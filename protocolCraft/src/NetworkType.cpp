@@ -128,7 +128,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
     DEFINE_NETWORK_TYPE(ChunkBiomeData);
-    DEFINE_SERIALIZE(ChunkPos);
+    DEFINE_NETWORK_TYPE(ChunkPos);
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     DEFINE_NETWORK_TYPE(ClientboundLevelChunkPacketData);
@@ -180,11 +180,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_NETWORK_TYPE(ChatTypeBoundNetwork);
     DEFINE_NETWORK_TYPE(FilterMask);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_NETWORK_TYPE(LastSeenMessagesEntry);
-#else
-    DEFINE_SERIALIZE(LastSeenMessagesEntry);
-#endif
     DEFINE_NETWORK_TYPE(LastSeenMessagesUpdate);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */

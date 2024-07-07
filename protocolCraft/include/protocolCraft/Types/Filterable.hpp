@@ -56,7 +56,6 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-
             output["raw"] = raw;
             if (filtered.has_value())
             {

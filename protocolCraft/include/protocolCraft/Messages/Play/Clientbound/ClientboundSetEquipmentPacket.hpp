@@ -11,32 +11,10 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Set Equipment";
 
-#if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS(
-            (VarInt,   std::pair<VarInt, Slot>),
-            (EntityId, Slot)
-        );
-#else
-        DECLARE_FIELDS(
-            (VarInt,   std::map<unsigned char, Slot>),
-            (EntityId, Slots)
-        );
-#endif
-        DECLARE_SERIALIZE;
-
-        GETTER_SETTER(EntityId);
-#if PROTOCOL_VERSION < 735 /* < 1.16 */
-        GETTER_SETTER(Slot);
-#else
-        GETTER_SETTER(Slots);
-#endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+    private:
+        std::map<unsigned char, Slot> ReadSlots(ReadIterator& iter, size_t& length) const
         {
-            SetEntityId(ReadData<VarInt>(iter, length));
-
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             bool has_value = true;
             std::map<unsigned char, Slot> slots;
             while (has_value)
@@ -47,28 +25,38 @@ namespace ProtocolCraft
 
                 has_value = current_value & (1 << 7);
             }
-            SetSlots(slots);
-#else
-            const int slot_first = ReadData<VarInt>(iter, length);
-            const Slot slot_second = ReadData<Slot>(iter, length);
-            SetSlot({ slot_first, slot_second });
-#endif
+            return slots;
         }
 
-        virtual void WriteImpl(WriteContainer& container) const override
+        void WriteSlots(const std::map<unsigned char, Slot>& slots, WriteContainer& container) const
         {
-            WriteData<VarInt>(GetEntityId(), container);
-#if PROTOCOL_VERSION > 730 /* > 1.15.2 */
             size_t index = 0;
-            for (const auto& [k, v] : GetSlots())
+            for (const auto& [k, v] : slots)
             {
-                WriteData<unsigned char>(index != GetSlots().size() - 1 ? k | (1 << 7) : k, container);
+                WriteData<unsigned char>(index != slots.size() - 1 ? k | (1 << 7) : k, container);
                 WriteData<Slot>(v, container);
             }
-#else
-            WriteData<VarInt>(GetSlot().first, container);
-            WriteData<Slot>(GetSlot().second, container);
-#endif
         }
+#endif
+
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        DECLARE_FIELDS(
+            (VarInt,   std::pair<VarInt, Slot>),
+            (EntityId, Slot)
+        );
+#else
+        DECLARE_FIELDS(
+            (VarInt,   Internal::CustomType<std::map<unsigned char, Slot>, &THIS::ReadSlots, &THIS::WriteSlots>),
+            (EntityId, Slots)
+        );
+#endif
+        DECLARE_READ_WRITE_SERIALIZE;
+
+        GETTER_SETTER(EntityId);
+#if PROTOCOL_VERSION < 735 /* < 1.16 */
+        GETTER_SETTER(Slot);
+#else
+        GETTER_SETTER(Slots);
+#endif
     };
 } //ProtocolCraft

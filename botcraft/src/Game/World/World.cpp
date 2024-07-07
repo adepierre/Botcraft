@@ -788,14 +788,14 @@ namespace Botcraft
         const int chunk_z = CHUNK_WIDTH * (msg.GetSectionPos() << 22 >> 42); // 22 bits
         const int chunk_y = SECTION_HEIGHT * (msg.GetSectionPos() << 44 >> 44); // 20 bits
 
-        const size_t data_size = msg.GetPositions().size();
-        for (size_t i = 0; i < data_size; ++i)
+        for (size_t i = 0; i < msg.GetPosState().size(); ++i)
         {
-            const unsigned int block_id = msg.GetStates()[i];
+            const unsigned int block_id = msg.GetPosState()[i] >> 12;
+            const short position = msg.GetPosState()[i] & 0xFFFl;
 
-            const int x_pos = chunk_x + ((msg.GetPositions()[i] >> 8) & 0xF);
-            const int z_pos = chunk_z + ((msg.GetPositions()[i] >> 4) & 0xF);
-            const int y_pos = chunk_y + ((msg.GetPositions()[i] >> 0) & 0xF);
+            const int x_pos = chunk_x + ((position >> 8) & 0xF);
+            const int z_pos = chunk_z + ((position >> 4) & 0xF);
+            const int y_pos = chunk_y + ((position >> 0) & 0xF);
 #endif
             Position cube_pos(x_pos, y_pos, z_pos);
 

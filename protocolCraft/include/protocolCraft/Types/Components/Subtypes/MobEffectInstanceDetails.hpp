@@ -10,10 +10,32 @@ namespace ProtocolCraft
     {
         class MobEffectInstanceDetails : public NetworkType
         {
+        private:
+            std::shared_ptr<MobEffectInstanceDetails> ReadHiddenEffect(ReadIterator& iter, size_t& length) const
+            {
+                std::shared_ptr<MobEffectInstanceDetails> hidden_effect = nullptr;
+                if (ReadData<bool>(iter, length))
+                {
+                    hidden_effect = std::make_shared<MobEffectInstanceDetails>();
+                    hidden_effect->Read(iter, length);
+                }
+                return hidden_effect;
+            }
+
+            void WriteHiddenEffect(const std::shared_ptr<MobEffectInstanceDetails>& hidden_effect, WriteContainer& container) const
+            {
+                WriteData<bool>(hidden_effect != nullptr, container);
+                if (hidden_effect != nullptr)
+                {
+                    WriteData<MobEffectInstanceDetails>(*hidden_effect, container);
+                }
+            }
+
             DECLARE_FIELDS(
-                (VarInt,    VarInt,   bool,    bool,          bool,     std::shared_ptr<MobEffectInstanceDetails>),
+                (VarInt,    VarInt,   bool,    bool,          bool,     Internal::CustomType<std::shared_ptr<MobEffectInstanceDetails>, &MobEffectInstanceDetails::ReadHiddenEffect, &MobEffectInstanceDetails::WriteHiddenEffect>),
                 (Amplifier, Duration, Ambient, ShowParticles, ShowIcon, HiddenEffect)
             );
+            DECLARE_READ_WRITE_SERIALIZE;
 
             GETTER_SETTER(Amplifier);
             GETTER_SETTER(Duration);
@@ -21,56 +43,6 @@ namespace ProtocolCraft
             GETTER_SETTER(ShowParticles);
             GETTER_SETTER(ShowIcon);
             GETTER_SETTER(HiddenEffect);
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-            {
-                SetAmplifier(ReadData<VarInt>(iter, length));
-                SetDuration(ReadData<VarInt>(iter, length));
-                SetAmbient(ReadData<bool>(iter, length));
-                SetShowParticles(ReadData<bool>(iter, length));
-                SetShowIcon(ReadData<bool>(iter, length));
-                // Pointer std::optional
-                std::shared_ptr<MobEffectInstanceDetails> hidden_effect = nullptr;
-                if (ReadData<bool>(iter, length))
-                {
-                    hidden_effect = std::make_shared<MobEffectInstanceDetails>();
-                    hidden_effect->Read(iter, length);
-                }
-                SetHiddenEffect(hidden_effect);
-            }
-
-            virtual void WriteImpl(WriteContainer& container) const override
-            {
-                WriteData<VarInt>(GetAmplifier(), container);
-                WriteData<VarInt>(GetDuration(), container);
-                WriteData<bool>(GetAmbient(), container);
-                WriteData<bool>(GetShowParticles(), container);
-                WriteData<bool>(GetShowIcon(), container);
-                // Pointer std::optional
-                WriteData<bool>(GetHiddenEffect() != nullptr, container);
-                if (GetHiddenEffect() != nullptr)
-                {
-                    WriteData<MobEffectInstanceDetails>(*GetHiddenEffect(), container);
-                }
-            }
-
-            virtual Json::Value SerializeImpl() const override
-            {
-                Json::Value output;
-
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Amplifier)])] = GetAmplifier();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Duration)])] = GetDuration();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Ambient)])] = GetAmbient();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ShowParticles)])] = GetShowParticles();
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ShowIcon)])] = GetShowIcon();
-                if (GetHiddenEffect() != nullptr)
-                {
-                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::HiddenEffect)])] = *GetHiddenEffect();
-                }
-
-                return output;
-            }
         };
     }
 }

@@ -99,6 +99,14 @@ namespace ProtocolCraft
                 { "second",  val.second }
             });
         }
+        else if constexpr (Internal::IsSharedPtr<T>)
+        {
+            if (val == nullptr)
+            {
+                return std::nullopt;
+            }
+            return SerializeType<typename T::element_type>(*val);
+        }
         else
         {
             return val;

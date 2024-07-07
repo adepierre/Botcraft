@@ -22,11 +22,11 @@
 
 namespace ProtocolCraft
 {
-    DEFINE_SERIALIZE(BrigadierPropertyDouble);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyDouble);
     DEFINE_NETWORK_TYPE(BrigadierPropertyEntity);
-    DEFINE_SERIALIZE(BrigadierPropertyFloat);
-    DEFINE_SERIALIZE(BrigadierPropertyInteger);
-    DEFINE_SERIALIZE(BrigadierPropertyLong);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyFloat);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyInteger);
+    DEFINE_NETWORK_TYPE(BrigadierPropertyLong);
     DEFINE_NETWORK_TYPE(BrigadierPropertyNone);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
     DEFINE_NETWORK_TYPE(BrigadierPropertyRange);

@@ -2,6 +2,9 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+#include "protocolCraft/Types/Holder.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -16,53 +19,15 @@ namespace ProtocolCraft
             (std::vector<unsigned char>),
             (MessageSignature)
         );
-        DECLARE_READ_WRITE_SERIALIZE;
 #else
-        // TODO: That looks like a Holder<std::array<unsigned char, 256>>
         DECLARE_FIELDS(
-            (VarInt,             std::array<unsigned char, 256>),
-            (MessageSignatureId, MessageSignature)
+            (Holder<std::array<unsigned char, 256>>),
+            (MessageSignature)
         );
 #endif
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(MessageSignature);
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        GETTER_SETTER(MessageSignatureId);
-#endif
-
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-            SetMessageSignatureId(ReadData<VarInt>(iter, length) - 1);
-            if (GetMessageSignatureId() == -1)
-            {
-                SetMessageSignature(ReadData<std::array<unsigned char, 256>>(iter, length));
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            WriteData<VarInt>(GetMessageSignatureId() + 1, container);
-            if (GetMessageSignatureId() == -1)
-            {
-                WriteData<std::array<unsigned char, 256>>(GetMessageSignature(), container);
-            }
-        }
-
-        virtual Json::Value SerializeImpl() const override
-        {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::MessageSignatureId)])] = GetMessageSignatureId();
-            if (GetMessageSignatureId() == -1)
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::MessageSignature)])] = "Vector of " + std::to_string(GetMessageSignature().size()) + " unsigned char";
-            }
-
-            return output;
-        }
-#endif
     };
 } //ProtocolCraft
 #endif

@@ -80,7 +80,7 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     // Configuration clientbound
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundCustomPayloadConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundCustomPayloadConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ClientboundDisconnectConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ClientboundFinishConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ClientboundKeepAliveConfigurationPacket);
@@ -137,7 +137,7 @@ namespace ProtocolCraft
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundChangeDifficultyPacket);
     DEFINE_MESSAGE_CLASS(ClientboundMapItemDataPacket);
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSectionBlocksUpdatePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSectionBlocksUpdatePacket);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     DEFINE_MESSAGE_CLASS(ClientboundContainerAckPacket);
 #endif
@@ -169,7 +169,7 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundAnimatePacket);
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundSetEquipmentPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetEquipmentPacket);
     DEFINE_MESSAGE_CLASS(ClientboundUpdateMobEffectPacket);
     DEFINE_MESSAGE_CLASS(ClientboundRotateHeadPacket);
     DEFINE_MESSAGE_CLASS(ClientboundMoveEntityPacketPos);
@@ -182,8 +182,8 @@ namespace ProtocolCraft
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundEntityEventPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetEntityMotionPacket);
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundExplodePacket);
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundLevelParticlesPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundExplodePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundLevelParticlesPacket);
     DEFINE_MESSAGE_CLASS(ClientboundPlayerPositionPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetHealthPacket);
     DEFINE_MESSAGE_CLASS(ClientboundTeleportEntityPacket);
@@ -194,17 +194,17 @@ namespace ProtocolCraft
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundRespawnPacket);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    DEFINE_SERIALIZED_MESSAGE_CLASS(ClientboundLightUpdatePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundLightUpdatePacket);
 #endif
 #if PROTOCOL_VERSION > 493 /* > 1.14.3 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
     DEFINE_MESSAGE_CLASS(ClientboundBlockBreakAckPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundBlockEntityDataPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerInfoPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerInfoPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundTabListPacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundCustomPayloadPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundCustomPayloadPacket);
     DEFINE_MESSAGE_CLASS(ClientboundRemoveMobEffectPacket);
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
     DEFINE_MESSAGE_CLASS(ClientboundResourcePackPacket);
@@ -231,7 +231,7 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundAddPlayerPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundSetDefaultSpawnPositionPacket);
-    DEFINE_CUSTOM_SERIALIZED_MESSAGE_CLASS(ClientboundAwardStatsPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundAwardStatsPacket);
 #if PROTOCOL_VERSION > 342 /* > 1.12.2 */
     DEFINE_MESSAGE_CLASS(ClientboundStopSoundPacket);
 #endif
@@ -301,11 +301,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
     DEFINE_MESSAGE_CLASS(ClientboundCustomChatCompletionsPacket);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_MESSAGE_CLASS(ClientboundDeleteChatPacket);
-#else
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundDeleteChatPacket);
-#endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_MESSAGE_CLASS(ClientboundPlayerChatHeaderPacket);
 #endif
@@ -313,7 +309,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     DEFINE_MESSAGE_CLASS(ClientboundDisguisedChatPacket);
     DEFINE_MESSAGE_CLASS(ClientboundPlayerInfoRemovePacket);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClientboundPlayerInfoUpdatePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerInfoUpdatePacket);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     DEFINE_MESSAGE_CLASS(ClientboundUpdateEnabledFeaturesPacket);
 #endif
@@ -379,7 +375,7 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ServerboundCookieResponseConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ServerboundSelectKnownPacksPacket);
 #endif
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundCustomPayloadConfigurationPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundCustomPayloadConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ServerboundFinishConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ServerboundKeepAliveConfigurationPacket);
     DEFINE_MESSAGE_CLASS(ServerboundPongConfigurationPacket);
@@ -434,7 +430,7 @@ namespace ProtocolCraft
 #endif
     DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketPos);
     DEFINE_MESSAGE_CLASS(ServerboundMovePlayerPacketPosRot);
-    DEFINE_IMPLEMENTED_MESSAGE_CLASS(ServerboundCustomPayloadPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundCustomPayloadPacket);
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
     DEFINE_MESSAGE_CLASS(ServerboundBlockEntityTagQueryPacket);
     DEFINE_MESSAGE_CLASS(ServerboundEntityTagQueryPacket);

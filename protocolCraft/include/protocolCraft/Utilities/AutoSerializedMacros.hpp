@@ -65,21 +65,23 @@
             { return std::get<static_cast<size_t>(FieldsEnum::name)>(fields); }                                          \
         static_assert(true, "Forcing ;")
 
-
 // Define ReadImpl virtual function for auto serializable types
 #define DEFINE_READ(ClassName)                                                                        \
     void ClassName::ReadImpl(ReadIterator& iter, size_t& length) {                                    \
         Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                                  \
             using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                \
             using SerializedElement = Internal::SerializedType<TupleElement>;                         \
-            if constexpr (Internal::IsConditioned<TupleElement>) {                                    \
+            if constexpr (Internal::IsCustomType<TupleElement>) {                                     \
+                std::get<i>(fields) = TupleElement::Read(this, iter, length);                         \
+            }                                                                                         \
+            else if constexpr (Internal::IsConditioned<TupleElement>) {                               \
                 if (TupleElement::Evaluate(this)) {                                                   \
-                    std::get<i>(fields) = ReadData<                                               \
+                    std::get<i>(fields) = ReadData<                                                   \
                         typename Internal::SerializedType<typename TupleElement::type>::storage_type, \
                         typename SerializedElement::serialization_type>(iter, length);                \
                 }                                                                                     \
                 else if constexpr (TupleElement::stored_as_optional) {                                \
-                    std::get<i>(fields) = std::nullopt;                                           \
+                    std::get<i>(fields) = std::nullopt;                                               \
                 }                                                                                     \
             }                                                                                         \
             else {                                                                                    \
@@ -96,7 +98,10 @@
         Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                                                 \
             using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                               \
             using SerializedElement = Internal::SerializedType<TupleElement>;                                        \
-            if constexpr (Internal::IsConditioned<TupleElement>) {                                                   \
+            if constexpr (Internal::IsCustomType<TupleElement>) {                                                    \
+                TupleElement::Write(this, std::get<i>(fields), container);                                           \
+            }                                                                                                        \
+            else if constexpr (Internal::IsConditioned<TupleElement>) {                                              \
                 if (TupleElement::Evaluate(this)) {                                                                  \
                     if constexpr (TupleElement::stored_as_optional) {                                                \
                         WriteData<                                                                                   \
@@ -126,7 +131,10 @@
             using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                     \
             using SerializedElement = Internal::SerializedType<TupleElement>;                              \
             std::optional<Json::Value> serialized = std::nullopt;                                          \
-            if constexpr (Internal::IsConditioned<TupleElement>) {                                         \
+            if constexpr (Internal::IsCustomType<TupleElement>) {                                          \
+                serialized = TupleElement::Serialize(this, std::get<i>(fields));                           \
+            }                                                                                              \
+            else if constexpr (Internal::IsConditioned<TupleElement>) {                                    \
                 if (TupleElement::Evaluate(this)) {                                                        \
                     if constexpr (TupleElement::stored_as_optional) {                                      \
                         serialized = SerializeType<typename Internal::SerializedType<                      \
@@ -160,16 +168,3 @@
     DEFINE_WRITE(ClassName);              \
     DEFINE_SERIALIZE(ClassName);          \
     template class BaseMessage<ClassName>
-
-// Define a Message with auto serializable fields, but custom ReadImpl/WriteImpl
-#define DEFINE_SERIALIZED_MESSAGE_CLASS(ClassName) \
-    DEFINE_SERIALIZE(ClassName);                   \
-    template class BaseMessage<ClassName>
-
-#define DEFINE_CUSTOM_SERIALIZED_MESSAGE_CLASS(ClassName) \
-    DEFINE_READ(ClassName);                               \
-    DEFINE_WRITE(ClassName);                              \
-    template class BaseMessage<ClassName>
-
-// Define a Message with auto serializable fields, but custom Impl methods
-#define DEFINE_IMPLEMENTED_MESSAGE_CLASS(ClassName) template class BaseMessage<ClassName>

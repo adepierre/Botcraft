@@ -44,18 +44,9 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Player Info Update";
 
-        DECLARE_FIELDS(
-            (std::vector<PlayerInfoUpdateAction>, std::map<UUID, PlayerInfoUpdateEntry>),
-            (Actions,                             Entries)
-        );
-
-        GETTER_SETTER(Actions);
-        GETTER_SETTER(Entries);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+    private:
+        std::vector<PlayerInfoUpdateAction> ReadActions(ReadIterator& iter, size_t& length) const
         {
-            // Get the number of bits to encode all possible actions in a bitset
             constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
             std::bitset<bitset_size> bitset = ReadData<std::bitset<bitset_size>>(iter, length);
             std::vector<PlayerInfoUpdateAction> actions;
@@ -66,15 +57,29 @@ namespace ProtocolCraft
                     actions.push_back(static_cast<PlayerInfoUpdateAction>(i));
                 }
             }
-            SetActions(actions);
+            return actions;
+        }
 
+        void WriteActions(const std::vector<PlayerInfoUpdateAction>& actions, WriteContainer& container) const
+        {
+            constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
+            std::bitset<bitset_size> bitset;
+            for (const auto a : actions)
+            {
+                bitset.set(static_cast<size_t>(a), true);
+            }
+            WriteData<std::bitset<bitset_size>>(bitset, container);
+        }
+
+        std::map<UUID, PlayerInfoUpdateEntry> ReadEntries(ReadIterator& iter, size_t& length) const
+        {
             std::map<UUID, PlayerInfoUpdateEntry> entries;
             const int entries_length = ReadData<VarInt>(iter, length);
             for (int i = 0; i < entries_length; ++i)
             {
                 const UUID uuid = ReadData<UUID>(iter, length);
                 PlayerInfoUpdateEntry& entry = entries[uuid];
-                for (const auto a : actions)
+                for (const auto a : GetActions())
                 {
                     switch (a)
                     {
@@ -103,21 +108,13 @@ namespace ProtocolCraft
                     }
                 }
             }
-            SetEntries(entries);
+            return entries;
         }
 
-        virtual void WriteImpl(WriteContainer& container) const override
+        void WriteEntries(const std::map<UUID, PlayerInfoUpdateEntry>& entries, WriteContainer& container) const
         {
-            constexpr size_t bitset_size = static_cast<size_t>(PlayerInfoUpdateAction::NUM_PLAYERINFOUPDATEACTION);
-            std::bitset<bitset_size> bitset;
-            for (const auto a : GetActions())
-            {
-                bitset.set(static_cast<size_t>(a), true);
-            }
-            WriteData<std::bitset<bitset_size>>(bitset, container);
-
-            WriteData<VarInt>(static_cast<int>(GetEntries().size()), container);
-            for (const auto& p : GetEntries())
+            WriteData<VarInt>(static_cast<int>(entries.size()), container);
+            for (const auto& p : entries)
             {
                 WriteData<UUID>(p.first, container);
                 for (const auto a : GetActions())
@@ -150,14 +147,10 @@ namespace ProtocolCraft
             }
         }
 
-        virtual Json::Value SerializeImpl() const override
+        std::optional<Json::Value> SerializeEntries(const std::map<UUID, PlayerInfoUpdateEntry>& entries) const
         {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Actions)])] = GetActions();
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])] = Json::Array();
-            for (const auto& p : GetEntries())
+            Json::Array output;
+            for (const auto& p : entries)
             {
                 Json::Value entry = Json::Object();
                 entry["uuid"] = p.first;
@@ -193,11 +186,19 @@ namespace ProtocolCraft
                         break;
                     }
                 }
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Entries)])].push_back(entry);
+                output.push_back(entry);
             }
-
             return output;
         }
+
+        DECLARE_FIELDS(
+            (Internal::CustomType<std::vector<PlayerInfoUpdateAction>, &THIS::ReadActions, &THIS::WriteActions>, Internal::CustomType<std::map<UUID, PlayerInfoUpdateEntry>, &THIS::ReadEntries, &THIS::WriteEntries, &THIS::SerializeEntries>),
+            (Actions,                                                                                            Entries)
+        );
+        DECLARE_READ_WRITE_SERIALIZE;
+
+        GETTER_SETTER(Actions);
+        GETTER_SETTER(Entries);
     };
 } //ProtocolCraft
 #endif

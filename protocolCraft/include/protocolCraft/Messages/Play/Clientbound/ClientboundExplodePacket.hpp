@@ -18,28 +18,66 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Explode";
 
+    private:
+        std::vector<NetworkPosition> ReadToBlow(ReadIterator& iter, size_t& length) const
+        {
+            std::vector<NetworkPosition> to_blow(
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+            ReadData<int>(iter, length)
+#else
+            ReadData<VarInt>(iter, length)
+#endif
+            );
+
+            for (size_t i = 0; i < to_blow.size(); ++i)
+            {
+                to_blow[i].SetX(ReadData<int, char>(iter, length));
+                to_blow[i].SetY(ReadData<int, char>(iter, length));
+                to_blow[i].SetZ(ReadData<int, char>(iter, length));
+            }
+
+            return to_blow;
+        }
+
+        void WriteToBlow(const std::vector<NetworkPosition>& to_blow, WriteContainer& container) const
+        {
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+            WriteData<int>(static_cast<int>(to_blow.size()), container);
+#else
+            WriteData<VarInt>(static_cast<int>(to_blow.size()), container);
+#endif
+
+            for (size_t i = 0; i < to_blow.size(); ++i)
+            {
+                WriteData<int, char>(to_blow[i].GetX(), container);
+                WriteData<int, char>(to_blow[i].GetY(), container);
+                WriteData<int, char>(to_blow[i].GetZ(), container);
+            }
+        }
+
+
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         DECLARE_FIELDS(
-            (float, float, float, float, std::vector<NetworkPosition>, float,      float,      float),
-            (X,     Y,     Z,     Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ)
+            (float, float, float, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float),
+            (X,     Y,     Z,     Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ)
         );
 #elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
         DECLARE_FIELDS(
-            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float),
-            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ)
+            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float),
+            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ)
         );
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
         DECLARE_FIELDS(
-            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent),
-            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
+            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent),
+            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
         );
 #else
         DECLARE_FIELDS(
-            (double, double, double, float, std::vector<NetworkPosition>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>),
-            (X,      Y,      Z,      Power, ToBlow,                       KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
+            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>),
+            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
         );
 #endif
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
         GETTER_SETTER(X);
         GETTER_SETTER(Y);
@@ -55,90 +93,5 @@ namespace ProtocolCraft
         GETTER_SETTER(LargeExplosionParticles);
         GETTER_SETTER(ExplosionSound);
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            SetX(ReadData<float>(iter, length));
-            SetY(ReadData<float>(iter, length));
-            SetZ(ReadData<float>(iter, length));
-#else
-            SetX(ReadData<double>(iter, length));
-            SetY(ReadData<double>(iter, length));
-            SetZ(ReadData<double>(iter, length));
-#endif
-            SetPower(ReadData<float>(iter, length));
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            // Special case, read size as int instead of VarInt, and custom read function
-            SetToBlow(ReadVector<NetworkPosition, int>(iter, length,
-#else
-            SetToBlow(ReadVector<NetworkPosition>(iter, length,
-#endif
-                [](ReadIterator& i, size_t& l)
-                {
-                    NetworkPosition output;
-
-                    output.SetX(ReadData<int, char>(i, l));
-                    output.SetY(ReadData<int, char>(i, l));
-                    output.SetZ(ReadData<int, char>(i, l));
-
-                    return output;
-                }
-            ));
-            SetKnockbackX(ReadData<float>(iter, length));
-            SetKnockbackY(ReadData<float>(iter, length));
-            SetKnockbackZ(ReadData<float>(iter, length));
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            SetBlockInteraction(ReadData<VarInt>(iter, length));
-            SetSmallExplosionParticles(ReadData<Particle>(iter, length));
-            SetLargeExplosionParticles(ReadData<Particle>(iter, length));
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            SetExplosionSound(ReadData<SoundEvent>(iter, length));
-#else
-            SetExplosionSound(ReadData<Holder<SoundEvent>>(iter, length));
-#endif
-#endif
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-            WriteData<float>(GetX(), container);
-            WriteData<float>(GetY(), container);
-            WriteData<float>(GetZ(), container);
-#else
-            WriteData<double>(GetX(), container);
-            WriteData<double>(GetY(), container);
-            WriteData<double>(GetZ(), container);
-#endif
-            WriteData<float>(GetPower(), container);
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-            // Special case, write size as int instead of VarInt, with custom write function
-            WriteVector<NetworkPosition, int>(GetToBlow(), container,
-#else
-            WriteVector<NetworkPosition>(GetToBlow(), container,
-#endif
-                [](const NetworkPosition& n, WriteContainer& c)
-                {
-                    WriteData<int, char>(n.GetX(), c);
-                    WriteData<int, char>(n.GetY(), c);
-                    WriteData<int, char>(n.GetZ(), c);
-                }
-            );
-            WriteData<float>(GetKnockbackX(), container);
-            WriteData<float>(GetKnockbackY(), container);
-            WriteData<float>(GetKnockbackZ(), container);
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            WriteData<VarInt>(GetBlockInteraction(), container);
-            WriteData<Particle>(GetSmallExplosionParticles(), container);
-            WriteData<Particle>(GetLargeExplosionParticles(), container);
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-            WriteData<SoundEvent>(GetExplosionSound(), container);
-#else
-            WriteData<Holder<SoundEvent>>(GetExplosionSound(), container);
-#endif
-#endif
-        }
     };
 } //ProtocolCraft

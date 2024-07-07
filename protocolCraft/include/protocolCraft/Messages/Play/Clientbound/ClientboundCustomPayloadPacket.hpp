@@ -12,66 +12,52 @@ namespace ProtocolCraft
 
         static constexpr std::string_view packet_name = "Custom Payload";
 
-        DECLARE_FIELDS(
-            (std::string, Internal::Vector<unsigned char, void, 0>, std::shared_ptr<PluginObject>),
-            (Identifier,  RawData,                                  ParsedData)
-        );
-
-        GETTER_SETTER(Identifier);
-        GETTER_SETTER(RawData);
-        GETTER_SETTER(ParsedData);
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+    private:
+        std::shared_ptr<PluginObject> ReadParsed(ReadIterator& iter, size_t& length) const
         {
-            SetIdentifier(ReadData<std::string>(iter, length));
-            SetParsedData(CreateObjectFromPlugin(GetIdentifier().c_str()));
-            if (GetParsedData() == nullptr)
+            std::shared_ptr<PluginObject> parsed = CreateObjectFromPlugin(GetIdentifier().c_str());
+            if (parsed != nullptr)
             {
-                SetRawData(ReadData<Internal::Vector<unsigned char, void, 0>>(iter, length));
-            }
-            else
-            {
-                SetRawData({});
                 unsigned long long int data_size = static_cast<unsigned long long int>(length);
                 const unsigned char* data_ptr = &(*iter);
-                GetParsedData()->Read(data_ptr, data_size);
+                parsed->Read(data_ptr, data_size);
                 iter += length - data_size;
                 length = static_cast<size_t>(data_size);
             }
+
+            return parsed;
         }
 
-        virtual void WriteImpl(WriteContainer& container) const override
+        void WriteParsed(const std::shared_ptr<PluginObject>& parsed, WriteContainer& container) const
         {
-            WriteData<std::string>(GetIdentifier(), container);
-            if (GetParsedData() == nullptr)
+            if (parsed == nullptr)
             {
-                WriteData<Internal::Vector<unsigned char, void, 0>>(GetRawData(), container);
+                return;
             }
-            else
-            {
-                unsigned long long int serialized_length = 0;
-                const unsigned char* serialized = GetParsedData()->Write(serialized_length);
-                WriteByteArray(serialized, static_cast<size_t>(serialized_length), container);
-            }
+            unsigned long long int serialized_length = 0;
+            const unsigned char* serialized = parsed->Write(serialized_length);
+            WriteByteArray(serialized, static_cast<size_t>(serialized_length), container);
         }
 
-        virtual Json::Value SerializeImpl() const override
+        std::optional<Json::Value> SerializeParsed(const std::shared_ptr<PluginObject>& parsed) const
         {
-            Json::Value output;
-
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Identifier)])] = GetIdentifier();
-            if (GetParsedData() == nullptr)
+            if (parsed == nullptr)
             {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::RawData)])] = "Vector of " + std::to_string(GetRawData().size()) + " unsigned chars";
+                return std::nullopt;
             }
-            else
-            {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ParsedData)])] = Json::Parse(GetParsedData()->Serialize());
-            }
-
-            return output;
+            return Json::Parse(parsed->Serialize());
         }
 
+        DECLARE_CONDITION(ParsedDataNull, GetParsedData() == nullptr);
+
+        DECLARE_FIELDS(
+            (std::string, Internal::CustomType<std::shared_ptr<PluginObject>, &THIS::ReadParsed, &THIS::WriteParsed, &THIS::SerializeParsed>, Internal::Conditioned<Internal::Vector<unsigned char, void, 0>, &THIS::ParsedDataNull>),
+            (Identifier,  ParsedData,                                                                                                         RawData)
+        );
+        DECLARE_READ_WRITE_SERIALIZE;
+
+        GETTER_SETTER(Identifier);
+        GETTER_SETTER(ParsedData);
+        GETTER_SETTER(RawData);
     };
 } //ProtocolCraft

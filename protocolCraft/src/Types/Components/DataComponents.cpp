@@ -57,6 +57,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(BlockPredicate);
         DEFINE_NETWORK_TYPE(ItemAttributeModifiersEntry);
         DEFINE_NETWORK_TYPE(MobEffectInstance);
+        DEFINE_NETWORK_TYPE(MobEffectInstanceDetails);
         DEFINE_NETWORK_TYPE(PossibleEffect);
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
