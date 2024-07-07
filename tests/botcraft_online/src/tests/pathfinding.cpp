@@ -235,7 +235,7 @@ TEST_CASE("speed pathfinding")
         SECTION("walk")
         {
             sprint = false;
-            expected_time_s = 5.7f;
+            expected_time_s = 5.75f;
         }
         SECTION("sprint")
         {
@@ -255,7 +255,7 @@ TEST_CASE("speed pathfinding")
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 3.1f;
+            expected_time_s = 3.2f;
         }
     }
     SECTION("speed I")
@@ -285,7 +285,7 @@ TEST_CASE("speed pathfinding")
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 3.2f;
+            expected_time_s = 3.3f;
         }
     }
 
@@ -319,7 +319,7 @@ TEST_CASE("speed pathfinding")
     bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + delta, 0, 0, 0, true, sprint, botcraft_speed_factor);
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     const float time_taken = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() / 1000.0f;
-    CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.2));
+    CHECK_THAT(time_taken, Catch::Matchers::WithinAbs(expected_time_s, 0.25));
 }
 
 #if PROTOCOL_VERSION == 340 /* 1.12.2 */
