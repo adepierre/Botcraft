@@ -525,6 +525,7 @@ endif(MSVC)
 
 if (MSVC)
     target_compile_options(protocolCraft PRIVATE "/bigobj")
+    set_target_properties(protocolCraft PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif (MSVC)
 
 # Set version

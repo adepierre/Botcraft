@@ -563,6 +563,7 @@ endif(MSVC)
 
 if (MSVC)
     target_compile_options(botcraft PRIVATE "/bigobj")
+    set_target_properties(botcraft PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif (MSVC)
 
 # Set version header
