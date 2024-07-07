@@ -9,6 +9,7 @@
 #include "protocolCraft/Types/GameProfile/GameProfile.hpp"
 #include "protocolCraft/Types/GameProfile/GameProfileProperty.hpp"
 #include "protocolCraft/Types/Chat/RemoteChatSessionData.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 
 namespace ProtocolCraft
 {

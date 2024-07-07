@@ -4,6 +4,7 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Utilities/Plugins/PluginLoader.hpp"
 #include "protocolCraft/Utilities/Plugins/PluginObject.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 
 namespace ProtocolCraft
 {

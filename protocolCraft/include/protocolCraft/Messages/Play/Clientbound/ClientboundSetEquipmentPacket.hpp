@@ -2,6 +2,7 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Item/Slot.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 
 namespace ProtocolCraft
 {

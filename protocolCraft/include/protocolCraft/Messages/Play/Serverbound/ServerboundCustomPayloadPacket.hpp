@@ -1,6 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 #include "protocolCraft/Utilities/Plugins/PluginLoader.hpp"
 #include "protocolCraft/Utilities/Plugins/PluginObject.hpp"
 

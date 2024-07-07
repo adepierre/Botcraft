@@ -2,6 +2,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/Types/ClientboundLightUpdatePacketData.hpp"
 #endif

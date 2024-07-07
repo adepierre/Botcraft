@@ -6,8 +6,6 @@
 
 #include <utility>
 
-// All template functions that should only be used inside .cpp files
-
 namespace ProtocolCraft
 {
     template<typename T>

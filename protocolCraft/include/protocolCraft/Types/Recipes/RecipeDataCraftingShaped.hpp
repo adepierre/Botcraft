@@ -4,6 +4,7 @@
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"
 #include "protocolCraft/Types/Item/Slot.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 
 namespace ProtocolCraft
 {

@@ -7,6 +7,7 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/PlayerUpdate.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 
 namespace ProtocolCraft
 {

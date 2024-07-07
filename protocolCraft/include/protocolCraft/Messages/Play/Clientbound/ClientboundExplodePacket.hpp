@@ -2,6 +2,8 @@
 
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
+#include "protocolCraft/Utilities/CustomType.hpp"
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/Sound/SoundEvent.hpp"
