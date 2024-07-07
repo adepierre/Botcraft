@@ -37,15 +37,15 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehavi
 
 ChatCommandClient::~ChatCommandClient()
 {
-    
+
 }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
 void ChatCommandClient::Handle(ClientboundChatPacket& msg)
 {
     ManagersClient::Handle(msg);
-    
-    // Split the message 
+
+    // Split the message
     std::istringstream ss{ msg.GetMessage().GetText() };
     const std::vector<std::string> splitted({ std::istream_iterator<std::string>{ss}, std::istream_iterator<std::string>{} });
 
@@ -327,7 +327,7 @@ void ChatCommandClient::CheckPerimeter(const Position& pos, const float radius, 
                 adjacent_position.y -= 1;
 
                 const Blockstate *adjacent_block = world->GetBlock(adjacent_position);
-                
+
                 if (!adjacent_block ||
                     adjacent_block->IsFluid() ||
                     !adjacent_block->IsSolid() ||

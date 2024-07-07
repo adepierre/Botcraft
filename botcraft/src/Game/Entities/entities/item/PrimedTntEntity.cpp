@@ -17,7 +17,8 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataFuseId(80);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        SetDataBlockStateId(AssetsManager::getInstance().GetBlockstate("minecraft:tnt")->GetId());
+        static const BlockstateId tnt_id = AssetsManager::getInstance().GetBlockstate("minecraft:tnt")->GetId();
+        SetDataBlockStateId(tnt_id);
 #endif
     }
 
