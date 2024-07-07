@@ -18,8 +18,6 @@
 
 #include "UserControlledClient.hpp"
 
-#include <iostream>
-
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
@@ -33,7 +31,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
     {
         network_manager = std::make_shared<NetworkManager>(ConnectionState::Play);
         world = std::make_shared<World>(false);
-        entity_manager = std::make_shared<EntityManager>();
+        entity_manager = std::make_shared<EntityManager>(network_manager);
         inventory_manager = std::make_shared<InventoryManager>();
 
         should_be_closed = false;
@@ -65,7 +63,7 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
 
 UserControlledClient::~UserControlledClient()
 {
-    
+
 }
 
 void UserControlledClient::CreateTestWorld()
@@ -268,7 +266,7 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 #endif
-    
+
     entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.5, 1.0, 0.5));
 }
 
