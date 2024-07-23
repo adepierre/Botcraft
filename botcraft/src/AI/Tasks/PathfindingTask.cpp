@@ -1551,12 +1551,10 @@ namespace Botcraft
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
         local_player->LookAt(target, set_pitch);
 
-        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketRot> rot = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketRot>();
-        rot->SetOnGround(local_player->GetOnGround());
-        rot->SetYRot(local_player->GetYaw());
-        rot->SetXRot(local_player->GetPitch());
-
-        client.GetNetworkManager()->Send(rot);
+        local_player->AddInputsForward(0.0f);
+        if (!Utilities::YieldForCondition([&] {
+            return !local_player->GetDirtyInputs();
+        }, client, 250)) return Status::Failure;
 
         return Status::Success;
     }
