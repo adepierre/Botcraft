@@ -13,7 +13,7 @@ void ShowHelp(const char* argv0)
         << "Options:\n"
         << "\t-h, --help\tShow this help message\n"
         << "\t--address\tAddress of the server you want to connect to, default: 127.0.0.1:25565\n"
-        << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCChatCommand\n"
+        << "\t--login\t\tPlayer name in offline mode, empty for Microsoft account, default: BCMobHitter\n"
         << std::endl;
 }
 
@@ -71,6 +71,12 @@ int main(int argc, char* argv[])
         client.Connect(args.address, args.login);
         client.SetBehaviourTree(mob_hitter_tree);
 
+        // Wait for the server to send the first ClientboundLoginPacket to init the player
+        Botcraft::Utilities::WaitForCondition([&]() {
+            return client.GetLocalPlayer() != nullptr;
+        }, 5000);
+
+        // Start behaviour
         client.RunBehaviourUntilClosed();
 
         client.Disconnect();
