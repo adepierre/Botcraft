@@ -69,6 +69,18 @@ namespace Botcraft
 
     /// @brief Try to set a given item in the given hand
     /// @param client The client performing the action
+    /// @param item_id Item id to place in hand
+    /// @param hand Left or right hand
+    /// @return Success if the item is now in hand, Failure otherwise
+    Status SetItemIdInHand(BehaviourClient& client, const ItemId item_id, const Hand hand = Hand::Right);
+
+    /// @brief Same thing as SetItemIdInHand, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the item is now in hand, Failure otherwise
+    Status SetItemIdInHandBlackboard(BehaviourClient& client);
+
+    /// @brief Try to set a given item in the given hand
+    /// @param client The client performing the action
     /// @param item_name Item name to place in hand
     /// @param hand Left or right hand
     /// @return Success if the item is now in hand, Failure otherwise
@@ -206,6 +218,18 @@ namespace Botcraft
     /// @return Success if item is crafted, Failure otherwise
     Status CraftNamedBlackboard(BehaviourClient& client);
 
+
+    /// @brief Check if item_id is present in inventory
+    /// @param client The client performing the action
+    /// @param item_id Item id
+    /// @param quantity Min quantity to have
+    /// @return Success if inventory quantity is >= quantity else Failure
+    Status HasItemIdInInventory(BehaviourClient& client, const ItemId item_id, const int quantity = 1);
+
+    /// @brief Same thing as HasItemIdInInventory, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if inventory quantity is >= quantity else Failure
+    Status HasItemIdInInventoryBlackboard(BehaviourClient& client);
 
     /// @brief Check if item_name is present in inventory
     /// @param client The client performing the action

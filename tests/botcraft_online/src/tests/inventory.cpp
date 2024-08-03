@@ -145,7 +145,16 @@ TEST_CASE("set in hand")
     CHECK(GiveItem(bot, "minecraft:stick", "Stick", 1));
     CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", "Diamond Pickaxe", 1));
 
-    bot->SyncAction(5000, Botcraft::SetItemInHand, "minecraft:diamond_pickaxe", Botcraft::Hand::Right);
+    SECTION("Name")
+    {
+        bot->SyncAction(5000, Botcraft::SetItemInHand, "minecraft:diamond_pickaxe", Botcraft::Hand::Right);
+    }
+
+    SECTION("Id")
+    {
+        const Botcraft::ItemId pickaxe_id = Botcraft::AssetsManager::getInstance().GetItemID("minecraft:diamond_pickaxe");
+        bot->SyncAction(5000, Botcraft::SetItemIdInHand, pickaxe_id, Botcraft::Hand::Right);
+    }
 
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     {

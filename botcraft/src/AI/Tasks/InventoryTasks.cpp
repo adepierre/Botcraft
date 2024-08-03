@@ -296,7 +296,7 @@ namespace Botcraft
     }
 
 
-    Status SetItemInHandImpl(BehaviourClient& client, const std::string& item_name, const Hand hand)
+    Status SetItemInHandImpl(BehaviourClient& client, const ItemId item_id, const Hand hand)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
@@ -307,7 +307,7 @@ namespace Botcraft
         // If the currently selected item is the right one, just go for it
         const Slot current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
         if (!current_selected.IsEmptySlot()
-            && AssetsManager::getInstance().Items().at(current_selected.GetItemId())->GetName() == item_name)
+            && current_selected.GetItemId() == item_id)
 
         {
             return Status::Success;
@@ -321,7 +321,7 @@ namespace Botcraft
                 if (id >= Window::INVENTORY_STORAGE_START
                     && id < Window::INVENTORY_OFFHAND_INDEX
                     && !slot.IsEmptySlot()
-                    && AssetsManager::getInstance().Items().at(slot.GetItemId())->GetName() == item_name)
+                    && slot.GetItemId() == item_id)
                 {
                     inventory_correct_slot_index = id;
                     break;
@@ -338,6 +338,38 @@ namespace Botcraft
         return SwapItemsInContainer(client, Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index, inventory_destination_slot_index);
     }
 
+
+    Status SetItemIdInHand(BehaviourClient& client, const ItemId item_id, const Hand hand)
+    {
+        constexpr std::array variable_names = {
+            "SetItemIdInHand.item_name",
+            "SetItemIdInHand.hand"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<ItemId>(variable_names[0], item_id);
+        blackboard.Set<Hand>(variable_names[1], hand);
+
+        return SetItemInHandImpl(client, item_id, hand);
+    }
+
+    Status SetItemIdInHandBlackboard(BehaviourClient& client)
+    {
+        constexpr std::array variable_names = {
+            "SetItemIdInHand.item_name",
+            "SetItemIdInHand.hand"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const ItemId item_id = blackboard.Get<ItemId>(variable_names[0]);
+        const Hand hand = blackboard.Get<Hand>(variable_names[1], Hand::Right);
+
+        return SetItemInHandImpl(client, item_id, hand);
+    }
+
     Status SetItemInHand(BehaviourClient& client, const std::string& item_name, const Hand hand)
     {
         constexpr std::array variable_names = {
@@ -350,7 +382,9 @@ namespace Botcraft
         blackboard.Set<std::string>(variable_names[0], item_name);
         blackboard.Set<Hand>(variable_names[1], hand);
 
-        return SetItemInHandImpl(client, item_name, hand);
+        const ItemId item_id = AssetsManager::getInstance().GetItemID(item_name);
+
+        return SetItemInHandImpl(client, item_id, hand);
     }
 
     Status SetItemInHandBlackboard(BehaviourClient& client)
@@ -366,7 +400,9 @@ namespace Botcraft
         const std::string& item_name = blackboard.Get<std::string>(variable_names[0]);
         const Hand hand = blackboard.Get<Hand>(variable_names[1], Hand::Right);
 
-        return SetItemInHandImpl(client, item_name, hand);
+        const ItemId item_id = AssetsManager::getInstance().GetItemID(item_name);
+
+        return SetItemInHandImpl(client, item_id, hand);
     }
 
 
@@ -536,7 +572,10 @@ namespace Botcraft
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
             {
-                LOG_WARNING('[' << network_manager->GetMyName() << "] Something went wrong waiting block placement confirmation at " << pos << " (Timeout).");
+                LOG_WARNING('[' << network_manager->GetMyName() << "] "
+                    << "Something went wrong waiting block placement confirmation at " << pos << " (Timeout). "
+                    << "Block ok: " << is_block_ok << " Slot ok: " << is_slot_ok
+                );
                 return Status::Failure;
             }
             if (!is_block_ok)
@@ -1389,11 +1428,9 @@ namespace Botcraft
     }
 
 
-    Status HasItemInInventoryImpl(BehaviourClient& client, const std::string& item_name, const int quantity)
+    Status HasItemInInventoryImpl(BehaviourClient& client, const ItemId item_id, const int quantity)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-
-        const auto item_id = AssetsManager::getInstance().GetItemID(item_name);
 
         int quantity_sum = 0;
         {
@@ -1420,6 +1457,38 @@ namespace Botcraft
         return Status::Failure;
     }
 
+    Status HasItemIdInInventory(BehaviourClient& client, const ItemId item_id, const int quantity)
+    {
+        constexpr std::array variable_names = {
+               "HasItemIdInInventory.item_id",
+               "HasItemIdInInventory.quantity"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+        blackboard.Set<ItemId>(variable_names[0], item_id);
+        blackboard.Set<int>(variable_names[1], quantity);
+
+        return HasItemInInventoryImpl(client, item_id, quantity);
+    }
+
+    Status HasItemIdInInventoryBlackboard(BehaviourClient& client)
+    {
+        constexpr std::array variable_names = {
+               "HasItemIdInInventory.item_id",
+               "HasItemIdInInventory.quantity"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const ItemId item_id = blackboard.Get<ItemId>(variable_names[0]);
+
+        // Optional
+        const int quantity = blackboard.Get<int>(variable_names[1], 1);
+
+        return HasItemInInventoryImpl(client, item_id, quantity);
+    }
+
     Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity)
     {
         constexpr std::array variable_names = {
@@ -1431,7 +1500,9 @@ namespace Botcraft
         blackboard.Set<std::string>(variable_names[0], item_name);
         blackboard.Set<int>(variable_names[1], quantity);
 
-        return HasItemInInventoryImpl(client, item_name, quantity);
+        const auto item_id = AssetsManager::getInstance().GetItemID(item_name);
+
+        return HasItemInInventoryImpl(client, item_id, quantity);
     }
 
     Status HasItemInInventoryBlackboard(BehaviourClient& client)
@@ -1449,7 +1520,7 @@ namespace Botcraft
         // Optional
         const int quantity = blackboard.Get<int>(variable_names[1], 1);
 
-        return HasItemInInventoryImpl(client, item_name, quantity);
+        return HasItemInInventoryImpl(client, AssetsManager::getInstance().GetItemID(item_name), quantity);
     }
 
 
