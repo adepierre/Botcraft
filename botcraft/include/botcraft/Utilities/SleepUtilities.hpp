@@ -18,7 +18,7 @@ namespace Botcraft::Utilities
         SleepUntil(std::chrono::steady_clock::now() + time);
     }
 
-    bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms = 0);
+    bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms = 0, const long long int check_interval_ms = 10);
 
     bool YieldForCondition(const std::function<bool()>& condition, BehaviourClient& client, const long long int timeout_ms = 0);
 }

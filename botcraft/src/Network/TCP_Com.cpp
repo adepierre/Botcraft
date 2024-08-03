@@ -19,7 +19,7 @@ namespace Botcraft
 {
     TCP_Com::TCP_Com(const std::string& address,
         std::function<void(const std::vector<unsigned char>&)> callback)
-        : socket(io_service)
+        : socket(io_service), initialized(false)
     {
         NewPacketCallback = callback;
 
@@ -44,6 +44,11 @@ namespace Botcraft
             Logger::GetInstance().UnregisterThread(thread_com.get_id());
             thread_com.join();
         }
+    }
+
+    bool TCP_Com::IsInitialized() const
+    {
+        return initialized;
     }
 
     void TCP_Com::SendPacket(const std::vector<unsigned char>& msg)
@@ -95,6 +100,7 @@ namespace Botcraft
         if (!error)
         {
             LOG_INFO("Connection to server established.");
+            initialized = true;
             socket.async_read_some(asio::buffer(read_msg.data(), read_msg.size()),
                 std::bind(&TCP_Com::handle_read, this,
                 std::placeholders::_1, std::placeholders::_2));

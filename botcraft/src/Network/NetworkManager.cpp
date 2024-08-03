@@ -9,6 +9,7 @@
 #include "botcraft/Network/Compression.hpp"
 #endif
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Utilities/StringUtilities.hpp"
 #endif
@@ -52,9 +53,11 @@ namespace Botcraft
 
         com = std::make_shared<TCP_Com>(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1));
 
-        //Let some time to initialize the communication before actually send data
-        // TODO: make this in a cleaner way?
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        // Wait for the communication to be ready before sending any data
+        Utilities::WaitForCondition([&]()
+            {
+                return com->IsInitialized();
+            }, 500, 0);
 
         std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);

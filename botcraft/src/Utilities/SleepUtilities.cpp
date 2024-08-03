@@ -25,7 +25,7 @@ namespace Botcraft::Utilities
 #endif
     }
 
-    bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms)
+    bool WaitForCondition(const std::function<bool()>& condition, const long long int timeout_ms, const long long int check_interval_ms)
     {
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         while (timeout_ms == 0 || std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < timeout_ms)
@@ -34,7 +34,7 @@ namespace Botcraft::Utilities
             {
                 return true;
             }
-            SleepFor(std::chrono::milliseconds(10));
+            SleepFor(std::chrono::milliseconds(check_interval_ms));
         }
         return false;
     }

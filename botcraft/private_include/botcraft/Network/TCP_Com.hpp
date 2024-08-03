@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <deque>
 #include <thread>
 #include <mutex>
@@ -19,6 +20,8 @@ namespace Botcraft
         TCP_Com(const std::string& address,
             std::function<void(const std::vector<unsigned char>&)> callback);
         ~TCP_Com();
+
+        bool IsInitialized() const;
 
         void close();
 
@@ -65,5 +68,7 @@ namespace Botcraft
 #ifdef USE_ENCRYPTION
         std::shared_ptr<AESEncrypter> encrypter;
 #endif
+
+        std::atomic<bool> initialized;
     };
 } // Botcraft
