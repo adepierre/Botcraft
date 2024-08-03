@@ -1,3 +1,4 @@
+#include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
 #include "botcraft/Game/World/World.hpp"
 
@@ -1078,7 +1079,12 @@ namespace Botcraft
             (pos.z % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH
         );
 
-        return it->second.GetBlock(chunk_pos);
+        const Blockstate* output = it->second.GetBlock(chunk_pos);
+
+        // As we are in a loaded chunk, nullptr means it's in an empty section
+        // (or the chunk position was invalid but we know it's valid given how it's constructed above)
+        // --> return air block instead of nullptr
+        return output != nullptr ? output : AssetsManager::getInstance().GetBlockstate(0);
     }
 
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
