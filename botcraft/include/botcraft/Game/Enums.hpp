@@ -188,7 +188,8 @@ namespace Botcraft
         FinishDigging,
         DropItemStack,
         DropItem,
-        ShootArrow_FinishEating,
+        ShootArrow,
+        FinishEating = ShootArrow,
         SwapItemHand
     };
 
