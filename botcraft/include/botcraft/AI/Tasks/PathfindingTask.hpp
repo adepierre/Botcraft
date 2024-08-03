@@ -55,8 +55,9 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @param target The target to look at
     /// @param set_pitch If false, only the yaw will be changed
-    /// @return Always return Success
-    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch = true);
+    /// @param sync_to_server If true, will wait for the new orientation to be sent to the server
+    /// @return Always Success if sync_to_server is false, return the SyncPosRotToServer result otherwise
+    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch = true, const bool sync_to_server = true);
 
     /// @brief Same thing as LookAt, but reads its parameters from the blackboard
     /// @param client The client performing the action
@@ -72,4 +73,14 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if the player is now not flying anymore, failure otherwise
     Status StopFlying(BehaviourClient& client);
+
+    /// @brief This task will make sure the current player position/orientation have been sent to the server
+    /// This is important for example if you want to throw an item: you need to first look in the desired direction
+    /// then throw the item. But if the new orientation is not registered server side, the items won't be instantiated
+    /// in the right direction
+    /// @param client The client performing the action
+    /// @return Failure if the position has not been properly sent to the server in a reasonable time (it may happen
+    /// if the physics manager is currently not running), Success otherwise
+    Status SyncPosRotToServer(BehaviourClient& client);
+
 } // namespace Botcraft

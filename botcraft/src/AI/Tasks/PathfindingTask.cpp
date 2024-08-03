@@ -1546,41 +1546,41 @@ namespace Botcraft
     }
 
 
-    Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
+    Status LookAtImpl(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch, const bool sync_to_server)
     {
-        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
-        local_player->LookAt(target, set_pitch);
+        client.GetLocalPlayer()->LookAt(target, set_pitch);
 
-        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketRot> rot = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketRot>();
-        rot->SetOnGround(local_player->GetOnGround());
-        rot->SetYRot(local_player->GetYaw());
-        rot->SetXRot(local_player->GetPitch());
+        if (!sync_to_server)
+        {
+            return Status::Success;
+        }
 
-        client.GetNetworkManager()->Send(rot);
-
-        return Status::Success;
+        return SyncPosRotToServer(client);
     }
 
-    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch)
+    Status LookAt(BehaviourClient& client, const Vector3<double>& target, const bool set_pitch, const bool sync_to_server)
     {
         const std::array variable_names = {
             "LookAt.target",
-            "LookAt.set_pitch"
+            "LookAt.set_pitch",
+            "LookAt.sync_to_server",
         };
 
         Blackboard& blackboard = client.GetBlackboard();
 
         blackboard.Set<Vector3<double>>(variable_names[0], target);
         blackboard.Set<bool>(variable_names[1], set_pitch);
+        blackboard.Set<bool>(variable_names[2], sync_to_server);
 
-        return LookAtImpl(client, target, set_pitch);
+        return LookAtImpl(client, target, set_pitch, sync_to_server);
     }
 
     Status LookAtBlackboard(BehaviourClient& client)
     {
         const std::array variable_names = {
             "LookAt.target",
-            "LookAt.set_pitch"
+            "LookAt.set_pitch",
+            "LookAt.sync_to_server",
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1590,8 +1590,9 @@ namespace Botcraft
 
         // Optional
         const bool set_pitch = blackboard.Get(variable_names[1], true);
+        const bool sync_to_server = blackboard.Get(variable_names[2], true);
 
-        return LookAtImpl(client, target, set_pitch);
+        return LookAtImpl(client, target, set_pitch, sync_to_server);
     }
 
     Status StartFlying(BehaviourClient& client)
@@ -1669,5 +1670,15 @@ namespace Botcraft
         }
 
         return local_player->GetFlying() ? Status::Failure : Status::Success;
+    }
+
+    Status SyncPosRotToServer(BehaviourClient& client)
+    {
+        std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        // Wait for next physics update
+        local_player->SetDirtyInputs();
+        return Utilities::YieldForCondition([&] {
+            return !local_player->GetDirtyInputs();
+        }, client, 250) ? Status::Success : Status::Failure;
     }
 }

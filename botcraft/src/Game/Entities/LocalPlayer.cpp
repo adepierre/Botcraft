@@ -224,6 +224,12 @@ namespace Botcraft
         food_saturation = food_saturation_;
     }
 
+    void LocalPlayer::SetDirtyInputs()
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        dirty_inputs = true;
+    }
+
 
     void LocalPlayer::SetPosition(const Vector3<double>& pos)
     {

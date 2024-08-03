@@ -4,7 +4,7 @@
 
 #include <optional>
 
-namespace Botcraft 
+namespace Botcraft
 {
     struct PlayerInputs
     {
@@ -55,6 +55,7 @@ namespace Botcraft
         void SetHealth(const float health_);
         void SetFood(const int food_);
         void SetFoodSaturation(const float food_saturation_);
+        void SetDirtyInputs();
 
         virtual void SetPosition(const Vector3<double>& pos) override;
         virtual void SetX(const double x) override;
