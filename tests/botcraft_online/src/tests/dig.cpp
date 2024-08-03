@@ -18,7 +18,7 @@ void TestDig(std::unique_ptr<Botcraft::SimpleBehaviourClient>& bot, const Botcra
         }, 5000);
 
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-    bot->SyncAction(30000, Botcraft::Dig, pos, true, Botcraft::PlayerDiggingFace::North);
+    bot->SyncAction(30000, Botcraft::Dig, pos, true, Botcraft::PlayerDiggingFace::North, true);
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     // Check the block is now air

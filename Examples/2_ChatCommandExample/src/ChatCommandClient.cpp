@@ -239,7 +239,7 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
         auto tree = Builder<ChatCommandClient>("dig")
             // shortcut for composite<Sequence<ChatCommandClient>>()
             .sequence()
-                .succeeder().leaf("diggy diggy hole", Dig, pos, true, PlayerDiggingFace::Up)
+                .succeeder().leaf("diggy diggy hole", Dig, pos, true, PlayerDiggingFace::Up, true)
                 // Switch back to empty behaviour
                 .leaf([](ChatCommandClient& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
             .end();

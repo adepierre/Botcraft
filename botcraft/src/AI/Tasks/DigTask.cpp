@@ -18,47 +18,83 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
+    Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding)
     {
         std::shared_ptr<LocalPlayer> local_player = c.GetLocalPlayer();
-        // Get hand (?) pos to check the distance to the center of the target block
-        // (unsure about the 1.0 distance, might be from the eyes or somewhere else)
-        const Vector3<double> hand_pos = local_player->GetPosition() + Vector3<double>(0.0, 1.0, 0.0);
-
-        if (hand_pos.SqrDist(Vector3<double>(0.5, 0.5, 0.5) + pos) > 20.0f)
-        {
-            // Go in range
-            if (GoTo(c, pos, 4) == Status::Failure)
-            {
-                return Status::Failure;
-            }
-        }
-
-        const Position eyes_block = Position(
-            static_cast<int>(std::floor(hand_pos.x)),
-            static_cast<int>(std::floor(hand_pos.y + 0.6)),
-            static_cast<int>(std::floor(hand_pos.z))
-        );
-        const bool is_on_ground = local_player->GetOnGround();
 
         std::shared_ptr<World> world = c.GetWorld();
         const Blockstate* blockstate = world->GetBlock(pos);
 
-        // No block
-        if (blockstate == nullptr || blockstate->IsAir())
+        // Not loaded, pathfind toward it
+        if (blockstate == nullptr)
+        {
+            if (!allow_pathfinding || GoTo(c, pos, 4) == Status::Failure)
+            {
+                return Status::Failure;
+            }
+            // Update the block after pathfinding
+            blockstate = world->GetBlock(pos);
+        }
+
+        // This should not happen as the block should be loaded if we successfully moved near it but just in case
+        if (blockstate == nullptr)
+        {
+            LOG_WARNING("Digging target block is nullptr while being close to player");
+            return Status::Failure;
+        }
+
+        // Nothing to do
+        if (blockstate->IsAir())
         {
             return Status::Success;
         }
 
-        const Blockstate* head_blockstate = world->GetBlock(eyes_block);
-        const bool is_head_in_fluid = head_blockstate != nullptr && head_blockstate->IsFluid();
+        const GameType game_mode = local_player->GetGameMode();
 
-        // Not breakable
-        if (blockstate->IsFluid() ||
-            (blockstate->GetHardness() < 0.0f && !local_player->GetInstabuild()))
+        if (blockstate->IsFluid() || // Can't dig fluids
+            game_mode == GameType::Adventure || game_mode == GameType::Spectator || // Can't break block in adventure or spectator mode
+            (!local_player->GetInstabuild() && blockstate->GetHardness() < 0.0f) // Non breakable blocks without creative instabuild flag
+        )
         {
             return Status::Failure;
         }
+
+        // Check if the block is in range
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        const double range = game_mode == GameType::Creative ? 5.0 : 4.5;
+#else
+        const double range = static_cast<double>(local_player->GetAttributePlayerBlockInteractionRangeValue());
+#endif
+        Vector3<double> eye_pos = local_player->GetPosition() + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0);
+        Vector3<double> closest_point_on_block = blockstate->GetClosestPoint(pos, eye_pos);
+
+        int pathfind_tolerance = 4;
+        while (pathfind_tolerance > 0 && eye_pos.SqrDist(closest_point_on_block) >= range * range)
+        {
+            if (!allow_pathfinding || GoTo(c, pos, pathfind_tolerance) == Status::Failure)
+            {
+                return Status::Failure;
+            }
+            eye_pos = local_player->GetPosition() + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0);
+            closest_point_on_block = blockstate->GetClosestPoint(pos, eye_pos);
+            pathfind_tolerance -= 1;
+        }
+
+        // We didn't manage to get close enough
+        if (eye_pos.SqrDist(closest_point_on_block) >= range * range)
+        {
+            return Status::Failure;
+        }
+
+        const Position eyes_block = Position(
+            static_cast<int>(std::floor(eye_pos.x)),
+            static_cast<int>(std::floor(eye_pos.y)),
+            static_cast<int>(std::floor(eye_pos.z))
+        );
+        const bool is_on_ground = local_player->GetOnGround();
+
+        const Blockstate* head_blockstate = world->GetBlock(eyes_block);
+        const bool is_head_in_fluid = head_blockstate != nullptr && head_blockstate->IsFluid();
 
         ToolType current_tool_type = ToolType::None;
         ToolMaterial current_tool_material = ToolMaterial::None;
@@ -218,12 +254,13 @@ namespace Botcraft
         return Status::Success;
     }
 
-    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face)
+    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding)
     {
         constexpr std::array variable_names = {
             "Dig.pos",
             "Dig.send_swing",
-            "Dig.face"
+            "Dig.face",
+            "Dig.allow_pathfinding"
         };
 
         Blackboard& blackboard = c.GetBlackboard();
@@ -231,8 +268,9 @@ namespace Botcraft
         blackboard.Set<Position>(variable_names[0], pos);
         blackboard.Set<bool>(variable_names[1], send_swing);
         blackboard.Set<PlayerDiggingFace>(variable_names[2], face);
+        blackboard.Set<bool>(variable_names[3], allow_pathfinding);
 
-        return DigImpl(c, pos, send_swing, face);
+        return DigImpl(c, pos, send_swing, face, allow_pathfinding);
     }
 
     Status DigBlackboard(BehaviourClient& c)
@@ -240,7 +278,8 @@ namespace Botcraft
         constexpr std::array variable_names = {
             "Dig.pos",
             "Dig.send_swing",
-            "Dig.face"
+            "Dig.face",
+            "Dig.allow_pathfinding"
         };
 
         Blackboard& blackboard = c.GetBlackboard();
@@ -251,7 +290,8 @@ namespace Botcraft
         // Optional
         const bool send_swing = blackboard.Get<bool>(variable_names[1], false);
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Up);
+        const bool allow_pathfinding = blackboard.Get<bool>(variable_names[3], true);
 
-        return DigImpl(c, pos, send_swing, face);
+        return DigImpl(c, pos, send_swing, face, allow_pathfinding);
     }
 }
