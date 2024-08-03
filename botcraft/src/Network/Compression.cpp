@@ -8,17 +8,10 @@
 
 namespace Botcraft
 {
-    const unsigned long MAX_COMPRESSED_PACKET_LEN = 200 * 1024;
-
     std::vector<unsigned char> Compress(const std::vector<unsigned char>& raw)
     {
         unsigned long size_to_compress = static_cast<unsigned long>(raw.size());
         unsigned long compressed_size = compressBound(size_to_compress);
-
-        if (compressed_size > MAX_COMPRESSED_PACKET_LEN)
-        {
-            throw std::runtime_error("Incoming packet is too big");
-        }
 
         std::vector<unsigned char> compressed_data(compressed_size);
         int status = compress2(compressed_data.data(), &compressed_size, raw.data(), size_to_compress, Z_DEFAULT_COMPRESSION);
