@@ -115,6 +115,11 @@ namespace Botcraft
         const std::string& GetVariableValue(const std::string& variable) const;
         Vector3<double> GetHorizontalOffsetAtPos(const Position& pos) const;
         std::set<AABB> GetCollidersAtPos(const Position& pos) const;
+        /// @brief Get the closest point on this blockstate placed at block_pos from a reference pos
+        /// @param block_pos Block position
+        /// @param pos Reference position to find the closest point from
+        /// @return The closest point inside the block AABB shapes
+        Vector3<double> GetClosestPoint(const Position& block_pos, const Vector3<double>& pos) const;
 
         bool IsAir() const;
         bool IsSolid() const;

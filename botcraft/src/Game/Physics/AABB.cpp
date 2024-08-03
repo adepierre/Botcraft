@@ -35,6 +35,23 @@ namespace Botcraft
         return half_size;
     }
 
+    Vector3<double> AABB::GetClosestPoint(const Vector3<double>& pos) const
+    {
+        const Vector3<double> min = GetMin();
+        const Vector3<double> max = GetMax();
+        Vector3<double> output;
+        // Loop through each axis
+        // If > than max, then we are on the max face for axis i
+        // If < than min, then we are on the min face for axis i
+        // Else we are somewhere on one of the other faces (or fully inside the AABB)
+        for (size_t i = 0; i < 3; ++i)
+        {
+            output[i] = std::clamp(pos[i], min[i], max[i]);
+        }
+
+        return output;
+    }
+
     bool AABB::Collide(const AABB& b) const
     {
         bool x = std::abs(center.x - b.center.x) <= (half_size.x + b.half_size.x);

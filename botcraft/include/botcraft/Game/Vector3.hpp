@@ -285,7 +285,7 @@ namespace Botcraft
 namespace std
 {
     template <typename T>
-    struct hash<Botcraft::Vector3<T> > 
+    struct hash<Botcraft::Vector3<T> >
     {
         inline size_t operator()(const Botcraft::Vector3<T>& v) const
         {

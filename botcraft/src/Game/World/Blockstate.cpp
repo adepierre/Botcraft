@@ -1,5 +1,6 @@
 #include <deque>
 #include <fstream>
+#include <limits>
 #include <set>
 
 #include "botcraft/Game/World/Blockstate.hpp"
@@ -651,6 +652,24 @@ namespace Botcraft
             output.insert(c + offset);
         }
         return output;
+    }
+
+    Vector3<double> Blockstate::GetClosestPoint(const Position& block_pos, const Vector3<double>& pos) const
+    {
+        const std::set<AABB> colliders = GetCollidersAtPos(block_pos);
+        double distance = std::numeric_limits<double>::max();
+        Vector3<double> closest_point;
+        for (const auto& c : colliders)
+        {
+            const Vector3<double> closest_on_current_collider = c.GetClosestPoint(pos);
+            const double current_distance = closest_on_current_collider.SqrDist(pos);
+            if (current_distance < distance)
+            {
+                distance = current_distance;
+                closest_point = closest_on_current_collider;
+            }
+        }
+        return closest_point;
     }
 
     bool Blockstate::IsAir() const

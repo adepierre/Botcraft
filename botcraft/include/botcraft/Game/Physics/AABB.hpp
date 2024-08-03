@@ -13,7 +13,11 @@ namespace Botcraft
         Vector3<double> GetMax() const;
         const Vector3<double>& GetCenter() const;
         const Vector3<double>& GetHalfSize() const;
-        
+        /// @brief Get the closest point in the AABB from a given point
+        /// @param pos The reference point
+        /// @return Closest point to pos inside the AABB
+        Vector3<double> GetClosestPoint(const Vector3<double>& pos) const;
+
         //Return whether or not these two AABB collides
         bool Collide(const AABB& b) const;
 
