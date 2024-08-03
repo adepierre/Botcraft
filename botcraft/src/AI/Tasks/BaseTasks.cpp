@@ -175,7 +175,7 @@ namespace Botcraft
 
         // Optional
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[1], PlayerDiggingFace::Up);
-        const bool animation = blackboard.Get(variable_names[2], false);
+        const bool animation = blackboard.Get(variable_names[2], true);
 
         return InteractWithBlockImpl(client, pos, face, animation);
     }
