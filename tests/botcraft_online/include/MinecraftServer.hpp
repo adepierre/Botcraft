@@ -1,12 +1,13 @@
 #pragma once
 
-#include <thread>
+#include <atomic>
+#include <filesystem>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
-#include <memory>
+#include <thread>
 #include <vector>
-#include <filesystem>
 
 struct subprocess_s;
 
@@ -75,7 +76,7 @@ private:
     /// @brief Server subprocess handle
     std::unique_ptr<subprocess_s> subprocess;
 
-    bool running;
+    std::atomic<bool> running;
 
     std::filesystem::path server_path;
 };

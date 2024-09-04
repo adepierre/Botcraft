@@ -6,10 +6,10 @@
 #include <botcraft/Utilities/SleepUtilities.hpp>
 #include <botcraft/Version.hpp>
 
-#include <stdexcept>
 #include <array>
-#include <regex>
 #include <fstream>
+#include <regex>
+#include <stdexcept>
 
 const std::filesystem::path server_relative_files_path = "../../test_server_files";
 
@@ -61,13 +61,26 @@ MinecraftServer::~MinecraftServer()
     // Ask the server to stop properly
     SendLine("stop");
 
+    std::atomic<bool> joined = false;
+    // Setup a 2 minutes timeout for the join to prevent stdout reading thread deadlock
+    std::thread timeout_thread([&]() {
+        if (Botcraft::Utilities::WaitForCondition([&]() -> bool { return joined; }, 120000))
+        {
+            return;
+        }
+        LOG_ERROR("Timeout waiting for the server process to stop, killing it");
+        Kill();
+    });
+
     // Wait for the process to finish
     if (subprocess_join(subprocess.get(), NULL) != 0)
     {
         LOG_FATAL("Error joining wrapped server process, killing it");
         Kill();
     }
+    joined = true;
     running = false;
+    timeout_thread.join();
     if (subprocess_destroy(subprocess.get()) != 0)
     {
         LOG_FATAL("Error destroying wrapped server process");
