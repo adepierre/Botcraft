@@ -3,6 +3,7 @@
 #include "botcraft/AI/Tasks/PathfindingTask.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/Physics/PhysicsManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
@@ -991,6 +992,7 @@ namespace Botcraft
         const Vector3<double> motion_vector = target_position - local_player->GetPosition();
         const double half_player_width = 0.5 * local_player->GetWidth();
         const Vector3<double> horizontal_target_position(target_position.x, 0.0, target_position.z);
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
 
         std::shared_ptr<World> world = client.GetWorld();
 
@@ -1024,7 +1026,7 @@ namespace Botcraft
                     if (!Utilities::YieldForCondition([&]() -> bool
                         {
                             return local_player->GetY() >= target_block.y;
-                        }, client, 2000))
+                        }, client, 40.0 * ms_per_tick))
                     {
                         return false;
                     }
@@ -1058,7 +1060,7 @@ namespace Botcraft
                             }
 
                             return false;
-                        }, client, 1000))
+                        }, client, 20.0 * ms_per_tick))
                     {
                         return false;
                     }
@@ -1100,7 +1102,7 @@ namespace Botcraft
                     local_player->SetInputsSprint(sprint && (forward == 1.0));
 
                     return false;
-                }, client, (std::abs(motion_vector.x) + std::abs(motion_vector.z) + (motion_vector.y < -0.5)) * 1000))
+                }, client, (std::abs(motion_vector.x) + std::abs(motion_vector.z) + (motion_vector.y < -0.5)) * 20.0 * ms_per_tick))
             {
                 return false;
             }
@@ -1141,7 +1143,7 @@ namespace Botcraft
                 }
 
                 return false;
-            }, client, 1000 + 1000 * std::abs(motion_vector.y)))
+            }, client, 20.0 * ms_per_tick + (1 + std::abs(motion_vector.y))))
         {
             return false;
         }
@@ -1171,7 +1173,7 @@ namespace Botcraft
                 }
 
                 return false;
-            }, client, 1000 + 1000 * std::abs(motion_vector.y)))
+            }, client, 20.0 * ms_per_tick * (1 + std::abs(motion_vector.y))))
         {
             return false;
         }
@@ -1208,7 +1210,7 @@ namespace Botcraft
                 }
 
                 return false;
-            }, client, 1000);
+            }, client, 20.0 * ms_per_tick);
     }
 
     // Try to cancel speed while going toward the target position
@@ -1216,6 +1218,7 @@ namespace Botcraft
     {
         std::shared_ptr<LocalPlayer> player = client.GetLocalPlayer();
         const Vector3<double> pos = player->GetPosition();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
 
         Utilities::YieldForCondition([&]() -> bool
             {
@@ -1274,7 +1277,7 @@ namespace Botcraft
                 }
 
                 return false;
-            }, client, 1000);
+            }, client, 20.0 * ms_per_tick);
     }
 
     Status GoToImpl(BehaviourClient& client, const Vector3<double>& goal, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump, const bool sprint, float speed_factor)
@@ -1305,6 +1308,7 @@ namespace Botcraft
             const Vector3<double> target(0.5 + goal_block.x, 0.5 + goal_block.y, 0.5 + goal_block.z);
             const double square_half_width = local_player->GetWidth() * local_player->GetWidth() / 4.0;
             const double dist = std::sqrt((target - local_player->GetPosition()).SqrNorm());
+            const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
             if (Utilities::YieldForCondition([&]() -> bool
                 {
                     if (!local_player->GetDirtyInputs())
@@ -1314,7 +1318,7 @@ namespace Botcraft
                     }
 
                     return local_player->GetPosition().SqrDist(target) < square_half_width;
-                }, client, dist * 1000))
+                }, client, dist * 20.0 * ms_per_tick))
             {
                 AdjustPosSpeed(client, goal);
                 return Status::Success;
@@ -1336,9 +1340,10 @@ namespace Botcraft
         {
             // Wait until we are on the ground or climbing
             const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+            const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
             while (!local_player->GetOnGround() && !local_player->IsClimbing() && !local_player->IsInFluid())
             {
-                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 2000)
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 40.0 * ms_per_tick)
                 {
                     LOG_WARNING("Timeout waiting for the bot to land on the floor between two block move. Staying at " << local_player->GetPosition());
                     return Status::Failure;
@@ -1598,6 +1603,7 @@ namespace Botcraft
     Status StartFlying(BehaviourClient& client)
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
         if (!local_player->GetMayFly())
         {
             return Status::Failure;
@@ -1612,7 +1618,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1620,7 +1626,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1628,7 +1634,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1639,6 +1645,7 @@ namespace Botcraft
     Status StopFlying(BehaviourClient& client)
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
         if (!local_player->GetFlying())
         {
             return Status::Success;
@@ -1648,7 +1655,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1656,7 +1663,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1664,7 +1671,7 @@ namespace Botcraft
         if (!Utilities::YieldForCondition([&]() -> bool
             {
                 return !local_player->GetDirtyInputs();
-            }, client, 150))
+            }, client, 3.0 * ms_per_tick))
         {
             return Status::Failure;
         }
@@ -1675,10 +1682,11 @@ namespace Botcraft
     Status SyncPosRotToServer(BehaviourClient& client)
     {
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
         // Wait for next physics update
         local_player->SetDirtyInputs();
         return Utilities::YieldForCondition([&] {
             return !local_player->GetDirtyInputs();
-        }, client, 250) ? Status::Success : Status::Failure;
+        }, client, 5.0 * ms_per_tick) ? Status::Success : Status::Failure;
     }
 }

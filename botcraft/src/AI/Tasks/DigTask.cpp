@@ -9,6 +9,7 @@
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
+#include "botcraft/Game/Physics/PhysicsManager.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/ItemUtilities.hpp"
@@ -171,6 +172,7 @@ namespace Botcraft
         const float speed_multiplier = static_cast<float>(local_player->GetAttributePlayerBlockBreakSpeedValue());
 #endif
 
+        const double ms_per_tick = c.GetPhysicsManager()->GetMsPerTick();
         const float expected_mining_time_s =
             local_player->GetInstabuild() ? 0.0f :
             blockstate->GetMiningTimeSeconds(
@@ -181,7 +183,7 @@ namespace Botcraft
                 mining_fatigue_amplifier,
                 is_on_ground,
                 speed_multiplier * submerged_speed_multiplier
-            );
+            ) * static_cast<float>(ms_per_tick / 50.0);
         if (expected_mining_time_s > 60.0f)
         {
             LOG_INFO("Starting an expected " << expected_mining_time_s << " seconds long mining at " << pos << ".A little help?");
@@ -218,7 +220,7 @@ namespace Botcraft
         {
             auto now = std::chrono::steady_clock::now();
             long long int elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-            if (elapsed > 5000 + expected_mining_time_s * 1000.0f)
+            if (elapsed > 50 * ms_per_tick + expected_mining_time_s * 1000.0f)
             {
                 LOG_WARNING("Something went wrong waiting block breaking confirmation (Timeout).");
                 return Status::Failure;
@@ -237,7 +239,7 @@ namespace Botcraft
 
                 finished_sent = true;
             }
-            if (send_swing && !finished_sent && std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time_send_swing).count() > 250)
+            if (send_swing && !finished_sent && std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time_send_swing).count() > 5.0 * ms_per_tick)
             {
                 last_time_send_swing = now;
                 network_manager->Send(swing_packet);

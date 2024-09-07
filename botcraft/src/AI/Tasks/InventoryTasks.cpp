@@ -9,6 +9,7 @@
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Game/Physics/PhysicsManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"
@@ -568,9 +569,10 @@ namespace Botcraft
         bool is_block_ok = false;
         bool is_slot_ok = false;
         auto start = std::chrono::steady_clock::now();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
         while (!is_block_ok || !is_slot_ok)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 60.0 * ms_per_tick)
             {
                 LOG_WARNING('[' << network_manager->GetMyName() << "] "
                     << "Something went wrong waiting block placement confirmation at " << pos << " (Timeout). "
@@ -675,9 +677,10 @@ namespace Botcraft
         }
 
         auto start = std::chrono::steady_clock::now();
+        const double ms_per_tick = client.GetPhysicsManager()->GetMsPerTick();
         while (inventory_manager->GetOffHand().GetItemCount() == current_stack_size)
         {
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 3000)
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= 60.0 * ms_per_tick)
             {
                 LOG_WARNING("Something went wrong trying to eat (Timeout).");
                 return Status::Failure;
