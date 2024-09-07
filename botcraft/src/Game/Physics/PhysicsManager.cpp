@@ -41,9 +41,7 @@ namespace Botcraft
         teleported = false;
         ticks_since_last_position_sent = 0;
 
-        const AssetsManager& assets_manager = AssetsManager::getInstance();
-
-        elytra_item = assets_manager.GetItem(assets_manager.GetItemID("minecraft:elytra"));
+        elytra_item = AssetsManager::getInstance().GetItem("minecraft:elytra");
         if (elytra_item == nullptr)
         {
             throw std::runtime_error("Unknown item minecraft:elytra");
@@ -70,6 +68,14 @@ namespace Botcraft
         {
             thread_physics.join();
         }
+    }
+
+    double PhysicsManager::GetMsPerTick() const
+    {
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        std::shared_lock<std::shared_mutex> lock(ms_per_tick_mutex);
+#endif
+        return ms_per_tick;
     }
 
 
@@ -141,14 +147,39 @@ namespace Botcraft
         teleported = true;
     }
 
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+    void PhysicsManager::Handle(ProtocolCraft::ClientboundTickingStatePacket& msg)
+    {
+        std::scoped_lock<std::shared_mutex> lock(ms_per_tick_mutex);
+        // If the game is frozen, physics run normally for players
+        if (msg.GetIsFrozen())
+        {
+            ms_per_tick = 50.0;
+            return;
+        }
+
+        // Vanilla behaviour: slowed down but never speed up, even if tick rate is > 20/s
+        // TODO: add a parameter to allow non-vanilla client speed up for higher tick rates?
+        ms_per_tick = std::max(50.0, 1000.0 / static_cast<double>(msg.GetTickRate()));
+    }
+#endif
+
     void PhysicsManager::Physics()
     {
         Logger::GetInstance().RegisterThread("Physics - " + network_manager->GetMyName());
 
         while (should_run)
         {
+            auto end = std::chrono::steady_clock::now();
             // End of the current tick
-            auto end = std::chrono::steady_clock::now() + std::chrono::milliseconds(50);
+            long long int us_end = 50000;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            {
+                std::shared_lock<std::shared_mutex> lock(ms_per_tick_mutex);
+                us_end = static_cast<long long int>(1000.0 * ms_per_tick);
+            }
+#endif
+            end += std::chrono::microseconds(us_end);
 
             if (network_manager->GetConnectionState() == ConnectionState::Play)
             {

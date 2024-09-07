@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <thread>
 
 #include "protocolCraft/Handler.hpp"
@@ -44,9 +45,14 @@ namespace Botcraft
         void StartPhysics();
         void StopPhysics();
 
+        double GetMsPerTick() const;
+
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        virtual void Handle(ProtocolCraft::ClientboundTickingStatePacket& msg) override;
+#endif
 
     private:
         void Physics();
@@ -98,8 +104,17 @@ namespace Botcraft
 
         int ticks_since_last_position_sent;
 
-        std::thread thread_physics; // Thread running to compute position and send it to the server every 50 ms (20 ticks/s)
+        std::thread thread_physics; // Thread running to compute position and send it to the server every tick
 
         const Item* elytra_item;
+
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        // using std::atomic instead of mutex slows things down a bit too much
+        mutable std::shared_mutex ms_per_tick_mutex;
+        double ms_per_tick = 50.0;
+#else
+        static constexpr double ms_per_tick = 50.0;
+#endif
+
     };
 } // Botcraft
