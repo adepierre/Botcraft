@@ -1891,3 +1891,58 @@ TEST_CASE("collisions")
         }
     }
 }
+
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+TEST_CASE("tick rate jump")
+{
+    std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
+
+    double tick_rate = 0.0;
+    double expected_time_ms = 0.0;
+
+    SECTION("20")
+    {
+        tick_rate = 20.0;
+        expected_time_ms = 50.0 * 12;
+    }
+
+    SECTION("10")
+    {
+        tick_rate = 10.0;
+        expected_time_ms = 100.0 * 12;
+    }
+
+    SECTION("40")
+    {
+        tick_rate = 40.0;
+        expected_time_ms = 50.0 * 12;
+    }
+    
+    MinecraftServer::GetInstance().SendLine("tick rate " + std::to_string(tick_rate));
+    MinecraftServer::GetInstance().WaitLine(".*: Set the target tick rate to.*", 5000);
+
+    // Wait for the bot to be on the ground
+    Utilities::WaitForCondition([&]() {
+        return bot->GetLocalPlayer() != nullptr && bot->GetLocalPlayer()->GetOnGround();
+    }, 5000);
+
+    auto start = std::chrono::steady_clock::now();
+    bot->GetLocalPlayer()->SetInputsJump(true);
+    // Wait for the bot to not be on the ground anymore
+    Utilities::WaitForCondition([&]() {
+        return !bot->GetLocalPlayer()->GetOnGround();
+    }, 5000);
+    // Wait for the bot to be back on the ground
+    Utilities::WaitForCondition([&]() {
+        return bot->GetLocalPlayer()->GetOnGround();
+    }, 5000);
+    auto end = std::chrono::steady_clock::now();
+
+    const double elapsed_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    CHECK_THAT(elapsed_time_ms, Catch::Matchers::WithinAbs(expected_time_ms, 200));
+
+    // Reset tickrate
+    MinecraftServer::GetInstance().SendLine("tick rate 20");
+    MinecraftServer::GetInstance().WaitLine(".*: Set the target tick rate to.*", 5000);
+}
+#endif
