@@ -2,7 +2,6 @@
 
 #include <atomic>
 #include <memory>
-#include <mutex>
 #include <thread>
 
 #include "protocolCraft/Handler.hpp"
@@ -109,9 +108,7 @@ namespace Botcraft
         const Item* elytra_item;
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        // using std::atomic instead of mutex slows things down a bit too much
-        mutable std::shared_mutex ms_per_tick_mutex;
-        double ms_per_tick = 50.0;
+        std::atomic<double> ms_per_tick = 50.0;
 #else
         static constexpr double ms_per_tick = 50.0;
 #endif

@@ -72,9 +72,6 @@ namespace Botcraft
 
     double PhysicsManager::GetMsPerTick() const
     {
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        std::shared_lock<std::shared_mutex> lock(ms_per_tick_mutex);
-#endif
         return ms_per_tick;
     }
 
@@ -150,7 +147,6 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
     void PhysicsManager::Handle(ProtocolCraft::ClientboundTickingStatePacket& msg)
     {
-        std::scoped_lock<std::shared_mutex> lock(ms_per_tick_mutex);
         // If the game is frozen, physics run normally for players
         if (msg.GetIsFrozen())
         {
@@ -172,14 +168,7 @@ namespace Botcraft
         {
             auto end = std::chrono::steady_clock::now();
             // End of the current tick
-            long long int us_end = 50000;
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-            {
-                std::shared_lock<std::shared_mutex> lock(ms_per_tick_mutex);
-                us_end = static_cast<long long int>(1000.0 * ms_per_tick);
-            }
-#endif
-            end += std::chrono::microseconds(us_end);
+            end += std::chrono::microseconds(static_cast<long long int>(1000.0 * ms_per_tick));
 
             if (network_manager->GetConnectionState() == ConnectionState::Play)
             {
