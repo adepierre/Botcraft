@@ -1087,7 +1087,7 @@ namespace Botcraft
         return output != nullptr ?
             output :
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
-            AssetsManager::getInstance().GetBlockstate({ 0, 0 });
+            AssetsManager::getInstance().GetBlockstate(std::make_pair(0, 0));
 #else
             AssetsManager::getInstance().GetBlockstate(0);
 #endif
