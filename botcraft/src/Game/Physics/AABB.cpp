@@ -52,6 +52,11 @@ namespace Botcraft
         return output;
     }
 
+    double AABB::GetVolume() const
+    {
+        return 8.0 * half_size.x * half_size.y * half_size.z;
+    }
+
     bool AABB::Collide(const AABB& b) const
     {
         bool x = std::abs(center.x - b.center.x) <= (half_size.x + b.half_size.x);

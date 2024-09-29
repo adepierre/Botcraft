@@ -17,6 +17,9 @@ namespace Botcraft
         /// @param pos The reference point
         /// @return Closest point to pos inside the AABB
         Vector3<double> GetClosestPoint(const Vector3<double>& pos) const;
+        /// @brief Get the volume of this AABB
+        /// @return size_x * size_y * size_z
+        double GetVolume() const;
 
         //Return whether or not these two AABB collides
         bool Collide(const AABB& b) const;
