@@ -231,7 +231,7 @@ namespace ProtocolCraft
 
         bool Value::contains(const std::string& s) const
         {
-            return is_object() && get<Object>().count(s);
+            return is<Object>() && get<Object>().count(s);
         }
 
         size_t Value::size() const
@@ -289,6 +289,104 @@ namespace ProtocolCraft
             return Dump(0, indent, indent_char);
         }
 
+        std::string Value::Dump(const size_t depth_level, const int indent, const char indent_char) const
+        {
+            std::ostringstream oss;
+
+            std::visit([&](auto&& arg)
+                {
+                    using T = std::decay_t<decltype(arg)>;
+
+                    if constexpr (std::is_same_v<T, std::monostate>)
+                    {
+                        oss << "null";
+                    }
+                    else if constexpr (std::is_same_v<T, RecursiveWrapper<Object>>)
+                    {
+                        const Object& o = arg.get();
+                        if (o.empty())
+                        {
+                            oss << "{}";
+                            return;
+                        }
+
+                        const std::string new_line = (indent == -1 ? "" : "\n");
+                        const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
+                        const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
+
+                        oss << "{" << new_line;
+                        bool first = true;
+                        for (const auto& [k, v] : o)
+                        {
+                            if (!first)
+                            {
+                                oss << "," << new_line;
+                            }
+                            else
+                            {
+                                first = false;
+                            }
+                            oss << line_indentation << value_indentation << "\"" << k << "\"" << (indent == -1 ? ":" : ": ") << v.Dump(depth_level + 1, indent, indent_char);
+                        }
+                        oss << new_line << line_indentation << "}";
+                    }
+                    else if constexpr (std::is_same_v<T, RecursiveWrapper<Array>>)
+                    {
+                        const Array& a = arg.get();
+                        if (a.empty())
+                        {
+                            oss << "[]";
+                            return;
+                        }
+                        const std::string new_line = (indent == -1 ? "" : "\n");
+                        const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
+                        const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
+
+                        oss << '[' << new_line;
+                        bool first = true;
+                        for (const auto& v : a)
+                        {
+                            if (!first)
+                            {
+                                oss << ',' << new_line;
+                            }
+                            else
+                            {
+                                first = false;
+                            }
+                            oss << line_indentation << value_indentation << v.Dump(depth_level + 1, indent, indent_char);
+                        }
+                        oss << new_line << line_indentation << ']';
+                    }
+                    else if constexpr (std::is_same_v<T, std::string>)
+                    {
+                        oss << "\"" << EscapeChars(arg) << "\"";
+                    }
+                    else if constexpr (std::is_same_v<T, bool>)
+                    {
+                        oss << (arg ? "true" : "false");
+                    }
+                    else if constexpr (std::is_same_v<T, double>)
+                    {
+                        if (arg == std::floor(arg))
+                        {
+                            oss << std::setprecision(1) << std::fixed << arg;
+                        }
+                        else
+                        {
+                            oss << arg;
+                        }
+                    }
+                    else
+                    {
+                        oss << arg;
+                    }
+                }, val);
+
+            return oss.str();
+        }
+
+
         Value Parse(std::string_view::const_iterator iter, size_t length, bool no_except)
         {
             const size_t init_length = length;
@@ -332,103 +430,6 @@ namespace ProtocolCraft
                 }
                 throw std::runtime_error(e.what() + std::string(" (at pos ") + std::to_string(s.size() - length) + ')');
             }
-        }
-
-        std::string Value::Dump(const size_t depth_level, const int indent, const char indent_char) const
-        {
-            std::ostringstream oss;
-
-            std::visit([&](auto&& arg)
-            {
-                using T = std::decay_t<decltype(arg)>;
-
-                if constexpr (std::is_same_v<T, std::monostate>)
-                {
-                    oss << "null";
-                }
-                else if constexpr (std::is_same_v<T, RecursiveWrapper<Object>>)
-                {
-                    const Object& o = arg.get();
-                    if (o.empty())
-                    {
-                        oss << "{}";
-                        return;
-                    }
-
-                    const std::string new_line = (indent == -1 ? "" : "\n");
-                    const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
-                    const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
-
-                    oss << "{" << new_line;
-                    bool first = true;
-                    for (const auto& [k, v] : o)
-                    {
-                        if (!first)
-                        {
-                            oss << "," << new_line;
-                        }
-                        else
-                        {
-                            first = false;
-                        }
-                        oss << line_indentation << value_indentation << "\"" << k << "\"" << (indent == -1 ? ":" : ": ") << v.Dump(depth_level + 1, indent, indent_char);
-                    }
-                    oss << new_line << line_indentation << "}";
-                }
-                else if constexpr (std::is_same_v<T, RecursiveWrapper<Array>>)
-                {
-                    const Array& a = arg.get();
-                    if (a.empty())
-                    {
-                        oss << "[]";
-                        return;
-                    }
-                    const std::string new_line = (indent == -1 ? "" : "\n");
-                    const std::string line_indentation = indent > -1 ? std::string(depth_level * indent, indent_char) : "";
-                    const std::string value_indentation = indent > -1 ? std::string(indent, indent_char) : "";
-
-                    oss << '[' << new_line;
-                    bool first = true;
-                    for (const auto& v : a)
-                    {
-                        if (!first)
-                        {
-                            oss << ',' << new_line;
-                        }
-                        else
-                        {
-                            first = false;
-                        }
-                        oss << line_indentation << value_indentation << v.Dump(depth_level + 1, indent, indent_char);
-                    }
-                    oss << new_line << line_indentation << ']';
-                }
-                else if constexpr (std::is_same_v<T, std::string>)
-                {
-                    oss << "\"" << EscapeChars(arg) << "\"";
-                }
-                else if constexpr (std::is_same_v<T, bool>)
-                {
-                    oss << (arg ? "true" : "false");
-                }
-                else if constexpr (std::is_same_v<T, double>)
-                {
-                    if (arg == std::floor(arg))
-                    {
-                        oss << std::setprecision(1) << std::fixed << arg;
-                    }
-                    else
-                    {
-                        oss << arg;
-                    }
-                }
-                else
-                {
-                    oss << arg;
-                }
-            }, val);
-
-            return oss.str();
         }
 
         std::string EscapeChars(const std::string& s)
@@ -568,7 +569,7 @@ namespace ProtocolCraft
             if (s[0] == '-')
             {
                 // min long long int (but with > because string comparison)
-                if (s.size() >= 20 && s > "-9223372036854775808")
+                if (s.size() > 20 || (s.size() == 20 && s > "-9223372036854775808"))
                 {
                     return std::stod(s);
                 }
@@ -576,7 +577,7 @@ namespace ProtocolCraft
             }
 
             // max unsigned long long int
-            if (s.size() >= 20 && s > "18446744073709551615")
+            if (s.size() > 20 || (s.size() == 20 && s > "18446744073709551615"))
             {
                 return std::stod(s);
             }
