@@ -3,6 +3,8 @@
 //
 
 #include "botcraft/Network/Yggdrasil_Authentifier.h"
+
+#include <iomanip>
 #include <asio/ssl.hpp>
 #include <asio/ip/tcp.hpp>
 #include <asio/connect.hpp>
@@ -155,7 +157,92 @@ namespace Botcraft
                                                             const std::vector<unsigned char> &shared_secret,
                                                             const std::vector<unsigned char> &public_key) const
     {
-        return Authentifier::JoinServer(server_id, shared_secret, public_key);
+        #ifndef USE_ENCRYPTION
+        return false;
+#else
+        if (mc_player_uuid.empty())
+        {
+            LOG_ERROR("Trying to join a server before authentication");
+            return false;
+        }
+
+        SHA_CTX sha_context;
+        SHA1_Init(&sha_context);
+
+        SHA1_Update(&sha_context, server_id.c_str(), server_id.length());
+        SHA1_Update(&sha_context, shared_secret.data(), shared_secret.size());
+        SHA1_Update(&sha_context, public_key.data(), public_key.size());
+
+        std::vector<unsigned char> digest(SHA_DIGEST_LENGTH);
+        SHA1_Final(digest.data(), &sha_context);
+
+        // Compute minecraft special hexdigest (see https://wiki.vg/Protocol_Encryption#Client)
+
+        bool is_negative = digest[0] & (1 << 7);
+
+        // Take two complement
+        if (is_negative)
+        {
+            // Revert bits
+            for (int i = 0; i < digest.size(); ++i)
+            {
+                digest[i] = ~digest[i];
+            }
+
+            // add 1
+            int position = static_cast<int>(digest.size()) - 1;
+            while (digest[position] == 255 && position > 0)
+            {
+                digest[position] = 0;
+                position -= 1;
+            }
+            digest[position] += 1;
+        }
+
+        // Get hex representation
+        std::stringstream ss;
+        for (int i = 0; i < digest.size(); ++i)
+        {
+            ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(digest[i] & 0xFF);
+        }
+
+        std::string server_hash = ss.str();
+        // Remove leading 0
+        const size_t start = server_hash.find_first_not_of('0');
+        if (start != std::string::npos)
+        {
+            server_hash = server_hash.substr(start);
+        }
+        else
+        {
+            server_hash = "";
+        }
+
+        if (is_negative)
+        {
+            server_hash = "-" + server_hash;
+        }
+
+        // Prepare the data to send to the server
+        const Json::Value data = {
+            { "accessToken", mc_access_token },
+            { "selectedProfile", mc_player_uuid },
+            { "serverId", server_hash}
+        };
+
+        const WebRequestResponse post_response = POSTRequest(yggdrasil_host, "/api/yggdrasil/sessionserver/session/minecraft/join",
+            "application/json; charset=utf-8", "*/*", "", data.Dump());
+
+        if (post_response.status_code != 204)
+        {
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during server join:\n"
+                << post_response.response.Dump(4));
+            return false;
+        }
+
+        return true;
+#endif
     }
 
     std::string extractSubstring(const std::string &str, char startChar, char endChar)
