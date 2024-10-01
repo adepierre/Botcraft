@@ -616,7 +616,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     void NetworkManager::Handle(ClientboundLoginPacket& msg)
     {
-        if (authentifier)
+        Yggdrasil_Authentifier* yggdrasil_ptr = dynamic_cast<Yggdrasil_Authentifier*>(authentifier.get());
+        if (authentifier && yggdrasil_ptr == nullptr)
         {
             std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ServerboundChatSessionUpdatePacket>();
             RemoteChatSessionData chat_session_data;
