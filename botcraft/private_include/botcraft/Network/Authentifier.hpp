@@ -24,16 +24,16 @@ namespace Botcraft
     {
     public:
         Authentifier();
-        ~Authentifier();
+        virtual ~Authentifier();
 
         /// @brief Authentication using a Microsoft account. If
         /// login is set, use it to identify the cached credentials.
         /// @param login Login is used as key to identify the credentials in cache file
         /// @return True if successfully authenticated, false otherwise
-        const bool AuthMicrosoft(const std::string& login);
+        virtual const bool AuthMicrosoft(const std::string& login);
 
         // Join a server after encryption request arrived
-        const bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
+        virtual const bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
 
         const std::string& GetPlayerDisplayName() const;
         const std::array<unsigned char, 16>& GetPlayerUUID() const;
@@ -79,7 +79,7 @@ namespace Botcraft
 #endif
 #endif
 
-    private:
+    protected:
         /// @brief Compute the UUID bytes from the string one
         void UpdateUUIDBytes();
 
@@ -193,7 +193,7 @@ namespace Botcraft
         /// @param host The host address
         /// @param raw_request The full request (header + content) as it should be sent
         /// @return A WebRequestResponse returned by the server
-        const WebRequestResponse WebRequest(const std::string& host, const std::string& raw_request) const;
+        virtual const WebRequestResponse WebRequest(const std::string& host, const std::string& raw_request) const;
 
         /// @brief Send a POST request with ssl stuff
         /// @param host The host address (after https:// and before the first /)
@@ -216,7 +216,7 @@ namespace Botcraft
             const std::string& authorization = "") const;
 #endif
 
-    private:
+    protected:
         
         /// @brief Path to cache the credentials
         static const std::string cached_credentials_path;

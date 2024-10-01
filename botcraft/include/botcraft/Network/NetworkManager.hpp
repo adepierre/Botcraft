@@ -25,6 +25,8 @@ namespace Botcraft
     {
     public:
         NetworkManager(const std::string& address, const std::string& login, const bool force_microsoft_auth);
+        NetworkManager(const std::string& address, const std::string& url, const std::string& email,
+            const std::string& pass = std::string());
         // Used to create a dummy network manager that does not fire any message
         // but is always in constant_connection_state
         NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state);

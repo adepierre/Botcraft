@@ -23,6 +23,13 @@ namespace Botcraft
         network_manager->AddHandler(this);
     }
 
+    void ConnectionClient::Connect(const std::string &address, const std::string &url, const std::string &email,
+                                   const std::string &pass)
+    {
+        network_manager = std::make_shared<NetworkManager>(address, url, email, pass);
+        network_manager->AddHandler(this);
+    }
+
     void ConnectionClient::Disconnect()
     {
         should_be_closed = true;

@@ -15,6 +15,7 @@
 #endif
 
 
+#include "botcraft/Network/Yggdrasil_Authentifier.h"
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/MessageFactory.hpp"
 
@@ -91,6 +92,17 @@ namespace Botcraft
         }
 #endif
         Send(loginstart_msg);
+    }
+    NetworkManager::NetworkManager(const std::string &address, const std::string &url, const std::string &email,
+                                   const std::string &pass)
+    {
+        com = nullptr;
+        authentifier = std::make_shared<Yggdrasil_Authentifier>(url, email, pass);
+        if (!authentifier->AuthMicrosoft(email))
+        {
+            throw std::runtime_error("An attempt to authenticate on the Yggdrasil server failed");
+        }
+        name = authentifier->GetPlayerDisplayName();
     }
 
     NetworkManager::NetworkManager(const ConnectionState constant_connection_state)
