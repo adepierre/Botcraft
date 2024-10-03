@@ -15,6 +15,7 @@
 #endif
 
 
+#include "botcraft/Network/Yggdrasil_Authentifier.h"
 #include "protocolCraft/BinaryReadWrite.hpp"
 #include "protocolCraft/MessageFactory.hpp"
 
@@ -58,6 +59,66 @@ namespace Botcraft
             {
                 return com->IsInitialized();
             }, 500, 0);
+
+        std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
+        handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
+        handshake_msg->SetHostName(com->GetIp());
+        handshake_msg->SetPort(com->GetPort());
+        handshake_msg->SetIntention(static_cast<int>(ConnectionState::Login));
+        Send(handshake_msg);
+
+        state = ConnectionState::Login;
+
+        std::shared_ptr<ServerboundHelloPacket> loginstart_msg = std::make_shared<ServerboundHelloPacket>();
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        loginstart_msg->SetGameProfile(name);
+#else
+        loginstart_msg->SetName_(name);
+        if (authentifier)
+        {
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+            ProfilePublicKey key;
+            key.SetTimestamp(authentifier->GetKeyTimestamp());
+            key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
+            key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
+
+            loginstart_msg->SetPublicKey(key);
+#else
+            message_sent_index = 0;
+#endif
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
+            loginstart_msg->SetProfileId(authentifier->GetPlayerUUID());
+#endif
+        }
+#endif
+        Send(loginstart_msg);
+    }
+    NetworkManager::NetworkManager(const std::string &address, const std::string &url, const std::string &email,
+                                   const std::string &pass)
+    {
+        com = nullptr;
+        authentifier = std::make_shared<Yggdrasil_Authentifier>(url, email, pass);
+        if (!authentifier->AuthMicrosoft(email))
+        {
+            throw std::runtime_error("An attempt to authenticate on the Yggdrasil server failed");
+        }
+        name = authentifier->GetPlayerDisplayName();
+
+        compression = -1;
+        AddHandler(this);
+
+        state = ConnectionState::Handshake;
+
+        //Start the thread to process the incoming packets
+        m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
+
+        com = std::make_shared<TCP_Com>(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1));
+
+        // Wait for the communication to be ready before sending any data
+        Utilities::WaitForCondition([&]()
+           {
+               return com->IsInitialized();
+           }, 500, 0);
 
         std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
@@ -190,7 +251,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         chat_message->SetSignedPreview(false);
 #endif
-        if (authentifier)
+        Yggdrasil_Authentifier* yggdrasil_ptr = dynamic_cast<Yggdrasil_Authentifier*>(authentifier.get());
+        if (authentifier && yggdrasil_ptr == nullptr)
         {
             long long int salt, timestamp;
             std::vector<unsigned char> signature;
@@ -244,7 +306,8 @@ namespace Botcraft
     void NetworkManager::SendChatCommand(const std::string& command)
     {
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        if (authentifier == nullptr)
+        Yggdrasil_Authentifier* yggdrasil_ptr = dynamic_cast<Yggdrasil_Authentifier*>(authentifier.get());
+        if (authentifier == nullptr || yggdrasil_ptr != nullptr)
         {
             std::shared_ptr<ServerboundChatCommandPacket> chat_command = std::make_shared<ServerboundChatCommandPacket>();
             chat_command->SetCommand(command);
@@ -553,7 +616,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     void NetworkManager::Handle(ClientboundLoginPacket& msg)
     {
-        if (authentifier)
+        Yggdrasil_Authentifier* yggdrasil_ptr = dynamic_cast<Yggdrasil_Authentifier*>(authentifier.get());
+        if (authentifier && yggdrasil_ptr == nullptr)
         {
             std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ServerboundChatSessionUpdatePacket>();
             RemoteChatSessionData chat_session_data;

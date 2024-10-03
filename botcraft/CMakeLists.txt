@@ -230,6 +230,7 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/AESEncrypter.hpp
     private_include/botcraft/Network/Compression.hpp
     private_include/botcraft/Network/TCP_Com.hpp
+    private_include/botcraft/Network/Yggdrasil_Authentifier.h
 
     private_include/botcraft/Network/DNS/DNSMessage.hpp
     private_include/botcraft/Network/DNS/DNSQuestion.hpp
@@ -452,6 +453,7 @@ set(botcraft_SRC
     src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
+    src/Network/Yggdrasil_Authentifier.cpp
 
     src/Utilities/DemanglingUtilities.cpp
     src/Utilities/Logger.cpp

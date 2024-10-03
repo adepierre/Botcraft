@@ -19,6 +19,7 @@ namespace Botcraft
         /// @param login If login is empty, will try to connect with a Microsoft account
         /// @param force_microsoft_account If true, then Microsoft auth flow will be used. In this case, login is used as key to cache the credentials
         void Connect(const std::string& address, const std::string& login, const bool force_microsoft_account = false);
+        void Connect(const std::string& address, const std::string& url, const std::string& email, const std::string& pass);
         virtual void Disconnect();
 
         bool GetShouldBeClosed() const;

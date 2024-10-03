@@ -1,0 +1,10 @@
+project(8_Yggdrasil)
+
+set(${PROJECT_NAME}_SOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/src/main.cpp
+)
+set(${PROJECT_NAME}_INCLUDE_FOLDERS
+
+)
+
+add_example("${${PROJECT_NAME}_INCLUDE_FOLDERS}" "${${PROJECT_NAME}_SOURCE_FILES}")
