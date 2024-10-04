@@ -32,6 +32,8 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
         network_manager = std::make_shared<NetworkManager>(ConnectionState::Play);
         world = std::make_shared<World>(false);
         entity_manager = std::make_shared<EntityManager>(network_manager);
+        // Dummy login packet to init local player
+        ClientboundLoginPacket().Dispatch(entity_manager.get());
         inventory_manager = std::make_shared<InventoryManager>();
 
         should_be_closed = false;
