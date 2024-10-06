@@ -22,7 +22,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microsoft_auth)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microsoft_auth, const std::vector<Handler*>& handlers)
     {
         com = nullptr;
 
@@ -45,6 +45,10 @@ namespace Botcraft
 
         compression = -1;
         AddHandler(this);
+        for (Handler* p : handlers)
+        {
+            AddHandler(p);
+        }
 
         state = ConnectionState::Handshake;
 
@@ -54,10 +58,9 @@ namespace Botcraft
         com = std::make_shared<TCP_Com>(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1));
 
         // Wait for the communication to be ready before sending any data
-        Utilities::WaitForCondition([&]()
-            {
-                return com->IsInitialized();
-            }, 500, 0);
+        Utilities::WaitForCondition([&]() {
+            return com->IsInitialized();
+        }, 500, 0);
 
         std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
         handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
@@ -101,10 +104,10 @@ namespace Botcraft
 
     NetworkManager::~NetworkManager()
     {
-        Close();
+        Stop();
     }
 
-    void NetworkManager::Close()
+    void NetworkManager::Stop()
     {
         state = ConnectionState::None;
 
