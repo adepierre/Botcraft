@@ -1,159 +1,183 @@
 #pragma once
 
-// Declare ReadImpl virtual function for auto serializable types
-#define DECLARE_READ protected: virtual void ReadImpl(ReadIterator& iter, size_t& length) override
-// Declare WriteImpl virtual function for auto serializable types
-#define DECLARE_WRITE protected: virtual void WriteImpl(WriteContainer& container) const override
-// Declare SerializeImpl virtual function for auto serializable types
-#define DECLARE_SERIALIZE protected: virtual Json::Value SerializeImpl() const override
+/// @brief Define a condition that can be used later inside an Internal::Conditioned type
+#define DEFINE_CONDITION(Name, ...) private: bool Name() const { return __VA_ARGS__; } static_assert(true, "Forcing ;")
 
-// Declare ReadImpl, WriteImpl and SerializeImpl virtual functions for auto serializable types
-#define DECLARE_READ_WRITE_SERIALIZE DECLARE_READ; DECLARE_WRITE; DECLARE_SERIALIZE
-
-// Define a condition to be used inside a Internal::Conditioned type
-#define DECLARE_CONDITION(Name, ...) private: bool Name() const { return __VA_ARGS__; } static_assert(true, "Forcing ;")
-
-// Create all types and static variables without any internal field
-#define DECLARE_EMPTY                                                     \
-    private:                                                              \
-        using FieldsTuple = std::tuple<>;                                 \
-        Internal::SerializedType<FieldsTuple>::storage_type fields;       \
-        enum class FieldsEnum { None = -1, NUM_FIELDS };                  \
-        static constexpr std::array<std::string_view, 0> json_names = {}; \
-        DECLARE_READ_WRITE_SERIALIZE
-
-#define _ARGS(...) __VA_ARGS__
-#define _STR_ARGS(...) #__VA_ARGS__
-// Creates a tuple with the given types, and names its elements with Names. Both sets should be comma separated values between ()
-#define DECLARE_FIELDS(Types, Names)                                                                                       \
-    private:                                                                                                               \
-        enum class FieldsEnum { None = -1, _ARGS Names, NUM_FIELDS };                                                      \
-        using FieldsTuple = std::tuple<_ARGS Types>;                                                                       \
-        Internal::SerializedType<FieldsTuple>::storage_type fields;                                                        \
-        static constexpr std::array names =                                                                                \
-            Internal::SplitComma<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(_STR_ARGS Names);                            \
-        static constexpr std::array json_names_length =                                                                    \
-            Internal::GetSnakeCaseSize<static_cast<size_t>(FieldsEnum::NUM_FIELDS)>(names);                                \
-        static constexpr std::tuple tuple_json_names =                                                                     \
-            Internal::ArrayToSnakeCaseTuple<static_cast<size_t>(FieldsEnum::NUM_FIELDS), json_names_length>(names);        \
-        static constexpr std::array json_names = Internal::TupleOfArraysToArrayOfStr(tuple_json_names);                    \
-        static_assert(std::size(json_names) == std::tuple_size_v<FieldsTuple>, "Fields types and names count don't match")
+/// @brief Define a field that will be automatically integrated in Read/Write and Json serialization
+/// We start by retrieving the SerializedType of the given type and create the actual class member.
+/// Then we find the index of this field by counting how many FieldsData<size_t, T> template class
+/// have already been defined. Last part defines a templated FieldsData struct with all the
+/// name/type/member pointer info for this field.
+/// For the name, we want to define it in PascalCase but we also need a camel_case litteral
+/// version for json serialization, hence the constexpr string processing
+/// For field_ptr we don't know the name of the current class so to avoid passing it to the macro
+/// we use a template class instead. See GetField in DEFINE_UTILITIES for example of how to use it.
+/// @param name field name
+/// @param ... field type (passed as VA_ARGS because it can contain some ,) /!\ if Name == Type,
+/// use the fully qualified type instead (like ProtocolCraft::Type instead of Type)
+#define SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Name, ...)                        \
+    private:                                                                     \
+        using Name##_type = typename Internal::SerializedType<__VA_ARGS__>;      \
+        Name##_type::storage_type Name;                                          \
+        template <size_t, typename> struct FieldsData;                           \
+        static constexpr size_t Name##_index =                                   \
+            Internal::field_index<0, struct FieldDummy##Name, FieldsData>;       \
+        template <typename T>                                                    \
+        struct FieldsData<Name##_index, T> {                                     \
+            static constexpr std::array name_array =                             \
+                Internal::ToSnakeCase<Internal::GetSnakeCaseSize(#Name)>(#Name); \
+            static constexpr std::string_view field_name =                       \
+                Internal::ToStringView<std::size(name_array)>(name_array);       \
+            using field_type = __VA_ARGS__;                                      \
+            using field_storage_type = Name##_type::storage_type;                \
+            using field_serialization_type = Name##_type::serialization_type;    \
+            template <typename Parent> static constexpr field_storage_type       \
+                Parent::*field_ptr = &Parent::Name;                              \
+        };                                                                       \
+        static_assert(true, "Forcing ;")
 
 
 // Basically just a Get and a Set function, by value if it's a simple type, and by const ref if not
-// We don't use ::type in using name##_type so IDE autocomplete can still return the proper type
-// otherwise they'd just return name##_type which is not as helpful
-#define GETTER_SETTER(name)                                                                                                  \
+// We don't set an intermediate using with Name##_type::storage_type otherwise IDE autocomplete would
+// display the name of the using instead of the real underlying type
+#define GETTER(Name)                                                                                                         \
     public:                                                                                                                  \
-        using name##_type =                                                                                                  \
-            typename Internal::SerializedType<std::tuple_element_t<static_cast<size_t>(FieldsEnum::name), FieldsTuple>>;     \
-        std::conditional_t<std::is_arithmetic_v<name##_type::storage_type> || std::is_enum_v<name##_type::storage_type>,     \
-            name##_type::storage_type, const name##_type::storage_type&> Get##name() const                                   \
-            { return std::get<static_cast<size_t>(FieldsEnum::name)>(fields); }                                              \
-        auto& Set##name(                                                                                                     \
-            std::conditional_t<std::is_arithmetic_v<name##_type::storage_type> || std::is_enum_v<name##_type::storage_type>, \
-            name##_type::storage_type, const name##_type::storage_type&> name)                                               \
-            { std::get<static_cast<size_t>(FieldsEnum::name)>(fields) = name; return *this; }                                \
+        std::conditional_t<std::is_arithmetic_v<Name##_type::storage_type> || std::is_enum_v<Name##_type::storage_type>,     \
+            Name##_type::storage_type, const Name##_type::storage_type&> Get##Name() const { return Name; }                  \
         static_assert(true, "Forcing ;")
 
-#define GETTER(name)                                                                                                     \
-    public:                                                                                                              \
-        using name##_type =                                                                                              \
-            typename Internal::SerializedType<std::tuple_element_t<static_cast<size_t>(FieldsEnum::name), FieldsTuple>>; \
-        std::conditional_t<std::is_arithmetic_v<name##_type::storage_type> || std::is_enum_v<name##_type::storage_type>, \
-            name##_type::storage_type, const name##_type::storage_type&> Get##name() const                               \
-            { return std::get<static_cast<size_t>(FieldsEnum::name)>(fields); }                                          \
+#define SETTER(Name)                                                                                                         \
+    public:                                                                                                                  \
+        auto& Set##Name(                                                                                                     \
+            std::conditional_t<std::is_arithmetic_v<Name##_type::storage_type> || std::is_enum_v<Name##_type::storage_type>, \
+            Name##_type::storage_type, const Name##_type::storage_type&> Name##_) { Name = Name##_; return *this; }          \
         static_assert(true, "Forcing ;")
 
-// Define ReadImpl virtual function for auto serializable types
-#define DEFINE_READ(ClassName)                                                                        \
-    void ClassName::ReadImpl(ReadIterator& iter, size_t& length) {                                    \
-        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                                  \
-            using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                \
-            using SerializedElement = Internal::SerializedType<TupleElement>;                         \
-            if constexpr (Internal::IsCustomType<TupleElement>) {                                     \
-                std::get<i>(fields) = TupleElement::Read(this, iter, length);                         \
-            }                                                                                         \
-            else if constexpr (Internal::IsConditioned<TupleElement>) {                               \
-                if (TupleElement::Evaluate(this)) {                                                   \
-                    std::get<i>(fields) = ReadData<                                                   \
-                        typename Internal::SerializedType<typename TupleElement::type>::storage_type, \
-                        typename SerializedElement::serialization_type>(iter, length);                \
-                }                                                                                     \
-                else if constexpr (TupleElement::stored_as_optional) {                                \
-                    std::get<i>(fields) = std::nullopt;                                               \
-                }                                                                                     \
-            }                                                                                         \
-            else {                                                                                    \
-                std::get<i>(fields) = ReadData<                                                       \
-                    typename SerializedElement::storage_type,                                         \
-                    typename SerializedElement::serialization_type>(iter, length);                    \
-            }                                                                                         \
-        });                                                                                           \
+#define GETTER_SETTER(Name) GETTER(Name); SETTER(Name)
+
+#define SERIALIZED_FIELD(Name, ...)                      \
+    SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Name, __VA_ARGS__); \
+    GETTER_SETTER(Name)
+
+/// @brief Declare ReadImpl virtual function for auto serializable types
+#define DECLARE_READ protected: virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+/// @brief Declare WriteImpl virtual function for auto serializable types
+#define DECLARE_WRITE protected: virtual void WriteImpl(WriteContainer& container) const override
+/// @brief Declare SerializeImpl virtual function for auto serializable types
+#define DECLARE_SERIALIZE protected: virtual Json::Value SerializeImpl() const override
+/// @brief Define some constexpr utilities used to deal with the auto serializable fields
+/// We use void as the unique identifier type template parameter for FieldsData as we are
+/// sure it'll be different from what was used for the fields
+#define DEFINE_UTILITIES                                                                                        \
+    private:                                                                                                    \
+        template <size_t, typename> struct FieldsData;                                                          \
+        static constexpr size_t num_fields = Internal::field_index<0, void, FieldsData>;                        \
+        template <size_t i> static constexpr std::string_view field_name = FieldsData<i, void>::field_name;     \
+        template <size_t i> using field_type = typename FieldsData<i, void>::field_type;                        \
+        template <size_t i> using field_storage_type = typename FieldsData<i, void>::field_storage_type;        \
+        template <size_t i> using field_serialization_type =                                                    \
+            typename FieldsData<i, void>::field_serialization_type;                                             \
+        template <size_t i> auto& GetField() {                                                                  \
+            return this->*FieldsData<i, void>::template field_ptr<std::remove_reference_t<decltype(*this)>>; }  \
+        template <size_t i> const auto& GetField() const {                                                      \
+             return this->*FieldsData<i, void>::template field_ptr<std::remove_reference_t<decltype(*this)>>; } \
+    static_assert(true, "Forcing ;")
+
+/// @brief Define auto serializable utilities and declare ReadImpl, WriteImpl and SerializeImpl virtual functions
+#define DECLARE_READ_WRITE_SERIALIZE DEFINE_UTILITIES; DECLARE_READ; DECLARE_WRITE; DECLARE_SERIALIZE
+
+/// @brief Define ReadImpl virtual function that loops through all auto serializable fields
+#define DEFINE_READ(ClassName)                                           \
+    void ClassName::ReadImpl(ReadIterator& iter, size_t& length) {       \
+        Internal::loop<num_fields>([&](auto i) {                         \
+            auto& field = this->GetField<i>();                           \
+            if constexpr (Internal::IsCustomType<field_type<i>>) {       \
+                field = field_type<i>::Read(this, iter, length);         \
+            }                                                            \
+            else if constexpr (Internal::IsConditioned<field_type<i>>) { \
+                if (field_type<i>::Evaluate(this)) {                     \
+                    if constexpr (field_type<i>::stored_as_optional) {   \
+                        field = ReadData<                                \
+                            typename field_storage_type<i>::value_type,  \
+                            field_serialization_type<i>>(iter, length);  \
+                    }                                                    \
+                    else {                                               \
+                        field = ReadData<                                \
+                            field_storage_type<i>,                       \
+                            field_serialization_type<i>>(iter, length);  \
+                    }                                                    \
+                }                                                        \
+                else if constexpr (field_type<i>::stored_as_optional) {  \
+                    field = std::nullopt;                                \
+                }                                                        \
+            }                                                            \
+            else {                                                       \
+                field = ReadData<                                        \
+                    field_storage_type<i>,                               \
+                    field_serialization_type<i>>(iter, length);          \
+            }                                                            \
+        });                                                              \
     } static_assert(true, "Forcing ;")
 
-// Define WriteImpl virtual function for auto serializable types
-#define DEFINE_WRITE(ClassName)                                                                                      \
-    void ClassName::WriteImpl(WriteContainer& container) const {                                                     \
-        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                                                 \
-            using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                               \
-            using SerializedElement = Internal::SerializedType<TupleElement>;                                        \
-            if constexpr (Internal::IsCustomType<TupleElement>) {                                                    \
-                TupleElement::Write(this, std::get<i>(fields), container);                                           \
-            }                                                                                                        \
-            else if constexpr (Internal::IsConditioned<TupleElement>) {                                              \
-                if (TupleElement::Evaluate(this)) {                                                                  \
-                    if constexpr (TupleElement::stored_as_optional) {                                                \
-                        WriteData<                                                                                   \
-                            typename Internal::SerializedType<typename TupleElement::type>::storage_type,            \
-                            typename SerializedElement::serialization_type>(std::get<i>(fields).value(), container); \
-                    }                                                                                                \
-                    else {                                                                                           \
-                        WriteData<                                                                                   \
-                            typename Internal::SerializedType<typename TupleElement::type>::storage_type,            \
-                            typename SerializedElement::serialization_type>(std::get<i>(fields), container);         \
-                    }                                                                                                \
-                }                                                                                                    \
-            }                                                                                                        \
-            else {                                                                                                   \
-                WriteData<                                                                                           \
-                    typename SerializedElement::storage_type,                                                        \
-                    typename SerializedElement::serialization_type>(std::get<i>(fields), container);                 \
-            }                                                                                                        \
-        });                                                                                                          \
+/// @brief Define WriteImpl virtual function that loops through all auto serializable fields
+#define DEFINE_WRITE(ClassName)                                                     \
+    void ClassName::WriteImpl(WriteContainer& container) const {                    \
+        Internal::loop<num_fields>([&](auto i) {                                    \
+            const auto& field = this->GetField<i>();                                \
+            if constexpr (Internal::IsCustomType<field_type<i>>) {                  \
+                field_type<i>::Write(this, field, container);                       \
+            }                                                                       \
+            else if constexpr (Internal::IsConditioned<field_type<i>>) {            \
+                if (field_type<i>::Evaluate(this)) {                                \
+                    if constexpr (field_type<i>::stored_as_optional) {              \
+                        WriteData<                                                  \
+                            typename field_storage_type<i>::value_type,             \
+                            field_serialization_type<i>>(field.value(), container); \
+                    }                                                               \
+                    else {                                                          \
+                        WriteData<                                                  \
+                            field_storage_type<i>,                                  \
+                            field_serialization_type<i>>(field, container);         \
+                    }                                                               \
+                }                                                                   \
+            }                                                                       \
+            else {                                                                  \
+                WriteData<                                                          \
+                    field_storage_type<i>,                                          \
+                    field_serialization_type<i>>(field, container);                 \
+            }                                                                       \
+        });                                                                         \
     } static_assert(true, "Forcing ;")
 
 // Define SerializeImpl virtual function for auto serializable types
-#define DEFINE_SERIALIZE(ClassName)                                                                        \
-    Json::Value ClassName::SerializeImpl() const {                                                         \
-        Json::Value output;                                                                                \
-        Internal::loop<std::tuple_size_v<FieldsTuple>>([&](auto i) {                                       \
-            using TupleElement = std::tuple_element_t<i, FieldsTuple>;                                     \
-            using SerializedElement = Internal::SerializedType<TupleElement>;                              \
-            std::optional<Json::Value> serialized = std::nullopt;                                          \
-            if constexpr (Internal::IsCustomType<TupleElement>) {                                          \
-                serialized = TupleElement::Serialize(this, std::get<i>(fields));                           \
-            }                                                                                              \
-            else if constexpr (Internal::IsConditioned<TupleElement>) {                                    \
-                if (TupleElement::Evaluate(this)) {                                                        \
-                    if constexpr (TupleElement::stored_as_optional) {                                      \
-                        serialized = SerializeType<typename Internal::SerializedType<                      \
-                            typename TupleElement::type>::storage_type>(std::get<i>(fields).value());      \
-                    }                                                                                      \
-                    else {                                                                                 \
-                        serialized = SerializeType<typename Internal::SerializedType<                      \
-                            typename TupleElement::type>::storage_type>(std::get<i>(fields));              \
-                    }                                                                                      \
-                }                                                                                          \
-            }                                                                                              \
-            else {                                                                                         \
-                serialized = SerializeType<typename SerializedElement::storage_type>(std::get<i>(fields)); \
-            }                                                                                              \
-            if (serialized.has_value()) {                                                                  \
-                output[std::string(json_names[i])] = serialized.value();                                   \
-            }                                                                                              \
-        });                                                                                                \
-        return output;                                                                                     \
+#define DEFINE_SERIALIZE(ClassName)                                                     \
+    Json::Value ClassName::SerializeImpl() const {                                      \
+        Json::Value output;                                                             \
+        Internal::loop<num_fields>([&](auto i) {                                        \
+            const auto& field = this->GetField<i>();                                    \
+            std::optional<Json::Value> serialized = std::nullopt;                       \
+            if constexpr (Internal::IsCustomType<field_type<i>>) {                      \
+                serialized = field_type<i>::Serialize(this, field);                     \
+            }                                                                           \
+            else if constexpr (Internal::IsConditioned<field_type<i>>) {                \
+                if (field_type<i>::Evaluate(this)) {                                    \
+                    if constexpr (field_type<i>::stored_as_optional) {                  \
+                        serialized = SerializeType<                                     \
+                            typename field_storage_type<i>::value_type>(field.value()); \
+                    }                                                                   \
+                    else {                                                              \
+                        serialized = SerializeType<field_storage_type<i>>(field);       \
+                    }                                                                   \
+                }                                                                       \
+            }                                                                           \
+            else {                                                                      \
+                serialized = SerializeType<field_storage_type<i>>(field);               \
+            }                                                                           \
+            if (serialized.has_value()) {                                               \
+                output[std::string(field_name<i>)] = serialized.value();                \
+            }                                                                           \
+        });                                                                             \
+        return output;                                                                  \
     } static_assert(true, "Forcing ;")
 
 // Define a NetworkType with auto serializable fields

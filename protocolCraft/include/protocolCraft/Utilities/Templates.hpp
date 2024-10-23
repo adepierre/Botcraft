@@ -28,6 +28,17 @@ namespace ProtocolCraft
 
     namespace Internal
     {
+        /// @brief Default case, see field_index specialization for implementation details
+        template <size_t N, typename T, template <size_t, typename> typename U, typename = void>
+        static constexpr size_t field_index = 0;
+
+        /// @brief A templated size_t that counts the number of existing classes U with a "field_name" member
+        /// @tparam N Current counter for recursion (user should always call it with 0)
+        /// @tparam T Can be any type, must be different for each field we want to be counted later (used because we can't have a empty template<> specialization nested in a class)
+        /// @tparam U The templated class that will be searched for match
+        template <size_t N, typename T, template <size_t, typename> typename U>
+        static constexpr size_t field_index<N, T, U, std::void_t<decltype(U<N, T>::field_name)>> = 1 + field_index<N + 1, T, U>;
+
         /// @brief Concat multiple tuples in one big tuple
         /// @tparam ...input_t Multiple std::tuple types to concat
         template<typename ... input_t>
@@ -89,10 +100,6 @@ namespace ProtocolCraft
             static_assert(std::is_same_v<S, void> || N == 0, "Can't specify a size type if N > 0");
         };
 
-
-        template <typename T> struct GetClassFromReadPtr;
-        template <typename T, typename C> struct GetClassFromReadPtr<T(C::*)(std::vector<unsigned char>::const_iterator, size_t&) const> { using Class = C; };
-
         template <typename T> struct SerializedType;
 
         template <typename T, auto ReadFunc, auto WriteFunc, auto SerializeFunc>
@@ -123,7 +130,7 @@ namespace ProtocolCraft
 
 
         template <typename T>                         struct SerializedType                           { using storage_type = T;                                                                                               using serialization_type = T;                                                             };
-        template <typename T>                         struct SerializedType<VarType<T>>               { using storage_type = typename VarType<T>::underlying_type;                                                            using serialization_type = VarType<T>;                                                    };
+        template <typename T>                         struct SerializedType<VarType<T>>               { using storage_type = T;                                                                                               using serialization_type = VarType<T>;                                                    };
         template <>                                   struct SerializedType<NBT::UnnamedValue>        { using storage_type = NBT::Value;                                                                                      using serialization_type = NBT::UnnamedValue;                                             };
         template <typename T, size_t N>               struct SerializedType<std::array<T, N>>         { using storage_type = std::array<typename SerializedType<T>::storage_type, N>;                                         using serialization_type = std::array<T, N>;                                              };
         template <typename T>                         struct SerializedType<std::vector<T>>           { using storage_type = std::vector<typename SerializedType<T>::storage_type>;                                           using serialization_type = std::vector<T>;                                                };
@@ -137,7 +144,6 @@ namespace ProtocolCraft
         template <typename T, auto F>                 struct SerializedType<Conditioned<T, F, true>>  { using storage_type = std::optional<typename SerializedType<T>::storage_type>;                                         using serialization_type = T;                                                             };
         template <typename T, auto F>                 struct SerializedType<Conditioned<T, F, false>> { using storage_type = typename SerializedType<T>::storage_type;                                                        using serialization_type = T;                                                             };
         template <typename T, auto R, auto W, auto S> struct SerializedType<CustomType<T, R, W, S>>   { using storage_type = typename SerializedType<T>::storage_type;                                                        using serialization_type = T;                                                             };
-        template <typename ...P>                      struct SerializedType<std::tuple<P...>>         { using storage_type = std::tuple<typename SerializedType<P>::storage_type...>;                                         using serialization_type = std::tuple<typename SerializedType<P>::serialization_type...>; };
 
         /// @brief To be used in constexpr else to fail compilation in a C++ compliant way
         /// @tparam T Any type
