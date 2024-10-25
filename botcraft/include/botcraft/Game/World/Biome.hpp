@@ -4,18 +4,21 @@
 
 namespace Botcraft
 {
-    // Enum for biomes with special color processing
+    /// @brief Enum for biomes with special color processing
     enum class BiomeType
     {
-        Classic = 0,
-        Swamp = 1,
-        DarkForest = 2,
-        Badlands = 3,
+        Classic,
+        Swamp,
+        DarkForest,
+        Badlands,
 #if PROTOCOL_VERSION >= 393 /* >= 1.13 */
-        WarmOcean = 4,
-        LukewarmOcean = 5,
-        ColdOcean = 6,
-        FrozenOcean = 7
+        WarmOcean ,
+        LukewarmOcean,
+        ColdOcean,
+        FrozenOcean,
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        PaleGarden,
 #endif
     };
 
@@ -27,15 +30,15 @@ namespace Botcraft
         ~Biome();
 
         const std::string& GetName() const;
-        
+
         // Height is the y value of the block
-        const unsigned int GetColorMultiplier(const int height, const bool is_grass) const;
-        const unsigned int GetWaterColorMultiplier() const;
+        unsigned int GetColorMultiplier(const int height, const bool is_grass) const;
+        unsigned int GetWaterColorMultiplier() const;
 
     private:
         // Compute the value of the pixel in the triangle defined by the colors of the three corners
         // height is 0 if y <= 64 and y - 64 otherwise
-        const unsigned int ComputeColorTriangle(const int height, const bool is_grass) const;
+        unsigned int ComputeColorTriangle(const int height, const bool is_grass) const;
 
     private:
         std::string name;

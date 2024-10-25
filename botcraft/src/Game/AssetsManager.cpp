@@ -947,6 +947,12 @@ namespace Botcraft
                     biome_type = BiomeType::FrozenOcean;
                 }
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.20.1 */
+                else if (string_biome_type == "PaleGarden")
+                {
+                    biome_type = BiomeType::PaleGarden;
+                }
+#endif
             }
 
             biomes[id] = std::make_unique<Biome>(name, temperature, rainfall, biome_type);

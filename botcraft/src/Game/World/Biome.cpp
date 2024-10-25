@@ -1,16 +1,20 @@
-#include <vector>
+#include <array>
 #include <algorithm>
 
 #include "botcraft/Game/World/Biome.hpp"
 
 namespace Botcraft
 {
-    // The corners of the triangle defining grass and leaves colors in the following order:
-    // upper left, lower left, lower right
-    const std::vector<std::vector<unsigned int> > grass_color_triangle{ { 71, 205, 51 }, { 191, 183, 85 }, { 128, 180, 151 } };
-    const std::vector<std::vector<unsigned int> > leaves_color_triangle{ { 26, 191, 0 }, { 174, 164, 42 }, { 96, 161, 123 } };
+    namespace
+    {
+        // The corners of the triangle defining grass and leaves colors in the following order:
+        // upper left, lower left, lower right
+        using uint3 = std::array<unsigned int, 3>;
+        static constexpr std::array<uint3, 3> grass_color_triangle = { uint3{ 71, 205, 51 }, uint3{ 191, 183, 85 }, uint3{ 128, 180, 151 } };
+        static constexpr std::array<uint3, 3> leaves_color_triangle = { uint3{ 26, 191, 0 }, uint3{ 174, 164, 42 }, uint3{ 96, 161, 123 } };
 
-    const int sea_level = 62;
+        static constexpr int sea_level = 62;
+    }
 
     Biome::Biome(const std::string& name_, const float temperature_,
                  const float rainfall_, const BiomeType biome_type_)
@@ -33,7 +37,7 @@ namespace Botcraft
         return name;
     }
 
-    const unsigned int Biome::GetColorMultiplier(const int height, const bool is_grass) const
+    unsigned int Biome::GetColorMultiplier(const int height, const bool is_grass) const
     {
         if (height <= sea_level)
         {
@@ -73,17 +77,18 @@ namespace Botcraft
 
         }
         case BiomeType::Badlands:
-        {
-            const unsigned int base_color = is_grass ? 0xFF90814D : 0xFF9E814D;
-            return base_color;
-        }
+            return is_grass ? 0xFF90814D : 0xFF9E814D;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case BiomeType::PaleGarden:
+            return is_grass ? 0xFF778373 : 0xFF878D76;
+#endif
         default:
             return 0xFFFFFFFF;
         }
         return 0xFFFFFFFF;
     }
 
-    const unsigned int Biome::GetWaterColorMultiplier() const
+    unsigned int Biome::GetWaterColorMultiplier() const
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
         switch (biome_type)
@@ -109,35 +114,32 @@ namespace Botcraft
             return 0xFF7B3C24; // dark indigoish
         case BiomeType::FrozenOcean:
             return 0xFF341930;  // dark purple
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case BiomeType::PaleGarden:
+            return 0xFF76889D;
+#endif
         default:
             return 0xFFD48717; // blue
         }
 #endif
     }
 
-    const unsigned int Biome::ComputeColorTriangle(const int height, const bool is_grass) const
+    unsigned int Biome::ComputeColorTriangle(const int height, const bool is_grass) const
     {
         const float local_temperature = std::max(0.0f, std::min(1.0f, temperature - height * 0.0016667f));
         const float local_rainfall = std::max(0.0f, std::min(1.0f, rainfall)) * local_temperature;
 
-        std::vector<float> triangle_coordinates(3);
+        std::array<float, 3> triangle_coordinates;
         triangle_coordinates[0] = local_rainfall;
         triangle_coordinates[1] = local_temperature - local_rainfall;
         triangle_coordinates[2] = 1.0f - local_temperature;
 
-        std::vector<float> color(3);
+        std::array<float, 3> color;
         for (int i = 0; i < 3; ++i)
         {
             for (int j = 0; j < 3; ++j)
             {
-                if (is_grass)
-                {
-                    color[j] += triangle_coordinates[i] * grass_color_triangle[i][j];
-                }
-                else
-                {
-                    color[j] += triangle_coordinates[i] * leaves_color_triangle[i][j];
-                }
+                color[j] += triangle_coordinates[i] * (is_grass ? grass_color_triangle[i][j] : leaves_color_triangle[i][j]);
             }
         }
 
