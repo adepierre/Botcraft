@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=1": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=2": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=3": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=4": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=5": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=6": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=7": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=8": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=9": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=10": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=11": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=12": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=13": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=14": {
+      "model": "minecraft:block/pale_oak_sign"
+    },
+    "rotation=15": {
+      "model": "minecraft:block/pale_oak_sign"
+    }
+  }
+}
