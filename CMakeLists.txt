@@ -14,7 +14,7 @@ option(BOTCRAFT_ENCRYPTION "Activate if you want to connect to a server in onlin
 option(BOTCRAFT_BUILD_EXAMPLES "Set to compile examples with the library" ON)
 option(BOTCRAFT_BUILD_TESTS "Activate if you want to build tests" OFF)
 option(BOTCRAFT_BUILD_TESTS_ONLINE "Activate if you want to enable additional on server tests (requires Java)" OFF)
-option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to true to use better thread sleep on Windows" OFF)
+option(BOTCRAFT_WINDOWS_BETTER_SLEEP "Set to true to use better thread sleep on Windows" ON)
 option(BOTCRAFT_USE_PRECOMPILED_HEADERS "Set to true to precompile botcraft headers, reducing compilation time with MSVC and Clang, ignored on GCC" ON)
 option(BOTCRAFT_BUILD_DOC "Build documentation (requires Doxygen)" ON)
 
@@ -25,9 +25,11 @@ option(BOTCRAFT_FORCE_LOCAL_GLAD "Set to true to force using a local install of 
 option(BOTCRAFT_FORCE_LOCAL_CATCH "Set to true to force using a local install of catch2 even if already present on the system" OFF)
 option(BOTCRAFT_INSTALL_MC_ASSETS "Install Minecraft assets next to custom ones" ON)
 
-# Only change them if you really know what you are doing, very untested
+# Only change them if you *really* know what you are doing, not supported and very untested, will probably break something
 option(PROTOCOLCRAFT_STATIC "If ON, will build protocolcraft as a static library instead of a dynamic one" OFF)
+mark_as_advanced(PROTOCOLCRAFT_STATIC)
 option(BOTCRAFT_STATIC "If ON, will build botcraft as a static library instead of a dynamic one" OFF)
+mark_as_advanced(BOTCRAFT_STATIC)
 
 set(BOTCRAFT_OUTPUT_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Base output build path")
 
