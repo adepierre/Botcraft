@@ -2508,7 +2508,9 @@
         "id": 818
     },
     "minecraft:wolf_armor": {
-        "id": 819
+        "id": 819,
+        "stack_size": 1,
+        "durability": 64
     },
     "minecraft:flint_and_steel": {
         "id": 820,
