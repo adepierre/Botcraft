@@ -7,15 +7,11 @@ namespace ProtocolCraft
 {
     class ItemCost : public NetworkType
     {
-        DECLARE_FIELDS(
-            (VarInt, VarInt, Components::DataComponentPredicate),
-            (ItemId, Count,  Components)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ItemId, VarInt);
+        SERIALIZED_FIELD(Count, VarInt);
+        SERIALIZED_FIELD(Components, Components::DataComponentPredicate);
 
-        GETTER_SETTER(ItemId);
-        GETTER_SETTER(Count);
-        GETTER_SETTER(Components);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

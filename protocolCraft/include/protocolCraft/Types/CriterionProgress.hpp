@@ -6,12 +6,8 @@ namespace ProtocolCraft
 {
     class CriterionProgress : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::optional<long long int>),
-            (DateOfAchieving)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(DateOfAchieving, std::optional<long long int>);
 
-        GETTER_SETTER(DateOfAchieving);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

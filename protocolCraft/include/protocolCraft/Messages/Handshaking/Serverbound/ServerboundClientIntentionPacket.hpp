@@ -9,15 +9,11 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Client Intention";
 
-        DECLARE_FIELDS(
-            (VarInt         , std::string, unsigned short, VarInt),
-            (ProtocolVersion, HostName   , Port          , Intention)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ProtocolVersion, VarInt);
+        SERIALIZED_FIELD(HostName, std::string);
+        SERIALIZED_FIELD(Port, unsigned short);
+        SERIALIZED_FIELD(Intention, VarInt);
 
-        GETTER_SETTER(ProtocolVersion);
-        GETTER_SETTER(HostName);
-        GETTER_SETTER(Port);
-        GETTER_SETTER(Intention);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

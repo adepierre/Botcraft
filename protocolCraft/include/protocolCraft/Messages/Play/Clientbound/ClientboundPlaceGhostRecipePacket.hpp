@@ -10,23 +10,15 @@ namespace ProtocolCraft
     class ClientboundPlaceGhostRecipePacket : public BaseMessage<ClientboundPlaceGhostRecipePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Place Ghost Recipe";
 
+        SERIALIZED_FIELD(ContainerId, char);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (char,        VarInt),
-            (ContainerId, Recipe)
-        );
+        SERIALIZED_FIELD(Recipe, VarInt);
 #else
-        DECLARE_FIELDS(
-            (char,        Identifier),
-            (ContainerId, Recipe)
-        );
+        SERIALIZED_FIELD(Recipe, Identifier);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Recipe);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

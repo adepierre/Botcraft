@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ClientboundLevelEventPacket : public BaseMessage<ClientboundLevelEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Level Event";
 
-        DECLARE_FIELDS(
-            (int,  NetworkPosition, int,  bool),
-            (Type, Pos,             Data, GlobalEvent)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Type, int);
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Data, int);
+        SERIALIZED_FIELD(GlobalEvent, bool);
 
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Data);
-        GETTER_SETTER(GlobalEvent);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

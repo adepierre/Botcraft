@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ClientboundServerLinksPacket : public BaseMessage<ClientboundServerLinksPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Server Links";
 
-        DECLARE_FIELDS(
-            (std::vector<ServerLinksUnstrustedEntry>),
-            (Links)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Links, std::vector<ServerLinksUnstrustedEntry>);
 
-        GETTER_SETTER(Links);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

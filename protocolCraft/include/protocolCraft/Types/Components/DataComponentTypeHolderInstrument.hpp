@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeHolderInstrument : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (InstrumentId)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(InstrumentId, VarInt);
 
-            GETTER_SETTER(InstrumentId);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

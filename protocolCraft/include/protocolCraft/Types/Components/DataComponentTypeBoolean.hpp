@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBoolean : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (bool),
-                (Value)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Value, bool);
 
-            GETTER_SETTER(Value);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

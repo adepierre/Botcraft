@@ -8,30 +8,18 @@ namespace ProtocolCraft
     class ClientboundProjectilePowerPacket : public BaseMessage<ClientboundProjectilePowerPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Projectile Power";
 
+        SERIALIZED_FIELD(Id_, VarInt);
 #if PROTOCOL_VERSION < 767 /* < 1.21 */
-        DECLARE_FIELDS(
-            (VarInt, double, double, double),
-            (Id_,    XPower, YPower, ZPower)
-        );
+        SERIALIZED_FIELD(XPower, double);
+        SERIALIZED_FIELD(YPower, double);
+        SERIALIZED_FIELD(ZPower, double);
 #else
-        DECLARE_FIELDS(
-            (VarInt, double),
-            (Id_,    AccelerationPower)
-        );
+        SERIALIZED_FIELD(AccelerationPower, double);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Id_);
-#if PROTOCOL_VERSION < 767 /* < 1.21 */
-        GETTER_SETTER(XPower);
-        GETTER_SETTER(YPower);
-        GETTER_SETTER(ZPower);
-#else
-        GETTER_SETTER(AccelerationPower);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

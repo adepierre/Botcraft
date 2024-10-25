@@ -9,14 +9,10 @@ namespace ProtocolCraft
     {
         class MobEffectInstance : public NetworkType
         {
-            DECLARE_FIELDS(
-                (VarInt,    MobEffectInstanceDetails),
-                (MobEffect, Details)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(MobEffect, VarInt);
+            SERIALIZED_FIELD(Details, MobEffectInstanceDetails);
 
-            GETTER_SETTER(MobEffect);
-            GETTER_SETTER(Details);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

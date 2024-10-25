@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetChunkCacheRadiusPacket : public BaseMessage<ClientboundSetChunkCacheRadiusPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Chunk Cache Radius";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (Radius)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Radius, VarInt);
 
-        GETTER_SETTER(Radius);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

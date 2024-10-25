@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundLockDifficultyPacket : public BaseMessage<ServerboundLockDifficultyPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Lock Difficulty";
 
-        DECLARE_FIELDS(
-            (bool),
-            (Locked)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Locked, bool);
 
-        GETTER_SETTER(Locked);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

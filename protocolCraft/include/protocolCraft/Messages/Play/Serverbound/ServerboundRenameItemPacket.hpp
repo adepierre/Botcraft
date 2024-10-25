@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundRenameItemPacket : public BaseMessage<ServerboundRenameItemPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Rename Item";
 
-        DECLARE_FIELDS(
-            (std::string),
-            (Name_)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Name_, std::string);
 
-        GETTER_SETTER(Name_);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

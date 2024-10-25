@@ -19,23 +19,18 @@ namespace ProtocolCraft
     class ClientboundSetTitlesPacket : public BaseMessage<ClientboundSetTitlesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Titles";
 
-        DECLARE_CONDITION(HasText, GetType() == SetTitlesType::Title || GetType() == SetTitlesType::Subtitle || GetType() == SetTitlesType::ActionBar);
-        DECLARE_CONDITION(HasTimes, GetType() == SetTitlesType::Times);
+        DEFINE_CONDITION(HasText, GetType() == SetTitlesType::Title || GetType() == SetTitlesType::Subtitle || GetType() == SetTitlesType::ActionBar);
+        DEFINE_CONDITION(HasTimes, GetType() == SetTitlesType::Times);
 
-        DECLARE_FIELDS(
-            (Internal::DiffType<SetTitlesType, VarInt>, Internal::Conditioned<Chat, &THIS::HasText>, Internal::Conditioned<int, &THIS::HasTimes>, Internal::Conditioned<int, &THIS::HasTimes>, Internal::Conditioned<int, &THIS::HasTimes>),
-            (Type,                                      Text,                                        FadeInTime,                                  StayTime,                                    FadeOutTime)
-        );
+        SERIALIZED_FIELD(Type, Internal::DiffType<SetTitlesType, VarInt>);
+        SERIALIZED_FIELD(Text, Internal::Conditioned<Chat, &THIS::HasText>);
+        SERIALIZED_FIELD(FadeInTime, Internal::Conditioned<int, &THIS::HasTimes>);
+        SERIALIZED_FIELD(StayTime, Internal::Conditioned<int, &THIS::HasTimes>);
+        SERIALIZED_FIELD(FadeOutTime, Internal::Conditioned<int, &THIS::HasTimes>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Text);
-        GETTER_SETTER(FadeInTime);
-        GETTER_SETTER(StayTime);
-        GETTER_SETTER(FadeOutTime);
     };
 } //ProtocolCraft
 #endif

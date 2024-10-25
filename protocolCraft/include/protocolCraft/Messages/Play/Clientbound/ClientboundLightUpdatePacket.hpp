@@ -12,7 +12,6 @@ namespace ProtocolCraft
     class ClientboundLightUpdatePacket : public BaseMessage<ClientboundLightUpdatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Light Update";
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -62,46 +61,31 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, VarInt,   VarInt,     VarInt,        VarInt,          Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadSkyUpdates, &THIS::WriteSkyUpdates>, Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadBlockUpdates, &THIS::WriteBlockUpdates>),
-            (X,      Z,      SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                                                                                          BlockUpdates)
-        );
-#elif PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, bool,       VarInt,   VarInt,     VarInt,        VarInt,          Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadSkyUpdates, &THIS::WriteSkyUpdates>, Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadBlockUpdates, &THIS::WriteBlockUpdates>),
-            (X,      Z,      TrustEdges, SkyYMask, BlockYMask, EmptySkyYMask, EmptyBlockYMask, SkyUpdates,                                                                                          BlockUpdates)
-        );
+        SERIALIZED_FIELD(X, VarInt);
+        SERIALIZED_FIELD(Z, VarInt);
+#if PROTOCOL_VERSION > 722 /* > 1.15.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
+        SERIALIZED_FIELD(TrustEdges, bool);
+#endif
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        SERIALIZED_FIELD(SkyYMask, VarInt);
+        SERIALIZED_FIELD(BlockYMask, VarInt);
+        SERIALIZED_FIELD(EmptySkyYMask, VarInt);
+        SERIALIZED_FIELD(EmptyBlockYMask, VarInt);
+        SERIALIZED_FIELD(SkyUpdates, Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadSkyUpdates, &THIS::WriteSkyUpdates>);
+        SERIALIZED_FIELD(BlockUpdates, Internal::CustomType<std::vector<std::vector<char>>, &THIS::ReadBlockUpdates, &THIS::WriteBlockUpdates>);
 #elif PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>,          std::vector<std::vector<char>>, std::vector<std::vector<char>>),
-            (X,      Z,      TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                              SkyUpdates,                     BlockUpdates)
-        );
-#else
-        DECLARE_FIELDS(
-            (VarInt, VarInt, ClientboundLightUpdatePacketData),
-            (X,      Z,      LightData)
-        );
+        SERIALIZED_FIELD(SkyYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(BlockYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(EmptySkyYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(EmptyBlockYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(SkyUpdates, std::vector<std::vector<char>>);
+        SERIALIZED_FIELD(BlockUpdates, std::vector<std::vector<char>>);
+#endif
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+        SERIALIZED_FIELD(LightData, ClientboundLightUpdatePacketData);
 #endif
 
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-        GETTER_SETTER(SkyYMask);
-        GETTER_SETTER(BlockYMask);
-        GETTER_SETTER(EmptySkyYMask);
-        GETTER_SETTER(EmptyBlockYMask);
-        GETTER_SETTER(SkyUpdates);
-        GETTER_SETTER(BlockUpdates);
-#endif
-#if PROTOCOL_VERSION > 722 /* > 1.15.2 */ && PROTOCOL_VERSION < 757 /* < 1.18 */
-        GETTER_SETTER(TrustEdges);
-#endif
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-        GETTER_SETTER(LightData);
-#endif
     };
 } //ProtocolCraft
 

@@ -6,14 +6,11 @@ namespace ProtocolCraft
 {
     class Identifier : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::string, std::string),
-            (Namespace,   Name)
-        );
-        DECLARE_SERIALIZE;
+        SERIALIZED_FIELD(Namespace, std::string);
+        SERIALIZED_FIELD(Name, std::string);
 
-        GETTER_SETTER(Namespace);
-        GETTER_SETTER(Name);
+        DEFINE_UTILITIES;
+        DECLARE_SERIALIZE;
 
     public:
         bool operator <(const Identifier& rhs) const

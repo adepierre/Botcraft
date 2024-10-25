@@ -11,13 +11,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBannerPatternLayers : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<BannerPatternLayer>),
-                (Layers)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Layers, std::vector<BannerPatternLayer>);
 
-            GETTER_SETTER(Layers);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

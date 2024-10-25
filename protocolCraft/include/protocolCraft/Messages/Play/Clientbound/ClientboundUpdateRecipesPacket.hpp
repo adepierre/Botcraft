@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ClientboundUpdateRecipesPacket : public BaseMessage<ClientboundUpdateRecipesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Update Recipes";
 
-        DECLARE_FIELDS(
-            (std::vector<Recipe>),
-            (Recipes)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Recipes, std::vector<Recipe>);
 
-        GETTER_SETTER(Recipes);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

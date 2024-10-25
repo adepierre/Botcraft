@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundOpenBookPacket : public BaseMessage<ClientboundOpenBookPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Open Book";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (Hand)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Hand, VarInt);
 
-        GETTER_SETTER(Hand);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

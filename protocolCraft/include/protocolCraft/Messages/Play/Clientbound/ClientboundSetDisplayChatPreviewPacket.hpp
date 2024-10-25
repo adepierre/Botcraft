@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetDisplayChatPreviewPacket : public BaseMessage<ClientboundSetDisplayChatPreviewPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Display Chat Preview";
 
-        DECLARE_FIELDS(
-            (bool),
-            (Enabled)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Enabled, bool);
 
-        GETTER_SETTER(Enabled);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

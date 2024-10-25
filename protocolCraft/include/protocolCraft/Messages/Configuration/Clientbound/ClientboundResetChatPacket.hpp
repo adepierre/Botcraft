@@ -9,7 +9,8 @@ namespace ProtocolCraft
     {
     public:
         static constexpr std::string_view packet_name = "Reset Chat";
-        DECLARE_EMPTY;
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

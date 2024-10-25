@@ -8,20 +8,15 @@ namespace ProtocolCraft
     class ClientboundDamageEventPacket : public BaseMessage<ClientboundDamageEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Damage Event";
 
-        DECLARE_FIELDS(
-            (VarInt,   VarInt,       VarInt,        VarInt,         std::optional<std::array<double, 3>>),
-            (EntityId, SourceTypeId, SourceCauseId, SourceDirectId, SourcePosition)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
+        SERIALIZED_FIELD(SourceTypeId, VarInt);
+        SERIALIZED_FIELD(SourceCauseId, VarInt);
+        SERIALIZED_FIELD(SourceDirectId, VarInt);
+        SERIALIZED_FIELD(SourcePosition, std::optional<std::array<double, 3>>);
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(SourceTypeId);
-        GETTER_SETTER(SourceCauseId);
-        GETTER_SETTER(SourceDirectId);
-        GETTER_SETTER(SourcePosition);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

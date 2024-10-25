@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundMoveEntityPacket : public BaseMessage<ClientboundMoveEntityPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Move Entity";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (EntityId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
 
-        GETTER_SETTER(EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

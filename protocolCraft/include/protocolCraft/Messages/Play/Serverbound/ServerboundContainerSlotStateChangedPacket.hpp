@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ServerboundContainerSlotStateChangedPacket : public BaseMessage<ServerboundContainerSlotStateChangedPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Container Slot State Changed";
 
-        DECLARE_FIELDS(
-            (VarInt, VarInt,      bool),
-            (SlotId, ContainerId, NewState)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SlotId, VarInt);
+        SERIALIZED_FIELD(ContainerId, VarInt);
+        SERIALIZED_FIELD(NewState, bool);
 
-        GETTER_SETTER(SlotId);
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(NewState);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

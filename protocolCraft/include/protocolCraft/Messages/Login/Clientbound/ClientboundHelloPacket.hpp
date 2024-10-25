@@ -9,33 +9,18 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Hello";
 
+        SERIALIZED_FIELD(ServerId, std::string);
+        SERIALIZED_FIELD(PublicKey, std::vector<unsigned char>);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (std::string, std::vector<unsigned char>, std::vector<unsigned char>),
-            (ServerId,    PublicKey,                  Nonce)
-        );
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (std::string, std::vector<unsigned char>, std::vector<unsigned char>),
-            (ServerId,    PublicKey,                  Challenge)
-        );
-#else
-        DECLARE_FIELDS(
-            (std::string, std::vector<unsigned char>, std::vector<unsigned char>, bool),
-            (ServerId,    PublicKey,                  Challenge,                  ShouldAuthenticate)
-        );
+        SERIALIZED_FIELD(Nonce, std::vector<unsigned char>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(ServerId);
-        GETTER_SETTER(PublicKey);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        GETTER_SETTER(Nonce);
-#else
-        GETTER_SETTER(Challenge);
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
+        SERIALIZED_FIELD(Challenge, std::vector<unsigned char>);
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        GETTER_SETTER(ShouldAuthenticate);
+        SERIALIZED_FIELD(ShouldAuthenticate, bool);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

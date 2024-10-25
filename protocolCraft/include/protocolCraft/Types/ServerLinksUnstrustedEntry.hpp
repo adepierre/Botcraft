@@ -10,44 +10,45 @@ namespace ProtocolCraft
     {
     private: using THIS = ServerLinksUnstrustedEntry;
 
-        DECLARE_CONDITION(HasTypeId, GetIsTypeId());
-        DECLARE_CONDITION(HasUri, !GetIsTypeId());
+        DEFINE_CONDITION(HasTypeId, GetIsTypeId());
+        DEFINE_CONDITION(HasUri, !GetIsTypeId());
 
-        DECLARE_FIELDS(
-            (bool,     Internal::Conditioned<VarInt, &THIS::HasTypeId>, Internal::Conditioned<Chat, &THIS::HasUri>, std::string),
-            (IsTypeId, TypeId,                                          Uri,                                        Link)
-        );
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(IsTypeId, bool);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(TypeId, Internal::Conditioned<VarInt, &THIS::HasTypeId>);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Uri, Internal::Conditioned<Chat, &THIS::HasUri>);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Link, std::string);
+
         DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER       (TypeId);
-        GETTER       (Uri);
+        GETTER(TypeId);
+        GETTER(Uri);
         GETTER_SETTER(Link);
 
     protected:
         bool GetIsTypeId() const
         {
-            return std::get<static_cast<size_t>(FieldsEnum::IsTypeId)>(fields);
+            return IsTypeId;
         }
 
     public:
-        auto& SetTypeId(const std::optional<int>& type_id)
+        auto& SetTypeId(const std::optional<int>& TypeId_)
         {
-            std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = type_id;
-            std::get<static_cast<size_t>(FieldsEnum::IsTypeId)>(fields) = type_id.has_value();
-            if (type_id.has_value())
+            TypeId = TypeId_;
+            IsTypeId = TypeId.has_value();
+            if (TypeId.has_value())
             {
-                std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = std::nullopt;
+                Uri = std::nullopt;
             }
             return *this;
         }
 
-        auto& SetUri(const std::optional<Chat>& uri)
+        auto& SetUri(const std::optional<Chat>& Uri_)
         {
-            std::get<static_cast<size_t>(FieldsEnum::Uri)>(fields) = uri;
-            std::get<static_cast<size_t>(FieldsEnum::IsTypeId)>(fields) = !uri.has_value();
-            if (uri.has_value())
+            Uri = Uri_;
+            IsTypeId = !Uri.has_value();
+            if (Uri.has_value())
             {
-                std::get<static_cast<size_t>(FieldsEnum::TypeId)>(fields) = std::nullopt;
+                TypeId = std::nullopt;
             }
             return *this;
         }

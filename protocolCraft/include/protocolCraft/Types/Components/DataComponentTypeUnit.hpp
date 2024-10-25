@@ -8,7 +8,7 @@ namespace ProtocolCraft
     {
         class DataComponentTypeUnit : public DataComponentType
         {
-            DECLARE_EMPTY;
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

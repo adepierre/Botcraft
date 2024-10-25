@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ServerboundChatSessionUpdatePacket : public BaseMessage<ServerboundChatSessionUpdatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chat Session Update";
 
-        DECLARE_FIELDS(
-            (RemoteChatSessionData),
-            (ChatSession)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ChatSession, RemoteChatSessionData);
 
-        GETTER_SETTER(ChatSession);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

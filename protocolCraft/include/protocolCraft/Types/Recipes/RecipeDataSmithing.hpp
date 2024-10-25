@@ -9,15 +9,11 @@ namespace ProtocolCraft
 {
     class RecipeDataSmithing : public RecipeData
     {
-        DECLARE_FIELDS(
-            (Ingredient, Ingredient, Slot),
-            (Base,       Ingredient, Result)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Base, ProtocolCraft::Ingredient);
+        SERIALIZED_FIELD(Ingredient, ProtocolCraft::Ingredient);
+        SERIALIZED_FIELD(Result, Slot);
 
-        GETTER_SETTER(Base);
-        GETTER_SETTER(Ingredient);
-        GETTER_SETTER(Result);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

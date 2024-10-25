@@ -7,17 +7,12 @@ namespace ProtocolCraft
     class ClientboundSetHealthPacket : public BaseMessage<ClientboundSetHealthPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Health";
 
-        DECLARE_FIELDS(
-            (float,  VarInt, float),
-            (Health, Food,   FoodSaturation)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Health, float);
+        SERIALIZED_FIELD(Food, VarInt);
+        SERIALIZED_FIELD(FoodSaturation, float);
 
-        GETTER_SETTER(Health);
-        GETTER_SETTER(Food);
-        GETTER_SETTER(FoodSaturation);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

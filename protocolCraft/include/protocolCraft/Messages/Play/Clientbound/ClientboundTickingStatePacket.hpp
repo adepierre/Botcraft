@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundTickingStatePacket : public BaseMessage<ClientboundTickingStatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Ticking State";
 
-        DECLARE_FIELDS(
-            (float,    bool),
-            (TickRate, IsFrozen)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TickRate, float);
+        SERIALIZED_FIELD(IsFrozen, bool);
 
-        GETTER_SETTER(TickRate);
-        GETTER_SETTER(IsFrozen);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

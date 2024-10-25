@@ -11,19 +11,14 @@ namespace ProtocolCraft
     class ClientboundLevelChunkWithLightPacket : public BaseMessage<ClientboundLevelChunkWithLightPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Level Chunk With Light";
 
-        DECLARE_FIELDS(
-            (int, int, ClientboundLevelChunkPacketData, ClientboundLightUpdatePacketData),
-            (X,   Z,   ChunkData,                       LightData)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Z, int);
+        SERIALIZED_FIELD(ChunkData, ClientboundLevelChunkPacketData);
+        SERIALIZED_FIELD(LightData, ClientboundLightUpdatePacketData);
 
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(ChunkData);
-        GETTER_SETTER(LightData);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

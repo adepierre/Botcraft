@@ -9,12 +9,8 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Status Response";
 
-        DECLARE_FIELDS(
-            (std::string),
-            (Status)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Status, std::string);
 
-        GETTER_SETTER(Status);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

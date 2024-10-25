@@ -8,14 +8,10 @@ namespace ProtocolCraft
 {
     class SoundEvent : public NetworkType
     {
-        DECLARE_FIELDS(
-            (Identifier, std::optional<float>),
-            (Location,   Range)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Location, Identifier);
+        SERIALIZED_FIELD(Range, std::optional<float>);
 
-        GETTER_SETTER(Location);
-        GETTER_SETTER(Range);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

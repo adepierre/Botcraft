@@ -7,16 +7,12 @@ namespace ProtocolCraft
 {
     class DustParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS(
-            (float, float, float, float),
-            (Red, Green, Blue, Scale)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Red, float);
+        SERIALIZED_FIELD(Green, float);
+        SERIALIZED_FIELD(Blue, float);
+        SERIALIZED_FIELD(Scale, float);
 
-        GETTER_SETTER(Red);
-        GETTER_SETTER(Green);
-        GETTER_SETTER(Blue);
-        GETTER_SETTER(Scale);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

@@ -3,18 +3,16 @@
 
 #include "protocolCraft/NetworkType.hpp"
 
+#include <vector>
+
 namespace ProtocolCraft
 {
     class SaltSignature : public NetworkType
     {
-        DECLARE_FIELDS(
-            (long long int, std::vector<unsigned char>),
-            (Salt,          Signature)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Salt, long long int);
+        SERIALIZED_FIELD(Signature, std::vector<unsigned char>);
 
-        GETTER_SETTER(Salt);
-        GETTER_SETTER(Signature);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

@@ -7,10 +7,9 @@ namespace ProtocolCraft
     class ClientboundFinishConfigurationPacket : public BaseMessage<ClientboundFinishConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Finish Configuration";
 
-        DECLARE_EMPTY;
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

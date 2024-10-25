@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundSetEntityLinkPacket : public BaseMessage<ClientboundSetEntityLinkPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Entity Link";
 
-        DECLARE_FIELDS(
-            (int,      int),
-            (SourceId, DestId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SourceId, int);
+        SERIALIZED_FIELD(DestId, int);
 
-        GETTER_SETTER(SourceId);
-        GETTER_SETTER(DestId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

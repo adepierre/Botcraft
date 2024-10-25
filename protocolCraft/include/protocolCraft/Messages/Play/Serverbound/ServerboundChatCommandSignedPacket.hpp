@@ -14,20 +14,15 @@ namespace ProtocolCraft
     class ServerboundChatCommandSignedPacket : public BaseMessage<ServerboundChatCommandSignedPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chat Command Signed";
 
-        DECLARE_FIELDS(
-            (std::string, long long int, long long int, std::map<std::string, std::vector<unsigned char>>, LastSeenMessagesUpdate),
-            (Command,     Timestamp,     Salt,          ArgumentSignatures,                                LastSeenMessages)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Command, std::string);
+        SERIALIZED_FIELD(Timestamp, long long int);
+        SERIALIZED_FIELD(Salt, long long int);
+        SERIALIZED_FIELD(ArgumentSignatures, std::map<std::string, std::vector<unsigned char>>);
+        SERIALIZED_FIELD(LastSeenMessages, LastSeenMessagesUpdate);
 
-        GETTER_SETTER(Command);
-        GETTER_SETTER(Timestamp);
-        GETTER_SETTER(Salt);
-        GETTER_SETTER(ArgumentSignatures);
-        GETTER_SETTER(LastSeenMessages);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

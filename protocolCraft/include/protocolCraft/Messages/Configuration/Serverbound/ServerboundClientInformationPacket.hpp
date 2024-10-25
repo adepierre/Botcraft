@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ServerboundClientInformationConfigurationPacket : public BaseMessage<ServerboundClientInformationConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Client Information (Configuration)";
 
-        DECLARE_FIELDS(
-            (ClientInformation),
-            (ClientInformation)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ClientInformation, ProtocolCraft::ClientInformation);
 
-        GETTER_SETTER(ClientInformation);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

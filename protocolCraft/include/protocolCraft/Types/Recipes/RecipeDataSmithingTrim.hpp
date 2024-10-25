@@ -8,15 +8,11 @@ namespace ProtocolCraft
 {
     class RecipeDataSmithingTrim : public RecipeData
     {
-        DECLARE_FIELDS(
-            (Ingredient, Ingredient, Ingredient),
-            (Template,   Base,       Addition)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Template, Ingredient);
+        SERIALIZED_FIELD(Base, Ingredient);
+        SERIALIZED_FIELD(Addition, Ingredient);
 
-        GETTER_SETTER(Template);
-        GETTER_SETTER(Base);
-        GETTER_SETTER(Addition);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundTabListPacket : public BaseMessage<ClientboundTabListPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Tab List";
 
-        DECLARE_FIELDS(
-            (Chat,   Chat),
-            (Header, Footer)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Header, Chat);
+        SERIALIZED_FIELD(Footer, Chat);
 
-        GETTER_SETTER(Header);
-        GETTER_SETTER(Footer);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

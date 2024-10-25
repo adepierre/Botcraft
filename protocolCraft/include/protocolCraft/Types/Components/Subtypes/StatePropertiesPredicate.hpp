@@ -11,13 +11,9 @@ namespace ProtocolCraft
     {
         class StatePropertiesPredicate : public NetworkType
         {
-            DECLARE_FIELDS(
-                (std::vector<PropertyMatcher>),
-                (Properties)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Properties, std::vector<PropertyMatcher>);
 
-            GETTER_SETTER(Properties);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

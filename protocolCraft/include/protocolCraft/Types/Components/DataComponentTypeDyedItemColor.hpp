@@ -8,14 +8,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeDyedItemColor : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (int, bool),
-                (Rgb, ShowInTooltip)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Rgb, int);
+            SERIALIZED_FIELD(ShowInTooltip, bool);
 
-            GETTER_SETTER(Rgb);
-            GETTER_SETTER(ShowInTooltip);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

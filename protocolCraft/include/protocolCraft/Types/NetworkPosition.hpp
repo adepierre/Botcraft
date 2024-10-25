@@ -6,15 +6,12 @@ namespace ProtocolCraft
 {
     class NetworkPosition : public NetworkType
     {
-        DECLARE_FIELDS(
-            (int, int, int),
-            (X,   Y,   Z)
-        );
-        DECLARE_SERIALIZE;
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Y, int);
+        SERIALIZED_FIELD(Z, int);
 
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
+        DEFINE_UTILITIES;
+        DECLARE_SERIALIZE;
 
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override

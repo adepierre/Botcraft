@@ -7,20 +7,16 @@ namespace ProtocolCraft
 {
     class ClientInformation : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::string, char,         VarInt,         bool,       unsigned char,      VarInt,   bool,                 bool),
-            (Language,    ViewDistance, ChatVisibility, ChatColors, ModelCustomisation, MainHand, TestFilteringEnabled, AllowsListing)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Language, std::string);
+        SERIALIZED_FIELD(ViewDistance, char);
+        SERIALIZED_FIELD(ChatVisibility, VarInt);
+        SERIALIZED_FIELD(ChatColors, bool);
+        SERIALIZED_FIELD(ModelCustomisation, unsigned char);
+        SERIALIZED_FIELD(MainHand, VarInt);
+        SERIALIZED_FIELD(TestFilteringEnabled, bool);
+        SERIALIZED_FIELD(AllowsListing, bool);
 
-        GETTER_SETTER(Language);
-        GETTER_SETTER(ViewDistance);
-        GETTER_SETTER(ChatVisibility);
-        GETTER_SETTER(ChatColors);
-        GETTER_SETTER(ModelCustomisation);
-        GETTER_SETTER(MainHand);
-        GETTER_SETTER(TestFilteringEnabled);
-        GETTER_SETTER(AllowsListing);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

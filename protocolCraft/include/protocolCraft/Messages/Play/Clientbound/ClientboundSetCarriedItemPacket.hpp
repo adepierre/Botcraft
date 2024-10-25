@@ -7,15 +7,10 @@ namespace ProtocolCraft
     class ClientboundSetCarriedItemPacket : public BaseMessage<ClientboundSetCarriedItemPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Carried Item";
 
-        DECLARE_FIELDS(
-            (char),
-            (Slot)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Slot, char);
 
-        GETTER_SETTER(Slot);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

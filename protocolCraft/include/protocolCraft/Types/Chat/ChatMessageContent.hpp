@@ -8,14 +8,10 @@ namespace ProtocolCraft
 {
     class ChatMessageContent : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::string, std::optional<Chat>),
-            (Plain,       Decorated)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Plain, std::string);
+        SERIALIZED_FIELD(Decorated, std::optional<Chat>);
 
-        GETTER_SETTER(Plain);
-        GETTER_SETTER(Decorated);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

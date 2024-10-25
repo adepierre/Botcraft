@@ -11,17 +11,13 @@ namespace ProtocolCraft
 {
     class PlayerChatMessage : public NetworkType
     {
-        DECLARE_FIELDS(
-            (SignedMessageHeader, std::vector<unsigned char>, SignedMessageBody, std::optional<Chat>, FilterMask),
-            (SignedHeader,        HeaderSignature,            SignedBody,        UnsignedContent,     FilterMask)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SignedHeader, SignedMessageHeader);
+        SERIALIZED_FIELD(HeaderSignature, std::vector<unsigned char>);
+        SERIALIZED_FIELD(SignedBody, SignedMessageBody);
+        SERIALIZED_FIELD(UnsignedContent, std::optional<Chat>);
+        SERIALIZED_FIELD(FilterMask, ProtocolCraft::FilterMask);
 
-        GETTER_SETTER(SignedHeader);
-        GETTER_SETTER(HeaderSignature);
-        GETTER_SETTER(SignedBody);
-        GETTER_SETTER(UnsignedContent);
-        GETTER_SETTER(FilterMask);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

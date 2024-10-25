@@ -11,14 +11,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeLodestoneTracker : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::optional<GlobalPos>, bool),
-                (Target,                   Tracked)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Target, std::optional<GlobalPos>);
+            SERIALIZED_FIELD(Tracked, bool);
 
-            GETTER_SETTER(Target);
-            GETTER_SETTER(Tracked);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

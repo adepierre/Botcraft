@@ -7,18 +7,14 @@ namespace ProtocolCraft
 {
     class BrigadierPropertyDouble : public BrigadierProperty
     {
-        DECLARE_CONDITION(Flags1, GetFlags() & 0x01);
-        DECLARE_CONDITION(Flags2, GetFlags() & 0x02);
+        DEFINE_CONDITION(Flags1, GetFlags() & 0x01);
+        DEFINE_CONDITION(Flags2, GetFlags() & 0x02);
 
-        DECLARE_FIELDS(
-            (char,  Internal::Conditioned<double, &BrigadierPropertyDouble::Flags1>, Internal::Conditioned<double, &BrigadierPropertyDouble::Flags2>),
-            (Flags, Min,                                                             Max)
-        );
+        SERIALIZED_FIELD(Flags, char);
+        SERIALIZED_FIELD(Min, Internal::Conditioned<double, &BrigadierPropertyDouble::Flags1>);
+        SERIALIZED_FIELD(Max, Internal::Conditioned<double, &BrigadierPropertyDouble::Flags2>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Flags);
-        GETTER_SETTER(Min);
-        GETTER_SETTER(Max);
     };
 }
 #endif

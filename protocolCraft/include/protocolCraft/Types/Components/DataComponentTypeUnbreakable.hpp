@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeUnbreakable : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (bool),
-                (ShowInTooltip)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(ShowInTooltip, bool);
 
-            GETTER_SETTER(ShowInTooltip);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

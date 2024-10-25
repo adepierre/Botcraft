@@ -42,7 +42,6 @@ namespace ProtocolCraft
     class ClientboundPlayerInfoUpdatePacket : public BaseMessage<ClientboundPlayerInfoUpdatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Info Update";
 
     private:
@@ -192,14 +191,10 @@ namespace ProtocolCraft
             return output;
         }
 
-        DECLARE_FIELDS(
-            (Internal::CustomType<std::vector<PlayerInfoUpdateAction>, &THIS::ReadActions, &THIS::WriteActions>, Internal::CustomType<std::map<UUID, PlayerInfoUpdateEntry>, &THIS::ReadEntries, &THIS::WriteEntries, &THIS::SerializeEntries>),
-            (Actions,                                                                                            Entries)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Actions, Internal::CustomType<std::vector<PlayerInfoUpdateAction>, &THIS::ReadActions, &THIS::WriteActions>);
+        SERIALIZED_FIELD(Entries, Internal::CustomType<std::map<UUID, PlayerInfoUpdateEntry>, &THIS::ReadEntries, &THIS::WriteEntries, &THIS::SerializeEntries>);
 
-        GETTER_SETTER(Actions);
-        GETTER_SETTER(Entries);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

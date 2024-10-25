@@ -8,14 +8,10 @@ namespace ProtocolCraft
 {
     class GlobalPos : public NetworkType
     {
-        DECLARE_FIELDS(
-            (Identifier, NetworkPosition),
-            (Dimension,  Pos)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Dimension, Identifier);
+        SERIALIZED_FIELD(Pos, NetworkPosition);
 
-        GETTER_SETTER(Dimension);
-        GETTER_SETTER(Pos);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

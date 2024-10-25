@@ -8,28 +8,16 @@ namespace ProtocolCraft
     class ClientboundLightUpdatePacketData : public NetworkType
     {
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS(
-            (bool,       std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>),
-            (TrustEdges, SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates)
-        );
-
-#else
-        DECLARE_FIELDS(
-            (std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<unsigned long long int>, std::vector<std::vector<char>>, std::vector<std::vector<char>>),
-            (SkyYMask,                            BlockYMask,                          EmptySkyYMask,                       EmptyBlockYMask,                     SkyUpdates,                     BlockUpdates)
-        );
+        SERIALIZED_FIELD(TrustEdges, bool);
 #endif
+        SERIALIZED_FIELD(SkyYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(BlockYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(EmptySkyYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(EmptyBlockYMask, std::vector<unsigned long long int>);
+        SERIALIZED_FIELD(SkyUpdates, std::vector<std::vector<char>>);
+        SERIALIZED_FIELD(BlockUpdates, std::vector<std::vector<char>>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        GETTER_SETTER(TrustEdges);
-#endif
-        GETTER_SETTER(SkyYMask);
-        GETTER_SETTER(BlockYMask);
-        GETTER_SETTER(EmptySkyYMask);
-        GETTER_SETTER(EmptyBlockYMask);
-        GETTER_SETTER(SkyUpdates);
-        GETTER_SETTER(BlockUpdates);
     };
 }
 #endif

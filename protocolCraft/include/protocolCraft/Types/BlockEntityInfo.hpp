@@ -8,16 +8,12 @@ namespace ProtocolCraft
 {
     class BlockEntityInfo : public NetworkType
     {
-        DECLARE_FIELDS(
-            (unsigned char, short, VarInt, NBT::UnnamedValue),
-            (PackedXZ,      Y,     Type,   Tag)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(PackedXZ, unsigned char);
+        SERIALIZED_FIELD(Y, short);
+        SERIALIZED_FIELD(Type, VarInt);
+        SERIALIZED_FIELD(Tag, NBT::UnnamedValue);
 
-        GETTER_SETTER(PackedXZ);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Tag);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

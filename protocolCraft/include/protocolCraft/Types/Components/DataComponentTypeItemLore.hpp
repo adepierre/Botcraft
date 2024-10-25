@@ -11,13 +11,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeItemLore : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<Chat>),
-                (Lines)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Lines, std::vector<Chat>);
 
-            GETTER_SETTER(Lines);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

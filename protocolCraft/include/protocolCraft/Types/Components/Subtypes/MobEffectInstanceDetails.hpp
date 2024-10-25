@@ -32,18 +32,14 @@ namespace ProtocolCraft
                 }
             }
 
-            DECLARE_FIELDS(
-                (VarInt,    VarInt,   bool,    bool,          bool,     Internal::CustomType<std::shared_ptr<MobEffectInstanceDetails>, &MobEffectInstanceDetails::ReadHiddenEffect, &MobEffectInstanceDetails::WriteHiddenEffect>),
-                (Amplifier, Duration, Ambient, ShowParticles, ShowIcon, HiddenEffect)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Amplifier, VarInt);
+            SERIALIZED_FIELD(Duration, VarInt);
+            SERIALIZED_FIELD(Ambient, bool);
+            SERIALIZED_FIELD(ShowParticles, bool);
+            SERIALIZED_FIELD(ShowIcon, bool);
+            SERIALIZED_FIELD(HiddenEffect, Internal::CustomType<std::shared_ptr<MobEffectInstanceDetails>, &MobEffectInstanceDetails::ReadHiddenEffect, &MobEffectInstanceDetails::WriteHiddenEffect>);
 
-            GETTER_SETTER(Amplifier);
-            GETTER_SETTER(Duration);
-            GETTER_SETTER(Ambient);
-            GETTER_SETTER(ShowParticles);
-            GETTER_SETTER(ShowIcon);
-            GETTER_SETTER(HiddenEffect);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

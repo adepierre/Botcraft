@@ -41,85 +41,85 @@ namespace ProtocolCraft
     }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-    Recipe& Recipe::SetType(const Identifier& type_)
+    Recipe& Recipe::SetType(const Identifier& Type_)
     {
-        std::get<static_cast<size_t>(FieldsEnum::Type)>(fields) = type_;
-        const std::string full = type_.GetFull();
+        Type = Type_;
+        const std::string full = Type.GetFull();
 
         if (full == "minecraft:crafting_shapeless")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataCraftingShapeless>();
+            Data = std::make_shared<RecipeDataCraftingShapeless>();
         }
         else if (full == "minecraft:crafting_shaped")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataCraftingShaped>();
+            Data = std::make_shared<RecipeDataCraftingShaped>();
         }
         else if (full == "minecraft:smelting")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCooking>();
+            Data = std::make_shared<RecipeDataSimpleCooking>();
         }
 #if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         else if (full == "minecraft:blasting")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCooking>();
+            Data = std::make_shared<RecipeDataSimpleCooking>();
         }
         else if (full == "minecraft:smoking")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCooking>();
+            Data = std::make_shared<RecipeDataSimpleCooking>();
         }
         else if (full == "minecraft:campfire_cooking")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCooking>();
+            Data = std::make_shared<RecipeDataSimpleCooking>();
         }
         else if (full == "minecraft:stonecutting")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSingleItem>();
+            Data = std::make_shared<RecipeDataSingleItem>();
         }
 #endif
 #if PROTOCOL_VERSION > 732 /* > 1.15.2 */ && PROTOCOL_VERSION < 763 /* < 1.20 */
         else if (full == "minecraft:smithing")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSmithing>();
+            Data = std::make_shared<RecipeDataSmithing>();
         }
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         else if (full == "minecraft:smithing_transform")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSmithingTransform>();
+            Data = std::make_shared<RecipeDataSmithingTransform>();
         }
         else if (full == "minecraft:smithing_trim")
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSmithingTrim>();
+            Data = std::make_shared<RecipeDataSmithingTrim>();
         }
 #endif
         else
         {
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCrafting>();
+            Data = std::make_shared<RecipeDataSimpleCrafting>();
         }
         return *this;
     }
 #else
-    Recipe& Recipe::SetType(const RecipeDataType type_)
+    Recipe& Recipe::SetType(const RecipeDataType Type_)
     {
-        if (type_ <= RecipeDataType::None || type_ >= RecipeDataType::NUM_RECIPE_DATA_TYPES)
+        if (Type_ <= RecipeDataType::None || Type_ >= RecipeDataType::NUM_RECIPE_DATA_TYPES)
         {
-            throw std::runtime_error("Unable to create recipe with id: " + std::to_string(static_cast<int>(type_)) + ".");
+            throw std::runtime_error("Unable to create recipe with id: " + std::to_string(static_cast<int>(Type_)) + ".");
         }
-        std::get<static_cast<size_t>(FieldsEnum::Type)>(fields) = type_;
+        Type = Type_;
 
-        switch (type_)
+        switch (Type_)
         {
         case RecipeDataType::CraftingShaped:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataCraftingShaped>();
+            Data = std::make_shared<RecipeDataCraftingShaped>();
             break;
         case RecipeDataType::CraftingShapeless:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataCraftingShapeless>();
+            Data = std::make_shared<RecipeDataCraftingShapeless>();
             break;
         case RecipeDataType::Smelting:
         case RecipeDataType::Blasting:
         case RecipeDataType::Smoking:
         case RecipeDataType::CampfireCooking:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCooking>();
+            Data = std::make_shared<RecipeDataSimpleCooking>();
             break;
         case RecipeDataType::CraftingSpecialArmordye:
         case RecipeDataType::CraftingSpecialBookcloning:
@@ -135,21 +135,21 @@ namespace ProtocolCraft
         case RecipeDataType::CraftingSpecialSuspiciousstew:
         case RecipeDataType::CraftingSpecialRepairitem:
         case RecipeDataType::CraftingDecoratedPot:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSimpleCrafting>();
+            Data = std::make_shared<RecipeDataSimpleCrafting>();
             break;
         case RecipeDataType::Stonecutting:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSingleItem>();
+            Data = std::make_shared<RecipeDataSingleItem>();
             break;
         case RecipeDataType::SmithingTransform:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSmithingTransform>();
+            Data = std::make_shared<RecipeDataSmithingTransform>();
             break;
         case RecipeDataType::SmithingTrim:
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = std::make_shared<RecipeDataSmithingTrim>();
+            Data = std::make_shared<RecipeDataSmithingTrim>();
             break;
         default:
             // This should not happen
-            throw std::runtime_error("Unable to create recipe with id: " + std::to_string(static_cast<int>(type_)) + ".");
-            std::get<static_cast<size_t>(FieldsEnum::Data)>(fields) = nullptr;
+            throw std::runtime_error("Unable to create recipe with id: " + std::to_string(static_cast<int>(Type_)) + ".");
+            Data = nullptr;
             break;
         }
         return *this;
@@ -157,17 +157,8 @@ namespace ProtocolCraft
 #endif
 
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-    const Identifier& Recipe::GetType() const
-    {
-        return std::get<static_cast<size_t>(FieldsEnum::Type)>(fields);
-    }
-#else
-    RecipeDataType Recipe::GetType() const
-    {
-        return std::get<static_cast<size_t>(FieldsEnum::Type)>(fields);
-    }
 
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     std::string_view Recipe::GetName() const
     {
         static constexpr std::array<std::string_view, static_cast<size_t>(RecipeDataType::NUM_RECIPE_DATA_TYPES)> recipe_names = {
@@ -202,11 +193,6 @@ namespace ProtocolCraft
         return recipe_names[static_cast<size_t>(GetType())];
     }
 #endif
-
-    const std::shared_ptr<RecipeData>& Recipe::GetData() const
-    {
-        return std::get<static_cast<size_t>(FieldsEnum::Data)>(fields);
-    }
 
     void Recipe::ReadImpl(ReadIterator& iter, size_t& length)
     {
@@ -248,13 +234,13 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-        output[std::string(json_names[static_cast<size_t>(FieldsEnum::RecipeId)])] = GetRecipeId();
+        output[std::string(field_name<RecipeId_index>)] = GetRecipeId();
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        output[std::string(json_names[static_cast<size_t>(FieldsEnum::Type)])] = GetType().GetFull();
+        output[std::string(field_name<Type_index>)] = GetType().GetFull();
 #else
-        output[std::string(json_names[static_cast<size_t>(FieldsEnum::Type)])] = GetName();
+        output[std::string(field_name<Type_index>)] = GetName();
 #endif
-        output[std::string(json_names[static_cast<size_t>(FieldsEnum::Data)])] = GetData() == nullptr ? Json::Object() : GetData()->Serialize();
+        output[std::string(field_name<Data_index>)] = GetData() == nullptr ? Json::Object() : GetData()->Serialize();
 
         return output;
     }

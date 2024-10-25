@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundMovePlayerPacketStatusOnly : public BaseMessage<ServerboundMovePlayerPacketStatusOnly>
     {
     public:
-
         static constexpr std::string_view packet_name = "Move Player Status Only";
 
-        DECLARE_FIELDS(
-            (bool),
-            (OnGround)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(OnGround, bool);
 
-        GETTER_SETTER(OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

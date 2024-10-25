@@ -11,14 +11,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeAdventureModePredicate : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<BlockPredicate>, bool),
-                (Predicates, ShowInTooltip)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Predicates, std::vector<BlockPredicate>);
+            SERIALIZED_FIELD(ShowInTooltip, bool);
 
-            GETTER_SETTER(Predicates);
-            GETTER_SETTER(ShowInTooltip);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

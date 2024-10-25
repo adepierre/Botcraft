@@ -15,44 +15,44 @@ namespace ProtocolCraft
         {
         private: using THIS = PropertyMatcher;
 
-            DECLARE_CONDITION(IsExactMatcher, GetIsExactMatcher());
-            DECLARE_CONDITION(IsRangedMatcher, !GetIsExactMatcher());
+            DEFINE_CONDITION(IsExactMatcher, GetIsExactMatcher());
+            DEFINE_CONDITION(IsRangedMatcher, !GetIsExactMatcher());
 
-            DECLARE_FIELDS(
-                (std::string, bool,           Internal::Conditioned<RangedMatcher, &THIS::IsRangedMatcher>, Internal::Conditioned<ExactMatcher, &THIS::IsExactMatcher>),
-                (Name,        IsExactMatcher, RangedMatcher,                                                ExactMatcher)
-            );
+            SERIALIZED_FIELD(Name, std::string);
+            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(IsExactMatcher_, bool);
+            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(RangedMatcher, Internal::Conditioned<ProtocolCraft::Components::RangedMatcher, &THIS::IsRangedMatcher>);
+            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ExactMatcher, Internal::Conditioned<ProtocolCraft::Components::ExactMatcher, &THIS::IsExactMatcher>);
+
             DECLARE_READ_WRITE_SERIALIZE;
 
-            GETTER_SETTER(Name);
-            GETTER       (RangedMatcher);
-            GETTER       (ExactMatcher);
+            GETTER(RangedMatcher);
+            GETTER(ExactMatcher);
 
         protected:
             bool GetIsExactMatcher() const
             {
-                return std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields);
+                return IsExactMatcher_;
             }
 
         public:
-            auto& SetRangedMatcher(const std::optional<RangedMatcher>& ranged_matcher)
+            auto& SetRangedMatcher(const std::optional<ProtocolCraft::Components::RangedMatcher>& RangedMatcher_)
             {
-                std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = ranged_matcher;
-                std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields) = !ranged_matcher.has_value();
-                if (ranged_matcher.has_value())
+                RangedMatcher = RangedMatcher_;
+                IsExactMatcher_ = !RangedMatcher.has_value();
+                if (RangedMatcher.has_value())
                 {
-                    std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = std::nullopt;
+                    ExactMatcher = std::nullopt;
                 }
                 return *this;
             }
 
-            auto& SetExactMatcher(const std::optional<ExactMatcher>& exact_matcher)
+            auto& SetExactMatcher(const std::optional<ProtocolCraft::Components::ExactMatcher>& ExactMatcher_)
             {
-                std::get<static_cast<size_t>(FieldsEnum::ExactMatcher)>(fields) = exact_matcher;
-                std::get<static_cast<size_t>(FieldsEnum::IsExactMatcher)>(fields) = exact_matcher.has_value();
-                if (exact_matcher.has_value())
+                ExactMatcher = ExactMatcher_;
+                IsExactMatcher_ = ExactMatcher.has_value();
+                if (ExactMatcher.has_value())
                 {
-                    std::get<static_cast<size_t>(FieldsEnum::RangedMatcher)>(fields) = std::nullopt;
+                    RangedMatcher = std::nullopt;
                 }
                 return *this;
             }

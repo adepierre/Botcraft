@@ -46,19 +46,18 @@ namespace ProtocolCraft
 
     class Recipe : public NetworkType
     {
+        SERIALIZED_FIELD(RecipeId, Identifier);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (Identifier, Identifier, std::shared_ptr<RecipeData>),
-            (RecipeId,   Type,       Data)
-        );
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Identifier);
 #else
-        DECLARE_FIELDS(
-            (Identifier, RecipeDataType, std::shared_ptr<RecipeData>),
-            (RecipeId,   Type,           Data)
-        );
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, RecipeDataType);
 #endif
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<RecipeData>);
 
-        GETTER_SETTER(RecipeId);
+        DECLARE_READ_WRITE_SERIALIZE;
+
+        GETTER(Type);
+        GETTER(Data);
 
     public:
         virtual ~Recipe() override;
@@ -69,18 +68,10 @@ namespace ProtocolCraft
         Recipe& SetType(const RecipeDataType type_);
 #endif
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        const Identifier& GetType() const;
-#else
-        RecipeDataType GetType() const;
+
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         std::string_view GetName() const;
 #endif
-        const std::shared_ptr<RecipeData>& GetData() const;
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
     };
 }
 #endif

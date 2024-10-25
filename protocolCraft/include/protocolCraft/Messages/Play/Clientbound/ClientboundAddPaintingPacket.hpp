@@ -9,31 +9,19 @@ namespace ProtocolCraft
     class ClientboundAddPaintingPacket : public BaseMessage<ClientboundAddPaintingPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Add Painting";
 
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Uuid, UUID);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (VarInt, UUID, std::string, NetworkPosition, char),
-            (Id_,    Uuid, Title,       Pos,             Direction)
-        );
+        SERIALIZED_FIELD(Title, std::string);
 #else
-        DECLARE_FIELDS(
-            (VarInt, UUID, VarInt, NetworkPosition, char),
-            (Id_,    Uuid, Motive, Pos,             Direction)
-        );
+        SERIALIZED_FIELD(Motive, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Direction, char);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Uuid);
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        GETTER_SETTER(Title);
-#else
-        GETTER_SETTER(Motive);
-#endif
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Direction);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

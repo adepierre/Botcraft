@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundRotateHeadPacket : public BaseMessage<ClientboundRotateHeadPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Rotate Head";
 
-        DECLARE_FIELDS(
-            (VarInt,   unsigned char),
-            (EntityId, YHeadRot)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
+        SERIALIZED_FIELD(YHeadRot, unsigned char);
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(YHeadRot);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

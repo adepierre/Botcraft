@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ClientboundBlockEventPacket : public BaseMessage<ClientboundBlockEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Event";
 
-        DECLARE_FIELDS(
-            (NetworkPosition, unsigned char, unsigned char, VarInt),
-            (Pos,             B0,            B1,            Block)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(B0, unsigned char);
+        SERIALIZED_FIELD(B1, unsigned char);
+        SERIALIZED_FIELD(Block, VarInt);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(B0);
-        GETTER_SETTER(B1);
-        GETTER_SETTER(Block);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

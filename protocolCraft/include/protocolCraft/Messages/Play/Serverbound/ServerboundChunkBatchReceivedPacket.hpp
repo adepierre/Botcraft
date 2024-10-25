@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundChunkBatchReceivedPacket : public BaseMessage<ServerboundChunkBatchReceivedPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chunk Batch Received";
 
-        DECLARE_FIELDS(
-            (float),
-            (DesiredChunksPerTick)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(DesiredChunksPerTick, float);
 
-        GETTER_SETTER(DesiredChunksPerTick);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

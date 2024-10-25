@@ -8,10 +8,9 @@ namespace ProtocolCraft
     class ClientboundChunkBatchStartPacket : public BaseMessage<ClientboundChunkBatchStartPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chunk Batch Start";
 
-        DECLARE_EMPTY;
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

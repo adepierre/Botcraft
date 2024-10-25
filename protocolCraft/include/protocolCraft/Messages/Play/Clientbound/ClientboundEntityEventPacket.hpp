@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundEntityEventPacket : public BaseMessage<ClientboundEntityEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Entity Event";
 
-        DECLARE_FIELDS(
-            (int,      char),
-            (EntityId, EventId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, int);
+        SERIALIZED_FIELD(EventId, char);
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(EventId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

@@ -8,14 +8,10 @@ namespace ProtocolCraft
 {
     class GameProfileProperty : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::string, std::string, std::optional<std::string>),
-            (Name,        Value,       Signature)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Name, std::string);
+        SERIALIZED_FIELD(Value, std::string);
+        SERIALIZED_FIELD(Signature, std::optional<std::string>);
 
-        GETTER_SETTER(Name);
-        GETTER_SETTER(Value);
-        GETTER_SETTER(Signature);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft

@@ -8,16 +8,12 @@ namespace ProtocolCraft
 {
     class NumberFormat : public NetworkType
     {
-        DECLARE_CONDITION(HasFormat, GetType() != 0);
+        DEFINE_CONDITION(HasFormat, GetType() != 0);
 
-        DECLARE_FIELDS(
-            (VarInt, Internal::Conditioned<Chat, &NumberFormat::HasFormat>),
-            (Type,   Format)
-        );
+        SERIALIZED_FIELD(Type, VarInt);
+        SERIALIZED_FIELD(Format, Internal::Conditioned<Chat, &NumberFormat::HasFormat>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Format);
     };
 } // ProtocolCraft
 #endif

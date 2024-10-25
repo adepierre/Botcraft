@@ -12,15 +12,12 @@ namespace ProtocolCraft
 {
     class VibrationPath : public NetworkType
     {
-        DECLARE_FIELDS(
-            (NetworkPosition, Identifier,      std::shared_ptr<PositionSource>, VarInt),
-            (Origin,          DestinationType, Destination,                     ArrivalInTicks)
-        );
+        SERIALIZED_FIELD(Origin, NetworkPosition);
+        SERIALIZED_FIELD(DestinationType, Identifier);
+        SERIALIZED_FIELD(Destination, std::shared_ptr<PositionSource>);
+        SERIALIZED_FIELD(ArrivalInTicks, VarInt);
 
-        GETTER_SETTER(Origin);
-        GETTER_SETTER(DestinationType);
-        GETTER_SETTER(Destination);
-        GETTER_SETTER(ArrivalInTicks);
+        DEFINE_UTILITIES;
     protected:
         virtual void ReadImpl(ReadIterator& iter, size_t& length) override
         {
@@ -44,11 +41,10 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Origin)])] = GetOrigin();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::DestinationType)])] = GetDestinationType();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Destination)])] = *GetDestination();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::ArrivalInTicks)])] = GetArrivalInTicks();
-
+            output[std::string(field_name<Origin_index>)] = GetOrigin();
+            output[std::string(field_name<DestinationType_index>)] = GetDestinationType();
+            output[std::string(field_name<Destination_index>)] = *GetDestination();
+            output[std::string(field_name<ArrivalInTicks_index>)] = GetArrivalInTicks();
 
             return output;
         }

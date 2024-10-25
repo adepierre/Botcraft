@@ -8,23 +8,18 @@ namespace ProtocolCraft
     class ClientboundInitializeBorderPacket : public BaseMessage<ClientboundInitializeBorderPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Initialize Border";
 
-        DECLARE_FIELDS(
-            (double,     double,     double,  double,  VarLong,  VarInt,             VarInt,        VarInt),
-            (NewCenterX, NewCenterZ, OldSize, NewSize, LerpTime, NewAbsoluteMaxSize, WarningBlocks, WarningTime)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(NewCenterX, double);
+        SERIALIZED_FIELD(NewCenterZ, double);
+        SERIALIZED_FIELD(OldSize, double);
+        SERIALIZED_FIELD(NewSize, double);
+        SERIALIZED_FIELD(LerpTime, VarLong);
+        SERIALIZED_FIELD(NewAbsoluteMaxSize, VarInt);
+        SERIALIZED_FIELD(WarningBlocks, VarInt);
+        SERIALIZED_FIELD(WarningTime, VarInt);
 
-        GETTER_SETTER(NewCenterX);
-        GETTER_SETTER(NewCenterZ);
-        GETTER_SETTER(OldSize);
-        GETTER_SETTER(NewSize);
-        GETTER_SETTER(LerpTime);
-        GETTER_SETTER(NewAbsoluteMaxSize);
-        GETTER_SETTER(WarningBlocks);
-        GETTER_SETTER(WarningTime);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

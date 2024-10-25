@@ -7,17 +7,12 @@ namespace ProtocolCraft
     class ServerboundPlayerInputPacket : public BaseMessage<ServerboundPlayerInputPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Input";
 
-        DECLARE_FIELDS(
-            (float, float, unsigned char),
-            (Xxa,   Zza,   Flags)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Xxa, float);
+        SERIALIZED_FIELD(Zza, float);
+        SERIALIZED_FIELD(Flags, unsigned char);
 
-        GETTER_SETTER(Xxa);
-        GETTER_SETTER(Zza);
-        GETTER_SETTER(Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

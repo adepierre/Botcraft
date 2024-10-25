@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeDyeColor : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (ColorId)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(ColorId, VarInt);
 
-            GETTER_SETTER(ColorId);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

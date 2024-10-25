@@ -7,15 +7,10 @@ namespace ProtocolCraft
     class ClientboundSetCameraPacket : public BaseMessage<ClientboundSetCameraPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Camera";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (CameraId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(CameraId, VarInt);
 
-        GETTER_SETTER(CameraId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

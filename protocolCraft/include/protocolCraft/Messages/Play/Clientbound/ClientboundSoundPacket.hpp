@@ -12,36 +12,23 @@ namespace ProtocolCraft
     class ClientboundSoundPacket : public BaseMessage<ClientboundSoundPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Sound";
 
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, int, int, int, float,  float),
-            (Sound,  Source, X,   Y,   Z,   Volume, Pitch)
-        );
-#elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, int, int, int, float,  float, long long int),
-            (Sound,  Source, X,   Y,   Z,   Volume, Pitch, Seed)
-        );
+#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+        SERIALIZED_FIELD(Sound, VarInt);
 #else
-        DECLARE_FIELDS(
-            (Holder<SoundEvent>, VarInt, int, int, int, float,  float, long long int),
-            (Sound,              Source, X,   Y,   Z,   Volume, Pitch, Seed)
-        );
+        SERIALIZED_FIELD(Sound, Holder<SoundEvent>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Sound);
-        GETTER_SETTER(Source);
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(Volume);
-        GETTER_SETTER(Pitch);
+        SERIALIZED_FIELD(Source, VarInt);
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Y, int);
+        SERIALIZED_FIELD(Z, int);
+        SERIALIZED_FIELD(Volume, float);
+        SERIALIZED_FIELD(Pitch, float);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        GETTER_SETTER(Seed);
+        SERIALIZED_FIELD(Seed, long long int);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ServerboundEntityTagQueryPacket : public BaseMessage<ServerboundEntityTagQueryPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Entity Tag Query";
 
-        DECLARE_FIELDS(
-            (VarInt, VarInt),
-            (TransactionId, EntityId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TransactionId, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
 
-        GETTER_SETTER(TransactionId);
-        GETTER_SETTER(EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

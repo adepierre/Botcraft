@@ -7,13 +7,9 @@ namespace ProtocolCraft
 {
     class ColorParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS(
-            (int),
-            (Color)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Color, int);
 
-        GETTER_SETTER(Color);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

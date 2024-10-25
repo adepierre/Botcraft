@@ -9,15 +9,11 @@ namespace ProtocolCraft
 {
     class KnownPack : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::string, std::string, std::string),
-            (Namespace, Id, Version)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Namespace, std::string);
+        SERIALIZED_FIELD(Id, std::string);
+        SERIALIZED_FIELD(Version, std::string);
 
-        GETTER_SETTER(Namespace);
-        GETTER_SETTER(Id);
-        GETTER_SETTER(Version);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

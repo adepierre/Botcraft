@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundSetCreativeModeSlotPacket : public BaseMessage<ServerboundSetCreativeModeSlotPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Creative Mode Slot";
 
-        DECLARE_FIELDS(
-            (short,   Slot),
-            (SlotNum, ItemStack)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SlotNum, short);
+        SERIALIZED_FIELD(ItemStack, Slot);
 
-        GETTER_SETTER(SlotNum);
-        GETTER_SETTER(ItemStack);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

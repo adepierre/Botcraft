@@ -14,28 +14,25 @@ namespace ProtocolCraft
     class MerchantOffer : public NetworkType
     {
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (Slot,       Slot,       std::optional<Slot>, bool,          int,                int,                      int, int,          float,           int),
-            (InputItem1, OutputItem, InputItem2,          TradeDisabled, NumberOfTradesUses, MaximumNumberOfTradeUses, Xp,  SpecialPrice, PriceMultiplier, Demand)
-        );
+        SERIALIZED_FIELD(InputItem1, Slot);
 #else
-        DECLARE_FIELDS(
-            (ItemCost,       Slot,       std::optional<ItemCost>, bool,          int,                int,                      int, int,          float,           int),
-            (InputItem1,     OutputItem, InputItem2,              TradeDisabled, NumberOfTradesUses, MaximumNumberOfTradeUses, Xp,  SpecialPrice, PriceMultiplier, Demand)
-        );
+        SERIALIZED_FIELD(InputItem1, ItemCost);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(OutputItem, Slot);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SERIALIZED_FIELD(InputItem2, std::optional<Slot>);
+#else
+        SERIALIZED_FIELD(InputItem2, std::optional<ItemCost>);
+#endif
+        SERIALIZED_FIELD(TradeDisabled, bool);
+        SERIALIZED_FIELD(NumberOfTradesUses, int);
+        SERIALIZED_FIELD(MaximumNumberOfTradeUses, int);
+        SERIALIZED_FIELD(Xp, int);
+        SERIALIZED_FIELD(SpecialPrice, int);
+        SERIALIZED_FIELD(PriceMultiplier, float);
+        SERIALIZED_FIELD(Demand, int);
 
-        GETTER_SETTER(InputItem1);
-        GETTER_SETTER(OutputItem);
-        GETTER_SETTER(InputItem2);
-        GETTER_SETTER(TradeDisabled);
-        GETTER_SETTER(NumberOfTradesUses);
-        GETTER_SETTER(MaximumNumberOfTradeUses);
-        GETTER_SETTER(Xp);
-        GETTER_SETTER(SpecialPrice);
-        GETTER_SETTER(PriceMultiplier);
-        GETTER_SETTER(Demand);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

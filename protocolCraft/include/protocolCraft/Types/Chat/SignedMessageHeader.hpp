@@ -9,14 +9,10 @@ namespace ProtocolCraft
 {
     class SignedMessageHeader : public NetworkType
     {
-        DECLARE_FIELDS(
-            (std::optional<std::vector<unsigned char>>, UUID),
-            (PreviousSignature,                         Sender)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(PreviousSignature, std::optional<std::vector<unsigned char>>);
+        SERIALIZED_FIELD(Sender, UUID);
 
-        GETTER_SETTER(PreviousSignature);
-        GETTER_SETTER(Sender);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

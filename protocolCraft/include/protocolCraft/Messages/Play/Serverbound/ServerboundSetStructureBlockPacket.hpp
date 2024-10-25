@@ -9,31 +9,26 @@ namespace ProtocolCraft
     class ServerboundSetStructureBlockPacket : public BaseMessage<ServerboundSetStructureBlockPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Structure Block";
 
-        DECLARE_FIELDS(
-            (NetworkPosition, VarInt,     VarInt, std::string, char,    char,    char,    char,  char,  char,  VarInt, VarInt,   std::string, float,     VarLong, char),
-            (Pos,             UpdateType, Mode,   Name_,       OffsetX, OffsetY, OffsetZ, SizeX, SizeY, SizeZ, Mirror, Rotation, Data,        Integrity, Seed,    Flags)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(UpdateType, VarInt);
+        SERIALIZED_FIELD(Mode, VarInt);
+        SERIALIZED_FIELD(Name_, std::string);
+        SERIALIZED_FIELD(OffsetX, char);
+        SERIALIZED_FIELD(OffsetY, char);
+        SERIALIZED_FIELD(OffsetZ, char);
+        SERIALIZED_FIELD(SizeX, char);
+        SERIALIZED_FIELD(SizeY, char);
+        SERIALIZED_FIELD(SizeZ, char);
+        SERIALIZED_FIELD(Mirror, VarInt);
+        SERIALIZED_FIELD(Rotation, VarInt);
+        SERIALIZED_FIELD(Data, std::string);
+        SERIALIZED_FIELD(Integrity, float);
+        SERIALIZED_FIELD(Seed, VarLong);
+        SERIALIZED_FIELD(Flags, char);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(UpdateType);
-        GETTER_SETTER(Mode);
-        GETTER_SETTER(Name_);
-        GETTER_SETTER(OffsetX);
-        GETTER_SETTER(OffsetY);
-        GETTER_SETTER(OffsetZ);
-        GETTER_SETTER(SizeX);
-        GETTER_SETTER(SizeY);
-        GETTER_SETTER(SizeZ);
-        GETTER_SETTER(Mirror);
-        GETTER_SETTER(Rotation);
-        GETTER_SETTER(Data);
-        GETTER_SETTER(Integrity);
-        GETTER_SETTER(Seed);
-        GETTER_SETTER(Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

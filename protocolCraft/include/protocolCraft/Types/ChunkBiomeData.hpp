@@ -8,14 +8,10 @@ namespace ProtocolCraft
 {
     class ChunkBiomeData : public NetworkType
     {
-        DECLARE_FIELDS(
-            (ChunkPos, std::vector<unsigned char>),
-            (Pos,      Buffer)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, ChunkPos);
+        SERIALIZED_FIELD(Buffer, std::vector<unsigned char>);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Buffer);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

@@ -12,18 +12,13 @@ namespace ProtocolCraft
     class ClientboundUpdateAdvancementsPacket : public BaseMessage<ClientboundUpdateAdvancementsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Update Advancements";
 
-        DECLARE_FIELDS(
-            (bool,  std::map<Identifier, Advancement>, std::vector<Identifier>, std::map<Identifier, AdvancementProgress>),
-            (Reset, Added,                             Removed,                 Progress)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Reset, bool);
+        SERIALIZED_FIELD(Added, std::map<Identifier, Advancement>);
+        SERIALIZED_FIELD(Removed, std::vector<Identifier>);
+        SERIALIZED_FIELD(Progress, std::map<Identifier, AdvancementProgress>);
 
-        GETTER_SETTER(Reset);
-        GETTER_SETTER(Added);
-        GETTER_SETTER(Removed);
-        GETTER_SETTER(Progress);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

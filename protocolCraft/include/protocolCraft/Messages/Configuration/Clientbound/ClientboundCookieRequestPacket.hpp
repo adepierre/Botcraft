@@ -11,13 +11,9 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Cookie Request (Configuration)";
 
-        DECLARE_FIELDS(
-            (Identifier),
-            (Key)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Key, Identifier);
 
-        GETTER_SETTER(Key);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

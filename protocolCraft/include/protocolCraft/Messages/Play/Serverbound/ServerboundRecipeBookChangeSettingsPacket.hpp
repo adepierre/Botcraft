@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ServerboundRecipeBookChangeSettingsPacket : public BaseMessage<ServerboundRecipeBookChangeSettingsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Recipe Book Change Settings";
 
-        DECLARE_FIELDS(
-            (VarInt,   bool,   bool),
-            (BookType, IsOpen, IsFiltering)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(BookType, VarInt);
+        SERIALIZED_FIELD(IsOpen, bool);
+        SERIALIZED_FIELD(IsFiltering, bool);
 
-        GETTER_SETTER(BookType);
-        GETTER_SETTER(IsOpen);
-        GETTER_SETTER(IsFiltering);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

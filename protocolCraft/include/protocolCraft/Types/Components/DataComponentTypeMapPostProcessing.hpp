@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeMapPostProcessing : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (MapPostProcessingId)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(MapPostProcessingId, VarInt);
 
-            GETTER_SETTER(MapPostProcessingId);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

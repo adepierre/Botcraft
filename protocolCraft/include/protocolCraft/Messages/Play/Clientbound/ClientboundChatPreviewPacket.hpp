@@ -9,17 +9,12 @@ namespace ProtocolCraft
     class ClientboundChatPreviewPacket : public BaseMessage<ClientboundChatPreviewPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chat Preview";
 
-        DECLARE_FIELDS(
-            (int,     std::optional<Chat>),
-            (QueryId, Preview)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(QueryId, int);
+        SERIALIZED_FIELD(Preview, std::optional<Chat>);
 
-        GETTER_SETTER(QueryId);
-        GETTER_SETTER(Preview);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

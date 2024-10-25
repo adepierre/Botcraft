@@ -11,15 +11,11 @@ namespace ProtocolCraft
 {
     class GameProfile : public NetworkType
     {
-        DECLARE_FIELDS(
-            (UUID, std::string, std::vector<GameProfileProperty>),
-            (Uuid, Name,        Properties)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Uuid, UUID);
+        SERIALIZED_FIELD(Name, std::string);
+        SERIALIZED_FIELD(Properties, std::vector<GameProfileProperty>);
 
-        GETTER_SETTER(Uuid);
-        GETTER_SETTER(Name);
-        GETTER_SETTER(Properties);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

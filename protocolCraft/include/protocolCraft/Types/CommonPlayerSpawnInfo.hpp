@@ -11,27 +11,20 @@ namespace ProtocolCraft
     class CommonPlayerSpawnInfo : public NetworkType
     {
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (Identifier,    Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt),
-            (DimensionType, Dimension,  Seed,          GameType,      PreviousGameType, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown)
-        );
+        SERIALIZED_FIELD(DimensionType, Identifier);
 #else
-        DECLARE_FIELDS(
-            (VarInt,        Identifier, long long int, unsigned char, unsigned char,    bool,    bool,   std::optional<GlobalPos>, VarInt),
-            (DimensionType, Dimension,  Seed,          GameType,      PreviousGameType, IsDebug, IsFlat, LastDeathLocation,        PortalCooldown)
-        );
+        SERIALIZED_FIELD(DimensionType, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Dimension, Identifier);
+        SERIALIZED_FIELD(Seed, long long int);
+        SERIALIZED_FIELD(GameType, unsigned char);
+        SERIALIZED_FIELD(PreviousGameType, unsigned char);
+        SERIALIZED_FIELD(IsDebug, bool);
+        SERIALIZED_FIELD(IsFlat, bool);
+        SERIALIZED_FIELD(LastDeathLocation, std::optional<GlobalPos>);
+        SERIALIZED_FIELD(PortalCooldown, VarInt);
 
-        GETTER_SETTER(DimensionType);
-        GETTER_SETTER(Dimension);
-        GETTER_SETTER(Seed);
-        GETTER_SETTER(GameType);
-        GETTER_SETTER(PreviousGameType);
-        GETTER_SETTER(IsDebug);
-        GETTER_SETTER(IsFlat);
-        GETTER_SETTER(LastDeathLocation);
-        GETTER_SETTER(PortalCooldown);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

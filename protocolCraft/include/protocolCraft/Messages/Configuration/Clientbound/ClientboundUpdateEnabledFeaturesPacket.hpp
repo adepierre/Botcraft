@@ -11,16 +11,11 @@ namespace ProtocolCraft
     class ClientboundUpdateEnabledFeaturesPacket : public BaseMessage<ClientboundUpdateEnabledFeaturesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Update Enabled Features";
 
-        DECLARE_FIELDS(
-            (std::vector<std::string>),
-            (Features)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Features, std::vector<std::string>);
 
-        GETTER_SETTER(Features);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ClientboundDisconnectConfigurationPacket : public BaseMessage<ClientboundDisconnectConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Disconnect (Configuration)";
 
-        DECLARE_FIELDS(
-            (Chat),
-            (Reason)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Reason, Chat);
 
-        GETTER_SETTER(Reason);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

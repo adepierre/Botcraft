@@ -9,17 +9,12 @@ namespace ProtocolCraft
     class ServerboundBlockEntityTagQueryPacket : public BaseMessage<ServerboundBlockEntityTagQueryPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Entity Tag Query";
 
-        DECLARE_FIELDS(
-            (VarInt,        NetworkPosition),
-            (TransactionId, Pos)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TransactionId, VarInt);
+        SERIALIZED_FIELD(Pos, NetworkPosition);
 
-        GETTER_SETTER(TransactionId);
-        GETTER_SETTER(Pos);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

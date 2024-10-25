@@ -10,7 +10,6 @@ namespace ProtocolCraft
     class ServerboundCustomPayloadPacket : public BaseMessage<ServerboundCustomPayloadPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Custom Payload";
 
     private:
@@ -49,16 +48,12 @@ namespace ProtocolCraft
             return Json::Parse(parsed->Serialize());
         }
 
-        DECLARE_CONDITION(ParsedDataNull, GetParsedData() == nullptr);
+        DEFINE_CONDITION(ParsedDataNull, GetParsedData() == nullptr);
 
-        DECLARE_FIELDS(
-            (std::string, Internal::CustomType<std::shared_ptr<PluginObject>, &THIS::ReadParsed, &THIS::WriteParsed, &THIS::SerializeParsed>, Internal::Conditioned<Internal::Vector<unsigned char, void, 0>, &THIS::ParsedDataNull>),
-            (Identifier,  ParsedData,                                                                                                         RawData)
-        );
+        SERIALIZED_FIELD(Identifier, std::string);
+        SERIALIZED_FIELD(ParsedData, Internal::CustomType<std::shared_ptr<PluginObject>, &THIS::ReadParsed, &THIS::WriteParsed, &THIS::SerializeParsed>);
+        SERIALIZED_FIELD(RawData, Internal::Conditioned<Internal::Vector<unsigned char, void, 0>, &THIS::ParsedDataNull>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Identifier);
-        GETTER_SETTER(ParsedData);
-        GETTER_SETTER(RawData);
     };
 } //ProtocolCraft

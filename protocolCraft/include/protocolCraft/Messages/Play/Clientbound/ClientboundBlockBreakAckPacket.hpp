@@ -9,19 +9,14 @@ namespace ProtocolCraft
     class ClientboundBlockBreakAckPacket : public BaseMessage<ClientboundBlockBreakAckPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Break Ack";
 
-        DECLARE_FIELDS(
-            (NetworkPosition, VarInt, VarInt, bool),
-            (Pos,             State,  Action, AllGood)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(State, VarInt);
+        SERIALIZED_FIELD(Action, VarInt);
+        SERIALIZED_FIELD(AllGood, bool);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(State);
-        GETTER_SETTER(Action);
-        GETTER_SETTER(AllGood);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 

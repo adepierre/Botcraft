@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ClientboundContainerAckPacket : public BaseMessage<ClientboundContainerAckPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Container Ack";
 
-        DECLARE_FIELDS(
-            (char,        short, bool),
-            (ContainerId, Uid,   Accepted)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ContainerId, char);
+        SERIALIZED_FIELD(Uid, short);
+        SERIALIZED_FIELD(Accepted, bool);
 
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Uid);
-        GETTER_SETTER(Accepted);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

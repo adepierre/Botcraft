@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundSetBorderCenterPacket : public BaseMessage<ClientboundSetBorderCenterPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Border Center";
 
-        DECLARE_FIELDS(
-            (double,     double),
-            (NewCenterX, NewCenterZ)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(NewCenterX, double);
+        SERIALIZED_FIELD(NewCenterZ, double);
 
-        GETTER_SETTER(NewCenterX);
-        GETTER_SETTER(NewCenterZ);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

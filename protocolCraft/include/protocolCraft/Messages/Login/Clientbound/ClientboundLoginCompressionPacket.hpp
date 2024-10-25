@@ -9,12 +9,8 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Login Compression";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (CompressionThreshold)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(CompressionThreshold, VarInt);
 
-        GETTER_SETTER(CompressionThreshold);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

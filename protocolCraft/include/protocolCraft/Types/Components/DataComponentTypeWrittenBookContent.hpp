@@ -13,17 +13,13 @@ namespace ProtocolCraft
     {
         class DataComponentTypeWrittenBookContent : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (Filterable<std::string>, std::string, VarInt,     std::vector<Filterable<Chat>>, bool),
-                (Title,                   Author,      Generation, Pages,                         Resolved)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Title, Filterable<std::string>);
+            SERIALIZED_FIELD(Author, std::string);
+            SERIALIZED_FIELD(Generation, VarInt);
+            SERIALIZED_FIELD(Pages, std::vector<Filterable<Chat>>);
+            SERIALIZED_FIELD(Resolved, bool);
 
-            GETTER_SETTER(Title);
-            GETTER_SETTER(Author);
-            GETTER_SETTER(Generation);
-            GETTER_SETTER(Pages);
-            GETTER_SETTER(Resolved);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

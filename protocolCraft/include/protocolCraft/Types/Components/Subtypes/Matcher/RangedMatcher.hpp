@@ -8,15 +8,10 @@ namespace ProtocolCraft
     {
         class RangedMatcher : public NetworkType
         {
-            DECLARE_FIELDS(
-                (std::optional<std::string>, std::optional<std::string>),
-                (MinValue,                   MaxValue)
-            );
+            SERIALIZED_FIELD(MinValue, std::optional<std::string>);
+            SERIALIZED_FIELD(MaxValue, std::optional<std::string>);
+
             DECLARE_READ_WRITE_SERIALIZE;
-
-            GETTER_SETTER(MinValue);
-            GETTER_SETTER(MaxValue);
-
         };
     }
 }

@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundSelectTradePacket : public BaseMessage<ServerboundSelectTradePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Select Trade";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (Item)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Item, VarInt);
 
-        GETTER_SETTER(Item);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

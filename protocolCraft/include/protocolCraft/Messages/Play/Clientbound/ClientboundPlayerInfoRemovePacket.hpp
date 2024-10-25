@@ -10,16 +10,11 @@ namespace ProtocolCraft
     class ClientboundPlayerInfoRemovePacket : public BaseMessage<ClientboundPlayerInfoRemovePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Info Remove";
 
-        DECLARE_FIELDS(
-            (std::vector<UUID>),
-            (ProfileIds)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ProfileIds, std::vector<UUID>);
 
-        GETTER_SETTER(ProfileIds);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

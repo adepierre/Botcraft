@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundTickingStepPacket : public BaseMessage<ClientboundTickingStepPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Ticking Step";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (TickingSteps)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TickingSteps, VarInt);
 
-        GETTER_SETTER(TickingSteps);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

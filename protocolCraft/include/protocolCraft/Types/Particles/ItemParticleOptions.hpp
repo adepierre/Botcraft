@@ -8,13 +8,9 @@ namespace ProtocolCraft
 {
     class ItemParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS(
-            (Slot),
-            (ItemStack)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ItemStack, Slot);
 
-        GETTER_SETTER(ItemStack);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

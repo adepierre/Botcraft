@@ -7,18 +7,13 @@ namespace ProtocolCraft
     class ServerboundMovePlayerPacketPos : public BaseMessage<ServerboundMovePlayerPacketPos>
     {
     public:
-
         static constexpr std::string_view packet_name = "Move Player Pos";
 
-        DECLARE_FIELDS(
-            (double, double, double, bool),
-            (X,      Y,      Z,      OnGround)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
+        SERIALIZED_FIELD(OnGround, bool);
 
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

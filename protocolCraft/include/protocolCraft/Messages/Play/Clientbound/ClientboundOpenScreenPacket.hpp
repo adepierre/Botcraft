@@ -8,29 +8,21 @@ namespace ProtocolCraft
     class ClientboundOpenScreenPacket : public BaseMessage<ClientboundOpenScreenPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Open Screen";
 
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_CONDITION(IsHorse, GetType() == "EntityHorse");
-        DECLARE_FIELDS(
-            (unsigned char, std::string, Chat,  unsigned char, Internal::Conditioned<int, &THIS::IsHorse>),
-            (ContainerId,   Type,        Title, NumberOfSlots, Id_)
-        );
+        DEFINE_CONDITION(IsHorse, GetType() == "EntityHorse");
+        SERIALIZED_FIELD(ContainerId, unsigned char);
+        SERIALIZED_FIELD(Type, std::string);
+        SERIALIZED_FIELD(Title, Chat);
+        SERIALIZED_FIELD(NumberOfSlots, unsigned char);
+        SERIALIZED_FIELD(Id_, Internal::Conditioned<int, &THIS::IsHorse>);
 #else
-        DECLARE_FIELDS(
-            (VarInt,      VarInt, Chat),
-            (ContainerId, Type,   Title)
-        );
+        SERIALIZED_FIELD(ContainerId, VarInt);
+        SERIALIZED_FIELD(Type, VarInt);
+        SERIALIZED_FIELD(Title, Chat);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Title);
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
-        GETTER_SETTER(NumberOfSlots);
-        GETTER_SETTER(Id_);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ClientboundSetBorderLerpSizePacket : public BaseMessage<ClientboundSetBorderLerpSizePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Border Lerp Size";
 
-        DECLARE_FIELDS(
-            (double, double, VarLong),
-            (OldSize, NewSize, LerpTime)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(OldSize, double);
+        SERIALIZED_FIELD(NewSize, double);
+        SERIALIZED_FIELD(LerpTime, VarLong);
 
-        GETTER_SETTER(OldSize);
-        GETTER_SETTER(NewSize);
-        GETTER_SETTER(LerpTime);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

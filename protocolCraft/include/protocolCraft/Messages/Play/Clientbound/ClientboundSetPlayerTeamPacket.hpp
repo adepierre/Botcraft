@@ -10,34 +10,32 @@ namespace ProtocolCraft
     class ClientboundSetPlayerTeamPacket : public BaseMessage<ClientboundSetPlayerTeamPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Player Team";
 
-        DECLARE_CONDITION(Method02, GetMethod() == 0 || GetMethod() == 2);
-        DECLARE_CONDITION(Method034, GetMethod() == 0 || GetMethod() == 3 || GetMethod() == 4);
+        DEFINE_CONDITION(Method02, GetMethod() == 0 || GetMethod() == 2);
+        DEFINE_CONDITION(Method034, GetMethod() == 0 || GetMethod() == 3 || GetMethod() == 4);
 
+        SERIALIZED_FIELD(Name_, std::string);
+        SERIALIZED_FIELD(Method, char);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (std::string, char,   Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<char, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<char, &THIS::Method02>, Internal::Conditioned<std::vector<std::string>, &THIS::Method034>),
-            (Name_,       Method, DisplayName,                                         PlayerPrefix,                                        PlayerSuffix,                                        Options,                                      NametagVisibility,                                   CollisionRule,                                       Color,                                        Players)
-        );
+        SERIALIZED_FIELD(DisplayName, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerPrefix, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerSuffix, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(Options, Internal::Conditioned<char, &THIS::Method02>);
+        SERIALIZED_FIELD(NametagVisibility, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(CollisionRule, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(Color, Internal::Conditioned<char, &THIS::Method02>);
 #else
-        DECLARE_FIELDS(
-            (std::string, char,   Internal::Conditioned<Chat, &THIS::Method02>, Internal::Conditioned<char, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<std::string, &THIS::Method02>, Internal::Conditioned<VarInt, &THIS::Method02>, Internal::Conditioned<Chat, &THIS::Method02>, Internal::Conditioned<Chat, &THIS::Method02>, Internal::Conditioned<std::vector<std::string>, &THIS::Method034>),
-            (Name_,       Method, DisplayName,                                  Options,                                      NametagVisibility,                                   CollisionRule,                                       Color,                                          PlayerPrefix,                                 PlayerSuffix,                                 Players)
-        );
+        SERIALIZED_FIELD(DisplayName, Internal::Conditioned<Chat, &THIS::Method02>);
+        SERIALIZED_FIELD(Options, Internal::Conditioned<char, &THIS::Method02>);
+        SERIALIZED_FIELD(NametagVisibility, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(CollisionRule, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(Color, Internal::Conditioned<VarInt, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerPrefix, Internal::Conditioned<Chat, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerSuffix, Internal::Conditioned<Chat, &THIS::Method02>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Players, Internal::Conditioned<std::vector<std::string>, &THIS::Method034>);
 
-        GETTER_SETTER(Name_);
-        GETTER_SETTER(Method);
-        GETTER_SETTER(DisplayName);
-        GETTER_SETTER(PlayerPrefix);
-        GETTER_SETTER(PlayerSuffix);
-        GETTER_SETTER(Options);
-        GETTER_SETTER(NametagVisibility);
-        GETTER_SETTER(CollisionRule);
-        GETTER_SETTER(Color);
-        GETTER_SETTER(Players);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

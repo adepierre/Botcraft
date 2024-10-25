@@ -10,30 +10,19 @@ namespace ProtocolCraft
 {
     class EntityModifierData : public NetworkType
     {
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (UUID, double, char),
-            (Uuid, Amount, Operation)
-        );
-#elif PROTOCOL_VERSION < 767 /* < 1.20.6 */
-        DECLARE_FIELDS(
-            (UUID, double,   VarInt),
-            (Uuid,   Amount, Operation)
-        );
-#else
-        DECLARE_FIELDS(
-            (Identifier, double, VarInt),
-            (Id,         Amount, Operation)
-        );
-#endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 767 /* < 1.21 */
-        GETTER_SETTER(Uuid);
+#if PROTOCOL_VERSION < 767 /* < 1.20.6 */
+        SERIALIZED_FIELD(Uuid, UUID);
 #else
-        GETTER_SETTER(Id);
+        SERIALIZED_FIELD(Id, Identifier);
 #endif
-        GETTER_SETTER(Amount);
-        GETTER_SETTER(Operation);
+        SERIALIZED_FIELD(Amount, double);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SERIALIZED_FIELD(Operation, char);
+#else
+        SERIALIZED_FIELD(Operation, VarInt);
+#endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

@@ -7,15 +7,11 @@ namespace ProtocolCraft
 {
     class ProfilePublicKey : public NetworkType
     {
-        DECLARE_FIELDS(
-            (long long int, std::vector<unsigned char>, std::vector<unsigned char>),
-            (Timestamp,     Key,                        Signature)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Timestamp, long long int);
+        SERIALIZED_FIELD(Key, std::vector<unsigned char>);
+        SERIALIZED_FIELD(Signature, std::vector<unsigned char>);
 
-        GETTER_SETTER(Timestamp);
-        GETTER_SETTER(Key);
-        GETTER_SETTER(Signature);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

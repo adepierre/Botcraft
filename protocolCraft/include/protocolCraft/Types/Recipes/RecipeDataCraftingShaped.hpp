@@ -11,6 +11,7 @@ namespace ProtocolCraft
     class RecipeDataCraftingShaped : public RecipeData
     {
     private:
+        using THIS = RecipeDataCraftingShaped;
         std::vector<Ingredient> ReadIngredients(ReadIterator& iter, size_t& length) const
         {
             std::vector<Ingredient> ingredients(GetWidth() * GetHeight());
@@ -30,40 +31,25 @@ namespace ProtocolCraft
             }
         }
 
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, std::string, Internal::CustomType<std::vector<Ingredient>, &RecipeDataCraftingShaped::ReadIngredients, &RecipeDataCraftingShaped::WriteIngredients>, Slot),
-            (Width,  Height, Group,       Ingredients,                                                                                                                            Result)
-        );
-#elif PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, std::string, VarInt,              Internal::CustomType<std::vector<Ingredient>, &RecipeDataCraftingShaped::ReadIngredients, &RecipeDataCraftingShaped::WriteIngredients>, Slot),
-            (Width,  Height, Group,       CookingBookCategory, Ingredients,                                                                                                                            Result)
-        );
-#elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS(
-            (VarInt, VarInt, std::string, VarInt,              Internal::CustomType<std::vector<Ingredient>, &RecipeDataCraftingShaped::ReadIngredients, &RecipeDataCraftingShaped::WriteIngredients>, Slot,   bool),
-            (Width,  Height, Group,       CookingBookCategory, Ingredients,                                                                                                                            Result, ShowNotification)
-        );
-#else
-        DECLARE_FIELDS(
-            (std::string, VarInt,              VarInt, VarInt, Internal::CustomType<std::vector<Ingredient>, &RecipeDataCraftingShaped::ReadIngredients, &RecipeDataCraftingShaped::WriteIngredients>, Slot,   bool),
-            (Group,       CookingBookCategory, Width,  Height, Ingredients,                                                                                                                            Result, ShowNotification)
-        );
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
+        SERIALIZED_FIELD(Width, VarInt);
+        SERIALIZED_FIELD(Height, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Width);
-        GETTER_SETTER(Height);
-        GETTER_SETTER(Group);
-        GETTER_SETTER(Ingredients);
-        GETTER_SETTER(Result);
+        SERIALIZED_FIELD(Group, std::string);
 #if PROTOCOL_VERSION > 760 /* > 1.19.2*/
-        GETTER_SETTER(CookingBookCategory);
+        SERIALIZED_FIELD(CookingBookCategory, VarInt);
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        SERIALIZED_FIELD(Width, VarInt);
+        SERIALIZED_FIELD(Height, VarInt);
+#endif
+        SERIALIZED_FIELD(Ingredients, Internal::CustomType<std::vector<Ingredient>, &THIS::ReadIngredients, &THIS::WriteIngredients>);
+        SERIALIZED_FIELD(Result, Slot);
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-        GETTER_SETTER(ShowNotification);
+        SERIALIZED_FIELD(ShowNotification, bool);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

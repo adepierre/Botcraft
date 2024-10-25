@@ -8,15 +8,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeJukeboxPlayable : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt,   VarInt,  bool),
-                (Material, Pattern, ShowInTooltip)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Material, VarInt);
+            SERIALIZED_FIELD(Pattern, VarInt);
+            SERIALIZED_FIELD(ShowInTooltip, bool);
 
-            GETTER_SETTER(Material);
-            GETTER_SETTER(Pattern);
-            GETTER_SETTER(ShowInTooltip);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

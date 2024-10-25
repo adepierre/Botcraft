@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundRemoveEntityPacket : public BaseMessage<ClientboundRemoveEntityPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Remove Entity";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (EntityId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
 
-        GETTER_SETTER(EntityId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

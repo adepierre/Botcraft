@@ -7,14 +7,10 @@ namespace ProtocolCraft
 {
     class ChunkPos : public NetworkType
     {
-        DECLARE_FIELDS(
-            (int, int),
-            (Z,   X)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Z, int);
+        SERIALIZED_FIELD(X, int);
 
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

@@ -13,13 +13,9 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Select Known Packs";
 
-        DECLARE_FIELDS(
-            (std::vector<KnownPack>),
-            (KnownPacks)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(KnownPacks, std::vector<KnownPack>);
 
-        GETTER_SETTER(KnownPacks);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

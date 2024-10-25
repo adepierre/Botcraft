@@ -8,10 +8,9 @@ namespace ProtocolCraft
     class ClientboundPlayerCombatEnterPacket : public BaseMessage<ClientboundPlayerCombatEnterPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Combat Enter";
 
-        DECLARE_EMPTY;
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

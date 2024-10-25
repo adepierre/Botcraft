@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeMapItemColor : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (int),
-                (Rgb)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Rgb, int);
 
-            GETTER_SETTER(Rgb);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

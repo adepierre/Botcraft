@@ -11,14 +11,10 @@ namespace ProtocolCraft
 {
     class PackedRegistryEntry : public NetworkType
     {
-        DECLARE_FIELDS(
-            (Identifier, std::optional<NBT::UnnamedValue>),
-            (Id,         Data)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id, Identifier);
+        SERIALIZED_FIELD(Data, std::optional<NBT::UnnamedValue>);
 
-        GETTER_SETTER(Id);
-        GETTER_SETTER(Data);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

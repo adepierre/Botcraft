@@ -9,15 +9,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeListBeehiveBlockEntityOccupant : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (DataComponentTypeCustomData, VarInt,      VarInt),
-                (EntityData,                  TicksInHive, MinTicksInHive)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(EntityData, DataComponentTypeCustomData);
+            SERIALIZED_FIELD(TicksInHive, VarInt);
+            SERIALIZED_FIELD(MinTicksInHive, VarInt);
 
-            GETTER_SETTER(EntityData);
-            GETTER_SETTER(TicksInHive);
-            GETTER_SETTER(MinTicksInHive);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

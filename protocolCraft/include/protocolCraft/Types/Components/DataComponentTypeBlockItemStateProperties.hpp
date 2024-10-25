@@ -10,13 +10,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeBlockItemStateProperties : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::map<std::string, std::string>),
-                (Properties)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Properties, std::map<std::string, std::string>);
 
-            GETTER_SETTER(Properties);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

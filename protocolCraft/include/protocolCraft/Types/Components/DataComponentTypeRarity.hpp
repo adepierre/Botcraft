@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeRarity : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (RarityId)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(RarityId, VarInt);
 
-            GETTER_SETTER(RarityId);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

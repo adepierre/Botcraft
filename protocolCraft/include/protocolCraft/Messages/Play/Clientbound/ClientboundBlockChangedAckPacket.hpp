@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundBlockChangedAckPacket : public BaseMessage<ClientboundBlockChangedAckPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Changed Ack";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (Sequence)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Sequence, VarInt);
 
-        GETTER_SETTER(Sequence);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 

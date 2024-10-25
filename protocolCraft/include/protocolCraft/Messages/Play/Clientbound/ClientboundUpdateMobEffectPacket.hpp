@@ -1,8 +1,10 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
 #include "protocolCraft/Types/NBT/NBT.hpp"
+
+#include <optional>
 #endif
 
 namespace ProtocolCraft
@@ -10,39 +12,25 @@ namespace ProtocolCraft
     class ClientboundUpdateMobEffectPacket : public BaseMessage<ClientboundUpdateMobEffectPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Update Mob Effect";
 
+        SERIALIZED_FIELD(EntityId, VarInt);
 #if PROTOCOL_VERSION < 758 /* < 1.18.2 */
-        DECLARE_FIELDS(
-            (VarInt,   char,     char,            VarInt,              char),
-            (EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags)
-        );
-#elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (VarInt,   VarInt,   char,            VarInt,              char),
-            (EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags)
-        );
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (VarInt,   VarInt,   char,            VarInt,              char,  std::optional<NBT::UnnamedValue>),
-            (EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags, FactorData)
-        );
+        SERIALIZED_FIELD(EffectId, char);
 #else
-        DECLARE_FIELDS(
-            (VarInt,   VarInt,   VarInt,          VarInt,              char),
-            (EntityId, EffectId, EffectAmplifier, EffectDurationTicks, Flags)
-        );
+        SERIALIZED_FIELD(EffectId, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(EffectId);
-        GETTER_SETTER(EffectAmplifier);
-        GETTER_SETTER(EffectDurationTicks);
-        GETTER_SETTER(Flags);
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SERIALIZED_FIELD(EffectAmplifier, char);
+#else
+        SERIALIZED_FIELD(EffectAmplifier, VarInt);
+#endif
+        SERIALIZED_FIELD(EffectDurationTicks, VarInt);
+        SERIALIZED_FIELD(Flags, char);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        GETTER_SETTER(FactorData);
+        SERIALIZED_FIELD(FactorData, std::optional<NBT::UnnamedValue>);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

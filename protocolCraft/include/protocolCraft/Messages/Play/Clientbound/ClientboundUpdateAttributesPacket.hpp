@@ -10,23 +10,15 @@ namespace ProtocolCraft
     class ClientboundUpdateAttributesPacket : public BaseMessage<ClientboundUpdateAttributesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Update Attributes";
 
+        SERIALIZED_FIELD(EntityId, VarInt);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        DECLARE_FIELDS(
-            (VarInt,   Internal::Vector<EntityProperty, int>),
-            (EntityId, Attributes)
-        );
+        SERIALIZED_FIELD(Attributes, Internal::Vector<EntityProperty, int>);
 #else
-        DECLARE_FIELDS(
-            (VarInt,   std::vector<EntityProperty>),
-            (EntityId, Attributes)
-        );
+        SERIALIZED_FIELD(Attributes, std::vector<EntityProperty>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(Attributes);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

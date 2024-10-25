@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundPickItemPacket : public BaseMessage<ServerboundPickItemPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Pick Item";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (Slot)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Slot, VarInt);
 
-        GETTER_SETTER(Slot);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -8,14 +8,10 @@ namespace ProtocolCraft
     {
         class SuspiciousStewEntry : public NetworkType
         {
-            DECLARE_FIELDS(
-                (VarInt, VarInt),
-                (Effect, Duration)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Effect, VarInt);
+            SERIALIZED_FIELD(Duration, VarInt);
 
-            GETTER_SETTER(Effect);
-            GETTER_SETTER(Duration);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

@@ -9,13 +9,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeResourceLocation : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (Identifier),
-                (Identifier)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Identifier, ProtocolCraft::Identifier);
 
-            GETTER_SETTER(Identifier);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ClientboundSetTitlesAnimationPacket : public BaseMessage<ClientboundSetTitlesAnimationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Titles Animation";
 
-        DECLARE_FIELDS(
-            (int, int, int),
-            (FadeIn, Stay, FadeOut)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(FadeIn, int);
+        SERIALIZED_FIELD(Stay, int);
+        SERIALIZED_FIELD(FadeOut, int);
 
-        GETTER_SETTER(FadeIn);
-        GETTER_SETTER(Stay);
-        GETTER_SETTER(FadeOut);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

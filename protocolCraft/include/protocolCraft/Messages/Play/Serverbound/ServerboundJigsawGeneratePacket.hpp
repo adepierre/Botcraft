@@ -9,18 +9,13 @@ namespace ProtocolCraft
     class ServerboundJigsawGeneratePacket : public BaseMessage<ServerboundJigsawGeneratePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Jigsaw Generate";
 
-        DECLARE_FIELDS(
-            (NetworkPosition, VarInt, bool),
-            (Pos,             Levels, KeepJigsaws)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Levels, VarInt);
+        SERIALIZED_FIELD(KeepJigsaws, bool);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Levels);
-        GETTER_SETTER(KeepJigsaws);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

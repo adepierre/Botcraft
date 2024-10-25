@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ClientboundAddVibrationSignalPacket : public BaseMessage<ClientboundAddVibrationSignalPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Add Vibration Signal";
 
-        DECLARE_FIELDS(
-            (VibrationPath),
-            (VibrationPath)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(VibrationPath, ProtocolCraft::VibrationPath);
 
-        GETTER_SETTER(VibrationPath);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

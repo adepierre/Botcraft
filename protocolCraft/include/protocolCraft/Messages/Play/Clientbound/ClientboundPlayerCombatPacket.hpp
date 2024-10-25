@@ -9,24 +9,19 @@ namespace ProtocolCraft
     class ClientboundPlayerCombatPacket : public BaseMessage<ClientboundPlayerCombatPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Combat";
 
-        DECLARE_CONDITION(Event1, GetEvent() == 1);
-        DECLARE_CONDITION(Event12, GetEvent() == 1 || GetEvent() == 2);
-        DECLARE_CONDITION(Event2, GetEvent() == 2);
+        DEFINE_CONDITION(Event1, GetEvent() == 1);
+        DEFINE_CONDITION(Event12, GetEvent() == 1 || GetEvent() == 2);
+        DEFINE_CONDITION(Event2, GetEvent() == 2);
 
-        DECLARE_FIELDS(
-            (VarInt, Internal::Conditioned<VarInt, &THIS::Event1>, Internal::Conditioned<VarInt, &THIS::Event2>, Internal::Conditioned<int, &THIS::Event12>, Internal::Conditioned<Chat, &THIS::Event2>),
-            (Event,  Duration,                                     PlayerId,                                     KillerId,                                   Message)
-        );
+        SERIALIZED_FIELD(Event, VarInt);
+        SERIALIZED_FIELD(Duration, Internal::Conditioned<VarInt, &THIS::Event1>);
+        SERIALIZED_FIELD(PlayerId, Internal::Conditioned<VarInt, &THIS::Event2>);
+        SERIALIZED_FIELD(KillerId, Internal::Conditioned<int, &THIS::Event12>);
+        SERIALIZED_FIELD(Message, Internal::Conditioned<Chat, &THIS::Event2>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Event);
-        GETTER_SETTER(Duration);
-        GETTER_SETTER(KillerId);
-        GETTER_SETTER(PlayerId);
-        GETTER_SETTER(Message);
     };
 } //ProtocolCraft
 #endif

@@ -7,17 +7,12 @@ namespace ProtocolCraft
     class ClientboundSetExperiencePacket : public BaseMessage<ClientboundSetExperiencePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Experience";
 
-        DECLARE_FIELDS(
-            (float,              VarInt,          VarInt),
-            (ExperienceProgress, ExperienceLevel, TotalExperience)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ExperienceProgress, float);
+        SERIALIZED_FIELD(ExperienceLevel, VarInt);
+        SERIALIZED_FIELD(TotalExperience, VarInt);
 
-        GETTER_SETTER(ExperienceProgress);
-        GETTER_SETTER(ExperienceLevel);
-        GETTER_SETTER(TotalExperience);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

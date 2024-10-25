@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundResourcePackPopConfigurationPacket : public BaseMessage<ClientboundResourcePackPopConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Resource Pack Pop (Configuration)";
 
-        DECLARE_FIELDS(
-            (UUID),
-            (Uuid)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Uuid, UUID);
 
-        GETTER_SETTER(Uuid);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

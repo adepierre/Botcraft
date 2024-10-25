@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetBorderSizePacket : public BaseMessage<ClientboundSetBorderSizePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Border Size";
 
-        DECLARE_FIELDS(
-            (double),
-            (Size)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Size, double);
 
-        GETTER_SETTER(Size);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -8,14 +8,10 @@ namespace ProtocolCraft
     {
         class BannerPatternLayer : public NetworkType
         {
-            DECLARE_FIELDS(
-                (VarInt, VarInt),
-                (Pattern, Color)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Pattern, VarInt);
+            SERIALIZED_FIELD(Color, VarInt);
 
-            GETTER_SETTER(Pattern);
-            GETTER_SETTER(Color);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

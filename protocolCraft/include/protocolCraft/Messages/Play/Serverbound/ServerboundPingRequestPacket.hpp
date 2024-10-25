@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundPingRequestPacket : public BaseMessage<ServerboundPingRequestPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Ping Request";
 
-        DECLARE_FIELDS(
-            (long long int),
-            (Time)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Time, long long int);
 
-        GETTER_SETTER(Time);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

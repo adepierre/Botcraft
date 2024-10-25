@@ -18,27 +18,20 @@ namespace ProtocolCraft
     class ClientboundRecipePacket : public BaseMessage<ClientboundRecipePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Recipe";
 
-        DECLARE_CONDITION(IsInit, GetState() == RecipeState::Init);
+        DEFINE_CONDITION(IsInit, GetState() == RecipeState::Init);
 
+        SERIALIZED_FIELD(State, Internal::DiffType<RecipeState, VarInt>);
+        SERIALIZED_FIELD(BookSettings, RecipeBookSettings);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (Internal::DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<VarInt>, Internal::Conditioned<std::vector<VarInt>, &THIS::IsInit>),
-            (State,                                   BookSettings,       Recipes,             ToHighlight)
-        );
+        SERIALIZED_FIELD(Recipes, std::vector<VarInt>);
+        SERIALIZED_FIELD(ToHighlight, Internal::Conditioned<std::vector<VarInt>, &THIS::IsInit>);
 #else
-        DECLARE_FIELDS(
-            (Internal::DiffType<RecipeState, VarInt>, RecipeBookSettings, std::vector<Identifier>, Internal::Conditioned<std::vector<Identifier>, &THIS::IsInit>),
-            (State,                                   BookSettings,       Recipes,                 ToHighlight)
-        );
+        SERIALIZED_FIELD(Recipes, std::vector<Identifier>);
+        SERIALIZED_FIELD(ToHighlight, Internal::Conditioned<std::vector<Identifier>, &THIS::IsInit>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(State);
-        GETTER_SETTER(BookSettings);
-        GETTER_SETTER(Recipes);
-        GETTER_SETTER(ToHighlight);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

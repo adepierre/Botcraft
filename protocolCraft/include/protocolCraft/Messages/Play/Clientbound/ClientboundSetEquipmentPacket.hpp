@@ -9,7 +9,6 @@ namespace ProtocolCraft
     class ClientboundSetEquipmentPacket : public BaseMessage<ClientboundSetEquipmentPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Equipment";
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
@@ -40,24 +39,13 @@ namespace ProtocolCraft
         }
 #endif
 
+        SERIALIZED_FIELD(EntityId, VarInt);
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-        DECLARE_FIELDS(
-            (VarInt,   std::pair<VarInt, Slot>),
-            (EntityId, Slot)
-        );
+        SERIALIZED_FIELD(Slot, std::pair<VarInt, ProtocolCraft::Slot>);
 #else
-        DECLARE_FIELDS(
-            (VarInt,   Internal::CustomType<std::map<unsigned char, Slot>, &THIS::ReadSlots, &THIS::WriteSlots>),
-            (EntityId, Slots)
-        );
+        SERIALIZED_FIELD(Slots, Internal::CustomType<std::map<unsigned char, Slot>, &THIS::ReadSlots, &THIS::WriteSlots>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(EntityId);
-#if PROTOCOL_VERSION < 735 /* < 1.16 */
-        GETTER_SETTER(Slot);
-#else
-        GETTER_SETTER(Slots);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

@@ -10,17 +10,12 @@ namespace ProtocolCraft
     class ClientboundDebugSamplePacket : public BaseMessage<ClientboundDebugSamplePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Debug Sample";
 
-        DECLARE_FIELDS(
-            (std::vector<long long int>, VarInt),
-            (Sample, DebugSampleType)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Sample, std::vector<long long int>);
+        SERIALIZED_FIELD(DebugSampleType, VarInt);
 
-        GETTER_SETTER(Sample);
-        GETTER_SETTER(DebugSampleType);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

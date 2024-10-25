@@ -9,13 +9,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeDefault : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (NBT::UnnamedValue),
-                (Tag)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Tag, NBT::UnnamedValue);
 
-            GETTER_SETTER(Tag);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

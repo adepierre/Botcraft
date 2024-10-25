@@ -8,15 +8,11 @@ namespace ProtocolCraft
 {
     class ChatTypeBoundNetwork : public NetworkType
     {
-        DECLARE_FIELDS(
-            (VarInt,   Chat, std::optional<Chat>),
-            (ChatType, Name, TargetName)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ChatType, VarInt);
+        SERIALIZED_FIELD(Name, Chat);
+        SERIALIZED_FIELD(TargetName, std::optional<Chat>);
 
-        GETTER_SETTER(ChatType);
-        GETTER_SETTER(Name);
-        GETTER_SETTER(TargetName);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

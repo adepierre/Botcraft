@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundPongResponsePacket : public BaseMessage<ClientboundPongResponsePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Pong Response";
 
-        DECLARE_FIELDS(
-            (int),
-            (Id_)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, int);
 
-        GETTER_SETTER(Id_);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

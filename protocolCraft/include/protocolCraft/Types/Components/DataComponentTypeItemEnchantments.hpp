@@ -10,14 +10,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeItemEnchantments : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::map<VarInt, VarInt>, bool),
-                (Enchantments,             ShowInTooltip)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Enchantments, std::map<VarInt, VarInt>);
+            SERIALIZED_FIELD(ShowInTooltip, bool);
 
-            GETTER_SETTER(Enchantments);
-            GETTER_SETTER(ShowInTooltip);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

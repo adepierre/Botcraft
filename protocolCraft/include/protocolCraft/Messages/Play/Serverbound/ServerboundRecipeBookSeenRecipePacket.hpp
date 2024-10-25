@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ServerboundRecipeBookSeenRecipePacket : public BaseMessage<ServerboundRecipeBookSeenRecipePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Recipe Book Seen Recipe";
 
-        DECLARE_FIELDS(
-            (Identifier),
-            (Recipe)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Recipe, Identifier);
 
-        GETTER_SETTER(Recipe);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

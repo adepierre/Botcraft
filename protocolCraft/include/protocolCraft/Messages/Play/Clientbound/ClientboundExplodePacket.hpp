@@ -17,7 +17,6 @@ namespace ProtocolCraft
     class ClientboundExplodePacket : public BaseMessage<ClientboundExplodePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Explode";
 
     private:
@@ -25,9 +24,9 @@ namespace ProtocolCraft
         {
             std::vector<NetworkPosition> to_blow(
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            ReadData<int>(iter, length)
+                ReadData<int>(iter, length)
 #else
-            ReadData<VarInt>(iter, length)
+                ReadData<VarInt>(iter, length)
 #endif
             );
 
@@ -57,43 +56,31 @@ namespace ProtocolCraft
             }
         }
 
-
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (float, float, float, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float),
-            (X,     Y,     Z,     Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ)
-        );
-#elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_FIELDS(
-            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float),
-            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ)
-        );
-#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float,      VarInt,           Particle,                Particle,                SoundEvent),
-            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
-        );
+        SERIALIZED_FIELD(X, float);
+        SERIALIZED_FIELD(Y, float);
+        SERIALIZED_FIELD(Z, float);
 #else
-        DECLARE_FIELDS(
-            (double, double, double, float, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>, float,      float,      float,      VarInt,           Particle,                Particle,                Holder<SoundEvent>),
-            (X,      Y,      Z,      Power, ToBlow,                                                                                    KnockbackX, KnockbackY, KnockbackZ, BlockInteraction, SmallExplosionParticles, LargeExplosionParticles, ExplosionSound)
-        );
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(Power);
-        GETTER_SETTER(ToBlow);
-        GETTER_SETTER(KnockbackX);
-        GETTER_SETTER(KnockbackY);
-        GETTER_SETTER(KnockbackZ);
+        SERIALIZED_FIELD(Power, float);
+        SERIALIZED_FIELD(ToBlow, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>);
+        SERIALIZED_FIELD(KnockbackX, float);
+        SERIALIZED_FIELD(KnockbackY, float);
+        SERIALIZED_FIELD(KnockbackZ, float);
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        GETTER_SETTER(BlockInteraction);
-        GETTER_SETTER(SmallExplosionParticles);
-        GETTER_SETTER(LargeExplosionParticles);
-        GETTER_SETTER(ExplosionSound);
+        SERIALIZED_FIELD(BlockInteraction, VarInt);
+        SERIALIZED_FIELD(SmallExplosionParticles, Particle);
+        SERIALIZED_FIELD(LargeExplosionParticles, Particle);
 #endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SERIALIZED_FIELD(ExplosionSound, SoundEvent);
+#elif PROTOCOL_VERSION > 764 /* > 1.20.2 */
+        SERIALIZED_FIELD(ExplosionSound, Holder<SoundEvent>);
+#endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

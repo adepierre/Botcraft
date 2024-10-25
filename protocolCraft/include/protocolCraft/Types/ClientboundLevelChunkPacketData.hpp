@@ -9,15 +9,11 @@ namespace ProtocolCraft
 {
     class ClientboundLevelChunkPacketData : public NetworkType
     {
-        DECLARE_FIELDS(
-            (NBT::UnnamedValue, std::vector<unsigned char>, std::vector<BlockEntityInfo>),
-            (Heightmaps,        Buffer,                     BlockEntitiesData)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Heightmaps, NBT::UnnamedValue);
+        SERIALIZED_FIELD(Buffer, std::vector<unsigned char>);
+        SERIALIZED_FIELD(BlockEntitiesData, std::vector<BlockEntityInfo>);
 
-        GETTER_SETTER(Heightmaps);
-        GETTER_SETTER(Buffer);
-        GETTER_SETTER(BlockEntitiesData);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

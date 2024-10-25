@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundCustomChatCompletionsPacket : public BaseMessage<ClientboundCustomChatCompletionsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Custom Chat Completion Packet";
 
-        DECLARE_FIELDS(
-            (VarInt, std::vector<std::string>),
-            (Action, Entries)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Action, VarInt);
+        SERIALIZED_FIELD(Entries, std::vector<std::string>);
 
-        GETTER_SETTER(Action);
-        GETTER_SETTER(Entries);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

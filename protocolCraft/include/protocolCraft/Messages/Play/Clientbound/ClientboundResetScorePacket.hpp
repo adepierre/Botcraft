@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundResetScorePacket : public BaseMessage<ClientboundResetScorePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Reset Score";
 
-        DECLARE_FIELDS(
-            (std::string, std::optional<std::string>),
-            (Owner,       ObjectiveName)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Owner, std::string);
+        SERIALIZED_FIELD(ObjectiveName, std::optional<std::string>);
 
-        GETTER_SETTER(Owner);
-        GETTER_SETTER(ObjectiveName);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

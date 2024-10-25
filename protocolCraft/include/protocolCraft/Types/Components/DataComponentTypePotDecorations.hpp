@@ -10,13 +10,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypePotDecorations : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<VarInt>),
-                (Sides)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Sides, std::vector<VarInt>);
 
-            GETTER_SETTER(Sides);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

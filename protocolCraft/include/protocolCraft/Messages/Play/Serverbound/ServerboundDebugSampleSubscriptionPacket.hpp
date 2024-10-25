@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundDebugSampleSubscriptionPacket : public BaseMessage<ServerboundDebugSampleSubscriptionPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Debug Sample Subscription";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (SampleType)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SampleType, VarInt);
 
-        GETTER_SETTER(SampleType);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

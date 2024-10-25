@@ -5,7 +5,6 @@
 #include "protocolCraft/Types/Identifier.hpp"
 
 #include <optional>
-#include <vector>
 
 namespace ProtocolCraft
 {
@@ -14,14 +13,10 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Cookie Response (Configuration)";
 
-        DECLARE_FIELDS(
-            (Identifier, std::optional<Internal::Vector<unsigned char, void, 0>>),
-            (Key,        Payload)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Key, Identifier);
+        SERIALIZED_FIELD(Payload, std::optional<Internal::Vector<unsigned char, void, 0>>);
 
-        GETTER_SETTER(Key);
-        GETTER_SETTER(Payload);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

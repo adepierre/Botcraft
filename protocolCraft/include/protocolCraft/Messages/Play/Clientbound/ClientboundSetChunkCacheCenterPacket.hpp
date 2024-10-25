@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundSetChunkCacheCenterPacket : public BaseMessage<ClientboundSetChunkCacheCenterPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Chunk Cache Center";
 
-        DECLARE_FIELDS(
-            (VarInt, VarInt),
-            (X,      Z)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(X, VarInt);
+        SERIALIZED_FIELD(Z, VarInt);
 
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

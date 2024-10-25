@@ -7,15 +7,11 @@ namespace ProtocolCraft
 {
     class Record : public NetworkType
     {
-        DECLARE_FIELDS(
-            (unsigned char, unsigned char, VarInt),
-            (HorizontalPosition, YCoordinate, BlockId)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(HorizontalPosition, unsigned char);
+        SERIALIZED_FIELD(YCoordinate, unsigned char);
+        SERIALIZED_FIELD(BlockId, VarInt);
 
-        GETTER_SETTER(HorizontalPosition);
-        GETTER_SETTER(YCoordinate);
-        GETTER_SETTER(BlockId);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

@@ -10,16 +10,11 @@ namespace ProtocolCraft
     class ClientboundChunksBiomesPacket : public BaseMessage<ClientboundChunksBiomesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chunks Biome";
 
-        DECLARE_FIELDS(
-            (std::vector<ChunkBiomeData>),
-            (ChunkBiomeData)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ChunkBiomeData, std::vector<ProtocolCraft::ChunkBiomeData>);
 
-        GETTER_SETTER(ChunkBiomeData);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

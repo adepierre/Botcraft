@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundChangeDifficultyPacket : public BaseMessage<ServerboundChangeDifficultyPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Change Difficulty";
 
-        DECLARE_FIELDS(
-            (char),
-            (Difficulty)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Difficulty, char);
 
-        GETTER_SETTER(Difficulty);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -8,27 +8,15 @@ namespace ProtocolCraft
     class ServerboundPlayerActionPacket : public BaseMessage<ServerboundPlayerActionPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Action";
 
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (VarInt, NetworkPosition, char),
-            (Action, Pos,             Direction)
-        );
-#else
-        DECLARE_FIELDS(
-            (VarInt, NetworkPosition, char,      VarInt),
-            (Action, Pos,             Direction, Sequence)
-        );
-#endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Action);
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Direction);
+        SERIALIZED_FIELD(Action, VarInt);
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Direction, char);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        GETTER_SETTER(Sequence);
+        SERIALIZED_FIELD(Sequence, VarInt);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

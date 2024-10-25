@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ServerboundSeenAdvancementsPacket : public BaseMessage<ServerboundSeenAdvancementsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Seen Advancement";
 
-        DECLARE_CONDITION(HasTab, GetAction() == 0);
+        DEFINE_CONDITION(HasTab, GetAction() == 0);
 
-        DECLARE_FIELDS(
-            (VarInt, Internal::Conditioned<Identifier, &THIS::HasTab>),
-            (Action, Tab)
-        );
+        SERIALIZED_FIELD(Action, VarInt);
+        SERIALIZED_FIELD(Tab, Internal::Conditioned<Identifier, &THIS::HasTab>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Action);
-        GETTER_SETTER(Tab);
     };
 } //ProtocolCraft

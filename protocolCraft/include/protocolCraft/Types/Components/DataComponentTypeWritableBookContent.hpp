@@ -12,13 +12,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeWritableBookContent : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<Filterable<std::string>>),
-                (Pages)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Pages, std::vector<Filterable<std::string>>);
 
-            GETTER_SETTER(Pages);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

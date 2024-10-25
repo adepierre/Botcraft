@@ -8,26 +8,21 @@ namespace ProtocolCraft
     class ClientboundBossEventPacket : public BaseMessage<ClientboundBossEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Boss Event";
 
-        DECLARE_CONDITION(Op02, GetOperation() == 0 || GetOperation() == 2);
-        DECLARE_CONDITION(Op03, GetOperation() == 0 || GetOperation() == 3);
-        DECLARE_CONDITION(Op04, GetOperation() == 0 || GetOperation() == 4);
-        DECLARE_CONDITION(Op05, GetOperation() == 0 || GetOperation() == 5);
+        DEFINE_CONDITION(Op02, GetOperation() == 0 || GetOperation() == 2);
+        DEFINE_CONDITION(Op03, GetOperation() == 0 || GetOperation() == 3);
+        DEFINE_CONDITION(Op04, GetOperation() == 0 || GetOperation() == 4);
+        DEFINE_CONDITION(Op05, GetOperation() == 0 || GetOperation() == 5);
 
-        DECLARE_FIELDS(
-            (UUID, VarInt,    Internal::Conditioned<Chat, &THIS::Op03>, Internal::Conditioned<float, &THIS::Op02>, Internal::Conditioned<VarInt, &THIS::Op04>, Internal::Conditioned<VarInt, &THIS::Op04>, Internal::Conditioned<unsigned char, &THIS::Op05>),
-            (Id_,  Operation, Name_,                                    Pct,                                       Color,                                      Overlay,                                    Flags)
-        );
+        SERIALIZED_FIELD(Id_, UUID);
+        SERIALIZED_FIELD(Operation, VarInt);
+        SERIALIZED_FIELD(Name_, Internal::Conditioned<Chat, &THIS::Op03>);
+        SERIALIZED_FIELD(Pct, Internal::Conditioned<float, &THIS::Op02>);
+        SERIALIZED_FIELD(Color, Internal::Conditioned<VarInt, &THIS::Op04>);
+        SERIALIZED_FIELD(Overlay, Internal::Conditioned<VarInt, &THIS::Op04>);
+        SERIALIZED_FIELD(Flags, Internal::Conditioned<unsigned char, &THIS::Op05>);
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Operation);
-        GETTER_SETTER(Name_);
-        GETTER_SETTER(Pct);
-        GETTER_SETTER(Color);
-        GETTER_SETTER(Overlay);
-        GETTER_SETTER(Flags);
     };
 } //ProtocolCraft

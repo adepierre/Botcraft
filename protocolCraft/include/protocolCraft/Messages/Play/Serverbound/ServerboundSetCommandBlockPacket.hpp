@@ -9,19 +9,14 @@ namespace ProtocolCraft
     class ServerboundSetCommandBlockPacket : public BaseMessage<ServerboundSetCommandBlockPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Command Block";
 
-        DECLARE_FIELDS(
-            (NetworkPosition, std::string, VarInt, char),
-            (Pos,             Command,     Mode,   Flags)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Command, std::string);
+        SERIALIZED_FIELD(Mode, VarInt);
+        SERIALIZED_FIELD(Flags, char);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Command);
-        GETTER_SETTER(Mode);
-        GETTER_SETTER(Flags);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

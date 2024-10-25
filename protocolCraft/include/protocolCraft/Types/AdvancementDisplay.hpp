@@ -9,27 +9,25 @@ namespace ProtocolCraft
 {
     class AdvancementDisplay : public NetworkType
     {
-        DECLARE_CONDITION(HasBackgroundTexture, GetFlags() & 0x01);
+        DEFINE_CONDITION(HasBackgroundTexture, GetFlags() & 0x01);
 
-        DECLARE_FIELDS(
-            (Chat,  Chat,        Slot, VarInt,    int,   Internal::Conditioned<Identifier, &AdvancementDisplay::HasBackgroundTexture>, float,  float),
-            (Title, Description, Icon, FrameType, Flags, BackgroundTexture,                                                            XCoord, YCoord)
-        );
+        SERIALIZED_FIELD(Title, Chat);
+        SERIALIZED_FIELD(Description, Chat);
+        SERIALIZED_FIELD(Icon, Slot);
+        SERIALIZED_FIELD(FrameType, VarInt);
+        SERIALIZED_FIELD(Flags, int);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(BackgroundTexture, Internal::Conditioned<Identifier, &AdvancementDisplay::HasBackgroundTexture>);
+        SERIALIZED_FIELD(XCoord, float);
+        SERIALIZED_FIELD(YCoord, float);
+
         DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Title);
-        GETTER_SETTER(Description);
-        GETTER_SETTER(Icon);
-        GETTER_SETTER(FrameType);
-        GETTER_SETTER(Flags);
-        GETTER_SETTER(XCoord);
-        GETTER_SETTER(YCoord);
-        GETTER       (BackgroundTexture);
+        GETTER(BackgroundTexture);
     public:
-        auto& SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture)
+        auto& SetBackgroundTexture(const std::optional<Identifier>& BackgroundTexture_)
         {
-            SetFlags(BackgroundTexture.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
-            std::get<static_cast<size_t>(FieldsEnum::BackgroundTexture)>(fields) = BackgroundTexture;
+            SetFlags(BackgroundTexture_.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
+            BackgroundTexture = BackgroundTexture_;
             return *this;
         }
     };

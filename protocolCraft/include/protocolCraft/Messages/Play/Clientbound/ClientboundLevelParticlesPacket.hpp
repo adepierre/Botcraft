@@ -10,14 +10,13 @@ namespace ProtocolCraft
     class ClientboundLevelParticlesPacket : public BaseMessage<ClientboundLevelParticlesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Level Particles";
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     private:
         Particle ReadParticle(ReadIterator& iter, size_t& length) const
         {
-            Particle particle;
+            ProtocolCraft::Particle particle;
             particle.SetParticleType(GetParticleType());
             particle.ReadOptions(iter, length);
             return particle;
@@ -29,41 +28,26 @@ namespace ProtocolCraft
         }
 #endif
 
-#if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS(
-            (Internal::DiffType<ParticleType, int>, bool,            float, float, float, float, float, float, float,    int,   Internal::CustomType<Particle, &THIS::ReadParticle, &THIS::WriteParticle>),
-            (ParticleType,                          OverrideLimiter, X,     Y,     Z,     XDist, YDist, ZDist, MaxSpeed, Count, Particle)
-        );
-#elif PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (Internal::DiffType<ParticleType, int>, bool,            double, double, double, float, float, float, float,    int,   Internal::CustomType<Particle, &THIS::ReadParticle, &THIS::WriteParticle>),
-            (ParticleType,                          OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle)
-        );
+#if PROTOCOL_VERSION < 759 /* < 1.19 */
+        SERIALIZED_FIELD(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, int>);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (Internal::DiffType<ParticleType, VarInt>, bool,            double, double, double, float, float, float, float,    int,   Internal::CustomType<Particle, &THIS::ReadParticle, &THIS::WriteParticle>),
-            (ParticleType,                             OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle)
-        );
-#else
-        DECLARE_FIELDS(
-            (bool,            double, double, double, float, float, float, float,    int,   Particle),
-            (OverrideLimiter, X,      Y,      Z,      XDist, YDist, ZDist, MaxSpeed, Count, Particle)
-        );
+        SERIALIZED_FIELD(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
+        SERIALIZED_FIELD(OverrideLimiter, bool);
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
+        SERIALIZED_FIELD(XDist, float);
+        SERIALIZED_FIELD(YDist, float);
+        SERIALIZED_FIELD(ZDist, float);
+        SERIALIZED_FIELD(MaxSpeed, float);
+        SERIALIZED_FIELD(Count, int);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        GETTER_SETTER(ParticleType);
+        SERIALIZED_FIELD(Particle, Internal::CustomType<ProtocolCraft::Particle, &THIS::ReadParticle, &THIS::WriteParticle>);
+#else
+        SERIALIZED_FIELD(Particle, ProtocolCraft::Particle);
 #endif
-        GETTER_SETTER(OverrideLimiter);
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(XDist);
-        GETTER_SETTER(YDist);
-        GETTER_SETTER(ZDist);
-        GETTER_SETTER(MaxSpeed);
-        GETTER_SETTER(Count);
-        GETTER_SETTER(Particle);
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

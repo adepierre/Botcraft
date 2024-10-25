@@ -11,13 +11,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeSuspiciousStewEffects : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<SuspiciousStewEntry>),
-                (Effects)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Effects, std::vector<SuspiciousStewEntry>);
 
-            GETTER_SETTER(Effects);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

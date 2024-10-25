@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetSimulationDistancePacket : public BaseMessage<ClientboundSetSimulationDistancePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Simulation Distance";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (SimulationDistance)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(SimulationDistance, VarInt);
 
-        GETTER_SETTER(SimulationDistance);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

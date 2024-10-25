@@ -8,10 +8,9 @@ namespace ProtocolCraft
     class ClientboundBundlePacket : public BaseMessage<ClientboundBundlePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Bundle";
 
-        DECLARE_EMPTY;
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

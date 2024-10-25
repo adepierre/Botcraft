@@ -7,28 +7,23 @@ namespace ProtocolCraft
 {
     class FilterMask : public NetworkType
     {
-        DECLARE_CONDITION(IsType2, GetType() == 2);
+        DEFINE_CONDITION(IsType2, GetType() == 2);
 
-        DECLARE_FIELDS(
-            (VarInt, Internal::Conditioned<std::vector<long long int>, &FilterMask::IsType2>),
-            (Type,   Mask)
-        );
+        SERIALIZED_FIELD(Type, VarInt);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Mask, Internal::Conditioned<std::vector<long long int>, &FilterMask::IsType2>);
+
         DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Type);
-    public:
-        const std::optional<std::vector<long long int>>& GetMask() const
-        {
-            return std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields);
-        }
+        GETTER(Mask);
 
-        auto& SetMask(const std::optional<std::vector<long long int>>& Mask)
+    public:
+        auto& SetMask(const std::optional<std::vector<long long int>>& Mask_)
         {
-            if (Mask.has_value())
+            if (Mask_.has_value())
             {
                 SetType(2);
             }
-            std::get<static_cast<size_t>(FieldsEnum::Mask)>(fields) = Mask;
+            Mask = Mask_;
             return *this;
         }
     };

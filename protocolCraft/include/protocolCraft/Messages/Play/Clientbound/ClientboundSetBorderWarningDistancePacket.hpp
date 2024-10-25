@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetBorderWarningDistancePacket : public BaseMessage<ClientboundSetBorderWarningDistancePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Border Warning Distance";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (WarningBlocks)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(WarningBlocks, VarInt);
 
-        GETTER_SETTER(WarningBlocks);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

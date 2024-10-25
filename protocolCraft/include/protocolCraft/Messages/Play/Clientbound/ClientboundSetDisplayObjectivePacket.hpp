@@ -7,23 +7,15 @@ namespace ProtocolCraft
     class ClientboundSetDisplayObjectivePacket : public BaseMessage<ClientboundSetDisplayObjectivePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Display Objective";
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS(
-            (char, std::string),
-            (Slot, ObjectiveName)
-        );
+        SERIALIZED_FIELD(Slot, char);
 #else
-        DECLARE_FIELDS(
-            (VarInt, std::string),
-            (Slot,   ObjectiveName)
-        );
+        SERIALIZED_FIELD(Slot, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ObjectiveName, std::string);
 
-        GETTER_SETTER(Slot);
-        GETTER_SETTER(ObjectiveName);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

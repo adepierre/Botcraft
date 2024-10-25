@@ -18,32 +18,22 @@ namespace ProtocolCraft
     class ClientboundSetScorePacket : public BaseMessage<ClientboundSetScorePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Score";
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        DECLARE_CONDITION(NotRemove, GetMethod() != SetScoreMethod::Remove);
-        DECLARE_FIELDS(
-            (std::string, Internal::DiffType<SetScoreMethod, char>, std::string,   Internal::Conditioned<VarInt, &THIS::NotRemove>),
-            (Owner,       Method,                                   ObjectiveName, Score)
-        );
+        DEFINE_CONDITION(NotRemove, GetMethod() != SetScoreMethod::Remove);
+        SERIALIZED_FIELD(Owner, std::string);
+        SERIALIZED_FIELD(Method, Internal::DiffType<SetScoreMethod, char>);
+        SERIALIZED_FIELD(ObjectiveName, std::string);
+        SERIALIZED_FIELD(Score, Internal::Conditioned<VarInt, &THIS::NotRemove>);
 #else
-        DECLARE_FIELDS(
-            (std::string, std::string,   VarInt, std::optional<Chat>, std::optional<NumberFormat>),
-            (Owner,       ObjectiveName, Score,  Display,             NumberFormat)
-        );
+        SERIALIZED_FIELD(Owner, std::string);
+        SERIALIZED_FIELD(ObjectiveName, std::string);
+        SERIALIZED_FIELD(Score, VarInt);
+        SERIALIZED_FIELD(Display, std::optional<Chat>);
+        SERIALIZED_FIELD(NumberFormat, std::optional<ProtocolCraft::NumberFormat>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Owner);
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        GETTER_SETTER(Method);
-#endif
-        GETTER_SETTER(ObjectiveName);
-        GETTER_SETTER(Score);
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        GETTER_SETTER(Display);
-        GETTER_SETTER(NumberFormat);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

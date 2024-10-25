@@ -9,17 +9,12 @@ namespace ProtocolCraft
     class ClientboundCommandsPacket : public BaseMessage<ClientboundCommandsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Commands";
 
-        DECLARE_FIELDS(
-            (std::vector<CommandNode>, VarInt),
-            (Nodes,                    RootIndex)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Nodes, std::vector<CommandNode>);
+        SERIALIZED_FIELD(RootIndex, VarInt);
 
-        GETTER_SETTER(Nodes);
-        GETTER_SETTER(RootIndex);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

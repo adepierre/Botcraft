@@ -7,19 +7,14 @@ namespace ProtocolCraft
     class ClientboundAddExperienceOrbPacket : public BaseMessage<ClientboundAddExperienceOrbPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Add Experience Orb";
 
-        DECLARE_FIELDS(
-            (VarInt, double, double, double, short),
-            (Id_,    X,      Y,      Z,      Value)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
+        SERIALIZED_FIELD(Value, short);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(Value);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

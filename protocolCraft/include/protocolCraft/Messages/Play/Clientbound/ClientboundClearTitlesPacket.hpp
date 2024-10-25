@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundClearTitlesPacket : public BaseMessage<ClientboundClearTitlesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Clear Titles";
 
-        DECLARE_FIELDS(
-            (bool),
-            (ResetTimes)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ResetTimes, bool);
 
-        GETTER_SETTER(ResetTimes);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

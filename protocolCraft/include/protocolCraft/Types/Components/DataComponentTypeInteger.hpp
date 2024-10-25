@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeInteger : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (Value)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Value, VarInt);
 
-            GETTER_SETTER(Value);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

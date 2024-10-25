@@ -6,12 +6,8 @@ namespace ProtocolCraft
 {
     class BlockParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS(
-            (VarInt),
-            (State)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(State, VarInt);
 
-        GETTER_SETTER(State);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

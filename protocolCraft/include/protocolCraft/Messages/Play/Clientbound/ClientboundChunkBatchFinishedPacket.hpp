@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundChunkBatchFinishedPacket : public BaseMessage<ClientboundChunkBatchFinishedPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chunk Batch Finished";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (BatchSize)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(BatchSize, VarInt);
 
-        GETTER_SETTER(BatchSize);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

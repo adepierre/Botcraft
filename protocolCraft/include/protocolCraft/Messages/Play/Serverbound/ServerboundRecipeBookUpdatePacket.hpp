@@ -9,44 +9,27 @@ namespace ProtocolCraft
     class ServerboundRecipeBookUpdatePacket : public BaseMessage<ServerboundRecipeBookUpdatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Recipe Book Update";
 
-        DECLARE_CONDITION(Purpose0, GetPurpose() == 0);
-        DECLARE_CONDITION(Purpose1, GetPurpose() == 1);
+        DEFINE_CONDITION(Purpose0, GetPurpose() == 0);
+        DEFINE_CONDITION(Purpose1, GetPurpose() == 1);
 
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (Internal::Conditioned<VarInt, &THIS::Purpose0>, Internal::Conditioned<Identifier, &THIS::Purpose0>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>),
-            (Purpose,                                        Recipe,                                             GuiOpen,                                      FilteringCraftable)
-        );
-#elif PROTOCOL_VERSION < 477 /* < 1.14 */
-        DECLARE_FIELDS(
-            (Internal::Conditioned<VarInt, &THIS::Purpose0>, Internal::Conditioned<Identifier, &THIS::Purpose0>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>),
-            (Purpose,                                        Recipe,                                             GuiOpen,                                      FilteringCraftable,                           FurnaceGuiOpen,                               FurnaceFilteringCraftable)
-        );
-#else
-        DECLARE_FIELDS(
-            (Internal::Conditioned<VarInt, &THIS::Purpose0>, Internal::Conditioned<Identifier, &THIS::Purpose0>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>, Internal::Conditioned<bool, &THIS::Purpose1>),
-            (Purpose,                                        Recipe,                                             GuiOpen,                                      FilteringCraftable,                           FurnaceGuiOpen,                               FurnaceFilteringCraftable,                    BlastFurnaceGuiOpen,                          BlastFurnaceFilteringCraftable,               SmokerGuiOpen,                                SmokerFilteringCraftable)
-        );
-#endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(Purpose);
-        GETTER_SETTER(Recipe);
-        GETTER_SETTER(GuiOpen);
-        GETTER_SETTER(FilteringCraftable);
+        SERIALIZED_FIELD(Purpose, Internal::Conditioned<VarInt, &THIS::Purpose0>);
+        SERIALIZED_FIELD(Recipe, Internal::Conditioned<Identifier, &THIS::Purpose0>);
+        SERIALIZED_FIELD(GuiOpen, Internal::Conditioned<bool, &THIS::Purpose1>);
+        SERIALIZED_FIELD(FilteringCraftable, Internal::Conditioned<bool, &THIS::Purpose1>);
 #if PROTOCOL_VERSION > 358 /* > 1.12.2 */
-        GETTER_SETTER(FurnaceGuiOpen);
-        GETTER_SETTER(FurnaceFilteringCraftable);
+        SERIALIZED_FIELD(FurnaceGuiOpen, Internal::Conditioned<bool, &THIS::Purpose1>);
+        SERIALIZED_FIELD(FurnaceFilteringCraftable, Internal::Conditioned<bool, &THIS::Purpose1>);
 #endif
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
-        GETTER_SETTER(BlastFurnaceGuiOpen);
-        GETTER_SETTER(BlastFurnaceFilteringCraftable);
-        GETTER_SETTER(SmokerGuiOpen);
-        GETTER_SETTER(SmokerFilteringCraftable);
+        SERIALIZED_FIELD(BlastFurnaceGuiOpen, Internal::Conditioned<bool, &THIS::Purpose1>);
+        SERIALIZED_FIELD(BlastFurnaceFilteringCraftable, Internal::Conditioned<bool, &THIS::Purpose1>);
+        SERIALIZED_FIELD(SmokerGuiOpen, Internal::Conditioned<bool, &THIS::Purpose1>);
+        SERIALIZED_FIELD(SmokerFilteringCraftable, Internal::Conditioned<bool, &THIS::Purpose1>);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

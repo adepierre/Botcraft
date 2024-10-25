@@ -8,20 +8,15 @@ namespace ProtocolCraft
     class ClientboundAddGlobalEntityPacket : public BaseMessage<ClientboundAddGlobalEntityPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Add Global Entity";
 
-        DECLARE_FIELDS(
-            (VarInt, char, double, double, double),
-            (Id_,    Type, X,      Y,      Z)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Type, char);
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Type);
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

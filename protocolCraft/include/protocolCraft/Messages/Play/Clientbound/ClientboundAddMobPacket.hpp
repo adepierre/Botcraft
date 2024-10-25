@@ -8,37 +8,25 @@ namespace ProtocolCraft
     class ClientboundAddMobPacket : public BaseMessage<ClientboundAddMobPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Add Mob";
 
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Uuid, UUID);
+        SERIALIZED_FIELD(Type, VarInt);
+        SERIALIZED_FIELD(X, double);
+        SERIALIZED_FIELD(Y, double);
+        SERIALIZED_FIELD(Z, double);
+        SERIALIZED_FIELD(YRot, unsigned char);
+        SERIALIZED_FIELD(XRot, unsigned char);
+        SERIALIZED_FIELD(YHeadRot, unsigned char);
+        SERIALIZED_FIELD(Xd, short);
+        SERIALIZED_FIELD(Yd, short);
+        SERIALIZED_FIELD(Zd, short);
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
-        DECLARE_FIELDS(
-            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short, Internal::Vector<unsigned char, void, 0>),
-            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd,    RawMetadata)
-        );
-#else
-        DECLARE_FIELDS(
-            (VarInt, UUID, VarInt, double, double, double, unsigned char, unsigned char, unsigned char,    short, short, short),
-            (Id_,    Uuid, Type,   X,      Y,      Z,      YRot,          XRot,                  YHeadRot, Xd,    Yd,    Zd)
-        );
+        SERIALIZED_FIELD(RawMetadata, Internal::Vector<unsigned char, void, 0>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Uuid);
-        GETTER_SETTER(Type);
-        GETTER_SETTER(X);
-        GETTER_SETTER(Y);
-        GETTER_SETTER(Z);
-        GETTER_SETTER(YRot);
-        GETTER_SETTER(XRot);
-        GETTER_SETTER(YHeadRot);
-        GETTER_SETTER(Xd);
-        GETTER_SETTER(Yd);
-        GETTER_SETTER(Zd);
-#if PROTOCOL_VERSION < 573 /* < 1.15 */
-        GETTER_SETTER(RawMetadata);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

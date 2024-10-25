@@ -9,28 +9,20 @@ namespace ProtocolCraft
     class ClientboundMerchantOffersPacket : public BaseMessage<ClientboundMerchantOffersPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Merchant Offers";
 
+        SERIALIZED_FIELD(ContainerId, VarInt);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (VarInt,      Internal::Vector<MerchantOffer, char>, VarInt,        VarInt,     bool,        bool),
-            (ContainerId, Offers,                                VillagerLevel, VillagerXp, ShowProgress, CanRestock)
-        );
+        SERIALIZED_FIELD(Offers, Internal::Vector<MerchantOffer, char>);
 #else
-        DECLARE_FIELDS(
-            (VarInt,      std::vector<MerchantOffer>, VarInt,        VarInt,     bool,        bool),
-            (ContainerId, Offers,                     VillagerLevel, VillagerXp, ShowProgress, CanRestock)
-        );
+        SERIALIZED_FIELD(Offers, std::vector<MerchantOffer>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(VillagerLevel, VarInt);
+        SERIALIZED_FIELD(VillagerXp, VarInt);
+        SERIALIZED_FIELD(ShowProgress, bool);
+        SERIALIZED_FIELD(CanRestock, bool);
 
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Offers);
-        GETTER_SETTER(VillagerLevel);
-        GETTER_SETTER(VillagerXp);
-        GETTER_SETTER(ShowProgress);
-        GETTER_SETTER(CanRestock);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

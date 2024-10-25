@@ -18,28 +18,16 @@ namespace ProtocolCraft
     class ClientboundRegistryDataPacket : public BaseMessage<ClientboundRegistryDataPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Registry Data";
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        DECLARE_FIELDS(
-            (NBT::UnnamedValue),
-            (RegistryHolder)
-        );
+        SERIALIZED_FIELD(RegistryHolder, NBT::UnnamedValue);
 #else
-        DECLARE_FIELDS(
-            (Identifier, std::vector<PackedRegistryEntry>),
-            (Registry,   Entries)
-        );
+        SERIALIZED_FIELD(Registry, Identifier);
+        SERIALIZED_FIELD(Entries, std::vector<PackedRegistryEntry>);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        GETTER_SETTER(RegistryHolder);
-#else
-        GETTER_SETTER(Registry);
-        GETTER_SETTER(Entries);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

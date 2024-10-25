@@ -9,18 +9,13 @@ namespace ProtocolCraft
     class ClientboundPlayerChatHeaderPacket : public BaseMessage<ClientboundPlayerChatHeaderPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Chat Header";
 
-        DECLARE_FIELDS(
-            (SignedMessageHeader, std::vector<unsigned char>, std::vector<unsigned char>),
-            (Header,              HeaderSignature,            BodyDigest)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Header, SignedMessageHeader);
+        SERIALIZED_FIELD(HeaderSignature, std::vector<unsigned char>);
+        SERIALIZED_FIELD(BodyDigest, std::vector<unsigned char>);
 
-        GETTER_SETTER(Header);
-        GETTER_SETTER(HeaderSignature);
-        GETTER_SETTER(BodyDigest);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

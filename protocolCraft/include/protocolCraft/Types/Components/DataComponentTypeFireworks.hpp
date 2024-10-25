@@ -9,14 +9,10 @@ namespace ProtocolCraft
     {
         class DataComponentTypeFireworks : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt,         std::vector<DataComponentTypeFireworkExplosion>),
-                (FlightDuration, Explosions)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(FlightDuration, VarInt);
+            SERIALIZED_FIELD(Explosions, std::vector<DataComponentTypeFireworkExplosion>);
 
-            GETTER_SETTER(FlightDuration);
-            GETTER_SETTER(Explosions);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

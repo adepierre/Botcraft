@@ -10,25 +10,17 @@ namespace ProtocolCraft
     class MapDecoration : public NetworkType
     {
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-        DECLARE_FIELDS(
-            (char,       char, char),
-            (RotAndType, X,    Z)
-        );
+        SERIALIZED_FIELD(RotAndType, char);
 #else
-        DECLARE_FIELDS(
-            (VarInt, char, char, char, std::optional<Chat>),
-            (Type,   X,    Z,    Rot,  DisplayName)
-        );
+        SERIALIZED_FIELD(Type, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(X, char);
+        SERIALIZED_FIELD(Z, char);
+#if PROTOCOL_VERSION > 363 /* > 1.12.2 */
+        SERIALIZED_FIELD(Rot, char);
+        SERIALIZED_FIELD(DisplayName, std::optional<Chat>);
+#endif
 
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
-        GETTER_SETTER(RotAndType);
-#else
-        GETTER_SETTER(Rot);
-        GETTER_SETTER(DisplayName);
-#endif
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

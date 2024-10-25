@@ -9,17 +9,12 @@ namespace ProtocolCraft
     class ClientboundUseBedPacket : public BaseMessage<ClientboundUseBedPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Use Bed";
 
-        DECLARE_FIELDS(
-            (VarInt, NetworkPosition),
-            (EntityId, Location)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
+        SERIALIZED_FIELD(Location, NetworkPosition);
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(Location);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

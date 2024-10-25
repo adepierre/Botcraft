@@ -12,14 +12,10 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Transfer (Configuration)";
 
-        DECLARE_FIELDS(
-            (std::string, VarInt),
-            (Host,        Port)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Host, std::string);
+        SERIALIZED_FIELD(Port, VarInt);
 
-        GETTER_SETTER(Host);
-        GETTER_SETTER(Port);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

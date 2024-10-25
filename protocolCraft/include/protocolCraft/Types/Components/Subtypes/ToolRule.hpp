@@ -4,7 +4,6 @@
 #include "protocolCraft/Types/HolderSet.hpp"
 
 #include <optional>
-#include <vector>
 
 namespace ProtocolCraft
 {
@@ -12,15 +11,11 @@ namespace ProtocolCraft
     {
         class ToolRule : public NetworkType
         {
-            DECLARE_FIELDS(
-                (HolderSet, std::optional<float>, std::optional<bool>),
-                (Blocks,    Speed,                CorrectForDrop)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Blocks, HolderSet);
+            SERIALIZED_FIELD(Speed, std::optional<float>);
+            SERIALIZED_FIELD(CorrectForDrop, std::optional<bool>);
 
-            GETTER_SETTER(Blocks);
-            GETTER_SETTER(Speed);
-            GETTER_SETTER(CorrectForDrop);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

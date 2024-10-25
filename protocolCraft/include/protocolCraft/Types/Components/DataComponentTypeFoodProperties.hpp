@@ -11,17 +11,13 @@ namespace ProtocolCraft
     {
         class DataComponentTypeFoodProperties : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt,    float,      bool,         float,      std::vector<PossibleEffect>),
-                (Nutrition, Saturation, CanAlwaysEat, EatSeconds, Effects)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Nutrition, VarInt);
+            SERIALIZED_FIELD(Saturation, float);
+            SERIALIZED_FIELD(CanAlwaysEat, bool);
+            SERIALIZED_FIELD(EatSeconds, float);
+            SERIALIZED_FIELD(Effects, std::vector<PossibleEffect>);
 
-            GETTER_SETTER(Nutrition);
-            GETTER_SETTER(Saturation);
-            GETTER_SETTER(CanAlwaysEat);
-            GETTER_SETTER(EatSeconds);
-            GETTER_SETTER(Effects);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

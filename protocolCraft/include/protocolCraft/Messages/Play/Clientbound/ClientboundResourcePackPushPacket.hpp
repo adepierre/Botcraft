@@ -9,20 +9,15 @@ namespace ProtocolCraft
     class ClientboundResourcePackPushPacket : public BaseMessage<ClientboundResourcePackPushPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Ressource Pack Push";
 
-        DECLARE_FIELDS(
-            (UUID, std::string, std::string, bool,     std::optional<Chat>),
-            (Uuid, Url,         Hash,        Required, Prompt)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Uuid, UUID);
+        SERIALIZED_FIELD(Url, std::string);
+        SERIALIZED_FIELD(Hash, std::string);
+        SERIALIZED_FIELD(Required, bool);
+        SERIALIZED_FIELD(Prompt, std::optional<Chat>);
 
-        GETTER_SETTER(Uuid);
-        GETTER_SETTER(Url);
-        GETTER_SETTER(Hash);
-        GETTER_SETTER(Required);
-        GETTER_SETTER(Prompt);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

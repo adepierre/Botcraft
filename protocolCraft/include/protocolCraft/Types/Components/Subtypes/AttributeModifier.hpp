@@ -8,16 +8,12 @@ namespace ProtocolCraft
     {
         class AttributeModifier : public NetworkType
         {
-            DECLARE_FIELDS(
-                (UUID, std::string, double, VarInt),
-                (Id, Name, Amount, Operation)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Id, UUID);
+            SERIALIZED_FIELD(Name, std::string);
+            SERIALIZED_FIELD(Amount, double);
+            SERIALIZED_FIELD(Operation, VarInt);
 
-            GETTER_SETTER(Id);
-            GETTER_SETTER(Name);
-            GETTER_SETTER(Amount);
-            GETTER_SETTER(Operation);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

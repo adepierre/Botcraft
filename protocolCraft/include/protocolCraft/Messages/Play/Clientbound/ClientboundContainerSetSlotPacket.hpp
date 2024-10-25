@@ -10,28 +10,15 @@ namespace ProtocolCraft
     class ClientboundContainerSetSlotPacket : public BaseMessage<ClientboundContainerSetSlotPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Container Set Slot";
 
-#if PROTOCOL_VERSION < 756 /* < 1.17.1 */
-        DECLARE_FIELDS(
-            (char,        short, Slot),
-            (ContainerId, Slot,  ItemStack)
-        );
-#else
-        DECLARE_FIELDS(
-            (char,        VarInt,  short, Slot),
-            (ContainerId, StateId, Slot,  ItemStack)
-        );
-
-#endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Slot);
-        GETTER_SETTER(ItemStack);
+        SERIALIZED_FIELD(ContainerId, char);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-        GETTER_SETTER(StateId);
+        SERIALIZED_FIELD(StateId, VarInt);
 #endif
+        SERIALIZED_FIELD(Slot, short);
+        SERIALIZED_FIELD(ItemStack, ProtocolCraft::Slot);
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

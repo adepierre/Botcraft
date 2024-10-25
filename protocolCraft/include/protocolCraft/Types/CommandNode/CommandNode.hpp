@@ -12,29 +12,19 @@ namespace ProtocolCraft
 {
     class CommandNode : public NetworkType
     {
+        SERIALIZED_FIELD(Flags, char);
+        SERIALIZED_FIELD(Children, std::vector<VarInt>);
+        SERIALIZED_FIELD(RedirectNode, VarInt);
+        SERIALIZED_FIELD(Name, std::string);
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        DECLARE_FIELDS(
-            (char,  std::vector<VarInt>, VarInt,       std::string, Identifier, std::shared_ptr<BrigadierProperty>, Identifier),
-            (Flags, Children,            RedirectNode, Name,        Parser,     Properties,                         SuggestionType)
-        );
+        SERIALIZED_FIELD(Parser, Identifier);
 #else
-        DECLARE_FIELDS(
-            (char,  std::vector<VarInt>, VarInt,       std::string, Internal::DiffType<BrigadierPropertyType, VarInt>, std::shared_ptr<BrigadierProperty>, Identifier),
-            (Flags, Children,            RedirectNode, Name,        ParserId,                                          Properties,                         SuggestionType)
-        );
+        SERIALIZED_FIELD(ParserId, Internal::DiffType<BrigadierPropertyType, VarInt>);
 #endif
+        SERIALIZED_FIELD(Properties, std::shared_ptr<BrigadierProperty>);
+        SERIALIZED_FIELD(SuggestionType, Identifier);
 
-        GETTER_SETTER(Flags);
-        GETTER_SETTER(Children);
-        GETTER_SETTER(RedirectNode);
-        GETTER_SETTER(Name);
-#if PROTOCOL_VERSION < 759 /* < 1.19 */
-        GETTER_SETTER(Parser);
-#else
-        GETTER_SETTER(ParserId);
-#endif
-        GETTER_SETTER(Properties);
-        GETTER_SETTER(SuggestionType);
+        DEFINE_UTILITIES;
 
     public:
         virtual ~CommandNode()
@@ -105,30 +95,30 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Flags)])] = GetFlags();
-            output[std::string(json_names[static_cast<size_t>(FieldsEnum::Children)])] = GetChildren();
+            output[std::string(field_name<Flags_index>)] = GetFlags();
+            output[std::string(field_name<Children_index>)] = GetChildren();
 
             if (GetFlags() & 0x08)
             {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::RedirectNode)])] = GetRedirectNode();
+                output[std::string(field_name<RedirectNode_index>)] = GetRedirectNode();
             }
 
             const char node_type = GetFlags() & 0x03;
             if (node_type == 1 || node_type == 2)
             {
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Name)])] = GetName();
+                output[std::string(field_name<Name_index>)] = GetName();
             }
             if (node_type == 2)
             {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Parser)])] = GetParser();
+                output[std::string(field_name<Parser_index>)] = GetParser();
 #else
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::ParserId)])] = GetParserId();
+                output[std::string(field_name<ParserId_index>)] = GetParserId();
 #endif
-                output[std::string(json_names[static_cast<size_t>(FieldsEnum::Properties)])] = GetProperties()->Serialize();
+                output[std::string(field_name<Properties_index>)] = GetProperties()->Serialize();
                 if (GetFlags() & 0x10)
                 {
-                    output[std::string(json_names[static_cast<size_t>(FieldsEnum::SuggestionType)])] = GetSuggestionType();
+                    output[std::string(field_name<SuggestionType_index>)] = GetSuggestionType();
                 }
             }
 

@@ -10,27 +10,15 @@ namespace ProtocolCraft
     class ClientboundForgetLevelChunkPacket : public BaseMessage<ClientboundForgetLevelChunkPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Forget Level Chunk";
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS(
-            (int, int),
-            (X,   Z)
-        );
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Z, int);
 #else
-        DECLARE_FIELDS(
-            (ChunkPos),
-            (Pos)
-        );
+        SERIALIZED_FIELD(Pos, ChunkPos);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        GETTER_SETTER(X);
-        GETTER_SETTER(Z);
-#else
-        GETTER_SETTER(Pos);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

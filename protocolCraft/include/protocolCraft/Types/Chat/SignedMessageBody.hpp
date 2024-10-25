@@ -14,22 +14,15 @@ namespace ProtocolCraft
     class SignedMessageBody : public NetworkType
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (ChatMessageContent, long long int, long long int, std::vector<LastSeenMessagesEntry>),
-            (Content,            Timestamp,     Salt,          LastSeen)
-        );
+        SERIALIZED_FIELD(Content, ChatMessageContent);
 #else
-        DECLARE_FIELDS(
-            (std::string, long long int, long long int, std::vector<LastSeenMessagesEntry>),
-            (Content,     Timestamp,     Salt,          LastSeen)
-        );
+        SERIALIZED_FIELD(Content, std::string);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Timestamp, long long int);
+        SERIALIZED_FIELD(Salt, long long int);
+        SERIALIZED_FIELD(LastSeen, std::vector<LastSeenMessagesEntry>);
 
-        GETTER_SETTER(Content);
-        GETTER_SETTER(Timestamp);
-        GETTER_SETTER(Salt);
-        GETTER_SETTER(LastSeen);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

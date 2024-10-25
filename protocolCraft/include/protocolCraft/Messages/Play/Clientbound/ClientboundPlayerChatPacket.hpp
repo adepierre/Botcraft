@@ -25,47 +25,29 @@ namespace ProtocolCraft
     class ClientboundPlayerChatPacket : public BaseMessage<ClientboundPlayerChatPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Chat";
 
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        DECLARE_FIELDS(
-            (Chat,          std::optional<Chat>, VarInt, ChatSender, long long int, SaltSignature),
-            (SignedContent, UnsignedContent,     TypeId, Sender,     Timestamp,     SaltSignature)
-        );
+        SERIALIZED_FIELD(SignedContent, Chat);
+        SERIALIZED_FIELD(UnsignedContent, std::optional<Chat>);
+        SERIALIZED_FIELD(TypeId, VarInt);
+        SERIALIZED_FIELD(Sender, ChatSender);
+        SERIALIZED_FIELD(Timestamp, long long int);
+        SERIALIZED_FIELD(SaltSignature, ProtocolCraft::SaltSignature);
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (PlayerChatMessage, ChatTypeBoundNetwork),
-            (Message_,          ChatType)
-        );
+        SERIALIZED_FIELD(Message_, PlayerChatMessage);
+        SERIALIZED_FIELD(ChatType, ChatTypeBoundNetwork);
 #else
-        DECLARE_FIELDS(
-            (UUID,   VarInt, std::optional<std::array<unsigned char, 256>>, SignedMessageBody, std::optional<Chat>, FilterMask, ChatTypeBoundNetwork),
-            (Sender, Index,  Signature,                                     Body,              UnsignedContent,     FilterMask, ChatType)
-        );
+        SERIALIZED_FIELD(Sender, UUID);
+        SERIALIZED_FIELD(Index, VarInt);
+        SERIALIZED_FIELD(Signature, std::optional<std::array<unsigned char, 256>>);
+        SERIALIZED_FIELD(Body, SignedMessageBody);
+        SERIALIZED_FIELD(UnsignedContent, std::optional<Chat>);
+        SERIALIZED_FIELD(FilterMask, ProtocolCraft::FilterMask);
+        SERIALIZED_FIELD(ChatType, ChatTypeBoundNetwork);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 760 /* < 1.19.1 */
-        GETTER_SETTER(SignedContent);
-        GETTER_SETTER(TypeId);
-        GETTER_SETTER(Timestamp);
-        GETTER_SETTER(SaltSignature);
-#endif
-#if PROTOCOL_VERSION == 760 /* 1.19.2 */
-        GETTER_SETTER(Message_);
-        GETTER_SETTER(ChatType);
-#else
-        GETTER_SETTER(Sender);
-        GETTER_SETTER(UnsignedContent);
-#endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-        GETTER_SETTER(Index);
-        GETTER_SETTER(Signature);
-        GETTER_SETTER(Body);
-        GETTER_SETTER(FilterMask);
-        GETTER_SETTER(ChatType);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

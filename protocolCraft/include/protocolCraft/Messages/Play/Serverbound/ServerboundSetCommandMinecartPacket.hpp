@@ -8,18 +8,13 @@ namespace ProtocolCraft
     class ServerboundSetCommandMinecartPacket : public BaseMessage<ServerboundSetCommandMinecartPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Command Minecart";
 
-        DECLARE_FIELDS(
-            (VarInt, std::string, bool),
-            (Entity, Command,     TrackOutput)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Entity, VarInt);
+        SERIALIZED_FIELD(Command, std::string);
+        SERIALIZED_FIELD(TrackOutput, bool);
 
-        GETTER_SETTER(Entity);
-        GETTER_SETTER(Command);
-        GETTER_SETTER(TrackOutput);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

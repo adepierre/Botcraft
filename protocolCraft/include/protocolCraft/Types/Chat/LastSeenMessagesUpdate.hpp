@@ -14,25 +14,13 @@ namespace ProtocolCraft
     class LastSeenMessagesUpdate : public NetworkType
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (std::vector<LastSeenMessagesEntry>, std::optional<LastSeenMessagesEntry>),
-            (LastSeen,                           LastReceived)
-        );
+        SERIALIZED_FIELD(LastSeen, std::vector<LastSeenMessagesEntry>);
+        SERIALIZED_FIELD(LastReceived, std::optional<LastSeenMessagesEntry>);
 #else
-        DECLARE_FIELDS(
-            (VarInt, std::bitset<20>),
-            (Offset, Acknowledged)
-        );
+        SERIALIZED_FIELD(Offset, VarInt);
+        SERIALIZED_FIELD(Acknowledged, std::bitset<20>);
 #endif
         DECLARE_READ_WRITE_SERIALIZE;
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        GETTER_SETTER(LastSeen);
-        GETTER_SETTER(LastReceived);
-#else
-        GETTER_SETTER(Offset);
-        GETTER_SETTER(Acknowledged);
-#endif
     };
 } // ProtocolCraft
 #endif

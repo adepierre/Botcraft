@@ -11,12 +11,8 @@ namespace ProtocolCraft
     class AdvancementProgress : public NetworkType
     {
     public:
-        DECLARE_FIELDS(
-            (std::map<Identifier, CriterionProgress>),
-            (Criteria)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Criteria, std::map<Identifier, CriterionProgress>);
 
-        GETTER_SETTER(Criteria);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

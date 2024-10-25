@@ -11,15 +11,11 @@ namespace ProtocolCraft
     {
         class DataComponentTypeTool : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<ToolRule>, float,              VarInt),
-                (Rules,                 DefaultMiningSpeed, DamagePerBlock)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Rules, std::vector<ToolRule>);
+            SERIALIZED_FIELD(DefaultMiningSpeed, float);
+            SERIALIZED_FIELD(DamagePerBlock, VarInt);
 
-            GETTER_SETTER(Rules);
-            GETTER_SETTER(DefaultMiningSpeed);
-            GETTER_SETTER(DamagePerBlock);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

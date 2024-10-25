@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ServerboundPaddleBoatPacket : public BaseMessage<ServerboundPaddleBoatPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Paddle Boat";
 
-        DECLARE_FIELDS(
-            (bool, bool),
-            (Left, Right)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Left, bool);
+        SERIALIZED_FIELD(Right, bool);
 
-        GETTER_SETTER(Left);
-        GETTER_SETTER(Right);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

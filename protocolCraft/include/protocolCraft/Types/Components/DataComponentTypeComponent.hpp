@@ -9,13 +9,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeComponent : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (Chat),
-                (Component)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Component, Chat);
 
-            GETTER_SETTER(Component);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

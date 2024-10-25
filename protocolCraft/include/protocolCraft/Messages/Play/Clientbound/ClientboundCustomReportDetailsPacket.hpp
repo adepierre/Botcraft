@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundCustomReportDetailsPacket : public BaseMessage<ClientboundCustomReportDetailsPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Custom Report Details";
 
-        DECLARE_FIELDS(
-            (std::map<std::string, std::string>),
-            (Details)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Details, std::map<std::string, std::string>);
 
-        GETTER_SETTER(Details);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -7,18 +7,13 @@ namespace ProtocolCraft
     class ClientboundMoveEntityPacketRot : public BaseMessage<ClientboundMoveEntityPacketRot>
     {
     public:
-
         static constexpr std::string_view packet_name = "Move Entity Rot";
 
-        DECLARE_FIELDS(
-            (VarInt,   unsigned char, unsigned char, bool),
-            (EntityId, XRot,          YRot,          OnGround)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(EntityId, VarInt);
+        SERIALIZED_FIELD(XRot, unsigned char);
+        SERIALIZED_FIELD(YRot, unsigned char);
+        SERIALIZED_FIELD(OnGround, bool);
 
-        GETTER_SETTER(EntityId);
-        GETTER_SETTER(XRot);
-        GETTER_SETTER(YRot);
-        GETTER_SETTER(OnGround);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

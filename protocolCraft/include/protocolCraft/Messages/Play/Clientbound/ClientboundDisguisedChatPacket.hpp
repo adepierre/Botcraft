@@ -10,17 +10,12 @@ namespace ProtocolCraft
     class ClientboundDisguisedChatPacket : public BaseMessage<ClientboundDisguisedChatPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Disguised Chat";
 
-        DECLARE_FIELDS(
-            (Chat, ChatTypeBoundNetwork),
-            (Message, ChatType)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Message, Chat);
+        SERIALIZED_FIELD(ChatType, ChatTypeBoundNetwork);
 
-        GETTER_SETTER(Message);
-        GETTER_SETTER(ChatType);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

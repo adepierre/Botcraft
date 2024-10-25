@@ -9,16 +9,11 @@ namespace ProtocolCraft
     class ClientboundSetSubtitleTextPacket : public BaseMessage<ClientboundSetSubtitleTextPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set subtitle Text";
 
-        DECLARE_FIELDS(
-            (Chat),
-            (Text)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Text, Chat);
 
-        GETTER_SETTER(Text);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

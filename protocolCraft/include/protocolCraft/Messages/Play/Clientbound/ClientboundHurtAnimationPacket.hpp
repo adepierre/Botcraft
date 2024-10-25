@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundHurtAnimationPacket : public BaseMessage<ClientboundHurtAnimationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Hurt Animation";
 
-        DECLARE_FIELDS(
-            (VarInt, float),
-            (Id_, Yaw)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Yaw, float);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Yaw);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

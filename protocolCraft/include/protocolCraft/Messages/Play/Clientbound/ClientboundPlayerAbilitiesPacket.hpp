@@ -7,17 +7,12 @@ namespace ProtocolCraft
     class ClientboundPlayerAbilitiesPacket : public BaseMessage<ClientboundPlayerAbilitiesPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Abilities";
 
-        DECLARE_FIELDS(
-            (char, float, float),
-            (Flags, FlyingSpeed, WalkingSpeed)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Flags, char);
+        SERIALIZED_FIELD(FlyingSpeed, float);
+        SERIALIZED_FIELD(WalkingSpeed, float);
 
-        GETTER_SETTER(Flags);
-        GETTER_SETTER(FlyingSpeed);
-        GETTER_SETTER(WalkingSpeed);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

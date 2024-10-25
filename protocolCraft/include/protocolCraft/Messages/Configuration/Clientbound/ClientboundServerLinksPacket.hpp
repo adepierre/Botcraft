@@ -4,21 +4,18 @@
 #include "protocolCraft/BaseMessage.hpp"
 #include "protocolCraft/Types/ServerLinksUnstrustedEntry.hpp"
 
+#include <vector>
+
 namespace ProtocolCraft
 {
     class ClientboundServerLinksConfigurationPacket : public BaseMessage<ClientboundServerLinksConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Server Links (Configuration)";
 
-        DECLARE_FIELDS(
-            (std::vector<ServerLinksUnstrustedEntry>),
-            (Links)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Links, std::vector<ServerLinksUnstrustedEntry>);
 
-        GETTER_SETTER(Links);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

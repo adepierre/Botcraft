@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ClientboundSetBorderWarningDelayPacket : public BaseMessage<ClientboundSetBorderWarningDelayPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Set Border Warning Delay";
 
-        DECLARE_FIELDS(
-            (VarInt),
-            (WarningDelay)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(WarningDelay, VarInt);
 
-        GETTER_SETTER(WarningDelay);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

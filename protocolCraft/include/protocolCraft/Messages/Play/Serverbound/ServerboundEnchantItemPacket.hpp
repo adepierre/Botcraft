@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ServerboundEnchantItemPacket : public BaseMessage<ServerboundEnchantItemPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Enchant item";
 
-        DECLARE_FIELDS(
-            (char, char),
-            (ContainerId, Enchantment)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ContainerId, char);
+        SERIALIZED_FIELD(Enchantment, char);
 
-        GETTER_SETTER(ContainerId);
-        GETTER_SETTER(Enchantment);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -13,23 +13,13 @@ namespace ProtocolCraft
     class LastSeenMessagesEntry : public NetworkType
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (UUID,      std::vector<unsigned char>),
-            (ProfileId, LastSignature)
-        );
+        SERIALIZED_FIELD(ProfileId, UUID);
+        SERIALIZED_FIELD(LastSignature, std::vector<unsigned char>);
 #else
-        DECLARE_FIELDS(
-            (Holder<std::array<unsigned char, 256>>),
-            (LastSignature)
-        );
+        SERIALIZED_FIELD(LastSignature, Holder<std::array<unsigned char, 256>>);
 #endif
+
         DECLARE_READ_WRITE_SERIALIZE;
-
-
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        GETTER_SETTER(ProfileId);
-#endif
-        GETTER_SETTER(LastSignature);
     };
 } // ProtocolCraft
 #endif

@@ -8,16 +8,11 @@ namespace ProtocolCraft
     class ServerboundKeepAliveConfigurationPacket : public BaseMessage<ServerboundKeepAliveConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Keep Alive (Configuration)";
 
-        DECLARE_FIELDS(
-            (long long int),
-            (Id_)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, long long int);
 
-        GETTER_SETTER(Id_);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

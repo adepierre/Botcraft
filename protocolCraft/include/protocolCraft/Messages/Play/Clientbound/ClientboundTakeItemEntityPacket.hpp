@@ -7,17 +7,12 @@ namespace ProtocolCraft
     class ClientboundTakeItemEntityPacket : public BaseMessage<ClientboundTakeItemEntityPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Take Item Entity";
 
-        DECLARE_FIELDS(
-            (VarInt, VarInt, VarInt),
-            (ItemId, PlayerId, Amount)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(ItemId, VarInt);
+        SERIALIZED_FIELD(PlayerId, VarInt);
+        SERIALIZED_FIELD(Amount, VarInt);
 
-        GETTER_SETTER(ItemId);
-        GETTER_SETTER(PlayerId);
-        GETTER_SETTER(Amount);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

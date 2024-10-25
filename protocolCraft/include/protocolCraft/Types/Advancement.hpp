@@ -8,32 +8,16 @@ namespace ProtocolCraft
 {
     class Advancement : public NetworkType
     {
-#if PROTOCOL_VERSION < 763 /* < 1.20 */
-        DECLARE_FIELDS(
-            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>),
-            (ParentId,                  DisplayData,                       Criteria,                Requirements)
-        );
-#elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        DECLARE_FIELDS(
-            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<Identifier>, std::vector<std::vector<std::string>>, bool),
-            (ParentId,                  DisplayData,                       Criteria,                Requirements,                          SendsTelemetryEvent)
-        );
-#else
-        DECLARE_FIELDS(
-            (std::optional<Identifier>, std::optional<AdvancementDisplay>, std::vector<std::vector<std::string>>, bool),
-            (ParentId,                  DisplayData,                       Requirements,                          SendsTelemetryEvent)
-        );
-#endif
-        DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER_SETTER(ParentId);
-        GETTER_SETTER(DisplayData);
+        SERIALIZED_FIELD(ParentId, std::optional<Identifier>);
+        SERIALIZED_FIELD(DisplayData, std::optional<AdvancementDisplay>);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        GETTER_SETTER(Criteria);
+        SERIALIZED_FIELD(Criteria, std::vector<Identifier>);
 #endif
-        GETTER_SETTER(Requirements);
+        SERIALIZED_FIELD(Requirements, std::vector<std::vector<std::string>>);
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
-        GETTER_SETTER(SendsTelemetryEvent);
+        SERIALIZED_FIELD(SendsTelemetryEvent, bool);
 #endif
+
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }

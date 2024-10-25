@@ -7,14 +7,10 @@ namespace ProtocolCraft
 {
     class IconcrackParticleOptions : public ParticleOptions
     {
-        DECLARE_FIELDS(
-            (VarInt,    VarInt),
-            (Argument1, Argument2)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Argument1, VarInt);
+        SERIALIZED_FIELD(Argument2, VarInt);
 
-        GETTER_SETTER(Argument1);
-        GETTER_SETTER(Argument2);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 }
 #endif

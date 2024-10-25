@@ -11,13 +11,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeChargedProjectiles : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (std::vector<Slot>),
-                (List)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(List, std::vector<Slot>);
 
-            GETTER_SETTER(List);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

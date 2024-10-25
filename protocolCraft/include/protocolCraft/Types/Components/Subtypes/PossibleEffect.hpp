@@ -9,14 +9,10 @@ namespace ProtocolCraft
     {
         class PossibleEffect : public NetworkType
         {
-            DECLARE_FIELDS(
-                (MobEffectInstance, float),
-                (Effect,            Probability)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Effect, MobEffectInstance);
+            SERIALIZED_FIELD(Probability, float);
 
-            GETTER_SETTER(Effect);
-            GETTER_SETTER(Probability);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

@@ -9,27 +9,15 @@ namespace ProtocolCraft
     class ServerboundChatAckPacket : public BaseMessage<ServerboundChatAckPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Chat Ack";
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        DECLARE_FIELDS(
-            (LastSeenMessagesUpdate),
-            (LastSeenMessages)
-        );
+        SERIALIZED_FIELD(LastSeenMessages, LastSeenMessagesUpdate);
 #else
-        DECLARE_FIELDS(
-            (VarInt),
-            (Offset)
-        );
+        SERIALIZED_FIELD(Offset, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
 
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        GETTER_SETTER(LastSeenMessages);
-#else
-        GETTER_SETTER(Offset);
-#endif
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

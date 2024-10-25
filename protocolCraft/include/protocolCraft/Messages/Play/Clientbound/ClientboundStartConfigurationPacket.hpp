@@ -8,10 +8,9 @@ namespace ProtocolCraft
     class ClientboundStartConfigurationPacket : public BaseMessage<ClientboundStartConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Start Configuration";
 
-        DECLARE_EMPTY;
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

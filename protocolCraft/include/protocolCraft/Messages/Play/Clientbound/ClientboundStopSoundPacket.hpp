@@ -9,33 +9,32 @@ namespace ProtocolCraft
     class ClientboundStopSoundPacket : public BaseMessage<ClientboundStopSoundPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Stop Sound";
 
-        DECLARE_CONDITION(Flags1, GetFlags() & 0x01);
-        DECLARE_CONDITION(Flags2, GetFlags() & 0x02);
+        DEFINE_CONDITION(Flags1, GetFlags() & 0x01);
+        DEFINE_CONDITION(Flags2, GetFlags() & 0x02);
 
-        DECLARE_FIELDS(
-            (char,  Internal::Conditioned<VarInt, &THIS::Flags1>, Internal::Conditioned<Identifier, &THIS::Flags2>),
-            (Flags, Source,                                       Name_)
-        );
+        SERIALIZED_FIELD(Flags, char);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Source, Internal::Conditioned<VarInt, &THIS::Flags1>);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Name_, Internal::Conditioned<Identifier, &THIS::Flags2>);
+
         DECLARE_READ_WRITE_SERIALIZE;
 
-        GETTER_SETTER(Flags);
-        GETTER       (Source);
-        GETTER       (Name_);
+        GETTER(Source);
+        GETTER(Name_);
+
     public:
-        auto& SetSource(const std::optional<int>& Source)
+        auto& SetSource(const std::optional<int>& Source_)
         {
             SetFlags(Source.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
-            std::get<static_cast<size_t>(FieldsEnum::Source)>(fields) = Source;
+            Source = Source_;
             return *this;
         }
 
-        auto& SetName_(const std::optional<Identifier>& Name_)
+        auto& SetName_(const std::optional<Identifier>& Name__)
         {
             SetFlags(Name_.has_value() ? (GetFlags() | 0x02) : (GetFlags() & ~0x02));
-            std::get<static_cast<size_t>(FieldsEnum::Name_)>(fields) = Name_;
+            Name_ = Name__;
             return *this;
         }
     };

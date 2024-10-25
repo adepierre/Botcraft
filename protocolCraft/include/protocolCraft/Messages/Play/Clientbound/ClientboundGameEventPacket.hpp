@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundGameEventPacket : public BaseMessage<ClientboundGameEventPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Game Event";
 
-        DECLARE_FIELDS(
-            (unsigned char, float),
-            (Type,          Param)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Type, unsigned char);
+        SERIALIZED_FIELD(Param, float);
 
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Param);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

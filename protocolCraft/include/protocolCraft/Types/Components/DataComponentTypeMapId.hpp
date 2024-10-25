@@ -8,13 +8,9 @@ namespace ProtocolCraft
     {
         class DataComponentTypeMapId : public DataComponentType
         {
-            DECLARE_FIELDS(
-                (VarInt),
-                (Id)
-            );
-            DECLARE_READ_WRITE_SERIALIZE;
+            SERIALIZED_FIELD(Id, VarInt);
 
-            GETTER_SETTER(Id);
+            DECLARE_READ_WRITE_SERIALIZE;
         };
     }
 }

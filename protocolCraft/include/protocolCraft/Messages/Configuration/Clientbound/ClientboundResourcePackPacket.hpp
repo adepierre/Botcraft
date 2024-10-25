@@ -9,19 +9,14 @@ namespace ProtocolCraft
     class ClientboundResourcePackConfigurationPacket : public BaseMessage<ClientboundResourcePackConfigurationPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Resource Pack (Configuration)";
 
-        DECLARE_FIELDS(
-            (std::string, std::string, bool,     std::optional<Chat>),
-            (Url,         Hash,        Required, Prompt)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Url, std::string);
+        SERIALIZED_FIELD(Hash, std::string);
+        SERIALIZED_FIELD(Required, bool);
+        SERIALIZED_FIELD(Prompt, std::optional<Chat>);
 
-        GETTER_SETTER(Url);
-        GETTER_SETTER(Hash);
-        GETTER_SETTER(Required);
-        GETTER_SETTER(Prompt);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

@@ -8,17 +8,12 @@ namespace ProtocolCraft
     class ClientboundBlockDestructionPacket : public BaseMessage<ClientboundBlockDestructionPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Break Animation";
 
-        DECLARE_FIELDS(
-            (VarInt, NetworkPosition, char),
-            (Id_,    Pos,             Progress)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Pos, NetworkPosition);
+        SERIALIZED_FIELD(Progress, char);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Progress);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

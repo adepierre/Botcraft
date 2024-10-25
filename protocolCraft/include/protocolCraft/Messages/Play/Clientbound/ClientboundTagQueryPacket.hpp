@@ -9,17 +9,12 @@ namespace ProtocolCraft
     class ClientboundTagQueryPacket : public BaseMessage<ClientboundTagQueryPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Tag Query";
 
-        DECLARE_FIELDS(
-            (VarInt,        NBT::UnnamedValue),
-            (TransactionId, Tag)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TransactionId, VarInt);
+        SERIALIZED_FIELD(Tag, NBT::UnnamedValue);
 
-        GETTER_SETTER(TransactionId);
-        GETTER_SETTER(Tag);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

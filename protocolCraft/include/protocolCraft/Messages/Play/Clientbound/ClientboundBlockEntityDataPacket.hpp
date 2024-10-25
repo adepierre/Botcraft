@@ -9,24 +9,16 @@ namespace ProtocolCraft
     class ClientboundBlockEntityDataPacket : public BaseMessage<ClientboundBlockEntityDataPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Block Entity Data";
 
+        SERIALIZED_FIELD(Pos, NetworkPosition);
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-        DECLARE_FIELDS(
-            (NetworkPosition, unsigned char, NBT::UnnamedValue),
-            (Pos,             Type,          Tag)
-        );
+        SERIALIZED_FIELD(Type, unsigned char);
 #else
-        DECLARE_FIELDS(
-            (NetworkPosition, VarInt, NBT::UnnamedValue),
-            (Pos,             Type,   Tag)
-        );
+        SERIALIZED_FIELD(Type, VarInt);
 #endif
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Tag, NBT::UnnamedValue);
 
-        GETTER_SETTER(Pos);
-        GETTER_SETTER(Type);
-        GETTER_SETTER(Tag);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft

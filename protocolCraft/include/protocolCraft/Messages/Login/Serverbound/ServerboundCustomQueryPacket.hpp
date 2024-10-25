@@ -10,14 +10,10 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Custom Query";
 
-        DECLARE_FIELDS(
-            (VarInt,        std::optional<Internal::Vector<unsigned char, void, 0>>),
-            (TransactionId, Data)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(TransactionId, VarInt);
+        SERIALIZED_FIELD(Data, std::optional<Internal::Vector<unsigned char, void, 0>>);
 
-        GETTER_SETTER(TransactionId);
-        GETTER_SETTER(Data);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft
 #endif

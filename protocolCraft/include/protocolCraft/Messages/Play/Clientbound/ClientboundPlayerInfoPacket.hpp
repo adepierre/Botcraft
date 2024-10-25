@@ -23,7 +23,6 @@ namespace ProtocolCraft
     class ClientboundPlayerInfoPacket : public BaseMessage<ClientboundPlayerInfoPacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Player Info";
 
     private:
@@ -175,14 +174,10 @@ namespace ProtocolCraft
             return output;
         }
 
-        DECLARE_FIELDS(
-            (Internal::DiffType<PlayerInfoAction, VarInt>, Internal::CustomType<std::map<UUID, PlayerUpdate>, &THIS::ReadEntries, &THIS::WriteEntries, &THIS::SerializeEntries>),
-            (Action,                                       Entries)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Action, Internal::DiffType<PlayerInfoAction, VarInt>);
+        SERIALIZED_FIELD(Entries, Internal::CustomType<std::map<UUID, PlayerUpdate>, &THIS::ReadEntries, &THIS::WriteEntries, &THIS::SerializeEntries>);
 
-        GETTER_SETTER(Action);
-        GETTER_SETTER(Entries);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
 #endif

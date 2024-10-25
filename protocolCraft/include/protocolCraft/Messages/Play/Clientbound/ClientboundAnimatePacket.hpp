@@ -7,16 +7,11 @@ namespace ProtocolCraft
     class ClientboundAnimatePacket : public BaseMessage<ClientboundAnimatePacket>
     {
     public:
-
         static constexpr std::string_view packet_name = "Animate";
 
-        DECLARE_FIELDS(
-            (VarInt, unsigned char),
-            (Id_,    Action)
-        );
-        DECLARE_READ_WRITE_SERIALIZE;
+        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(Action, unsigned char);
 
-        GETTER_SETTER(Id_);
-        GETTER_SETTER(Action);
+        DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
