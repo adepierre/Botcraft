@@ -21,6 +21,9 @@ namespace ProtocolCraft
         UpdateListed,
         UpdateLatency,
         UpdateDisplayName,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        UpdateListOrder,
+#endif
         NUM_PLAYERINFOUPDATEACTION
     };
 
@@ -35,6 +38,10 @@ namespace ProtocolCraft
         bool listed = false;
 
         int latency = 0;
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        int list_order = 0;
+#endif
 
         std::optional<Chat> display_name;
     };
@@ -103,6 +110,11 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::UpdateDisplayName:
                         entry.display_name = ReadData<std::optional<Chat>>(iter, length);
                         break;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+                    case PlayerInfoUpdateAction::UpdateListOrder:
+                        entry.list_order = ReadData<VarInt>(iter, length);
+                        break;
+#endif
                     default:
                         break;
                     }
@@ -140,6 +152,11 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::UpdateDisplayName:
                         WriteData<std::optional<Chat>>(p.second.display_name, container);
                         break;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+                    case PlayerInfoUpdateAction::UpdateListOrder:
+                        WriteData<VarInt>(p.second.list_order, container);
+                        break;
+#endif
                     default:
                         break;
                     }
@@ -182,6 +199,11 @@ namespace ProtocolCraft
                             entry["display_name"] = p.second.display_name.value();
                         }
                         break;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+                    case PlayerInfoUpdateAction::UpdateListOrder:
+                        entry["list_order"] = p.second.list_order;
+                        break;
+#endif
                     default:
                         break;
                     }

@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #pragma once
 
 #include "protocolCraft/Types/Recipes/RecipeData.hpp"

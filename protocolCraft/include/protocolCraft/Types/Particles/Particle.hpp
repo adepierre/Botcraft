@@ -102,6 +102,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         Vibration,
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        Trail,
+#endif
         ItemSlime,
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ItemCobweb,
@@ -196,6 +199,9 @@ namespace ProtocolCraft
         RaidOmen,
         TrialOmen,
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        BlockCrumble,
+#endif
         NUM_PARTICLE_TYPES
     };
 #else
@@ -263,23 +269,21 @@ namespace ProtocolCraft
         Particle();
         virtual ~Particle();
         std::string_view GetName() const;
-        ParticleType GetParticleType() const;
-        std::shared_ptr<ParticleOptions> GetOptions() const;
 
-        Particle& SetParticleType(const ParticleType particle_type_);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Options, std::shared_ptr<ParticleOptions>);
+
+        GETTER(ParticleType);
+        GETTER(Options);
+
+        Particle& SetParticleType(const ProtocolCraft::ParticleType particle_type_);
+
+        DECLARE_READ_WRITE_SERIALIZE;
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+    public:
         void ReadOptions(ReadIterator& iter, size_t& length);
         void WriteOptions(WriteContainer& container) const;
 #endif
-
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-        virtual void WriteImpl(WriteContainer& container) const override;
-        virtual Json::Value SerializeImpl() const override;
-
-    private:
-        ParticleType particle_type = ParticleType::None;
-        std::shared_ptr<ParticleOptions> options;
     };
 }

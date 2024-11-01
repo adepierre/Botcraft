@@ -3,19 +3,27 @@
 
 #include "protocolCraft/Types/Particles/ParticleOptions.hpp"
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+#include <array>
+#endif
+
 namespace ProtocolCraft
 {
     class DustColorTransitionOptions : public ParticleOptions
     {
-        SERIALIZED_FIELD(FromRed, float);
-        SERIALIZED_FIELD(FromGreen, float);
-        SERIALIZED_FIELD(FromBlue, float);
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+        SERIALIZED_FIELD(FromColor, std::array<float, 3>);
+#else
+        SERIALIZED_FIELD(FromColor, int);
+#endif
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SERIALIZED_FIELD(Scale, float);
 #endif
-        SERIALIZED_FIELD(ToRed, float);
-        SERIALIZED_FIELD(ToGreen, float);
-        SERIALIZED_FIELD(ToBlue, float);
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+        SERIALIZED_FIELD(ToColor, std::array<float, 3>);
+#else
+        SERIALIZED_FIELD(ToColor, int);
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         SERIALIZED_FIELD(Scale, float);
 #endif

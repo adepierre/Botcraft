@@ -12,7 +12,11 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Container Set Slot";
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(ContainerId, char);
+#else
+        SERIALIZED_FIELD(ContainerId, VarInt);
+#endif
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
         SERIALIZED_FIELD(StateId, VarInt);
 #endif

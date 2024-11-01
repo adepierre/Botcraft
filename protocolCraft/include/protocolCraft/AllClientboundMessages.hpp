@@ -51,10 +51,15 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundCustomQueryPacket.hpp"
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundGameProfilePacket.hpp"
+#endif
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundHelloPacket.hpp"
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginCompressionPacket.hpp"
 #include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginDisconnectPacket.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Login/Clientbound/ClientboundLoginFinishedPacket.hpp"
+#endif
 
 // Play
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddEntityPacket.hpp"
@@ -144,6 +149,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundDisguisedChatPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundEntityEventPacket.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundEntityPositionSyncPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundExplodePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundGameEventPacket.hpp"
@@ -179,6 +187,9 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPos.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketPosRot.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveEntityPacketRot.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveMinecartPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundMoveVehiclePacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundOpenBookPacket.hpp"
@@ -215,13 +226,23 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerLookAtPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerPositionPacket.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundPlayerRotationPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundPongResponsePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundProjectilePowerPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipeBookAddPacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipeBookRemovePacket.hpp"
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipeBookSettingsPacket.hpp"
+#endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRecipePacket.hpp"
+#endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 755 /* > 1.17 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
 #endif
@@ -263,10 +284,15 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetBorderWarningDistancePacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCameraPacket.hpp"
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCarriedItemPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetChunkCacheCenterPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetChunkCacheRadiusPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetCursorItemPacket.hpp"
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetDefaultSpawnPositionPacket.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -279,8 +305,14 @@
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetEquipmentPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetExperiencePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetHealthPacket.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetHeldSlotPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetObjectivePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPassengersPacket.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPlayerInventoryPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundSetScorePacket.hpp"
 #if PROTOCOL_VERSION > 756 /* > 1.17 */
@@ -389,7 +421,11 @@ namespace ProtocolCraft
     using AllClientboundLoginMessages = std::tuple<
         ClientboundLoginDisconnectPacket,
         ClientboundHelloPacket,
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ClientboundGameProfilePacket,
+#else
+        ClientboundLoginFinishedPacket,
+#endif
         ClientboundLoginCompressionPacket
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ,
@@ -495,6 +531,9 @@ namespace ProtocolCraft
         ClientboundDisguisedChatPacket,
 #endif
         ClientboundEntityEventPacket,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundEntityPositionSyncPacket,
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
         ClientboundTagQueryPacket,
 #endif
@@ -532,6 +571,9 @@ namespace ProtocolCraft
 #endif
         ClientboundMoveEntityPacketPos,
         ClientboundMoveEntityPacketPosRot,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundMoveMinecartPacket,
+#endif
         ClientboundMoveEntityPacketRot,
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
         ClientboundMoveEntityPacket,
@@ -575,10 +617,20 @@ namespace ProtocolCraft
         ClientboundPlayerLookAtPacket,
 #endif
         ClientboundPlayerPositionPacket,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundPlayerRotationPacket,
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundRecipeBookAddPacket,
+        ClientboundRecipeBookRemovePacket,
+        ClientboundRecipeBookSettingsPacket,
+#endif
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
         ClientboundUseBedPacket,
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ClientboundRecipePacket,
+#endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 756 /* < 1.17.1 */
         ClientboundRemoveEntityPacket,
 #endif
@@ -615,10 +667,15 @@ namespace ProtocolCraft
         ClientboundSetBorderPacket,
 #endif
         ClientboundSetCameraPacket,
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ClientboundSetCarriedItemPacket,
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ClientboundSetChunkCacheCenterPacket,
         ClientboundSetChunkCacheRadiusPacket,
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundSetCursorItemPacket,
 #endif
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         ClientboundSetDefaultSpawnPositionPacket,
@@ -633,8 +690,14 @@ namespace ProtocolCraft
         ClientboundSetEquipmentPacket,
         ClientboundSetExperiencePacket,
         ClientboundSetHealthPacket,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundSetHeldSlotPacket,
+#endif
         ClientboundSetObjectivePacket,
         ClientboundSetPassengersPacket,
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        ClientboundSetPlayerInventoryPacket,
+#endif
         ClientboundSetPlayerTeamPacket,
         ClientboundSetScorePacket,
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */

@@ -60,20 +60,31 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(X, float);
         SERIALIZED_FIELD(Y, float);
         SERIALIZED_FIELD(Z, float);
-#else
+#elif PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);
+#else
+        SERIALIZED_FIELD(Center, std::array<double, 3>);
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(Power, float);
         SERIALIZED_FIELD(ToBlow, Internal::CustomType<std::vector<NetworkPosition>, &THIS::ReadToBlow, &THIS::WriteToBlow>);
+#endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(KnockbackX, float);
         SERIALIZED_FIELD(KnockbackY, float);
         SERIALIZED_FIELD(KnockbackZ, float);
-#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+#else
+        SERIALIZED_FIELD(PlayerKnockback, std::optional<std::array<double, 3>>);
+#endif
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(BlockInteraction, VarInt);
         SERIALIZED_FIELD(SmallExplosionParticles, Particle);
         SERIALIZED_FIELD(LargeExplosionParticles, Particle);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SERIALIZED_FIELD(ExplosionParticle, Particle);
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SERIALIZED_FIELD(ExplosionSound, SoundEvent);

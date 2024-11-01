@@ -9,7 +9,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Add Entity";
 
-        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(Uuid, UUID);
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(Type, char);

@@ -11,6 +11,9 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(GameTime, long long int);
         SERIALIZED_FIELD(DayTime, long long int);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SERIALIZED_FIELD(TickDayTime, bool);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

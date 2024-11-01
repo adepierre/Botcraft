@@ -37,12 +37,18 @@
 #include "protocolCraft/Types/KnownPack.hpp"
 #endif
 #include "protocolCraft/Types/MapDecoration.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Types/MinecartBehaviorMinecartStep.hpp"
+#endif
 #include "protocolCraft/Types/NetworkPosition.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/PackedRegistryEntry.hpp"
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Types/PlayerUpdate.hpp"
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.2 */
+#include "protocolCraft/Types/PositionMoveRotation.hpp"
 #endif
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
 #include "protocolCraft/Types/Record.hpp"
@@ -102,6 +108,12 @@
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #endif
 #include "protocolCraft/Types/Recipes/RecipeBookSettings.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Types/Recipes/RecipeBookAddEntry.hpp"
+#include "protocolCraft/Types/Recipes/RecipeDisplayEntry.hpp"
+#include "protocolCraft/Types/Recipes/SelectableRecipe.hpp"
+#include "protocolCraft/Types/Recipes/SelectableRecipeSingleInputEntry.hpp"
+#endif
 
 // Sound
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
@@ -153,12 +165,18 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(KnownPack);
 #endif
     DEFINE_NETWORK_TYPE(MapDecoration);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    DEFINE_NETWORK_TYPE(MinecartBehaviorMinecartStep);
+#endif
     DEFINE_SERIALIZE(NetworkPosition);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(PackedRegistryEntry);
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_NETWORK_TYPE(PlayerUpdate);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.2 */
+    DEFINE_NETWORK_TYPE(PositionMoveRotation);
 #endif
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
     DEFINE_NETWORK_TYPE(Record);
@@ -218,6 +236,12 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(Ingredient);
 #endif
     DEFINE_NETWORK_TYPE(RecipeBookSettings);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    DEFINE_NETWORK_TYPE(RecipeBookAddEntry);
+    DEFINE_NETWORK_TYPE(RecipeDisplayEntry);
+    DEFINE_NETWORK_TYPE(SelectableRecipe);
+    DEFINE_NETWORK_TYPE(SelectableRecipeSingleInputEntry);
+#endif
 
     // Sound
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */

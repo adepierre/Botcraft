@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Add Global Entity";
 
-        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(Type, char);
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);

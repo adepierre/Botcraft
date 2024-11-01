@@ -71,7 +71,11 @@ namespace ProtocolCraft
 #endif
     DEFINE_MESSAGE_CLASS(ClientboundLoginDisconnectPacket);
     DEFINE_MESSAGE_CLASS(ClientboundHelloPacket);
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     DEFINE_MESSAGE_CLASS(ClientboundGameProfilePacket);
+#else
+    DEFINE_MESSAGE_CLASS(ClientboundLoginFinishedPacket);
+#endif
     DEFINE_MESSAGE_CLASS(ClientboundLoginCompressionPacket);
 
     // Status clientbound
@@ -249,7 +253,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_MESSAGE_CLASS(ClientboundMerchantOffersPacket);
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     DEFINE_MESSAGE_CLASS(ClientboundRecipePacket);
+#endif
     DEFINE_MESSAGE_CLASS(ClientboundSetScorePacket);
 #if PROTOCOL_VERSION > 471 /* > 1.13.2 */
     DEFINE_MESSAGE_CLASS(ClientboundSetChunkCacheCenterPacket);
@@ -259,7 +265,9 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundContainerSetContentPacket);
     DEFINE_MESSAGE_CLASS(ClientboundContainerSetDataPacket);
     DEFINE_MESSAGE_CLASS(ClientboundOpenScreenPacket);
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     DEFINE_MESSAGE_CLASS(ClientboundSetCarriedItemPacket);
+#endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     DEFINE_MESSAGE_CLASS(ClientboundSetBorderPacket);
 #endif
@@ -340,9 +348,20 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundStoreCookiePacket);
     DEFINE_MESSAGE_CLASS(ClientboundTransferPacket);
 #endif
-#if PROTOCOL_VERSION > 766 /* > 1.21 */
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
     DEFINE_MESSAGE_CLASS(ClientboundCustomReportDetailsPacket);
     DEFINE_MESSAGE_CLASS(ClientboundServerLinksPacket);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    DEFINE_MESSAGE_CLASS(ClientboundMoveMinecartPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundEntityPositionSyncPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundPlayerRotationPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRecipeBookAddPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRecipeBookRemovePacket);
+    DEFINE_MESSAGE_CLASS(ClientboundRecipeBookSettingsPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetCursorItemPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetHeldSlotPacket);
+    DEFINE_MESSAGE_CLASS(ClientboundSetPlayerInventoryPacket);
 #endif
 
 
@@ -494,5 +513,9 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ServerboundChatCommandSignedPacket);
     DEFINE_MESSAGE_CLASS(ServerboundCookieResponsePacket);
     DEFINE_MESSAGE_CLASS(ServerboundDebugSampleSubscriptionPacket);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    DEFINE_MESSAGE_CLASS(ServerboundClientTickEndPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundSelectBundleItemPacket);
 #endif
 }

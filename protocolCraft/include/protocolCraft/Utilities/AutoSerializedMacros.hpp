@@ -18,7 +18,7 @@
 #define SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Name, ...)                        \
     private:                                                                     \
         using Name##_type = typename Internal::SerializedType<__VA_ARGS__>;      \
-        Name##_type::storage_type Name;                                          \
+        Name##_type::storage_type Name{};                                        \
         template <size_t, typename> struct FieldsData;                           \
         static constexpr size_t Name##_index =                                   \
             Internal::field_index<0, struct FieldDummy##Name, FieldsData>;       \

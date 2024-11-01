@@ -23,6 +23,9 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Types/Particles/TargetColorParticleOptions.hpp"
+#endif
 
 #include <array>
 #include <stdexcept>
@@ -52,6 +55,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     DEFINE_NETWORK_TYPE(ShriekParticleOptions);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    DEFINE_NETWORK_TYPE(TargetColorParticleOptions);
 #endif
 
     Particle::Particle()
@@ -159,6 +165,9 @@ namespace ProtocolCraft
     #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             "vibration",
     #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            "trail",
+#endif
             "item_slime",
     #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             "item_cobweb",
@@ -253,6 +262,9 @@ namespace ProtocolCraft
             "raid_omen",
             "trial_omen",
     #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            "block_crumble",
+#endif
         };
 #else
         static constexpr std::array<std::string_view, static_cast<size_t>(ParticleType::NUM_PARTICLE_TYPES)> names = {
@@ -307,32 +319,22 @@ namespace ProtocolCraft
             "spit",
         };
 #endif
-        if (particle_type <= ParticleType::None || particle_type >= ParticleType::NUM_PARTICLE_TYPES)
+        if (ParticleType <= ParticleType::None || ParticleType >= ParticleType::NUM_PARTICLE_TYPES)
         {
             return "";
         }
-        return names[static_cast<size_t>(particle_type)];
+        return names[static_cast<size_t>(ParticleType)];
     }
 
-    ParticleType Particle::GetParticleType() const
-    {
-        return particle_type;
-    }
-
-    std::shared_ptr<ParticleOptions> Particle::GetOptions() const
-    {
-        return options;
-    }
-
-    Particle& Particle::SetParticleType(const ParticleType particle_type_)
+    Particle& Particle::SetParticleType(const ProtocolCraft::ParticleType particle_type_)
     {
         if (particle_type_ <= ParticleType::None || particle_type_ >= ParticleType::NUM_PARTICLE_TYPES)
         {
             throw std::runtime_error("Unable to create particle with id: " + std::to_string(static_cast<int>(particle_type_)) + ".");
         }
-        particle_type = particle_type_;
+        ParticleType = particle_type_;
 
-        switch (particle_type)
+        switch (ParticleType)
         {
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
         case ParticleType::Block:
@@ -343,47 +345,55 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         case ParticleType::DustPillar:
 #endif
-            options = std::make_shared<BlockParticleOptions>();
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case ParticleType::BlockCrumble:
+#endif
+            Options = std::make_shared<BlockParticleOptions>();
             break;
         case ParticleType::Dust:
-            options = std::make_shared<DustParticleOptions>();
+            Options = std::make_shared<DustParticleOptions>();
             break;
         case ParticleType::Item:
-            options = std::make_shared<ItemParticleOptions>();
+            Options = std::make_shared<ItemParticleOptions>();
             break;
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case ParticleType::DustColorTransition:
-            options = std::make_shared<DustColorTransitionOptions>();
+            Options = std::make_shared<DustColorTransitionOptions>();
             break;
         case ParticleType::Vibration:
-            options = std::make_shared<VibrationParticleOptions>();
+            Options = std::make_shared<VibrationParticleOptions>();
             break;
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SculkCharge:
-            options = std::make_shared<SculkChargeParticleOptions>();
+            Options = std::make_shared<SculkChargeParticleOptions>();
             break;
         case ParticleType::Shriek:
-            options = std::make_shared<ShriekParticleOptions>();
+            Options = std::make_shared<ShriekParticleOptions>();
             break;
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         case ParticleType::EntityEffect:
-            options = std::make_shared<ColorParticleOptions>();
+            Options = std::make_shared<ColorParticleOptions>();
+            break;
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case ParticleType::Trail:
+            Options = std::make_shared<TargetColorParticleOptions>();
             break;
 #endif
 #else //1.12.2
         case ParticleType::Blockcrack:
         case ParticleType::Blockdust:
         case ParticleType::FallingDust:
-            options = std::make_shared<BlockParticleOptions>();
+            Options = std::make_shared<BlockParticleOptions>();
             break;
         case ParticleType::Iconcrack:
-            options = std::make_shared<IconcrackParticleOptions>();
+            Options = std::make_shared<IconcrackParticleOptions>();
             break;
 #endif
         default:
-            options = std::make_shared<EmptyParticleOptions>();
+            Options = std::make_shared<EmptyParticleOptions>();
             break;
         }
         return *this;
@@ -392,37 +402,37 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void Particle::ReadOptions(ReadIterator& iter, size_t& length)
     {
-        if (options != nullptr)
+        if (Options != nullptr)
         {
-            options->Read(iter, length);
+            Options->Read(iter, length);
         }
     }
 
     void Particle::WriteOptions(WriteContainer& container) const
     {
-        if (options != nullptr)
+        if (Options != nullptr)
         {
-            options->Write(container);
+            Options->Write(container);
         }
     }
 #endif
 
     void Particle::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        particle_type = ReadData<ParticleType, VarInt>(iter, length);
-        SetParticleType(particle_type);
-        if (options != nullptr)
+        ParticleType = ReadData<ProtocolCraft::ParticleType, VarInt>(iter, length);
+        SetParticleType(ParticleType);
+        if (Options != nullptr)
         {
-            options->Read(iter, length);
+            Options->Read(iter, length);
         }
     }
 
     void Particle::WriteImpl(WriteContainer& container) const
     {
-        WriteData<ParticleType, VarInt>(particle_type, container);
-        if (options != nullptr)
+        WriteData<ProtocolCraft::ParticleType, VarInt>(ParticleType, container);
+        if (Options != nullptr)
         {
-            options->Write(container);
+            Options->Write(container);
         }
     }
 
@@ -430,8 +440,8 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
-        output["particle_type"] = GetName();
-        output["options"] = options == nullptr ? Json::Object() : options->Serialize();
+        output[std::string(field_name<ParticleType_index>)] = GetName();
+        output[std::string(field_name<Options_index>)] = Options == nullptr ? Json::Object() : Options->Serialize();
 
         return output;
     }

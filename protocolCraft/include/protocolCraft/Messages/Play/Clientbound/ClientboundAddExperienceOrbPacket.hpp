@@ -9,7 +9,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Add Experience Orb";
 
-        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);

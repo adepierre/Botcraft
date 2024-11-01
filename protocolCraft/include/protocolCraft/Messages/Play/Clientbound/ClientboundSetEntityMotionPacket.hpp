@@ -9,7 +9,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Set Entity Motion";
 
-        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(XA, short);
         SERIALIZED_FIELD(YA, short);
         SERIALIZED_FIELD(ZA, short);

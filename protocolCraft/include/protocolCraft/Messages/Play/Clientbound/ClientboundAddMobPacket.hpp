@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Add Mob";
 
-        SERIALIZED_FIELD(Id_, VarInt);
+        SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(Uuid, UUID);
         SERIALIZED_FIELD(Type, VarInt);
         SERIALIZED_FIELD(X, double);

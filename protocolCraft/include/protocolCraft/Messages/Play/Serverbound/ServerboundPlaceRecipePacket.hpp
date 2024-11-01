@@ -12,13 +12,17 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Place Recipe";
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(ContainerId, char);
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
+#else
+        SERIALIZED_FIELD(ContainerId, VarInt);
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */ || PROTOCOL_VERSION > 767 /* > 1.21.1 */
         SERIALIZED_FIELD(Recipe, VarInt);
 #else
         SERIALIZED_FIELD(Recipe, Identifier);
 #endif
-        SERIALIZED_FIELD(ShiftDown, bool);
+        SERIALIZED_FIELD(UseMaxItems, bool);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
