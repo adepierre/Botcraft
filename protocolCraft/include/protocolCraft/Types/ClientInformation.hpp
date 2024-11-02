@@ -15,6 +15,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(MainHand, VarInt);
         SERIALIZED_FIELD(TestFilteringEnabled, bool);
         SERIALIZED_FIELD(AllowsListing, bool);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SERIALIZED_FIELD(ParticleStatus, VarInt);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

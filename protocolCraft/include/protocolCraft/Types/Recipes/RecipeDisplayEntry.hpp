@@ -13,7 +13,7 @@ namespace ProtocolCraft
     {
         SERIALIZED_FIELD(Id, VarInt);
         SERIALIZED_FIELD(Display, RecipeDisplay);
-        SERIALIZED_FIELD(Group, std::optional<VarInt>);
+        SERIALIZED_FIELD(Group, VarInt);
         SERIALIZED_FIELD(Category, VarInt);
         SERIALIZED_FIELD(CraftingRequirements, std::optional<std::vector<Ingredient>>);
 

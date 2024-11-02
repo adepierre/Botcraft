@@ -24,6 +24,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         SERIALIZED_FIELD(Inside, bool);
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SERIALIZED_FIELD(WorldBorderHit, bool);
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SERIALIZED_FIELD(Sequence, VarInt);
 #endif

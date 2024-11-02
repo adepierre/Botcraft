@@ -2,7 +2,7 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
-#include "protocolCraft/Types/Recipes/RecipeDisplayEntry.hpp"
+#include "protocolCraft/Types/Recipes/RecipeBookAddEntry.hpp"
 
 #include <vector>
 
@@ -13,9 +13,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Recipe Book Add";
 
-        // The char is the flags (should be an extra subtype with RecipeDisplayEntry and char, but easier with just a pair)
-        // TODO: do a proper subtype if one day ClientboundRecipeBookAddPacket::Entry has extra fields
-        SERIALIZED_FIELD(Entries, std::vector<std::pair<RecipeDisplayEntry, char>>);
+        SERIALIZED_FIELD(Entries, std::vector<RecipeBookAddEntry>);
         SERIALIZED_FIELD(Replace, bool);
 
         DECLARE_READ_WRITE_SERIALIZE;
