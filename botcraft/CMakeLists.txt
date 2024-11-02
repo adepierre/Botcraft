@@ -191,6 +191,10 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/vehicle/VehicleEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartContainerEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/AbstractBoatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/AbstractChestBoatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/ChestRaftEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/RaftEntity.hpp
     include/botcraft/Game/Entities/entities/animal/ShoulderRidingEntity.hpp
     include/botcraft/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.hpp
     include/botcraft/Game/Entities/entities/monster/AbstractIllagerEntity.hpp
@@ -200,9 +204,12 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.hpp
     include/botcraft/Game/Entities/entities/npc/AbstractVillagerEntity.hpp
     include/botcraft/Game/Entities/entities/AgeableMobEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/AgeableWaterCreatureEntity.hpp
     include/botcraft/Game/Entities/entities/PathfinderMobEntity.hpp
     include/botcraft/Game/Entities/entities/monster/PatrollingMonsterEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrowableProjectileEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/creaking/CreakingTransientEntity.hpp
 
     include/botcraft/Game/Inventory/Window.hpp
     include/botcraft/Game/Inventory/InventoryManager.hpp
@@ -439,9 +446,16 @@ set(botcraft_SRC
     src/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.cpp
     src/Game/Entities/entities/npc/AbstractVillagerEntity.cpp
     src/Game/Entities/entities/AgeableMobEntity.cpp
+    src/Game/Entities/entities/animal/AgeableWaterCreatureEntity.cpp
     src/Game/Entities/entities/PathfinderMobEntity.cpp
     src/Game/Entities/entities/monster/PatrollingMonsterEntity.cpp
     src/Game/Entities/entities/projectile/ThrowableProjectileEntity.cpp
+    src/Game/Entities/entities/monster/creaking/CreakingEntity.cpp
+    src/Game/Entities/entities/monster/creaking/CreakingTransientEntity.cpp
+    src/Game/Entities/entities/vehicle/AbstractBoatEntity.cpp
+    src/Game/Entities/entities/vehicle/AbstractChestBoatEntity.cpp
+    src/Game/Entities/entities/vehicle/ChestRaftEntity.cpp
+    src/Game/Entities/entities/vehicle/RaftEntity.cpp
 
     src/Game/Physics/AABB.cpp
     src/Game/Physics/PhysicsManager.cpp

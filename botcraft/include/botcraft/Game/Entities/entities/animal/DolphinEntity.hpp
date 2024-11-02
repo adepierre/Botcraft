@@ -1,16 +1,28 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #pragma once
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "botcraft/Game/Entities/entities/animal/WaterAnimalEntity.hpp"
+#else
+#include "botcraft/Game/Entities/entities/animal/AgeableWaterCreatureEntity.hpp"
+#endif
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     class DolphinEntity : public WaterAnimalEntity
+#else
+    class DolphinEntity : public AgeableWaterCreatureEntity
+#endif
     {
     protected:
         static constexpr int metadata_count = 3;
         static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         static constexpr int hierarchy_metadata_count = WaterAnimalEntity::metadata_count + WaterAnimalEntity::hierarchy_metadata_count;
+#else
+        static constexpr int hierarchy_metadata_count = AgeableWaterCreatureEntity::metadata_count + AgeableWaterCreatureEntity::hierarchy_metadata_count;
+#endif
 
     public:
         DolphinEntity();

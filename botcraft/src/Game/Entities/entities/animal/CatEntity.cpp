@@ -63,7 +63,7 @@ namespace Botcraft
         output["metadata"]["relax_state_one"] = GetRelaxStateOne();
         output["metadata"]["data_collar_color"] = GetDataCollarColor();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
 
         return output;

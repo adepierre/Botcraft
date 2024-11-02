@@ -124,19 +124,19 @@ namespace Botcraft
         output["metadata"]["data_shoulder_left"] = GetDataShoulderLeft().Serialize();
         output["metadata"]["data_shoulder_right"] = GetDataShoulderRight().Serialize();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
-        output["attributes"]["generic.attack_speed"] = GetAttributeAttackSpeedValue();
-        output["attributes"]["generic.luck"] = GetAttributeLuckValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_speed"] = GetAttributeAttackSpeedValue();
+        output["attributes"]["luck"] = GetAttributeLuckValue();
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        output["attributes"]["player.block_interaction_range"] = GetAttributePlayerBlockInteractionRangeValue();
-        output["attributes"]["player.entity_interaction_range"] = GetAttributePlayerEntityInteractionRangeValue();
-        output["attributes"]["player.block_break_speed"] = GetAttributePlayerBlockBreakSpeedValue();
+        output["attributes"]["block_interaction_range"] = GetAttributePlayerBlockInteractionRangeValue();
+        output["attributes"]["entity_interaction_range"] = GetAttributePlayerEntityInteractionRangeValue();
+        output["attributes"]["block_break_speed"] = GetAttributePlayerBlockBreakSpeedValue();
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-        output["attributes"]["player.submerged_mining_speed"] = GetAttributePlayerSubmergedMiningSpeedValue();
-        output["attributes"]["player.sneaking_speed"] = GetAttributePlayerSneakingSpeedValue();
-        output["attributes"]["player.mining_efficiency"] = GetAttributePlayerMiningEfficiencyValue();
-        output["attributes"]["player.sweeping_damage_ratio"] = GetAttributePlayerSweepingDamageRatioValue();
+        output["attributes"]["submerged_mining_speed"] = GetAttributePlayerSubmergedMiningSpeedValue();
+        output["attributes"]["sneaking_speed"] = GetAttributePlayerSneakingSpeedValue();
+        output["attributes"]["mining_efficiency"] = GetAttributePlayerMiningEfficiencyValue();
+        output["attributes"]["sweeping_damage_ratio"] = GetAttributePlayerSweepingDamageRatioValue();
 #endif
 
         return output;

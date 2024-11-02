@@ -15,5 +15,15 @@ namespace Botcraft
         virtual ~AnimalEntity();
 
         virtual bool IsAnimal() const override;
+
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        virtual ProtocolCraft::Json::Value Serialize() const override;
+#endif
+
+        // Attribute stuff
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        double GetAttributeTemptRangeValue() const;
+#endif
     };
 }

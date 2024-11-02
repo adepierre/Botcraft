@@ -17,7 +17,7 @@ namespace Botcraft
     {
         ProtocolCraft::Json::Value output = PathfinderMobEntity::Serialize();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

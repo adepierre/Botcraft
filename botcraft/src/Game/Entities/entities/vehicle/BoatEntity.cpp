@@ -1,9 +1,12 @@
 #include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include <mutex>
+#endif
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     const std::array<std::string, BoatEntity::metadata_count> BoatEntity::metadata_names{ {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         "data_id_hurt",
@@ -17,8 +20,13 @@ namespace Botcraft
         "data_id_bubble_time",
 #endif
     } };
+#endif
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     BoatEntity::BoatEntity()
+#else
+    BoatEntity::BoatEntity(const EntityType type) : type(type)
+#endif
     {
         // Initialize all metadata with default values
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
@@ -26,11 +34,13 @@ namespace Botcraft
         SetDataIdHurtdir(1);
         SetDataIdDamage(0.0f);
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SetDataIdType(0);
         SetDataIdPaddleLeft(false);
         SetDataIdPaddleRight(false);
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SetDataIdBubbleTime(0);
+#endif
 #endif
     }
 
@@ -47,7 +57,11 @@ namespace Botcraft
 
     EntityType BoatEntity::GetType() const
     {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         return EntityType::Boat;
+#else
+        return type;
+#endif
     }
 
 
@@ -56,20 +70,30 @@ namespace Botcraft
         return "boat";
     }
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     EntityType BoatEntity::GetClassType()
     {
         return EntityType::Boat;
     }
+#else
+    bool BoatEntity::IsBoat() const
+    {
+        return true;
+    }
+#endif
 
 
     ProtocolCraft::Json::Value BoatEntity::Serialize() const
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         ProtocolCraft::Json::Value output = Entity::Serialize();
-#else
+#elif PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ProtocolCraft::Json::Value output = VehicleEntity::Serialize();
+#else
+        ProtocolCraft::Json::Value output = AbstractBoatEntity::Serialize();
 #endif
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         output["metadata"]["data_id_hurt"] = GetDataIdHurt();
         output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();
@@ -81,11 +105,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         output["metadata"]["data_id_bubble_time"] = GetDataIdBubbleTime();
 #endif
+#else
+        output["type"] = type;
+#endif
 
         return output;
     }
 
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     void BoatEntity::SetMetadataValue(const int index, const std::any& value)
     {
         if (index < hierarchy_metadata_count)
@@ -194,6 +222,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_bubble_time"] = data_id_bubble_time;
     }
+#endif
 #endif
 
 

@@ -21,7 +21,9 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.6) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 48.0) });
+#endif
     }
 
     BeeEntity::~BeeEntity()
@@ -59,8 +61,8 @@ namespace Botcraft
         output["metadata"]["data_flags_id"] = GetDataFlagsId();
         output["metadata"]["data_remaining_anger_time"] = GetDataRemainingAngerTime();
 
-        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["flying_speed"] = GetAttributeFlyingSpeedValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
 
         return output;

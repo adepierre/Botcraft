@@ -22,7 +22,9 @@ namespace Botcraft
         SetDataVariantId(0);
 
         // Initialize all attributes with default values
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 40.0) });
+#endif
     }
 
     LlamaEntity::~LlamaEntity()

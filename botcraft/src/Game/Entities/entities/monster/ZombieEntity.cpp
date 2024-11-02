@@ -76,7 +76,7 @@ namespace Botcraft
         output["metadata"]["data_drowned_conversion_id"] = GetDataDrownedConversionId();
 #endif
 
-        output["attributes"]["zombie.spawn_reinforcements"] = GetAttributeSpawnReinforcementsChanceValue();
+        output["attributes"]["spawn_reinforcements"] = GetAttributeSpawnReinforcementsChanceValue();
 
         return output;
     }

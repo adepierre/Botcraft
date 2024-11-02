@@ -64,7 +64,7 @@ namespace Botcraft
         output["metadata"]["data_target_c"] = GetDataTargetC();
         output["metadata"]["data_id_inv"] = GetDataIdInv();
 
-        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
+        output["attributes"]["flying_speed"] = GetAttributeFlyingSpeedValue();
 
         return output;
     }

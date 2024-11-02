@@ -102,29 +102,29 @@ namespace Botcraft
 
         output["attributes"] = ProtocolCraft::Json::Value();
 
-        output["attributes"]["generic.max_health"] = GetAttributeMaxHealthValue();
-        output["attributes"]["generic.knockback_resistance"] = GetAttributeKnockbackResistanceValue();
-        output["attributes"]["generic.movement_speed"] = GetAttributeMovementSpeedValue();
-        output["attributes"]["generic.armor"] = GetAttributeArmorValue();
-        output["attributes"]["generic.armor_toughness"] = GetAttributeArmorToughnessValue();
+        output["attributes"]["max_health"] = GetAttributeMaxHealthValue();
+        output["attributes"]["knockback_resistance"] = GetAttributeKnockbackResistanceValue();
+        output["attributes"]["movement_speed"] = GetAttributeMovementSpeedValue();
+        output["attributes"]["armor"] = GetAttributeArmorValue();
+        output["attributes"]["armor_toughness"] = GetAttributeArmorToughnessValue();
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-        output["attributes"]["generic.max_absorption"] = GetAttributeMaxAbsorptionValue();
+        output["attributes"]["max_absorption"] = GetAttributeMaxAbsorptionValue();
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        output["attributes"]["generic.step_height"] = GetAttributeStepHeightValue();
-        output["attributes"]["generic.scale"] = GetAttributeScaleValue();
-        output["attributes"]["generic.gravity"] = GetAttributeGravityValue();
-        output["attributes"]["generic.safe_fall_distance"] = GetAttributeSafeFallDistanceValue();
-        output["attributes"]["generic.fall_damage_multiplier"] = GetAttributeFallDamageMultiplierValue();
-        output["attributes"]["generic.jump_strength"] = GetAttributeJumpStrengthValue();
+        output["attributes"]["step_height"] = GetAttributeStepHeightValue();
+        output["attributes"]["scale"] = GetAttributeScaleValue();
+        output["attributes"]["gravity"] = GetAttributeGravityValue();
+        output["attributes"]["safe_fall_distance"] = GetAttributeSafeFallDistanceValue();
+        output["attributes"]["fall_damage_multiplier"] = GetAttributeFallDamageMultiplierValue();
+        output["attributes"]["jump_strength"] = GetAttributeJumpStrengthValue();
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-        output["attributes"]["generic.oxygen_bonus"] = GetAttributeOxygenBonusValue();
-        output["attributes"]["generic.burning_time"] = GetAttributeBurningTimeValue();
-        output["attributes"]["generic.explosion_knockback_resistance"] = GetAttributeExplosionKnockbackResistanceValue();
-        output["attributes"]["generic.water_movement_efficiency"] = GetAttributeWaterMovementEfficiencyValue();
-        output["attributes"]["generic.movement_efficiency"] = GetAttributeMovementEfficiencyValue();
-        output["attributes"]["generic.attack_knockback"] = GetAttributeAttackKnockbackValue();
+        output["attributes"]["oxygen_bonus"] = GetAttributeOxygenBonusValue();
+        output["attributes"]["burning_time"] = GetAttributeBurningTimeValue();
+        output["attributes"]["explosion_knockback_resistance"] = GetAttributeExplosionKnockbackResistanceValue();
+        output["attributes"]["water_movement_efficiency"] = GetAttributeWaterMovementEfficiencyValue();
+        output["attributes"]["movement_efficiency"] = GetAttributeMovementEfficiencyValue();
+        output["attributes"]["attack_knockback"] = GetAttributeAttackKnockbackValue();
 #endif
 
         return output;

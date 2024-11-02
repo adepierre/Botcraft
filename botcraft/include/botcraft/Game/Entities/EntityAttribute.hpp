@@ -74,6 +74,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             PlayerSubmergedMiningSpeed,
             PlayerSweepingDamageRatio,
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            TemptRange,
+#endif
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             WaterMovementEfficiency,
 #endif
             NUM_ENTITY_ATTRIBUTES

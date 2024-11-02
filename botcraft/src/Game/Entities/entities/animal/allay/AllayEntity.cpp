@@ -24,7 +24,9 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.1) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.1) });
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 48.0) });
+#endif
     }
 
     AllayEntity::~AllayEntity()
@@ -63,8 +65,8 @@ namespace Botcraft
         output["metadata"]["data_dancing"] = GetDataDancing();
         output["metadata"]["data_can_duplicate"] = GetDataCanDuplicate();
 
-        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["flying_speed"] = GetAttributeFlyingSpeedValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

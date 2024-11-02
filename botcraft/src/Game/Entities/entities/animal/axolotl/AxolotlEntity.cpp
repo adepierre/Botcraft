@@ -64,7 +64,7 @@ namespace Botcraft
         output["metadata"]["data_playing_dead"] = GetDataPlayingDead();
         output["metadata"]["from_bucket"] = GetFromBucket();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
 
         return output;

@@ -54,14 +54,17 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value DolphinEntity::Serialize() const
     {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ProtocolCraft::Json::Value output = WaterAnimalEntity::Serialize();
+#else
+        ProtocolCraft::Json::Value output = AgeableWaterCreatureEntity::Serialize();
+#endif
 
         output["metadata"]["treasure_pos"] = GetTreasurePos().Serialize();
         output["metadata"]["got_fish"] = GetGotFish();
         output["metadata"]["moistness_level"] = GetMoistnessLevel();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
-
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
@@ -71,7 +74,11 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             WaterAnimalEntity::SetMetadataValue(index, value);
+#else
+            AgeableWaterCreatureEntity::SetMetadataValue(index, value);
+#endif
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {

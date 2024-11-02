@@ -12,6 +12,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         "pierce_level",
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        "in_ground",
+#endif
     } };
 
     AbstractArrowEntity::AbstractArrowEntity()
@@ -23,6 +26,9 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetPierceLevel(0);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SetInGround(false);
 #endif
     }
 
@@ -51,6 +57,9 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         output["metadata"]["pierce_level"] = GetPierceLevel();
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        output["metadata"]["in_ground"] = GetInGround();
 #endif
 
         return output;
@@ -96,6 +105,14 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    bool AbstractArrowEntity::GetInGround() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<bool>(metadata.at("in_ground"));
+    }
+#endif
+
 
     void AbstractArrowEntity::SetIdFlags(const char id_flags)
     {
@@ -116,6 +133,14 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["pierce_level"] = pierce_level;
+    }
+#endif
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    void AbstractArrowEntity::SetInGround(const bool in_ground)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["in_ground"] = in_ground;
     }
 #endif
 

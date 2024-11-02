@@ -37,9 +37,9 @@ namespace Botcraft
 
         output["metadata"]["data_mob_flags_id"] = GetDataMobFlagsId();
 
-        output["attributes"]["generic.follow_range"] = GetAttributeFollowRangeValue();
+        output["attributes"]["follow_range"] = GetAttributeFollowRangeValue();
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 767 /* < 1.21 */
-        output["attributes"]["generic.attack_knockback"] = GetAttributeAttackKnockbackValue();
+        output["attributes"]["attack_knockback"] = GetAttributeAttackKnockbackValue();
 #endif
 
         return output;

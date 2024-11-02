@@ -15,7 +15,9 @@ namespace Botcraft
 #endif
     {
     protected:
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        static constexpr int metadata_count = 3;
+#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
         static constexpr int metadata_count = 2;
 #elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 3;
@@ -49,6 +51,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         char GetPierceLevel() const;
 #endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        bool GetInGround() const;
+#endif
 
         void SetIdFlags(const char id_flags);
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
@@ -56,6 +61,9 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         void SetPierceLevel(const char pierce_level);
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        void SetInGround(const bool in_ground);
 #endif
 
     };

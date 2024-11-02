@@ -56,7 +56,7 @@ namespace Botcraft
 
         output["metadata"]["data_immune_to_zombification"] = GetDataImmuneToZombification();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

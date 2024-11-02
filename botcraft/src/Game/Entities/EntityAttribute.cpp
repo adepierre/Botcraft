@@ -301,109 +301,114 @@ namespace Botcraft
         switch (type)
         {
         case Type::MaxHealth:
-            current_value = std::min(1024.0, std::max(1.0, current_value));
+            current_value = std::clamp(current_value, 1.0, 1024.0);
             break;
         case Type::FollowRange:
-            current_value = std::min(2048.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
         case Type::KnockbackResistance:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
         case Type::MovementSpeed:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::FlyingSpeed:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::AttackDamage:
-            current_value = std::min(2048.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case Type::AttackKnockback:
-            current_value = std::min(5.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 5.0);
             break;
 #endif
         case Type::AttackSpeed:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::Armor:
-            current_value = std::min(30.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 30.0);
             break;
         case Type::ArmorToughness:
-            current_value = std::min(20.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 20.0);
             break;
         case Type::Luck:
-            current_value = std::min(1024.0, std::max(-1024.0, current_value));
+            current_value = std::clamp(current_value, -1024.0, 1024.0);
             break;
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         case Type::MaxAbsorption:
-            current_value = std::min(2048.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
 #endif
         case Type::ZombieSpawnReinforcementsChance:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         case Type::HorseJumpStrength:
-            current_value = std::min(2.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 2.0);
             break;
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         case Type::PlayerBlockBreakSpeed:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::PlayerBlockInteractionRange:
-            current_value = std::min(64.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 64.0);
             break;
         case Type::PlayerEntityInteractionRange:
-            current_value = std::min(64.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 64.0);
             break;
         case Type::FallDamageMultiplier:
-            current_value = std::min(100.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 100.0);
             break;
         case Type::Gravity:
-            current_value = std::min(1.0, std::max(-1.0, current_value));
+            current_value = std::clamp(current_value, -1.0, 1.0);
             break;
         case Type::JumpStrength:
-            current_value = std::min(32.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 32.0);
             break;
         case Type::SafeFallDistance:
-            current_value = std::min(1024.0, std::max(-1024.0, current_value));
+            current_value = std::clamp(current_value, -1024.0, 1024.0);
             break;
         case Type::Scale:
-            current_value = std::min(16.0, std::max(0.0625, current_value));
+            current_value = std::clamp(current_value, 0.0625, 16.0);
             break;
         case Type::StepHeight:
-            current_value = std::min(10.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 10.0);
             break;
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
         case Type::BurningTime:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::ExplosionKnockbackResistance:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
         case Type::PlayerMiningEfficiency:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::MovementEfficiency:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
         case Type::OxygenBonus:
-            current_value = std::min(1024.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1024.0);
             break;
         case Type::PlayerSneakingSpeed:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
         case Type::PlayerSubmergedMiningSpeed:
-            current_value = std::min(20.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 20.0);
             break;
         case Type::PlayerSweepingDamageRatio:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
             break;
         case Type::WaterMovementEfficiency:
-            current_value = std::min(1.0, std::max(0.0, current_value));
+            current_value = std::clamp(current_value, 0.0, 1.0);
+            break;
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case Type::TemptRange:
+            current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
 #endif
         default:

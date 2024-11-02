@@ -17,6 +17,10 @@
 #endif
 #include "botcraft/Utilities/Logger.hpp"
 
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 #endif
@@ -28,6 +32,10 @@
 #include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "botcraft/Game/Entities/entities/vehicle/ChestRaftEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/RaftEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/ambient/BatEntity.hpp"
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -59,6 +67,10 @@
 #include "botcraft/Game/Entities/entities/animal/CodEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/CowEntity.hpp"
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/creaking/CreakingTransientEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/DolphinEntity.hpp"
@@ -1324,6 +1336,43 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    bool Entity::IsAbstractBoat() const
+    {
+        return false;
+    }
+
+    bool Entity::IsAbstractChestBoat() const
+    {
+        return false;
+    }
+
+    bool Entity::IsAgeableWaterCreature() const
+    {
+        return false;
+    }
+
+    bool Entity::IsBoat() const
+    {
+        return false;
+    }
+
+    bool Entity::IsChestBoat() const
+    {
+        return false;
+    }
+
+    bool Entity::IsChestRaft() const
+    {
+        return false;
+    }
+
+    bool Entity::IsRaft() const
+    {
+        return false;
+    }
+#endif
+
 
     std::shared_ptr<Entity> Entity::CreateEntity(const EntityType type)
     {
@@ -1357,8 +1406,21 @@ namespace Botcraft
 #endif
         case EntityType::Blaze:
             return std::make_shared<BlazeEntity>();
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         case EntityType::Boat:
             return std::make_shared<BoatEntity>();
+#else
+        case EntityType::AcaciaBoat:
+        case EntityType::BirchBoat:
+        case EntityType::CherryBoat:
+        case EntityType::DarkOakBoat:
+        case EntityType::JungleBoat:
+        case EntityType::MangroveBoat:
+        case EntityType::OakBoat:
+        case EntityType::PaleOakBoat:
+        case EntityType::SpruceBoat:
+            return std::make_shared<BoatEntity>(type);
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         case EntityType::Bogged:
             return std::make_shared<BoggedEntity>();
@@ -1372,8 +1434,25 @@ namespace Botcraft
             return std::make_shared<BreezeWindChargeEntity>();
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         case EntityType::ChestBoat:
             return std::make_shared<ChestBoatEntity>();
+#else
+        case EntityType::AcaciaChestBoat:
+        case EntityType::BirchChestBoat:
+        case EntityType::CherryChestBoat:
+        case EntityType::DarkOakChestBoat:
+        case EntityType::JungleChestBoat:
+        case EntityType::MangroveChestBoat:
+        case EntityType::OakChestBoat:
+        case EntityType::PaleOakChestBoat:
+        case EntityType::SpruceChestBoat:
+            return std::make_shared<ChestBoatEntity>(type);
+#endif
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case EntityType::ChestRaft:
+            return std::make_shared<ChestRaftEntity>(type);
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Cat:
@@ -1393,6 +1472,12 @@ namespace Botcraft
 #endif
         case EntityType::Cow:
             return std::make_shared<CowEntity>();
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case EntityType::Creaking:
+            return std::make_shared<CreakingEntity>();
+        case EntityType::CreakingTransient:
+            return std::make_shared<CreakingTransientEntity>();
+#endif
         case EntityType::Creeper:
             return std::make_shared<CreeperEntity>();
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
@@ -1553,6 +1638,10 @@ namespace Botcraft
 #endif
         case EntityType::Rabbit:
             return std::make_shared<RabbitEntity>();
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        case EntityType::Raft:
+            return std::make_shared<RaftEntity>(type);
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Ravager:
             return std::make_shared<RavagerEntity>();

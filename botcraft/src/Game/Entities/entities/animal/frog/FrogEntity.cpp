@@ -60,8 +60,7 @@ namespace Botcraft
         output["metadata"]["data_variant_id"] = GetDataVariantId();
         output["metadata"]["data_tongue_target_id"] = GetDataTongueTargetId() ? ProtocolCraft::Json::Value(GetDataTongueTargetId().value()) : ProtocolCraft::Json::Value();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
-
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

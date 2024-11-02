@@ -67,7 +67,8 @@ namespace Botcraft
         output["metadata"]["data_trusted_id_0"] = GetDataTrustedId0() ? ProtocolCraft::Json::Value(GetDataTrustedId0().value()) : ProtocolCraft::Json::Value();
         output["metadata"]["data_trusted_id_1"] = GetDataTrustedId1() ? ProtocolCraft::Json::Value(GetDataTrustedId1().value()) : ProtocolCraft::Json::Value();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
+
 
         return output;
     }

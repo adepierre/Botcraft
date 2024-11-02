@@ -9,6 +9,9 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 50.0) });
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.35) });
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 7.0) });
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 12.0) });
+#endif
     }
 
     PiglinBruteEntity::~PiglinBruteEntity()

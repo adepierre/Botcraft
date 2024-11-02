@@ -87,7 +87,7 @@ namespace Botcraft
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 #endif
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

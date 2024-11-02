@@ -68,7 +68,7 @@ namespace Botcraft
         output["metadata"]["hidden_gene_id"] = GetHiddenGeneId();
         output["metadata"]["data_id_flags"] = GetDataIdFlags();
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }

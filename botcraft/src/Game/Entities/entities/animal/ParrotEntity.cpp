@@ -56,9 +56,9 @@ namespace Botcraft
 
         output["metadata"]["data_variant_id"] = GetDataVariantId();
 
-        output["attributes"]["generic.flying_speed"] = GetAttributeFlyingSpeedValue();
+        output["attributes"]["flying_speed"] = GetAttributeFlyingSpeedValue();
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 #endif
 
         return output;

@@ -56,7 +56,7 @@ namespace Botcraft
         output["metadata"]["data_type_id"] = GetDataTypeId();
 
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-        output["attribute"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
+        output["attribute"]["attack_damage"] = GetAttributeAttackDamageValue();
 #endif
 
         return output;

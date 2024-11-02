@@ -66,8 +66,7 @@ namespace Botcraft
         output["metadata"]["data_has_right_horn"] = GetDataHasRightHorn();
 #endif
 
-        output["attributes"]["generic.attack_damage"] = GetAttributeAttackDamageValue();
-
+        output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
 
         return output;
     }
