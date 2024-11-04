@@ -471,6 +471,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/ShapelessCraftingRecipeDisplay.hpp
     include/protocolCraft/Types/Recipes/SlotDisplay.hpp
     include/protocolCraft/Types/Recipes/SlotDisplayData.hpp
+    include/protocolCraft/Types/Recipes/SlotDisplayDataEmpty.hpp
     include/protocolCraft/Types/Recipes/SmithingRecipeDisplay.hpp
     include/protocolCraft/Types/Recipes/SmithingTrimDemoSlotDisplay.hpp
     include/protocolCraft/Types/Recipes/StonecutterRecipeDisplay.hpp

@@ -1,7 +1,6 @@
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/ConsumeEffect.hpp"
 
-#include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/ConsumeEffectData.hpp"
 #include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/ApplyStatusEffectsConsumeEffect.hpp"
 #include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/ClearAllStatusEffectsConsumeEffect.hpp"
 #include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/PlaySoundConsumeEffect.hpp"
@@ -12,7 +11,6 @@ namespace ProtocolCraft
 {
     namespace Components
     {
-        DEFINE_NETWORK_TYPE(ConsumeEffectData);
         DEFINE_NETWORK_TYPE(ApplyStatusEffectsConsumeEffect);
         DEFINE_NETWORK_TYPE(ClearAllStatusEffectsConsumeEffect);
         DEFINE_NETWORK_TYPE(PlaySoundConsumeEffect);

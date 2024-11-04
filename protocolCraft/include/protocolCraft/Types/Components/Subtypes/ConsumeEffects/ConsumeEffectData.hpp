@@ -8,7 +8,8 @@ namespace ProtocolCraft
     {
         class ConsumeEffectData : public NetworkType
         {
-            DECLARE_READ_WRITE_SERIALIZE;
+        public:
+            virtual ~ConsumeEffectData() {};
         };
     }
 }

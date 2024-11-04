@@ -2,7 +2,6 @@
 #include "protocolCraft/Types/Recipes/RecipeDisplay.hpp"
 
 #include "protocolCraft/Types/Recipes/FurnaceRecipeDisplay.hpp"
-#include "protocolCraft/Types/Recipes/RecipeDisplayData.hpp"
 #include "protocolCraft/Types/Recipes/ShapedCraftingRecipeDisplay.hpp"
 #include "protocolCraft/Types/Recipes/ShapelessCraftingRecipeDisplay.hpp"
 #include "protocolCraft/Types/Recipes/SmithingRecipeDisplay.hpp"
@@ -14,7 +13,6 @@
 namespace ProtocolCraft
 {
     DEFINE_NETWORK_TYPE(FurnaceRecipeDisplay);
-    DEFINE_NETWORK_TYPE(RecipeDisplayData);
     DEFINE_NETWORK_TYPE(ShapedCraftingRecipeDisplay);
     DEFINE_NETWORK_TYPE(ShapelessCraftingRecipeDisplay);
     DEFINE_NETWORK_TYPE(SmithingRecipeDisplay);

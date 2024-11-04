@@ -8,9 +8,7 @@ namespace ProtocolCraft
     class SlotDisplayData : public NetworkType
     {
     public:
-        virtual ~SlotDisplayData() override {};
-
-        DECLARE_READ_WRITE_SERIALIZE;
+        virtual ~SlotDisplayData() {};
     };
 }
 #endif

@@ -2,9 +2,9 @@
 #include "protocolCraft/Types/Recipes/SlotDisplay.hpp"
 
 #include "protocolCraft/Types/Recipes/CompositeSlotDisplay.hpp"
-#include "protocolCraft/Types/Recipes/SlotDisplayData.hpp"
 #include "protocolCraft/Types/Recipes/ItemSlotDisplay.hpp"
 #include "protocolCraft/Types/Recipes/ItemStackSlotDisplay.hpp"
+#include "protocolCraft/Types/Recipes/SlotDisplayDataEmpty.hpp"
 #include "protocolCraft/Types/Recipes/SmithingTrimDemoSlotDisplay.hpp"
 #include "protocolCraft/Types/Recipes/TagSlotDisplay.hpp"
 #include "protocolCraft/Types/Recipes/WithRemainderSlotDisplay.hpp"
@@ -14,9 +14,9 @@
 namespace ProtocolCraft
 {
     DEFINE_NETWORK_TYPE(CompositeSlotDisplay);
-    DEFINE_NETWORK_TYPE(SlotDisplayData);
     DEFINE_NETWORK_TYPE(ItemSlotDisplay);
     DEFINE_NETWORK_TYPE(ItemStackSlotDisplay);
+    DEFINE_NETWORK_TYPE(SlotDisplayDataEmpty);
     DEFINE_NETWORK_TYPE(SmithingTrimDemoSlotDisplay);
     DEFINE_NETWORK_TYPE(TagSlotDisplay);
     DEFINE_NETWORK_TYPE(WithRemainderSlotDisplay);
@@ -33,7 +33,7 @@ namespace ProtocolCraft
         {
         case SlotDisplaysDataType::Empty:
         case SlotDisplaysDataType::AnyFuel:
-            Data = std::make_shared<SlotDisplayData>();
+            Data = std::make_shared<SlotDisplayDataEmpty>();
             break;
         case SlotDisplaysDataType::Item:
             Data = std::make_shared<ItemSlotDisplay>();

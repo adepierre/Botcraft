@@ -7,7 +7,8 @@ namespace ProtocolCraft
 {
     class RecipeDisplayData : public NetworkType
     {
-        DECLARE_READ_WRITE_SERIALIZE;
+    public:
+        virtual ~RecipeDisplayData() {};
     };
 }
 #endif
