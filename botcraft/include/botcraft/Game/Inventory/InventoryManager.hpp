@@ -81,7 +81,11 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg) override;
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         virtual void Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg) override;
+#else
+        virtual void Handle(ProtocolCraft::ClientboundSetHeldSlotPacket& msg) override;
+#endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
 #endif
@@ -89,6 +93,10 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg) override;
 #endif
         virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& msg) override;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        virtual void Handle(ProtocolCraft::ClientboundSetCursorItemPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& msg) override;
+#endif
 
         void ApplyTransactionImpl(const InventoryTransaction& transaction);
 

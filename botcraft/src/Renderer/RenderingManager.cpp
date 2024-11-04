@@ -753,20 +753,20 @@ namespace Botcraft
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
         {
-            AddEntityToUpdate(msg.GetId_());
+            AddEntityToUpdate(msg.GetEntityId());
         }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
         {
-            AddEntityToUpdate(msg.GetId_());
+            AddEntityToUpdate(msg.GetEntityId());
         }
 #endif
 
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
         void RenderingManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
         {
-            AddEntityToUpdate(msg.GetId_());
+            AddEntityToUpdate(msg.GetEntityId());
         }
 #endif
 
@@ -779,7 +779,7 @@ namespace Botcraft
 
         void RenderingManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
         {
-            AddEntityToUpdate(msg.GetId_());
+            AddEntityToUpdate(msg.GetEntityId());
         }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -807,11 +807,11 @@ namespace Botcraft
         void RenderingManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
         {
             std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
-            if (local_player != nullptr && local_player->GetEntityID() == msg.GetId_())
+            if (local_player != nullptr && local_player->GetEntityID() == msg.GetEntityId())
             {
                 return;
             }
-            AddEntityToUpdate(msg.GetId_());
+            AddEntityToUpdate(msg.GetEntityId());
         }
 
 #if PROTOCOL_VERSION == 755 /* 1.17 */

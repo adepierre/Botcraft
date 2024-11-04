@@ -413,7 +413,11 @@ namespace Botcraft
         compression = msg.GetCompressionThreshold();
     }
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     void NetworkManager::Handle(ClientboundGameProfilePacket& msg)
+#else
+    void NetworkManager::Handle(ClientboundLoginFinishedPacket& msg)
+#endif
     {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         state = ConnectionState::Play;

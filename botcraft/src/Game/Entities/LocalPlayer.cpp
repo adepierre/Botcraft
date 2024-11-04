@@ -52,6 +52,10 @@ namespace Botcraft
         previous_jump = false;
         previous_sneak = false;
         previous_forward = 0.0f;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        previous_horizontal_collision = false;
+        last_sent_inputs = PlayerInputs();
+#endif
     }
 
     LocalPlayer::~LocalPlayer()

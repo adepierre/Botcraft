@@ -142,5 +142,9 @@ namespace Botcraft
         bool previous_jump;
         bool previous_sneak;
         float previous_forward;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        bool previous_horizontal_collision;
+        PlayerInputs last_sent_inputs;
+#endif
     };
 } // Botcraft

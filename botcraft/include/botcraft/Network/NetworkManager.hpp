@@ -49,7 +49,11 @@ namespace Botcraft
 
 
         virtual void Handle(ProtocolCraft::ClientboundLoginCompressionPacket& msg) override;
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
+#else
+        virtual void Handle(ProtocolCraft::ClientboundLoginFinishedPacket& msg) override;
+#endif
         virtual void Handle(ProtocolCraft::ClientboundHelloPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAlivePacket& msg) override;
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */

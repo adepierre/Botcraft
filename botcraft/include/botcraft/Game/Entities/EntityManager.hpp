@@ -65,6 +65,10 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg) override;
         virtual void Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& msg) override;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        virtual void Handle(ProtocolCraft::ClientboundEntityPositionSyncPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMoveMinecartPacket& msg) override;
+#endif
 
 
     private:

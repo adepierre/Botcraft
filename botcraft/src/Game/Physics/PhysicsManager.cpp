@@ -76,7 +76,7 @@ namespace Botcraft
     }
 
 
-    void PhysicsManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    void PhysicsManager::Handle(ClientboundLoginPacket& msg)
     {
         // Reset the player because *some* non vanilla servers
         // sends new login packets
@@ -93,7 +93,7 @@ namespace Botcraft
         }
     }
 
-    void PhysicsManager::Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg)
+    void PhysicsManager::Handle(ClientboundPlayerPositionPacket& msg)
     {
         if (player == nullptr)
         {
@@ -102,6 +102,7 @@ namespace Botcraft
         }
 
         std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         if (msg.GetRelativeArguments() & 0x01)
         {
             player->position.x = player->position.x + msg.GetX();
@@ -131,11 +132,49 @@ namespace Botcraft
         }
         player->yaw = msg.GetRelativeArguments() & 0x08 ? player->yaw + msg.GetYRot() : msg.GetYRot();
         player->pitch = msg.GetRelativeArguments() & 0x10 ? player->pitch + msg.GetXRot() : msg.GetXRot();
-        player->UpdateVectors();
 
         player->previous_position = player->position;
         player->previous_yaw = player->yaw;
         player->previous_pitch = player->pitch;
+#else
+        for (int i = 0; i < 3; ++i)
+        {
+            player->position[i] = msg.GetRelatives() & (1 << i) ? player->position[i] + msg.GetChange().GetPosition()[i] : msg.GetChange().GetPosition()[i];
+        }
+        const float new_yaw = msg.GetRelatives() & (1 << 3) ? player->yaw + msg.GetChange().GetYRot() : msg.GetChange().GetYRot();
+        const float new_pitch = msg.GetRelatives() & (1 << 4) ? player->pitch + msg.GetChange().GetXRot() : msg.GetChange().GetXRot();
+        Vector3<double> speed = player->speed;
+        if (msg.GetRelatives() & (1 << 8)) // Rotate delta, not sure what it's for...
+        {
+            const float delta_yaw = player->yaw - new_yaw;
+            const float delta_pitch = player->pitch - new_pitch;
+            // xRot
+            speed = Vector3<double>(
+                speed.x,
+                speed.y * static_cast<double>(std::cos(delta_pitch * 0.017453292f /* PI/180 */)) + speed.z * static_cast<double>(std::sin(delta_pitch * 0.017453292f /* PI/180 */)),
+                speed.z * static_cast<double>(std::cos(delta_pitch * 0.017453292f /* PI/180 */)) - speed.y * static_cast<double>(std::sin(delta_pitch * 0.017453292f /* PI/180 */))
+            );
+            // yRot
+            speed = Vector3<double>(
+                speed.x * static_cast<double>(std::cos(delta_yaw * 0.017453292f /* PI/180 */)) + speed.z * static_cast<double>(std::sin(delta_yaw * 0.017453292f /* PI/180 */)),
+                speed.y,
+                speed.z * static_cast<double>(std::cos(delta_yaw * 0.017453292f /* PI/180 */)) - speed.x * static_cast<double>(std::sin(delta_yaw * 0.017453292f /* PI/180 */))
+            );
+        }
+        player->yaw = new_yaw;
+        player->pitch = new_pitch;
+        for (int i = 0; i < 3; ++i)
+        {
+            player->speed[i] = msg.GetRelatives() & (1 << (5 + i)) ? speed[i] + msg.GetChange().GetDeltaMovement()[i] : msg.GetChange().GetDeltaMovement()[i];
+        }
+        for (int i = 0; i < 3; ++i)
+        {
+            player->previous_position[i] = msg.GetRelatives() & (1 << i) ? player->previous_position[i] + msg.GetChange().GetPosition()[i] : msg.GetChange().GetPosition()[i];
+        }
+        player->previous_yaw = msg.GetRelatives() & (1 << 3) ? player->yaw + msg.GetChange().GetYRot() : msg.GetChange().GetYRot();
+        player->previous_pitch = msg.GetRelatives() & (1 << 4) ? player->pitch + msg.GetChange().GetXRot() : msg.GetChange().GetXRot();
+#endif
+        player->UpdateVectors();
 
         // Defer sending the position update to the next physics tick
         // Sending it now causes huge slow down of the tests (lag when
@@ -145,7 +184,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-    void PhysicsManager::Handle(ProtocolCraft::ClientboundTickingStatePacket& msg)
+    void PhysicsManager::Handle(ClientboundTickingStatePacket& msg)
     {
         // If the game is frozen, physics run normally for players
         if (msg.GetIsFrozen())
@@ -157,6 +196,23 @@ namespace Botcraft
         // Vanilla behaviour: slowed down but never speed up, even if tick rate is > 20/s
         // TODO: add a parameter to allow non-vanilla client speed up for higher tick rates?
         ms_per_tick = std::max(50.0, 1000.0 / static_cast<double>(msg.GetTickRate()));
+    }
+#endif
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    void PhysicsManager::Handle(ClientboundPlayerRotationPacket& msg)
+    {
+        if (player == nullptr)
+        {
+            LOG_WARNING("Received a PlayerRotation packet without a player");
+            return;
+        }
+
+        std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+        player->yaw = msg.GetYRot();
+        player->pitch = msg.GetXRot();
+        player->previous_yaw = player->yaw;
+        player->previous_pitch = player->pitch;
     }
 #endif
 
@@ -182,19 +238,26 @@ namespace Botcraft
                     // Send player updated position with onground set to false to mimic vanilla client behaviour
                     if (teleported)
                     {
-                        std::shared_ptr<ProtocolCraft::ServerboundMovePlayerPacketPosRot> updated_position_msg = std::make_shared<ProtocolCraft::ServerboundMovePlayerPacketPosRot>();
+                        std::shared_ptr<ServerboundMovePlayerPacketPosRot> updated_position_msg = std::make_shared<ServerboundMovePlayerPacketPosRot>();
                         updated_position_msg->SetX(player->position.x);
                         updated_position_msg->SetY(player->position.y);
                         updated_position_msg->SetZ(player->position.z);
                         updated_position_msg->SetYRot(player->yaw);
                         updated_position_msg->SetXRot(player->pitch);
                         updated_position_msg->SetOnGround(false);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+                        updated_position_msg->SetHorizontalCollision(false);
+#endif
 
                         network_manager->Send(updated_position_msg);
                         teleported = false;
                     }
                     PhysicsTick();
                 }
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+                std::shared_ptr<ServerboundClientTickEndPacket> tick_end_msg = std::make_shared<ServerboundClientTickEndPacket>();
+                network_manager->Send(tick_end_msg);
+#endif
             }
             // Wait for end of tick
             Utilities::SleepUntil(end);
@@ -801,6 +864,37 @@ namespace Botcraft
     {
         ticks_since_last_position_sent += 1;
 
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        // Before 1.21.2, shift was sent after jump
+        const bool shift_key_down = player->inputs.sneak;
+        if (shift_key_down != player->previous_shift_key_down)
+        {
+            std::shared_ptr<ServerboundPlayerCommandPacket> player_command_msg = std::make_shared<ServerboundPlayerCommandPacket>();
+            player_command_msg->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShifKey));
+            player_command_msg->SetId_(player->entity_id);
+            network_manager->Send(player_command_msg);
+            player->previous_shift_key_down = shift_key_down;
+        }
+
+        if (player->last_sent_inputs.sneak        != player->inputs.sneak ||
+            player->last_sent_inputs.jump         != player->inputs.jump ||
+            player->last_sent_inputs.sprint       != player->inputs.sprint ||
+            player->last_sent_inputs.forward_axis != player->inputs.forward_axis ||
+            player->last_sent_inputs.left_axis    != player->inputs.left_axis)
+        {
+            std::shared_ptr<ServerboundPlayerInputPacket> player_input_msg = std::make_shared<ServerboundPlayerInputPacket>();
+            player_input_msg->SetForward(player->inputs.forward_axis > 0.0f);
+            player_input_msg->SetBackward(player->inputs.forward_axis < 0.0f);
+            player_input_msg->SetLeft(player->inputs.left_axis > 0.0f);
+            player_input_msg->SetRight(player->inputs.left_axis < 0.0f);
+            player_input_msg->SetJump(player->inputs.jump);
+            player_input_msg->SetShift(player->inputs.sneak);
+            player_input_msg->SetSprint(player->inputs.sprint);
+            network_manager->Send(player_input_msg);
+            player->last_sent_inputs = player->inputs;
+        }
+#endif
+
         const bool sprinting = player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting);
         if (sprinting != player->previous_sprinting)
         {
@@ -811,6 +905,8 @@ namespace Botcraft
             player->previous_sprinting = sprinting;
         }
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+        // Before 1.21.2, shift was sent after jump
         const bool shift_key_down = player->inputs.sneak;
         if (shift_key_down != player->previous_shift_key_down)
         {
@@ -820,6 +916,7 @@ namespace Botcraft
             network_manager->Send(player_command_msg);
             player->previous_shift_key_down = shift_key_down;
         }
+#endif
 
         const bool has_moved = (player->position - player->previous_position).SqrNorm() > 4e-8 || ticks_since_last_position_sent >= 20;
         const bool has_rotated = player->yaw != player->previous_yaw || player->pitch != player->previous_pitch;
@@ -832,6 +929,9 @@ namespace Botcraft
             move_player_msg->SetXRot(player->pitch);
             move_player_msg->SetYRot(player->yaw);
             move_player_msg->SetOnGround(player->on_ground);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            move_player_msg->SetHorizontalCollision(player->horizontal_collision);
+#endif
             network_manager->Send(move_player_msg);
         }
         else if (has_moved)
@@ -841,6 +941,9 @@ namespace Botcraft
             move_player_msg->SetY(player->position.y);
             move_player_msg->SetZ(player->position.z);
             move_player_msg->SetOnGround(player->on_ground);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            move_player_msg->SetHorizontalCollision(player->horizontal_collision);
+#endif
             network_manager->Send(move_player_msg);
         }
         else if (has_rotated)
@@ -849,9 +952,16 @@ namespace Botcraft
             move_player_msg->SetXRot(player->pitch);
             move_player_msg->SetYRot(player->yaw);
             move_player_msg->SetOnGround(player->on_ground);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            move_player_msg->SetHorizontalCollision(player->horizontal_collision);
+#endif
             network_manager->Send(move_player_msg);
         }
-        else if (player->on_ground != player->previous_on_ground)
+        else if (player->on_ground != player->previous_on_ground
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            || player->horizontal_collision != player->previous_horizontal_collision
+#endif
+            )
         {
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
             std::shared_ptr<ServerboundMovePlayerPacketStatusOnly> move_player_msg = std::make_shared<ServerboundMovePlayerPacketStatusOnly>();
@@ -859,6 +969,9 @@ namespace Botcraft
             std::shared_ptr<ServerboundMovePlayerPacket> move_player_msg = std::make_shared<ServerboundMovePlayerPacket>();
 #endif
             move_player_msg->SetOnGround(player->on_ground);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            move_player_msg->SetHorizontalCollision(player->horizontal_collision);
+#endif
             network_manager->Send(move_player_msg);
         }
 
@@ -873,6 +986,9 @@ namespace Botcraft
             player->previous_pitch = player->pitch;
         }
         player->previous_on_ground = player->on_ground;
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        player->previous_horizontal_collision = player->horizontal_collision;
+#endif
 
 #if USE_GUI
         if (rendering_manager != nullptr && (has_moved || has_rotated))

@@ -564,7 +564,11 @@ namespace Botcraft
 #endif
     }
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     void InventoryManager::Handle(ClientboundSetCarriedItemPacket& msg)
+#else
+    void InventoryManager::Handle(ClientboundSetHeldSlotPacket& msg)
+#endif
     {
         SetHotbarSelected(msg.GetSlot());
     }
@@ -621,7 +625,20 @@ namespace Botcraft
 
     void InventoryManager::Handle(ClientboundContainerClosePacket& msg)
     {
-        EraseInventory(msg.GetContainerId());
+        EraseInventory(static_cast<short>(msg.GetContainerId()));
     }
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+    void InventoryManager::Handle(ClientboundSetCursorItemPacket& msg)
+    {
+        // Not sure about this one, I can't figure out when it's sent by the server
+        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, msg.GetContents());
+    }
+
+    void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& msg)
+    {
+        SetSlot(Window::PLAYER_INVENTORY_INDEX, static_cast<short>(msg.GetSlot()), msg.GetContents());
+    }
+#endif
 
 } //Botcraft
