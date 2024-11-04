@@ -261,6 +261,11 @@ namespace Botcraft
         network_manager->Send(settings_msg);
     }
 
+    void ManagersClient::Handle(ClientboundPlayerPositionPacket& msg)
+    {
+        // Override the ConnectionClient Handle as the teleport confirmation is sent by the physics manager instead
+    }
+
     void ManagersClient::Handle(ClientboundRespawnPacket& msg)
     {
 #if PROTOCOL_VERSION < 464 /* < 1.14 */

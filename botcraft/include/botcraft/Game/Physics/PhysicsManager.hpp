@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <memory>
+#include <optional>
 #include <thread>
 
 #include "protocolCraft/Handler.hpp"
@@ -102,7 +103,7 @@ namespace Botcraft
         std::shared_ptr<World> world;
 
         std::atomic<bool> should_run;
-        bool teleported;
+        std::optional<int> teleport_id;
 
         int ticks_since_last_position_sent;
 

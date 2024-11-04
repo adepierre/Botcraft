@@ -38,7 +38,7 @@ namespace Botcraft
         world = world_;
 
         should_run = false;
-        teleported = false;
+        teleport_id = std::nullopt;
         ticks_since_last_position_sent = 0;
 
         elytra_item = AssetsManager::getInstance().GetItem("minecraft:elytra");
@@ -180,7 +180,7 @@ namespace Botcraft
         // Sending it now causes huge slow down of the tests (lag when
         // botcraft_0 is teleported to place structure block/signs).
         // I'm not sure what causes this behaviour (server side?)
-        teleported = true;
+        teleport_id = msg.GetId_();
     }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
@@ -236,7 +236,7 @@ namespace Botcraft
                     std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
 
                     // Send player updated position with onground set to false to mimic vanilla client behaviour
-                    if (teleported)
+                    if (teleport_id.has_value())
                     {
                         std::shared_ptr<ServerboundMovePlayerPacketPosRot> updated_position_msg = std::make_shared<ServerboundMovePlayerPacketPosRot>();
                         updated_position_msg->SetX(player->position.x);
@@ -249,8 +249,18 @@ namespace Botcraft
                         updated_position_msg->SetHorizontalCollision(false);
 #endif
 
+                        std::shared_ptr<ServerboundAcceptTeleportationPacket> accept_tp_msg = std::make_shared<ServerboundAcceptTeleportationPacket>();
+                        accept_tp_msg->SetId_(teleport_id.value());
+
+                        // Before 1.21.2 -> Accept TP then move player, 1.21.2+ -> move player then accept TP
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+                        network_manager->Send(accept_tp_msg);
                         network_manager->Send(updated_position_msg);
-                        teleported = false;
+#else
+                        network_manager->Send(updated_position_msg);
+                        network_manager->Send(accept_tp_msg);
+#endif
+                        teleport_id = std::nullopt;
                     }
                     PhysicsTick();
                 }
