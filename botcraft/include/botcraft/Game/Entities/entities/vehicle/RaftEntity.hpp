@@ -21,7 +21,7 @@ namespace Botcraft
 
         // Static stuff, for easier comparison
         static std::string GetClassName();
-        virtual bool IsRaft() const;
+        virtual bool IsRaft() const override;
 
         virtual ProtocolCraft::Json::Value Serialize() const override;
 

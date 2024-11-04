@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "botcraft/Game/Entities/entities/vehicle/RaftEntity.hpp"
 
 
@@ -55,3 +56,4 @@ namespace Botcraft
     }
 
 }
+#endif
