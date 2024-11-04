@@ -345,9 +345,13 @@ void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<i
 }
 #endif
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 void UserControlledClient::Handle(ClientboundGameProfilePacket& msg)
+#else
+void UserControlledClient::Handle(ClientboundLoginFinishedPacket & msg)
+#endif
 {
-    Botcraft::ManagersClient::Handle(msg);
+    ManagersClient::Handle(msg);
 
 #if USE_GUI
     if (use_renderer)
