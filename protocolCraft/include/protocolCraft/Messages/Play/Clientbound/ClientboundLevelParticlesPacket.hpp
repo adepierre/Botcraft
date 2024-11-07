@@ -43,7 +43,7 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(MaxSpeed, float);
         SERIALIZED_FIELD(Count, int);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        SERIALIZED_FIELD(Particle, Internal::CustomType<ProtocolCraft::Particle, &THIS::ReadParticle, &THIS::WriteParticle>);
+        SERIALIZED_FIELD(ParticleData, Internal::CustomType<ProtocolCraft::Particle, &THIS::ReadParticle, &THIS::WriteParticle>);
 #else
         SERIALIZED_FIELD(Particle, ProtocolCraft::Particle);
 #endif
