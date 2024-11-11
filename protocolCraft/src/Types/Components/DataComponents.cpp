@@ -189,9 +189,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
                 "jukebox_playable",
 #endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
                 "recipes",
-#endif
                 "lodestone_tracker",
                 "firework_explosion",
                 "fireworks",
@@ -250,9 +248,7 @@ namespace ProtocolCraft
             case DataComponentTypes::IntangibleProjectile:
             case DataComponentTypes::MapDecorations:
             case DataComponentTypes::DebugStickState:
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             case DataComponentTypes::Recipes:
-#endif
             case DataComponentTypes::Lock:
             case DataComponentTypes::ContainerLoot:
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */

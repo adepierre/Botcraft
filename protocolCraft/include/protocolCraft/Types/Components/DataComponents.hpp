@@ -78,9 +78,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             JukeboxPlayable,
 #endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             Recipes,
-#endif
             LodestoneTracker,
             FireworkExplosion,
             Fireworks,
