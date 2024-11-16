@@ -282,7 +282,10 @@ namespace Botcraft
                 { EquipmentSlot::Boots, ProtocolCraft::Slot() },
                 { EquipmentSlot::Leggings, ProtocolCraft::Slot() },
                 { EquipmentSlot::ChestPlate, ProtocolCraft::Slot() },
-                { EquipmentSlot::Helmet, ProtocolCraft::Slot() }
+                { EquipmentSlot::Helmet, ProtocolCraft::Slot() },
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+                { EquipmentSlot::BodyAnimalArmor, ProtocolCraft::Slot() },
+#endif
             };
         }
 

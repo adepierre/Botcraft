@@ -279,7 +279,10 @@ namespace Botcraft
         Boots,
         Leggings,
         ChestPlate,
-        Helmet
+        Helmet,
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        BodyAnimalArmor,
+#endif
     };
 
     enum class ToolMaterial: char
