@@ -356,7 +356,7 @@ namespace Botcraft
         }
         catch (const std::exception& e)
         {
-            LOG_FATAL("Exception: " << e.what());
+            LOG_FATAL("Exception:\n" << e.what());
             throw;
         }
         catch (...)
@@ -386,7 +386,7 @@ namespace Botcraft
             {
                 msg->Read(packet_iterator, length);
             }
-            catch (std::exception)
+            catch (const std::exception&)
             {
                 LOG_FATAL("Parsing exception while parsing message \"" << msg->GetName() << '"');
                 throw;

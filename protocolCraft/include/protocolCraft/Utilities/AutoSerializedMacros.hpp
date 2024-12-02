@@ -90,6 +90,7 @@
 #define DEFINE_READ(ClassName)                                           \
     void ClassName::ReadImpl(ReadIterator& iter, size_t& length) {       \
         Internal::loop<num_fields>([&](auto i) {                         \
+        try {                                                            \
             auto& field = this->GetField<i>();                           \
             if constexpr (Internal::IsCustomType<field_type<i>>) {       \
                 field = field_type<i>::Read(this, iter, length);         \
@@ -116,6 +117,12 @@
                     field_storage_type<i>,                               \
                     field_serialization_type<i>>(iter, length);          \
             }                                                            \
+        }                                                                \
+        catch (const std::exception& ex) {                               \
+            throw std::runtime_error(std::string("While reading ") +     \
+                std::string(field_name<i>) + " (" + std::to_string(i) +  \
+                "th field) in " + #ClassName + "\n" + ex.what());        \
+        }                                                                \
         });                                                              \
     } static_assert(true, "Forcing ;")
 
