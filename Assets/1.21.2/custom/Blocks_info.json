@@ -13045,7 +13045,7 @@
             ]
         },
         {
-            "hardness": 2,
+            "hardness": 5,
             "name": "minecraft:creaking_heart",
             "render": "block",
             "solid": true,
