@@ -435,6 +435,12 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
     DEFINE_MESSAGE_CLASS(ServerboundRenameItemPacket);
+#endif
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+    DEFINE_MESSAGE_CLASS(ServerboundPickItemFromBlockPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundPickItemFromEntityPacket);
+#endif
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
     DEFINE_MESSAGE_CLASS(ServerboundPickItemPacket);
 #endif
     DEFINE_MESSAGE_CLASS(ServerboundPlayerAbilitiesPacket);
@@ -471,6 +477,9 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ServerboundTeleportToEntityPacket);
     DEFINE_MESSAGE_CLASS(ServerboundPaddleBoatPacket);
     DEFINE_MESSAGE_CLASS(ServerboundPlayerInputPacket);
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+    DEFINE_MESSAGE_CLASS(ServerboundPlayerLoadedPacket);
+#endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     DEFINE_MESSAGE_CLASS(ServerboundPongPacket);
 #endif

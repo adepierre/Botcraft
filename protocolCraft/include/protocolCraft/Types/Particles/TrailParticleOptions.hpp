@@ -7,7 +7,7 @@
 
 namespace ProtocolCraft
 {
-    class TargetColorParticleOptions : public ParticleOptions
+    class TrailParticleOptions : public ParticleOptions
     {
         SERIALIZED_FIELD(Target, std::array<double, 3>);
         SERIALIZED_FIELD(Color, int);

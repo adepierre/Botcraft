@@ -225,6 +225,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundMoveVehiclePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPaddleBoatPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundPickItemFromBlockPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundPickItemFromEntityPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPickItemPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPingRequestPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPlaceRecipePacket.hpp
@@ -232,6 +234,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPlayerActionPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPlayerCommandPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPlayerInputPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundPlayerLoadedPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundPongPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp
@@ -442,7 +445,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/ItemParticleOptions.hpp
     include/protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp
     include/protocolCraft/Types/Particles/ShriekParticleOptions.hpp
-    include/protocolCraft/Types/Particles/TargetColorParticleOptions.hpp
+    include/protocolCraft/Types/Particles/TrailParticleOptions.hpp
     include/protocolCraft/Types/Particles/VibrationParticleOptions.hpp
 
     include/protocolCraft/Types/Recipes/CompositeSlotDisplay.hpp

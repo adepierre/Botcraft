@@ -24,7 +24,7 @@
 #include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Types/Particles/TargetColorParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/TrailParticleOptions.hpp"
 #endif
 
 #include <array>
@@ -57,7 +57,7 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(ShriekParticleOptions);
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-    DEFINE_NETWORK_TYPE(TargetColorParticleOptions);
+    DEFINE_NETWORK_TYPE(TrailParticleOptions);
 #endif
 
     Particle::Particle()
@@ -142,6 +142,9 @@ namespace ProtocolCraft
     #endif
     #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
             "cherry_leaves",
+    #endif
+    #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+            "pale_oak_leaves",
     #endif
     #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             "sculk_soul",
@@ -379,7 +382,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         case ParticleType::Trail:
-            Options = std::make_shared<TargetColorParticleOptions>();
+            Options = std::make_shared<TrailParticleOptions>();
             break;
 #endif
 #else //1.12.2

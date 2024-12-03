@@ -80,6 +80,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 762 /* > 1.19.4 */
         CherryLeaves,
 #endif
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        PaleOakLeaves,
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SculkSoul,
         SculkCharge,

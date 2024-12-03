@@ -21,6 +21,9 @@ namespace ProtocolCraft
         UpdateListed,
         UpdateLatency,
         UpdateDisplayName,
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        UpdateHat,
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         UpdateListOrder,
 #endif
@@ -38,6 +41,10 @@ namespace ProtocolCraft
         bool listed = false;
 
         int latency = 0;
+
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        bool show_hat = false;
+#endif
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         int list_order = 0;
@@ -110,6 +117,11 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::UpdateDisplayName:
                         entry.display_name = ReadData<std::optional<Chat>>(iter, length);
                         break;
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+                    case PlayerInfoUpdateAction::UpdateHat:
+                        entry.show_hat = ReadData<bool>(iter, length);
+                        break;
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                     case PlayerInfoUpdateAction::UpdateListOrder:
                         entry.list_order = ReadData<VarInt>(iter, length);
@@ -152,6 +164,11 @@ namespace ProtocolCraft
                     case PlayerInfoUpdateAction::UpdateDisplayName:
                         WriteData<std::optional<Chat>>(p.second.display_name, container);
                         break;
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+                    case PlayerInfoUpdateAction::UpdateHat:
+                        WriteData<bool>(p.second.show_hat, container);
+                        break;
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                     case PlayerInfoUpdateAction::UpdateListOrder:
                         WriteData<VarInt>(p.second.list_order, container);
@@ -199,6 +216,11 @@ namespace ProtocolCraft
                             entry["display_name"] = p.second.display_name.value();
                         }
                         break;
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+                    case PlayerInfoUpdateAction::UpdateHat:
+                        entry["show_hat"] = p.second.show_hat;
+                        break;
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                     case PlayerInfoUpdateAction::UpdateListOrder:
                         entry["list_order"] = p.second.list_order;

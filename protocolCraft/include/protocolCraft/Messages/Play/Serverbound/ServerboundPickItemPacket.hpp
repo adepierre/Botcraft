@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 385 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 385 /* > 1.12.2 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"

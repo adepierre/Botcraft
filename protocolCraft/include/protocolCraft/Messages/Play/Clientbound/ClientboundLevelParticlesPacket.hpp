@@ -34,6 +34,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
 #endif
         SERIALIZED_FIELD(OverrideLimiter, bool);
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        SERIALIZED_FIELD(AlwaysShow, bool);
+#endif
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);
