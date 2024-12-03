@@ -9564,6 +9564,7 @@
             "solid": false,
             "transparent": true,
             "tools": [
+                "any",
                 "pickaxe"
             ]
         },
