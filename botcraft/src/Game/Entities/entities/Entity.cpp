@@ -69,6 +69,8 @@
 #include "botcraft/Game/Entities/entities/animal/CowEntity.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
 #include "botcraft/Game/Entities/entities/monster/creaking/CreakingTransientEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
@@ -1478,6 +1480,8 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         case EntityType::Creaking:
             return std::make_shared<CreakingEntity>();
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
         case EntityType::CreakingTransient:
             return std::make_shared<CreakingTransientEntity>();
 #endif

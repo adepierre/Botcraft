@@ -34,13 +34,23 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
+
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         const std::string& GetDataType() const;
         void SetDataType(const std::string& data_type);
+#else
+        int GetDataType() const;
+        void SetDataType(const int data_type);
+#endif
 #endif
 
     protected:
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         const std::string& GetDataTypeImpl() const;
+#else
+        int GetDataTypeImpl() const;
+#endif
         double GetScaleImpl() const;
 #endif
         virtual double GetWidthImpl() const override;

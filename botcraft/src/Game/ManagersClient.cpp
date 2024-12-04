@@ -215,6 +215,10 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundLoginPacket& msg)
     {
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        ConnectionClient::Handle(msg);
+#endif
+
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
         is_hardcore = msg.GetHardcore();
 #else
@@ -268,6 +272,10 @@ namespace Botcraft
 
     void ManagersClient::Handle(ClientboundRespawnPacket& msg)
     {
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        ConnectionClient::Handle(msg);
+#endif
+
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
         difficulty = static_cast<Difficulty>(msg.GetDifficulty());
 #endif

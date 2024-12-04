@@ -8,6 +8,10 @@ namespace Botcraft
     const std::array<std::string, CreakingEntity::metadata_count> CreakingEntity::metadata_names{ {
         "can_move",
         "is_active",
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        "is_tearing_down",
+        "home_pose",
+#endif
     } };
 
     CreakingEntity::CreakingEntity()
@@ -15,13 +19,23 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetCanMove(true);
         SetIsActive(false);
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        SetIsTearingDown(false);
+        SetHomePos(std::nullopt);
+#endif
 
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 1.0) });
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.3) });
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 2.0) });
-        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 32.0) });
         attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 1.0) });
+#else
+        attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.4) });
+        attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 3.0) });
+        attributes.insert({ EntityAttribute::Type::StepHeight, EntityAttribute(EntityAttribute::Type::StepHeight, 1.0625) });
+#endif
+        attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 32.0) });
     }
 
     CreakingEntity::~CreakingEntity()
@@ -58,6 +72,10 @@ namespace Botcraft
 
         output["metadata"]["can_move"] = GetCanMove();
         output["metadata"]["is_active"] = GetIsActive();
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        output["metadata"]["is_tearing_down"] = GetIsTearingDown();
+        output["metadata"]["is_tearing_down"] = GetHomePos() ? GetHomePos().value().Serialize() : ProtocolCraft::Json::Value(nullptr);
+#endif
 
 
         return output;
@@ -88,6 +106,20 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("is_active"));
     }
 
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+    bool CreakingEntity::GetIsTearingDown() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<bool>(metadata.at("is_tearing_down"));
+    }
+
+    const std::optional<Position>& CreakingEntity::GetHomePos() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<const std::optional<Position>&>(metadata.at("home_pos"));
+    }
+#endif
+
 
     void CreakingEntity::SetCanMove(const bool can_move)
     {
@@ -101,7 +133,19 @@ namespace Botcraft
         metadata["is_active"] = is_active;
     }
 
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+    void CreakingEntity::SetIsTearingDown(const bool is_tearing_down)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["is_tearing_down"] = is_tearing_down;
+    }
 
+    void CreakingEntity::SetHomePos(const std::optional<Position>& home_pos)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["home_pos"] = home_pos;
+    }
+#endif
 
 
     double CreakingEntity::GetWidthImpl() const

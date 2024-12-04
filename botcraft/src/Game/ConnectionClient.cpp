@@ -134,4 +134,16 @@ namespace Botcraft
         should_be_closed = true;
     }
 #endif
+
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+    void ConnectionClient::Handle(ClientboundLoginPacket& msg)
+    {
+        network_manager->Send(std::make_shared<ServerboundPlayerLoadedPacket>());
+    }
+
+    void ConnectionClient::Handle(ClientboundRespawnPacket& msg)
+    {
+        network_manager->Send(std::make_shared<ServerboundPlayerLoadedPacket>());
+    }
+#endif
 } //Botcraft

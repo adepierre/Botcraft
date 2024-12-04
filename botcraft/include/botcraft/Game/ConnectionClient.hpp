@@ -48,6 +48,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         virtual void Handle(ProtocolCraft::ClientboundDisconnectConfigurationPacket& msg) override;
 #endif
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
+#endif
 
     protected:
         std::shared_ptr<NetworkManager> network_manager;

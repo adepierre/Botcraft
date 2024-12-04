@@ -15,7 +15,11 @@ namespace Botcraft
     {
         // Initialize all metadata with default values
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         SetDataType("medium");
+#else
+        SetDataType(1);
+#endif
 #endif
     }
 
@@ -71,6 +75,7 @@ namespace Botcraft
         }
     }
 
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
     const std::string& SalmonEntity::GetDataType() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -81,9 +86,22 @@ namespace Botcraft
     {
         return std::any_cast<const std::string&>(metadata.at("data_type"));
     }
+#else
+    int SalmonEntity::GetDataType() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return GetDataTypeImpl();
+    }
+
+    int SalmonEntity::GetDataTypeImpl() const
+    {
+        return std::any_cast<int>(metadata.at("data_type"));
+    }
+#endif
 
     double SalmonEntity::GetScaleImpl() const
     {
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         const std::string& type = GetDataTypeImpl();
         if (type == "medium")
         {
@@ -97,10 +115,26 @@ namespace Botcraft
         {
             return 1.5;
         }
+#else
+        switch (GetDataTypeImpl())
+        {
+        case 0:
+            return 0.5;
+        case 1:
+            return 1.0;
+        case 2:
+            return 1.5;
+        default:
+            return 1.0;
+        }
+#endif
     }
 
-
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
     void SalmonEntity::SetDataType(const std::string& data_type)
+#else
+    void SalmonEntity::SetDataType(const int data_type)
+#endif
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_type"] = data_type;

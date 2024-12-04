@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp"
