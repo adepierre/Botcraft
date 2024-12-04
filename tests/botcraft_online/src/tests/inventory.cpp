@@ -211,7 +211,7 @@ TEST_CASE("container")
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     const Botcraft::Position chest = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
 
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#if PROTOCOL_VERSION == 768 /* 1.21.2/3 */
     // Bugfix cause minecraft adds an empty "lock" tag to the chest when loading the structure :)
     MinecraftServer::GetInstance().SendLine("data remove block " + std::to_string(chest.x) + " " + std::to_string(chest.y) + " " + std::to_string(chest.z) + " \"lock\"");
     MinecraftServer::GetInstance().WaitLine(".*?: Modified block data of .*", 5000);
