@@ -625,12 +625,34 @@ namespace Botcraft
         player->crouching = !IsSwimmingAndNotFlying() && player->previous_sneak;
 #endif
 
-        // If crouch, slow down player inputs
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        if (player->crouching || (player->GetDataPoseImpl() == Pose::Swimming && !player->in_water))
+        const bool is_moving_slowly = player->crouching || (player->GetDataPoseImpl() == Pose::Swimming && !player->in_water);
 #else
-        if (player->crouching)
+        const bool is_moving_slowly = player->crouching;
 #endif
+
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        bool has_blindness = false;
+        for (const auto& effect : player->effects)
+        {
+            if (effect.type == EntityEffectType::Blindness && effect.end > std::chrono::steady_clock::now())
+            {
+                has_blindness = true;
+                break;
+            }
+        }
+
+        // Stop sprinting when crouching fix in 1.21.4+
+        if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying) ||
+            has_blindness ||
+            is_moving_slowly)
+        {
+            SetSprinting(false);
+        }
+#endif
+
+        // If crouch, slow down player inputs
+        if (is_moving_slowly)
         {
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
             constexpr float sneak_coefficient = 0.3f;
