@@ -1561,6 +1561,10 @@ namespace Botcraft
             return std::make_shared<HuskEntity>();
         case EntityType::Illusioner:
             return std::make_shared<IllusionerEntity>();
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
+        case EntityType::Interaction:
+            return std::make_shared<InteractionEntity>();
+#endif
         case EntityType::IronGolem:
             return std::make_shared<IronGolemEntity>();
         case EntityType::ItemEntity:
@@ -1673,6 +1677,10 @@ namespace Botcraft
             return std::make_shared<SlimeEntity>();
         case EntityType::SmallFireball:
             return std::make_shared<SmallFireballEntity>();
+#if PROTOCOL_VERSION > 761 /* > 1.19.3 */
+        case EntityType::Sniffer:
+            return std::make_shared<SnifferEntity>();
+#endif
         case EntityType::SnowGolem:
             return std::make_shared<SnowGolemEntity>();
         case EntityType::Snowball:
