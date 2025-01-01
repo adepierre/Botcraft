@@ -6,17 +6,41 @@ namespace ProtocolCraft
 {
     class Identifier : public NetworkType
     {
-        SERIALIZED_FIELD(Namespace, std::string);
-        SERIALIZED_FIELD(Name, std::string);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(RawString, std::string);
 
-        DEFINE_UTILITIES;
-        DECLARE_SERIALIZE;
+        DECLARE_READ_WRITE_SERIALIZE;
 
     public:
         bool operator <(const Identifier& rhs) const
         {
             return GetName() < rhs.GetName() ||
                 (GetName() == rhs.GetName() && GetNamespace() < rhs.GetNamespace());
+        }
+
+        std::string GetName() const
+        {
+            const size_t split = RawString.find(':');
+            return split == std::string::npos ? RawString : RawString.substr(split + 1);
+        }
+
+        auto& SetName(const std::string& name)
+        {
+            const std::string namespace_ = GetNamespace();
+            RawString = namespace_.empty() ? name : (namespace_ + ':' + name);
+            return *this;
+        }
+
+        std::string GetNamespace() const
+        {
+            const size_t split = RawString.find(':');
+            return split == std::string::npos ? "" : RawString.substr(0, split);
+        }
+
+        auto& SetNamespace(const std::string& namespace_)
+        {
+            const std::string name = GetName();
+            RawString = namespace_.empty() ? name : (namespace_ + ':' + name);
+            return *this;
         }
 
         std::string GetFull() const
@@ -27,38 +51,14 @@ namespace ProtocolCraft
             }
             else
             {
-                return GetNamespace() + ':' + GetName();
+                return RawString;
             }
         }
 
-    protected:
-        virtual void ReadImpl(ReadIterator& iter, size_t& length) override
+        auto& SetRawString(const std::string& raw)
         {
-            const std::string str = ReadData<std::string>(iter, length);
-            const size_t split = str.find(':');
-
-            if (split == std::string::npos)
-            {
-                SetNamespace("");
-                SetName(str);
-            }
-            else
-            {
-                SetNamespace(str.substr(0, split));
-                SetName(str.substr(split + 1));
-            }
-        }
-
-        virtual void WriteImpl(WriteContainer& container) const override
-        {
-            if (GetNamespace().empty())
-            {
-                WriteData<std::string>(GetName(), container);
-            }
-            else
-            {
-                WriteData<std::string>(GetNamespace() + ':' + GetName(), container);
-            }
+            RawString = raw;
+            return *this;
         }
     };
 } // ProtocolCraft

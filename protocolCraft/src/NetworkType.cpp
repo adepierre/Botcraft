@@ -160,7 +160,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     DEFINE_NETWORK_TYPE(GlobalPos);
 #endif
-    DEFINE_SERIALIZE(Identifier);
+    DEFINE_NETWORK_TYPE(Identifier);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(KnownPack);
 #endif
