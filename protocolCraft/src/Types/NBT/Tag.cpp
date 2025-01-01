@@ -132,7 +132,7 @@ namespace ProtocolCraft
                 break;
             case TagType::TagByteArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<char, int>(iter, length, ReadData<char>);
+                val = ReadData<Vector<char, int>>(iter, length);
                 break;
             case TagType::TagString:
                 val = ReadNBTString(iter, length);
@@ -145,11 +145,11 @@ namespace ProtocolCraft
                 break;
             case TagType::TagIntArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<int, int>(iter, length, ReadData<int>);
+                val = ReadData<Vector<int, int>>(iter, length);
                 break;
             case TagType::TagLongArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<long long int, int>(iter, length, ReadData<long long int>);
+                val = ReadData<Vector<long long int, int>>(iter, length);
                 break;
             default:
                 break;
@@ -181,7 +181,7 @@ namespace ProtocolCraft
                     else if constexpr (std::is_same_v<T, TagByteArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<char, int>(arg, container, WriteData<char>);
+                        WriteData<Vector<char, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, TagString>)
                     {
@@ -198,12 +198,12 @@ namespace ProtocolCraft
                     else if constexpr (std::is_same_v<T, TagIntArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<int, int>(arg, container, WriteData<int>);
+                        WriteData<Vector<int, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, TagLongArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<long long int, int>(arg, container, WriteData<long long int>);
+                        WriteData<Vector<long long int, int>>(arg, container);
                     }
                     else
                     {
@@ -249,7 +249,7 @@ namespace ProtocolCraft
                 break;
             case TagType::TagByteArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<char, int>(iter, length, ReadData<char>);
+                val = ReadData<Vector<char, int>>(iter, length);
                 break;
             case TagType::TagString:
                 val = ReadNBTString(iter, length);
@@ -262,11 +262,11 @@ namespace ProtocolCraft
                 break;
             case TagType::TagIntArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<int, int>(iter, length, ReadData<int>);
+                val = ReadData<Vector<int, int>>(iter, length);
                 break;
             case TagType::TagLongArray:
                 // Special case, use int as size instead of varint
-                val = ReadVector<long long int, int>(iter, length, ReadData<long long int>);
+                val = ReadData<Vector<long long int, int>>(iter, length);
                 break;
             default:
                 break;
@@ -295,7 +295,7 @@ namespace ProtocolCraft
                     else if constexpr (std::is_same_v<T, TagByteArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<char, int>(arg, container, WriteData<char>);
+                        WriteData<Vector<char, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, TagString>)
                     {
@@ -312,12 +312,12 @@ namespace ProtocolCraft
                     else if constexpr (std::is_same_v<T, TagIntArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<int, int>(arg, container, WriteData<int>);
+                        WriteData<Vector<int, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, TagLongArray>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<long long int, int>(arg, container, WriteData<long long int>);
+                        WriteData<Vector<long long int, int>>(arg, container);
                     }
                     else
                     {
@@ -388,7 +388,7 @@ namespace ProtocolCraft
                         std::is_same_v<T, TagByteArray> ||
                         std::is_same_v<T, TagIntArray> ||
                         std::is_same_v<T, TagLongArray>
-                        )
+                    )
                     {
                         output = arg.size();
                     }
@@ -421,65 +421,57 @@ namespace ProtocolCraft
             }
             case TagType::TagByte:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagByte, int>(iter, length, ReadData<char>);
+                vals = ReadData<Vector<char, int>>(iter, length);
                 break;
             case TagType::TagShort:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagShort, int>(iter, length, ReadData<short>);
+                vals = ReadData<Vector<short, int>>(iter, length);
                 break;
             case TagType::TagInt:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagInt, int>(iter, length, ReadData<int>);
+                vals = ReadData<Vector<int, int>>(iter, length);
                 break;
             case TagType::TagLong:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagLong, int>(iter, length, ReadData<long long int>);
+                vals = ReadData<Vector<long long int, int>>(iter, length);
                 break;
             case TagType::TagFloat:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagFloat, int>(iter, length, ReadData<float>);
+                vals = ReadData<Vector<float, int>>(iter, length);
                 break;
             case TagType::TagDouble:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagDouble, int>(iter, length, ReadData<double>);
+                vals = ReadData<Vector<double, int>>(iter, length);
                 break;
             case TagType::TagByteArray:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagByteArray, int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadVector<char, int>(i, l, ReadData<char>);
-                    }
-                );
+                vals = ReadData<Vector<Vector<char, int>, int>>(iter, length);
                 break;
             case TagType::TagString:
-                vals = ReadVector<TagString, int>(iter, length, ReadNBTString);
+            {
+                std::vector<std::string> values = std::vector<std::string>(ReadData<int>(iter, length));
+                for (size_t i = 0; i < values.size(); ++i)
+                {
+                    values[i] = ReadNBTString(iter, length);
+                }
+                vals = values;
                 break;
+            }
             case TagType::TagList:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagList, int>(iter, length, ReadData<TagList>);
+                vals = ReadData<Vector<TagList, int>>(iter, length);
                 break;
             case TagType::TagCompound:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagCompound, int>(iter, length, ReadData<TagCompound>);
+                vals = ReadData<Vector<TagCompound, int>>(iter, length);
                 break;
             case TagType::TagIntArray:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagIntArray, int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadVector<int, int>(i, l, ReadData<int>);
-                    }
-                );
+                vals = ReadData<Vector<Vector<int, int>, int>>(iter, length);
                 break;
             case TagType::TagLongArray:
                 // Special case, use int as size instead of varint
-                vals = ReadVector<TagLongArray, int>(iter, length,
-                    [](ReadIterator& i, size_t& l)
-                    {
-                        return ReadVector<long long int, int>(i, l, ReadData<long long int>);
-                    }
-                );
+                vals = ReadData<Vector<Vector<long long int, int>, int>>(iter, length);
                 break;
             default:
                 break;
@@ -501,41 +493,30 @@ namespace ProtocolCraft
                     else if constexpr (std::is_same_v<T, std::vector<TagByteArray>>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<TagByteArray, int>(arg, container,
-                            [](const TagByteArray& v, WriteContainer& c)
-                            {
-                                WriteVector<char, int>(v, c, WriteData<char>);
-                            }
-                        );
+                        WriteData<Vector<Vector<char, int>, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, std::vector<TagString>>)
                     {
-                        WriteVector<std::string, int>(arg, container, WriteNBTString);
+                        WriteData<int>(static_cast<int>(arg.size()), container);
+                        for (size_t i = 0; i < arg.size(); ++i)
+                        {
+                            WriteNBTString(arg[i], container);
+                        }
                     }
                     else if constexpr (std::is_same_v<T, std::vector<TagIntArray>>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<TagIntArray, int>(arg, container,
-                            [](const TagIntArray& v, WriteContainer& c)
-                            {
-                                WriteVector<int, int>(v, c, WriteData<int>);
-                            }
-                        );
+                        WriteData<Vector<Vector<int, int>, int>>(arg, container);
                     }
                     else if constexpr (std::is_same_v<T, std::vector<TagLongArray>>)
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<TagLongArray, int>(arg, container,
-                            [](const TagLongArray& v, WriteContainer& c)
-                            {
-                                WriteVector<long long int, int>(v, c, WriteData<long long int>);
-                            }
-                        );
+                        WriteData<Vector<Vector<long long int, int>, int>>(arg, container);
                     }
                     else
                     {
                         // Special case, use int as size instead of varint
-                        WriteVector<typename T::value_type, int>(arg, container, WriteData<typename T::value_type>);
+                        WriteData<Vector<typename T::value_type, int>>(arg, container);
                     }
                 }, vals);
         }

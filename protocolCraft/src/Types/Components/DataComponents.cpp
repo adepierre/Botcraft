@@ -371,32 +371,32 @@ namespace ProtocolCraft
         void DataComponentPredicate::ReadImpl(ReadIterator& iter, size_t& length)
         {
             // special case, dynamic factory
-            map = ReadMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(iter, length,
-                [](ReadIterator& i, size_t& l)
+            const int map_size = ReadData<VarInt>(iter, length);
+            map.clear();
+            for (int i = 0; i < map_size; ++i)
+            {
+                const DataComponentTypes k = ReadData<DataComponentTypes, VarInt>(iter, length);
+                std::shared_ptr<DataComponentType> v = CreateComponentType(k);
+                if (v != nullptr)
                 {
-                    const DataComponentTypes first = ReadData<DataComponentTypes, VarInt>(i, l);
-                    std::shared_ptr<DataComponentType> second = CreateComponentType(first);
-                    if (second != nullptr)
-                    {
-                        second->Read(i, l);
-                    }
-
-                    return std::make_pair(first, second);
-                });
+                    v->Read(iter, length);
+                }
+                map[k] = v;
+            }
         }
 
         void DataComponentPredicate::WriteImpl(WriteContainer& container) const
         {
             // special case, dynamic factory
-            WriteMap<DataComponentTypes, std::shared_ptr<DataComponentType>>(map, container,
-                [](const std::pair<const DataComponentTypes, std::shared_ptr<DataComponentType>>& p, WriteContainer& c)
+            WriteData<VarInt>(static_cast<int>(map.size()), container);
+            for (const auto& [k, v] : map)
+            {
+                WriteData<DataComponentTypes, VarInt>(k, container);
+                if (v != nullptr)
                 {
-                    WriteData<DataComponentTypes, VarInt>(p.first, c);
-                    if (p.second != nullptr)
-                    {
-                        p.second->Write(c);
-                    }
-                });
+                    v->Write(container);
+                }
+            }
         }
 
         Json::Value DataComponentPredicate::SerializeImpl() const
