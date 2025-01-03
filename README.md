@@ -68,7 +68,7 @@ Available bot behaviours includes:
 
 - Anti-cheat evasion: Botcraft actions/movements are most of the time vanilla-like, but not human-like. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
 - Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination. See [mod support](#mod-support) section for details.
-
+- Rendering and UI may not work on macOS due to platform incompatibility
 
 ### Nice gifs
 
@@ -173,7 +173,7 @@ Botcraft has multiple ``XXXClient`` classes you can inherit from depending on wh
 
 ## Connection
 
-Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang accounts are not valid anymore) owning the game is required. Detailed information about how to connect with offline or  Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
+Botcraft supports both servers in offline ("cracked") and online mode. If the server is in online mode, a valid Microsoft account (Mojang accounts are not valid anymore) owning the game is required. Detailed information about how to connect with offline or Microsoft accounts can be found in the [wiki page](https://github.com/adepierre/Botcraft/wiki/Connection).
 
 ## Mod support
 
