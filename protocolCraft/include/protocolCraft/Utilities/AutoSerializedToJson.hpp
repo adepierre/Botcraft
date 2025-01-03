@@ -166,7 +166,7 @@ namespace ProtocolCraft
             return WrapJsonWithOffsets(Json::Value({
                 { "first",  WrapJsonWithOffsets(val.first, start_offset != nullptr ? &start_offset->second.first : nullptr, end_offset != nullptr ? &end_offset->second.first : nullptr) },
                 { "second",  WrapJsonWithOffsets(val.second, start_offset != nullptr ? &start_offset->second.second : nullptr, end_offset != nullptr ? &end_offset->second.second : nullptr) }
-            }), start_offset != nullptr ? &start_offset->first, end_offset != nullptr ? &end_offset->first);
+            }), start_offset != nullptr ? &start_offset->first : nullptr, end_offset != nullptr ? &end_offset->first : nullptr);
 #else
             return Json::Value({
                 { "first", val.first },
