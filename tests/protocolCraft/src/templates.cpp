@@ -1,5 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
+// Defined to test OffsetType
+#ifndef PROTOCOLCRAFT_DETAILED_PARSING
+#define PROTOCOLCRAFT_DETAILED_PARSING
+#endif
 #include "protocolCraft/Utilities/Templates.hpp"
 
 enum class TestEnum
@@ -187,4 +191,16 @@ TEST_CASE("Conditioned")
         REQUIRE_FALSE(Internal::Conditioned<int, &TestClass::False>::Evaluate(&test));
     }
 
+}
+
+TEST_CASE("Offset type")
+{
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<int>::type, size_t>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<bool>::type, size_t>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::optional<int>>::type, size_t>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::vector<int>>::type, std::pair<size_t, std::vector<size_t>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::vector<std::vector<int>>>::type, std::pair<size_t, std::vector<std::pair<size_t, std::vector<size_t>>>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::pair<int, int>>::type, std::pair<size_t, std::pair<size_t, size_t>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::pair<int, std::vector<int>>>::type, std::pair<size_t, std::pair<size_t, std::pair<size_t, std::vector<size_t>>>>>);
+    STATIC_REQUIRE(std::is_same_v<typename Internal::OffsetType<std::map<std::string, int>>::type, std::pair<size_t, std::map<std::string, size_t>>>);
 }
