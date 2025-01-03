@@ -148,5 +148,14 @@ namespace ProtocolCraft
         /// @brief To be used in constexpr else to fail compilation in a C++ compliant way
         /// @tparam T Any type
         template <typename T> constexpr bool dependant_false = false;
+
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+        template <typename T>                 struct OffsetType                        { using type = size_t;                                                                                     };
+        template <typename T>                 struct OffsetType<std::optional<T>>      { using type = typename OffsetType<T>::type;                                                               };
+        template <typename T>                 struct OffsetType<std::vector<T>>        { using type = std::pair<size_t, std::vector<typename OffsetType<T>::type>>;                               };
+        template <typename T, size_t N>       struct OffsetType<std::array<T, N>>      { using type = std::pair<size_t, std::array<typename OffsetType<T>::type, N>>;                             };
+        template <typename T1, typename T2>   struct OffsetType<std::pair<T1, T2>>     { using type = std::pair<size_t, std::pair<typename OffsetType<T1>::type, typename OffsetType<T2>::type>>; };
+        template <typename K, typename V>     struct OffsetType<std::map<K, V>>        { using type = std::pair<size_t, std::map<K, typename OffsetType<V>::type>>;                               };
+#endif
     }
 }

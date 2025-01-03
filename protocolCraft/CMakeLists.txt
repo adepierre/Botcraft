@@ -604,6 +604,11 @@ if (NOT PROTOCOLCRAFT_STATIC)
     target_link_libraries(protocolCraft PUBLIC ${CMAKE_DL_LIBS})
 endif()
 
+# Setup detailed parsing preprocessor variable
+if(PROTOCOLCRAFT_DETAILED_PARSING)
+    target_compile_definitions(protocolCraft PUBLIC PROTOCOLCRAFT_DETAILED_PARSING=1)
+endif(PROTOCOLCRAFT_DETAILED_PARSING)
+
 # Installation stuff
 include(GNUInstallDirs)
 

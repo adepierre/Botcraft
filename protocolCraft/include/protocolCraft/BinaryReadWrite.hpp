@@ -45,7 +45,13 @@ namespace ProtocolCraft
     }
 
     template<typename StorageType, typename SerializationType>
-    StorageType ReadData(ReadIterator& iter, size_t& length)
+    StorageType ReadData(ReadIterator& iter, size_t& length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+        ,
+        typename Internal::OffsetType<StorageType>::type* start_offset = nullptr,
+        typename Internal::OffsetType<StorageType>::type* end_offset = nullptr
+#endif
+    )
     {
         // bool, char, short, int, long, float, double ...
         if constexpr (std::is_arithmetic_v<SerializationType>)
@@ -54,10 +60,22 @@ namespace ProtocolCraft
             {
                 throw std::runtime_error("Not enough input in ReadData");
             }
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                *start_offset = length;
+            }
+#endif
             SerializationType output;
             std::memcpy(&output, &(*iter), sizeof(SerializationType));
             length -= sizeof(SerializationType);
             iter += sizeof(SerializationType);
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                *end_offset = length;
+            }
+#endif
             // Don't need to change endianess of single byte
             if constexpr (sizeof(SerializationType) > 1)
             {
@@ -79,6 +97,12 @@ namespace ProtocolCraft
         // VarType
         else if constexpr (Internal::IsVarType<SerializationType>)
         {
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                *start_offset = length;
+            }
+#endif
             size_t num_read = 0;
             typename SerializationType::underlying_type result = 0;
 
@@ -105,12 +129,24 @@ namespace ProtocolCraft
 
             iter += num_read;
             length -= num_read;
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                *end_offset = length;
+            }
+#endif
 
             return static_cast<StorageType>(result);
         }
         // std::string
         else if constexpr (std::is_same_v<SerializationType, std::string> && std::is_same_v<StorageType, std::string>)
         {
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                *start_offset = length;
+            }
+#endif
             const size_t size = ReadData<size_t, VarInt>(iter, length);
             if (length < size)
             {
@@ -119,14 +155,32 @@ namespace ProtocolCraft
 
             iter += size;
             length -= size;
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                *end_offset = length;
+            }
+#endif
 
             return std::string(iter - size, iter);
         }
         // NetworkType
         else if constexpr (std::is_base_of_v<NetworkType, SerializationType> && std::is_base_of_v<NetworkType, StorageType>)
         {
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                *start_offset = length;
+            }
+#endif
             SerializationType output;
             output.Read(iter, length);
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                *end_offset = length;
+            }
+#endif
             // static_cast required for example to convert between NBT::Value and NBT::UnnamedValue
             return static_cast<StorageType>(output);
         }
@@ -138,12 +192,28 @@ namespace ProtocolCraft
         {
             size_t N;
             StorageType output{};
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                start_offset->first = length;
+            }
+#endif
             // std::vector
             if constexpr (Internal::IsVector<SerializationType>)
             {
                 static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
                 N = ReadData<size_t, VarInt>(iter, length);
                 output.resize(N);
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                if (start_offset != nullptr)
+                {
+                    start_offset->second.resize(N);
+                }
+                if (end_offset != nullptr)
+                {
+                    end_offset->second.resize(N);
+                }
+#endif
             }
             // std::array
             else if constexpr (Internal::IsArray<SerializationType>)
@@ -166,6 +236,16 @@ namespace ProtocolCraft
                     static_assert(std::is_same_v<StorageType, std::vector<unsigned char>>, "Only std::vector<unsigned char> is supported for \"all remaining data\"");
                     N = length;
                     output.resize(N);
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                    if (start_offset != nullptr)
+                    {
+                        start_offset->second.resize(N);
+                    }
+                    if (end_offset != nullptr)
+                    {
+                        end_offset->second.resize(N);
+                    }
+#endif
                 }
                 // Generic case for vector prefixed with size
                 else
@@ -173,6 +253,16 @@ namespace ProtocolCraft
                     static_assert(Internal::IsVector<StorageType>, "StorageType should be a std::vector");
                     N = ReadData<size_t, typename SerializationType::size_type>(iter, length);
                     output.resize(N);
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                    if (start_offset != nullptr)
+                    {
+                        start_offset->second.resize(N);
+                    }
+                    if (end_offset != nullptr)
+                    {
+                        end_offset->second.resize(N);
+                    }
+#endif
                 }
             }
 
@@ -186,6 +276,19 @@ namespace ProtocolCraft
                 {
                     throw std::runtime_error("Not enough input to read vector data");
                 }
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                for (size_t i = 0; i < N; ++i)
+                {
+                    if (start_offset != nullptr)
+                    {
+                        start_offset->second[i] = length - i;
+                    }
+                    if (end_offset != nullptr)
+                    {
+                        end_offset->second[i] = length - i + 1;
+                    }
+                }
+#endif
                 std::memcpy(output.data(), &(*iter), N);
                 length -= N;
                 iter += N;
@@ -195,9 +298,21 @@ namespace ProtocolCraft
             {
                 for (size_t i = 0; i < N; ++i)
                 {
-                    output[i] = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length);
+                    output[i] = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                        ,
+                        start_offset != nullptr ? &start_offset->second[i] : nullptr,
+                        end_offset != nullptr ? &end_offset->second[i] : nullptr
+#endif
+                    );
                 }
             }
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                end_offset->first = length;
+            }
+#endif
             return output;
         }
         // std::optional
@@ -208,7 +323,13 @@ namespace ProtocolCraft
             const bool has_value = ReadData<bool, bool>(iter, length);
             if (has_value)
             {
-                output = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length);
+                output = ReadData<typename StorageType::value_type, typename SerializationType::value_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                    ,
+                    start_offset,
+                    end_offset
+#endif
+                );
             }
 
             return output;
@@ -217,23 +338,67 @@ namespace ProtocolCraft
         else if constexpr (Internal::IsPair<StorageType> && Internal::IsPair<SerializationType>)
         {
             StorageType output;
-            output.first = ReadData<typename StorageType::first_type, typename SerializationType::first_type>(iter, length);
-            output.second = ReadData<typename StorageType::second_type, typename SerializationType::second_type>(iter, length);
+
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                start_offset->first = length;
+            }
+#endif
+            output.first = ReadData<typename StorageType::first_type, typename SerializationType::first_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                ,
+                start_offset != nullptr ? &start_offset->second.first : nullptr,
+                end_offset != nullptr ? &end_offset->second.first : nullptr
+#endif
+            );
+            output.second = ReadData<typename StorageType::second_type, typename SerializationType::second_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                ,
+                start_offset != nullptr ? &start_offset->second.second : nullptr,
+                end_offset != nullptr ? &end_offset->second.second : nullptr
+#endif
+            );
+
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                end_offset->first = length;
+            }
+#endif
             return output;
         }
         // std::map
         else if constexpr (Internal::IsMap<StorageType> && Internal::IsMap<SerializationType>)
         {
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                start_offset->first = length;
+            }
+#endif
             const int output_length = ReadData<int, VarInt>(iter, length);
 
             StorageType output;
             for (int i = 0; i < output_length; ++i)
             {
                 const typename StorageType::key_type key = ReadData<typename StorageType::key_type, typename SerializationType::key_type>(iter, length);
-                const typename StorageType::mapped_type val = ReadData<typename StorageType::mapped_type, typename SerializationType::mapped_type>(iter, length);
+                const typename StorageType::mapped_type val = ReadData<typename StorageType::mapped_type, typename SerializationType::mapped_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+                    ,
+                    start_offset != nullptr ? &start_offset->second[key] : nullptr,
+                    end_offset != nullptr ? &end_offset->second[key] : nullptr
+#endif
+                );
                 output.insert(std::make_pair(key, val));
             }
 
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                end_offset->first = length;
+            }
+#endif
             return output;
         }
         // std::bitset
@@ -241,11 +406,23 @@ namespace ProtocolCraft
         {
             StorageType output;
             const size_t N = output.size();
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (start_offset != nullptr)
+            {
+                *start_offset = length;
+            }
+#endif
             const std::vector<unsigned char> bytes = ReadByteArray(iter, length, N / 8 + (N % 8 != 0));
             for (size_t i = 0; i < N; ++i)
             {
                 output.set(i, (bytes[i / 8] >> (i % 8)) & 0x01);
             }
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            if (end_offset != nullptr)
+            {
+                *end_offset = length;
+            }
+#endif
 
             return output;
         }
@@ -256,9 +433,21 @@ namespace ProtocolCraft
     }
 
     template<typename T>
-    typename Internal::SerializedType<T>::storage_type ReadData(ReadIterator& iter, size_t& length)
+    typename Internal::SerializedType<T>::storage_type ReadData(ReadIterator& iter, size_t& length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+        ,
+        typename Internal::OffsetType<typename Internal::SerializedType<T>::storage_type>::type* start_offset = nullptr,
+        typename Internal::OffsetType<typename Internal::SerializedType<T>::storage_type>::type* end_offset = nullptr
+#endif
+    )
     {
-        return ReadData<typename Internal::SerializedType<T>::storage_type, typename Internal::SerializedType<T>::serialization_type>(iter, length);
+        return ReadData<typename Internal::SerializedType<T>::storage_type, typename Internal::SerializedType<T>::serialization_type>(iter, length
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+            ,
+            start_offset,
+            end_offset
+#endif
+        );
     }
 
     template <typename StorageType, typename SerializationType>

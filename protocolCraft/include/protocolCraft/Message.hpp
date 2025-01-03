@@ -32,7 +32,11 @@ namespace ProtocolCraft
 
         virtual std::string_view GetName() const = 0;
 
-        virtual std::shared_ptr<Message> Clone() const = 0;
+#ifdef PROTOCOLCRAFT_DETAILED_PARSING
+        /// @brief Get a default initialized copy of this type
+        /// @return A shared ptr to the same derived type of this Message
+        virtual std::shared_ptr<Message> CopyTypeOnly() const = 0;
+#endif
 
     protected:
         virtual void DispatchImpl(Handler *handler) = 0;
