@@ -164,8 +164,8 @@ namespace ProtocolCraft
         {
 #ifdef PROTOCOLCRAFT_DETAILED_PARSING
             return WrapJsonWithOffsets(Json::Value({
-                { "first",  WrapJsonWithOffsets(val.first, start_offset != nullptr ? &start_offset->second.first : nullptr, end_offset != nullptr ? &end_offset->second.first : nullptr) },
-                { "second",  WrapJsonWithOffsets(val.second, start_offset != nullptr ? &start_offset->second.second : nullptr, end_offset != nullptr ? &end_offset->second.second : nullptr) }
+                { "first",  WrapJsonWithOffsets(val.first, start_offset != nullptr ? &start_offset->second.first : nullptr, end_offset != nullptr ? &end_offset->second.first : nullptr).value_or(Json::Value()) },
+                { "second",  WrapJsonWithOffsets(val.second, start_offset != nullptr ? &start_offset->second.second : nullptr, end_offset != nullptr ? &end_offset->second.second : nullptr).value_or(Json::Value()) }
             }), start_offset != nullptr ? &start_offset->first : nullptr, end_offset != nullptr ? &end_offset->first : nullptr);
 #else
             return Json::Value({
