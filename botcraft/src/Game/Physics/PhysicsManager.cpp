@@ -1276,7 +1276,14 @@ namespace Botcraft
             const float friction = below_block == nullptr ? 0.6f : below_block->GetFriction();
             const float inertia = player->on_ground ? friction * 0.91f : 0.91f;
 
-            ApplyInputs(player->on_ground ? (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) * (0.21600002f / (friction * friction * friction))) : 0.02f);
+            ApplyInputs(player->on_ground ?
+                (static_cast<float>(player->GetAttributeMovementSpeedValueImpl()) * (0.21600002f / (friction * friction * friction))) :
+#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
+                player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ? 0.02f + 0.006f : 0.02f // flying_speed updated during Player::aiStep call
+#else
+                player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ? 0.025999999f : 0.02f // Player::getFlyingSpeed overload
+#endif
+            );
             if (player->on_climbable)
             { // LivingEntity::handleOnClimbable
                 player->speed.x = std::clamp(player->speed.x, -0.15000000596046448, 0.15000000596046448);
