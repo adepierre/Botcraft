@@ -68,7 +68,7 @@ Available bot behaviours includes:
 
 - Anti-cheat evasion: Botcraft actions/movements are most of the time vanilla-like, but not human-like. Only use Botcraft on your own servers or ask permission first if you don't want your account to be banned.
 - Modded servers: Botcraft aims to be compatible with vanilla server first. When possible, modded servers are also (partially) supported, but given the large diversity of servers and mods, Botcraft does not aim to work on every possible server/mod combination. See [mod support](#mod-support) section for details.
-- Rendering and UI may not work on macOS due to platform incompatibility
+- Rendering and UI may not work on macOS due to platform incompatibility. Everything can run fine even with GUI enable, but macOS will not display the rendering window, making it pointless. I recommend using ``BOTCRAFT_USE_OPENGL_GUI=OFF`` on macOS.
 
 ### Nice gifs
 
