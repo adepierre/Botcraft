@@ -130,6 +130,7 @@ namespace Botcraft
         Vector3<double> stuck_speed_multiplier;
         int jump_delay;
         int fly_jump_trigger_time;
+        int sprint_double_tap_trigger_time;
         std::optional<Position> supporting_block_pos;
         bool on_ground_without_supporting_block;
 

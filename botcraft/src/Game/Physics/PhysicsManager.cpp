@@ -40,6 +40,7 @@ namespace Botcraft
         should_run = false;
         teleport_id = std::nullopt;
         ticks_since_last_position_sent = 0;
+        double_tap_cause_sprint = true;
 
         elytra_item = AssetsManager::getInstance().GetItem("minecraft:elytra");
         if (elytra_item == nullptr)
@@ -67,6 +68,17 @@ namespace Botcraft
         if (thread_physics.joinable())
         {
             thread_physics.join();
+        }
+    }
+
+    void PhysicsManager::SetDoubleTapCauseSprint(const bool b)
+    {
+        double_tap_cause_sprint = b;
+        // Reset sprint_double_tap_trigger_time to 0 if b is false
+        if (player != nullptr)
+        {
+            std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+            player->sprint_double_tap_trigger_time *= b;
         }
     }
 
@@ -323,6 +335,7 @@ namespace Botcraft
                 } // Entity::baseTick
 
                 { // LocalPlayer::aiStep
+                    player->sprint_double_tap_trigger_time = std::max(0, player->sprint_double_tap_trigger_time - 1);
 
                     InputsToCrouch();
 
@@ -672,6 +685,21 @@ namespace Botcraft
 
     void PhysicsManager::InputsToSprint() const
     {
+        const bool was_sneaking = player->previous_sneak;
+        const bool had_enough_impulse_to_start_sprinting = player->previous_forward >= (player->under_water ? 1e-5f : 0.8f);
+        const bool has_enough_impulse_to_start_sprinting = player->inputs.forward_axis >= (player->under_water ? 1e-5f : 0.8f);
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        const bool is_moving_slowly = player->crouching || (player->GetDataPoseImpl() == Pose::Swimming && !player->in_water);
+#else
+        const bool is_moving_slowly = player->crouching;
+#endif
+
+        if (was_sneaking)
+        {
+            player->sprint_double_tap_trigger_time = 0;
+        }
+
         bool has_blindness = false;
         for (const auto& effect : player->effects)
         {
@@ -682,18 +710,28 @@ namespace Botcraft
             }
         }
 
-        const bool can_start_sprinting = !player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) &&
-            player->inputs.forward_axis >= (player->under_water ? 1e-5 : 0.8) &&
-            (player->may_fly || player->food > 6) &&
-            !player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying) &&
-            !has_blindness;
+        const bool can_start_sprinting = !(
+            player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) ||
+            !has_enough_impulse_to_start_sprinting ||
+            !(player->food > 6 || player->may_fly) ||
+            has_blindness ||
+            player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying) ||
+            (is_moving_slowly && !player->under_water)
+        );
 
-        // Start sprinting if possible
-        const bool could_sprint_previous = player->previous_forward >= (player->under_water ? 1e-5f : 0.8f);
-        if (can_start_sprinting && player->inputs.sprint && (
-            (!player->in_water || player->under_water) ||
-            ((player->on_ground || player->under_water) && !player->previous_sneak && !could_sprint_previous)
-            ))
+        if ((player->on_ground || player->under_water) && !was_sneaking && !had_enough_impulse_to_start_sprinting && can_start_sprinting)
+        {
+            if (player->sprint_double_tap_trigger_time > 0 || player->inputs.sprint)
+            {
+                SetSprinting(true);
+            }
+            else
+            {
+                player->sprint_double_tap_trigger_time = 7 * double_tap_cause_sprint;
+            }
+        }
+
+        if ((!player->in_water || player->under_water) && can_start_sprinting && player->inputs.sprint)
         {
             SetSprinting(true);
         }
@@ -728,7 +766,8 @@ namespace Botcraft
                 EntityAttribute::Modifier{
                     0.3,                                                // amount
                     EntityAttribute::Modifier::Operation::MultiplyTotal // operation
-                });
+                }
+            );
         }
     }
 
