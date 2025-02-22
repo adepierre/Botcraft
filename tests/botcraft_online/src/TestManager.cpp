@@ -331,6 +331,9 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
     case TestSucess::ExpectedFailure:
         text_color = "gold";
         break;
+    case TestSucess::Skipped:
+        text_color = "gray";
+        break;
     }
 #if PROTOCOL_VERSION < 763 /* < 1.20 */
     std::map<std::string, std::string> lines;
@@ -599,20 +602,46 @@ void TestManager::assertionEnded(Catch::AssertionStats const& assertion_stats)
 
 void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_stats, uint64_t part_number)
 {
+    const bool skipped = test_case_stats.totals.testCases.skipped > 0;
     const bool passed = test_case_stats.totals.assertions.allPassed();
     // Replace header with proper test result
-    LoadStructure(passed ? "_header_success" : (test_case_stats.testInfo->okToFail() ? "_header_expected_fail" : "_header_fail"), current_header_position);
+    LoadStructure(
+        skipped ?
+            "_header_skipped" :
+            passed ?
+                "_header_success" :
+                test_case_stats.testInfo->okToFail() ?
+                    "_header_expected_fail" :
+                    "_header_fail",
+        current_header_position
+    );
     // Create TP sign for the partial that just ended
     CreateTPSign(
         Botcraft::Position(-2 * (current_test_index + 1), 2, -2 * part_number - 5),
         Botcraft::Vector3(current_offset.x, 2, current_offset.z - 1),
-        section_stack, "north", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
+        section_stack,
+        "north",
+        skipped ?
+            TestSucess::Skipped :
+            passed ?
+                TestSucess::Success :
+                test_case_stats.testInfo->okToFail() ?
+                    TestSucess::ExpectedFailure :
+                    TestSucess::Failure
     );
     // Create back to spawn sign for the section that just ended
     CreateTPSign(
         Botcraft::Position(current_offset.x, 2, current_offset.z - 1),
         Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2 * static_cast<int>(part_number) - 5),
-        section_stack, "south", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
+        section_stack,
+        "south",
+        skipped ?
+            TestSucess::Skipped :
+            passed ?
+                TestSucess::Success :
+                test_case_stats.testInfo->okToFail() ?
+                    TestSucess::ExpectedFailure :
+                    TestSucess::Failure
     );
     if (!passed)
     {
@@ -638,21 +667,45 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
 
 void TestManager::testCaseEnded(Catch::TestCaseStats const& test_case_stats)
 {
+    const bool skipped = test_case_stats.totals.testCases.skipped > 0;
     const bool passed = test_case_stats.totals.assertions.allPassed();
-    LoadStructure(passed ? "_header_success" : (test_case_stats.testInfo->okToFail() ? "_header_expected_fail" : "_header_fail"), Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z));
+    LoadStructure(
+        skipped ?
+            "_header_skipped" :
+            passed ?
+                "_header_success" :
+                test_case_stats.testInfo->okToFail() ?
+                    "_header_expected_fail" :
+                    "_header_fail",
+        Botcraft::Position(current_offset.x, 0, spacing_z - header_size.z)
+    );
     // Create Sign to TP to current test
     CreateTPSign(
         Botcraft::Position(-2 * (current_test_index + 1), 2, -2),
         Botcraft::Vector3(current_offset.x, 2, spacing_z - 1),
         { std::filesystem::path(test_case_stats.testInfo->lineInfo.file).stem().string(), test_case_stats.testInfo->name },
-        "north", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
+        "north",
+        skipped ?
+            TestSucess::Skipped :
+            passed ?
+                TestSucess::Success :
+                test_case_stats.testInfo->okToFail() ?
+                    TestSucess::ExpectedFailure :
+                    TestSucess::Failure
     );
-    // Create sign to TP to TP back to spawn
+    // Create sign to TP back to spawn
     CreateTPSign(
         Botcraft::Position(current_offset.x, 2, spacing_z - 1),
         Botcraft::Vector3(-2 * (current_test_index + 1), 2, -2),
         { std::filesystem::path(test_case_stats.testInfo->lineInfo.file).stem().string(), test_case_stats.testInfo->name },
-        "south", passed ? TestSucess::Success : (test_case_stats.testInfo->okToFail() ? TestSucess::ExpectedFailure : TestSucess::Failure)
+        "south",
+        skipped ?
+            TestSucess::Skipped :
+            passed ?
+                TestSucess::Success :
+                test_case_stats.testInfo->okToFail() ?
+                    TestSucess::ExpectedFailure :
+                    TestSucess::Failure
     );
     current_test_index += 1;
     current_offset.x += std::max(current_test_size.x, header_size.x) + spacing_x;

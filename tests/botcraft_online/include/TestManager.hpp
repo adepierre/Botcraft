@@ -151,7 +151,8 @@ private:
         None,
         Success,
         Failure,
-        ExpectedFailure
+        ExpectedFailure,
+        Skipped,
     };
 
     /// @brief Read a NBT structure file and extract its size
