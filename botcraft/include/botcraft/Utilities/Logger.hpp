@@ -1,13 +1,15 @@
 #pragma once
 
-#include <string>
-#include <mutex>
-#include <chrono>
-#include <unordered_map>
-#include <functional>
-#include <sstream>
+#include <array>
 #include <atomic>
+#include <chrono>
+#include <functional>
+#include <mutex>
+#include <sstream>
+#include <string>
+#include <string_view>
 #include <thread>
+#include <unordered_map>
 
 constexpr const char* file_name(const char* path)
 {
@@ -23,23 +25,25 @@ constexpr const char* file_name(const char* path)
     return file;
 }
 
-#define LOG(osstream, level) do { \
-    Botcraft::Logger& logger = Botcraft::Logger::GetInstance(); \
-    if (level < logger.GetLogLevel()) \
-        break; \
-    std::ostringstream logger_ostringstream; \
-    logger_ostringstream << logger.GetDate().rdbuf() << ' ' << Botcraft::Logger::level_strings.at(level) \
-    << " [" << logger.GetThreadName(std::this_thread::get_id()) << "(" << std::this_thread::get_id() << ")] " \
+#define LOG(osstream, level) do {                                           \
+    Botcraft::Logger& logger = Botcraft::Logger::GetInstance();             \
+    if (level < logger.GetLogLevel())                                       \
+        break;                                                              \
+    std::ostringstream logger_ostringstream;                                \
+    logger_ostringstream << logger.GetDate().rdbuf()                        \
+    << ' ' << Botcraft::Logger::level_strings[static_cast<size_t>(level)]   \
+    << " [" << logger.GetThreadName(std::this_thread::get_id())             \
+    << "(" << std::this_thread::get_id() << ")] "                           \
     << file_name(__FILE__) << '(' << __LINE__ << "): " << osstream << '\n'; \
-    logger.Log(logger_ostringstream.str()); \
+    logger.Log(logger_ostringstream.str());                                 \
 } while(0)
 
-#define LOG_TRACE(osstream) LOG(osstream, Botcraft::LogLevel::Trace)
-#define LOG_DEBUG(osstream) LOG(osstream, Botcraft::LogLevel::Debug)
-#define LOG_INFO(osstream) LOG(osstream, Botcraft::LogLevel::Info)
+#define LOG_TRACE(osstream)   LOG(osstream, Botcraft::LogLevel::Trace)
+#define LOG_DEBUG(osstream)   LOG(osstream, Botcraft::LogLevel::Debug)
+#define LOG_INFO(osstream)    LOG(osstream, Botcraft::LogLevel::Info)
 #define LOG_WARNING(osstream) LOG(osstream, Botcraft::LogLevel::Warning)
-#define LOG_ERROR(osstream) LOG(osstream, Botcraft::LogLevel::Error)
-#define LOG_FATAL(osstream) LOG(osstream, Botcraft::LogLevel::Fatal)
+#define LOG_ERROR(osstream)   LOG(osstream, Botcraft::LogLevel::Error)
+#define LOG_FATAL(osstream)   LOG(osstream, Botcraft::LogLevel::Fatal)
 
 namespace Botcraft
 {
@@ -51,7 +55,8 @@ namespace Botcraft
         Warning,
         Error,
         Fatal,
-        None
+        None,
+        NUM_LOG_LEVEL,
     };
     std::ostream& operator<<(std::ostream& os, const LogLevel v);
 
@@ -60,15 +65,15 @@ namespace Botcraft
     private:
         Logger();
     public:
-        inline static const std::unordered_map<LogLevel, std::string> level_strings
+        static constexpr std::array<std::string_view, static_cast<size_t>(LogLevel::NUM_LOG_LEVEL)> level_strings =
         {
-            { LogLevel::Trace,   "[TRACE]"},
-            { LogLevel::Debug,   "[DEBUG]" },
-            { LogLevel::Info,    "[INFO]" },
-            { LogLevel::Warning, "[WARNING]" },
-            { LogLevel::Error,   "[ERROR]" },
-            { LogLevel::Fatal,   "[FATAL]" },
-            { LogLevel::None,    "[]" }
+             "[ TRACE ]",
+             "[ DEBUG ]",
+             "[ INFO  ]",
+             "[WARNING]",
+             "[ ERROR ]",
+             "[ FATAL ]",
+             "[       ]"
         };
         Logger(const Logger&) = delete;
         Logger& operator=(const Logger&) = delete;
