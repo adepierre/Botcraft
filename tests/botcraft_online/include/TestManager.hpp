@@ -3,15 +3,16 @@
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 
-#include <vector>
-#include <string>
+#include <filesystem>
 #include <map>
 #include <mutex>
+#include <string>
+#include <vector>
 
 #include <botcraft/AI/BehaviourClient.hpp>
-#include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/Enums.hpp>
 #include <botcraft/Game/ManagersClient.hpp>
+#include <botcraft/Game/Vector3.hpp>
 #include <botcraft/Game/World/World.hpp>
 #include <botcraft/Utilities/SleepUtilities.hpp>
 
@@ -33,6 +34,7 @@ private:
     static constexpr int spacing_x = 3;
     /// @brief Spacing between sections
     static constexpr int spacing_z = 3;
+
 
 public:
     static TestManager& GetInstance();
@@ -57,6 +59,8 @@ public:
     void CreateBook(const Botcraft::Position& pos, const std::vector<std::string>& pages, const std::string& facing = "north", const std::string& title = "", const std::string& author = "", const std::vector<std::string>& description = {});
 
     void Teleport(const std::string& name, const Botcraft::Vector3<double>& pos, const float yaw = 0.0f, const float pitch = 0.0f) const;
+
+    const std::filesystem::path& GetPhysicsRecapPath() const;
 
     template<class ClientType = Botcraft::ManagersClient,
         std::enable_if_t<std::is_base_of_v<Botcraft::ConnectionClient, ClientType>, bool> = true>
@@ -217,6 +221,9 @@ private:
     std::vector<std::string> section_stack;
     /// @brief Position of the header for current section
     Botcraft::Position current_header_position;
+
+    /// @brief Path to the physics recap markdown file
+    std::filesystem::path physics_recap_path;
 };
 
 /// @brief Catch2 listener to get test events and pass them to the main singleton

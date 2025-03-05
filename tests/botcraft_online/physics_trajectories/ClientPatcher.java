@@ -15,33 +15,37 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Can we have mixins ?
+// We have mixins at home
+// Mixins at home:
 public class ClientPatcher {
     // Keys to all classes, fields and methods we'll use/modify in the patch
-    private static final String cLocalPlayer = "LocalPlayer";
-    private static final String cEntity      = "Entity";
-    private static final String cVec3        = "Vec3";
-    private static final String cMinecraft   = "Minecraft";
-    private static final String cOptions     = "Options";
-    private static final String cKeyMapping  = "KeyMapping";
-    private static final String fMinecraft   = "minecraft";
-    private static final String fX           = "x";
-    private static final String fY           = "y";
-    private static final String fZ           = "z";
-    private static final String fOptions     = "options";
-    private static final String fKeyForward  = "keyUp";
-    private static final String fKeyLeft     = "keyLeft";
-    private static final String fKeyBackward = "keyDown";
-    private static final String fKeyRight    = "keyRight";
-    private static final String fKeyJump     = "keyJump";
-    private static final String fKeySneak    = "keyShift";
-    private static final String fKeySprint   = "keySprint";
-    private static final String fIsDown      = "isDown";
-    private static final String fOnGround    = "onGround";
-    private static final String fYRot        = "yRot";
-    private static final String fXRot        = "xRot";
-    private static final String fNoRender    = "noRender";
-    private static final String mTick        = "tick";
-    private static final String mPosition    = "position";
+    private static final String cLocalPlayer   = "LocalPlayer";
+    private static final String cEntity        = "Entity";
+    private static final String cVec3          = "Vec3";
+    private static final String cMinecraft     = "Minecraft";
+    private static final String cOptions       = "Options";
+    private static final String cKeyMapping    = "KeyMapping";
+    private static final String cConnectScreen = "ConnectScreen";
+    private static final String fMinecraft     = "minecraft";
+    private static final String fX             = "x";
+    private static final String fY             = "y";
+    private static final String fZ             = "z";
+    private static final String fOptions       = "options";
+    private static final String fKeyForward    = "keyUp";
+    private static final String fKeyLeft       = "keyLeft";
+    private static final String fKeyBackward   = "keyDown";
+    private static final String fKeyRight      = "keyRight";
+    private static final String fKeyJump       = "keyJump";
+    private static final String fKeySneak      = "keyShift";
+    private static final String fKeySprint     = "keySprint";
+    private static final String fIsDown        = "isDown";
+    private static final String fOnGround      = "onGround";
+    private static final String fYRot          = "yRot";
+    private static final String fXRot          = "xRot";
+    private static final String fNoRender      = "noRender";
+    private static final String mTick          = "tick";
+    private static final String mPosition      = "position";
 
     public static void main(String[] args) throws IOException {
         // Get the arguments
@@ -99,6 +103,16 @@ public class ClientPatcher {
                 else if (entry.getName().equals(classes.get(cEntity).name + ".class")) {
                     byte[] classBytes = readClassBytes(jin);
                     byte[] modifiedBytes = modifyEntityClass(classBytes);
+
+                    JarEntry newEntry = new JarEntry(entry.getName());
+                    jout.putNextEntry(newEntry);
+                    jout.write(modifiedBytes);
+                    jout.closeEntry();
+                }
+                // Modify ConnectScreen class to add a sleep before every constructor
+                else if (entry.getName().equals(classes.get(cConnectScreen).name + ".class")) {
+                    byte[] classBytes = readClassBytes(jin);
+                    byte[] modifiedBytes = modifyConnectScreenClass(classBytes);
 
                     JarEntry newEntry = new JarEntry(entry.getName());
                     jout.putNextEntry(newEntry);
@@ -189,6 +203,14 @@ public class ClientPatcher {
                     isMojangMapping ? "net.minecraft.client.KeyMapping" : "net/minecraft/client/settings/KeyBinding",
                     new HashMap<>(Map.of(fIsDown, isMojangMapping ? "isDown" : "field_74513_e")),
                     new HashMap<>() // We don't need get/set methods for KeyMapping, we'll set isDown field to public instead
+            )
+        );
+        classes.put(
+            cConnectScreen, new ObfuscatedClass(
+                    isMojangMapping ? "net.minecraft.client.gui.screens.ConnectScreen" : "net/minecraft/client/multiplayer/GuiConnecting",
+                    // We don't need any field or method for ConnectScreen as we change the constructors (known name)
+                    new HashMap<>(),
+                    new HashMap<>()
             )
         );
     }
@@ -307,11 +329,6 @@ public class ClientPatcher {
     private static class LocalPlayerClassVisitor extends ClassVisitor {
         public LocalPlayerClassVisitor(ClassVisitor cv) {
             super(Opcodes.ASM9, cv);
-        }
-
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(version, access, name, signature, superName, interfaces);
         }
 
         @Override
@@ -438,6 +455,7 @@ public class ClientPatcher {
             }
         }
 
+        // can be used for debugging
         private void printString(String s) {
             mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
             mv.visitLdcInsn(s);
@@ -712,7 +730,6 @@ public class ClientPatcher {
     }
 
 
-
     private static byte[] modifyKeyMappingClass(byte[] classBytes) {
         ClassReader cr = new ClassReader(classBytes);
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
@@ -758,6 +775,69 @@ public class ClientPatcher {
             }
 
             return super.visitField(access, name, descriptor, signature, value);
+        }
+    }
+
+
+    private static byte[] modifyConnectScreenClass(byte[] classBytes) {
+        ClassReader cr = new ClassReader(classBytes);
+        // COMPUTE_FRAMES to automatically compute frames and maxs thing
+        ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+        cr.accept(new ConnectScreenClassVisitor(cw), ClassReader.EXPAND_FRAMES);
+        return cw.toByteArray();
+    }
+
+    private static class ConnectScreenClassVisitor extends ClassVisitor {
+        public ConnectScreenClassVisitor(ClassVisitor cv) {
+            super(Opcodes.ASM9, cv);
+        }
+
+        @Override
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            super.visit(version, access, name, signature, superName, interfaces);
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+            MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
+
+            if ("<init>".equals(name)) {
+                return new ConnectScreenConstructorVisitor(Opcodes.ASM9, mv, access, name, descriptor);
+            }
+
+            return mv;
+        }
+    }
+
+    private static class ConnectScreenConstructorVisitor extends AdviceAdapter {
+        public ConnectScreenConstructorVisitor(int api, MethodVisitor mv, int access, String name, String descriptor) {
+            super(api, mv, access, name, descriptor);
+        }
+
+        @Override
+        protected void onMethodEnter() {
+            Label labelTryStart = new Label();
+            Label labelTryEnd = new Label();
+            Label labelCatchStart = new Label();
+            // try
+            mv.visitTryCatchBlock(labelTryStart, labelTryEnd, labelCatchStart, "java/lang/InterruptedException");
+            mv.visitLabel(labelTryStart);
+                // I have no idea why, but adding a sleep in this screen sometimes prevents some crashes.
+                // TODO: find the real cause of the crashes and fix it?
+                // Thread.sleep(10000);
+                mv.visitLdcInsn(10000L);
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/Thread", "sleep", "(J)V", false);
+                mv.visitLabel(labelTryEnd);
+                Label labelCatchEnd = new Label();
+                mv.visitJumpInsn(GOTO, labelCatchEnd);
+            // Catch(InterruptedException e)
+            mv.visitLabel(labelCatchStart);
+            int exception = newLocal(Type.getType("Ljava/lang/InterruptedException;"));
+            mv.visitVarInsn(ASTORE, exception);
+                // e.printStackTrace();
+                mv.visitVarInsn(ALOAD, exception);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/InterruptedException", "printStackTrace", "()V", false);
+            mv.visitLabel(labelCatchEnd);
         }
     }
 }

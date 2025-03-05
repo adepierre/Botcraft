@@ -10,6 +10,7 @@
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
 #include <botcraft/Utilities/Logger.hpp>
+#include <botcraft/Version.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -21,6 +22,7 @@ TestManager::TestManager()
     current_offset = {spacing_x, 2, 2 * spacing_z };
     current_test_index = 0;
     bot_index = 0;
+    physics_recap_path = std::filesystem::path("test_server_files") / "runtime" / "physics_trajectories" / (game_version + ".md");
 }
 
 TestManager::~TestManager()
@@ -264,6 +266,11 @@ void TestManager::Teleport(const std::string& name, const Botcraft::Vector3<doub
         << pitch;
     MinecraftServer::GetInstance().SendLine(command.str());
     MinecraftServer::GetInstance().WaitLine(".*?Teleported " + name + " to.*", 5000);
+}
+
+const std::filesystem::path& TestManager::GetPhysicsRecapPath() const
+{
+    return physics_recap_path;
 }
 
 Botcraft::Position TestManager::GetStructureSize(const std::string& filename) const
@@ -556,6 +563,15 @@ void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
 {
     // Make sure the server is running and ready before the first test run
     MinecraftServer::GetInstance().Initialize();
+    // If there is some pre-existing physics trajectories, remove them
+    const std::filesystem::path botcraft_trajectories = std::filesystem::path("test_server_files") / "runtime" / "physics_trajectories" / "botcraft" / game_version;
+    if (std::filesystem::exists(botcraft_trajectories))
+    {
+        std::filesystem::remove_all(botcraft_trajectories);
+    }
+    std::filesystem::create_directories(botcraft_trajectories);
+    std::ofstream recap_file(physics_recap_path, std::ios::out);
+    recap_file << "<details>\n<summary>Test results</summary>\n";
     // Retrieve header size
     header_size = GetStructureSize("_header_running");
     chunk_loader = GetBot(chunk_loader_name, Botcraft::GameType::Spectator);
@@ -718,6 +734,8 @@ void TestManager::testRunEnded(Catch::TestRunStats const& test_run_info)
     {
         chunk_loader->Disconnect();
     }
+    std::ofstream recap_file(physics_recap_path, std::ios::app);
+    recap_file << "\n</details>\n";
 }
 
 

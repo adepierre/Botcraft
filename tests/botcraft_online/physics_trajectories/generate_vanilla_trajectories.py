@@ -384,7 +384,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_patch_exe:
 def collect_trajectories(server: Server, in_folder: str, out_folder: str, client_folder: str, version: str, result_queue: Queue) -> None:
     try:
         print("Wait for the client to connect to the server...")
-        server.wait_regex(f".*? {PLAYER_NAME} joined the game.*", 60)
+        server.wait_regex(f".*? {PLAYER_NAME} joined the game.*", 120)
         print("Collecting trajectories...")
         os.makedirs(out_folder, exist_ok=True)
         for file in os.listdir(in_folder):
