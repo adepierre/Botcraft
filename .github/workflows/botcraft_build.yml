@@ -479,9 +479,10 @@ jobs:
         run: ./botcraft_online_tests [.physics]
 
       - name: Clone wiki
-        if: ${{ steps.get_trajectories.outcome == 'success' }}
-        shell: bash
-        run: git clone https://github.com/${{ github.repository }}.wiki.git wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
 
       - name: Update physics report
         if: ${{ steps.get_trajectories.outcome == 'success' }}
@@ -506,8 +507,8 @@ jobs:
         shell: bash
         run: |
           cd wiki
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add Physics-comparison-with-vanilla.md
-          git commit -m 'Update physics report for version $(cat ${{ runner.workspace }}/build/version.txt)'
+          git commit -m "Update physics report for version $(cat ${{ runner.workspace }}/build/version.txt)"
           git push
