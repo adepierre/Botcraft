@@ -1,5 +1,6 @@
 name: Botcraft build
 
+
 on:
   workflow_call:
     inputs:
@@ -10,13 +11,21 @@ on:
       version:
         description: Minecraft version
         required: false
-        default: latest
         type: string
+        default: latest
       issue:
         description: URL of the issue requesting this build
         required: false
         type: string
         default: ""
+      run_physics_tests:
+        description: If true, will try to generate the physics trajectories using the vanilla client and run the physics test to generate a report on physics accuracy
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 env:
   BUILD_TYPE: Release
@@ -24,7 +33,99 @@ env:
   VERSION: ${{ inputs.version }}
   ISSUE_URL: ${{ inputs.issue }}
 
+
 jobs:
+  generate_physics_trajectories:
+    runs-on: ${{ inputs.os }}
+    if: inputs.run_physics_tests
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install Windows deps
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          curl.exe -L --output mesa.7z --url https://github.com/pal1000/mesa-dist-win/releases/download/25.0.0/mesa3d-25.0.0-release-msvc.7z
+          7z x mesa.7z
+          systemwidedeploy.cmd 1
+
+      - name: Install Linux deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          # Don't know why exactly, but xorg is also needed in addition to xvfb
+          sudo apt-get install -y xvfb xorg
+
+      # install latest first so the default JAVA_HOME points to the variable one
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: |
+            21
+            ${{ inputs.version < '1.17' && '8' ||
+                inputs.version < '1.18' && '16' ||
+                inputs.version < '1.20.5' && '17' ||
+                '21' }}
+
+      - name: Run collection
+        continue-on-error: true
+        id: collect
+        shell: bash
+        run: >
+          $XVFBCMD python tests/botcraft_online/physics_trajectories/generate_vanilla_trajectories.py
+          --version $VERSION
+          --build-folder build
+          --input tests/botcraft_online/physics_trajectories/raw_trajectories
+          --output output
+          --structures tests/botcraft_online/runtime/structures
+          --dat tests/botcraft_online/runtime/level.dat
+          --patcher tests/botcraft_online/physics_trajectories/ClientPatcher.java
+          --java-build $JAVA_HOME_21_X64/bin/java
+          --java-run $JAVA_HOME/bin/java
+        env:
+          PYTHONUNBUFFERED: 1
+          XVFBCMD: ${{ runner.os == 'Linux' && 'xvfb-run' || '' }}
+
+      - name: Notify issue if collection failed
+        if: ${{ steps.collect.outcome != 'success' && inputs.issue }}
+        shell: bash
+        run: |
+          gh issue comment $ISSUE_URL --repo ${{ github.repository }} --body "Warning: physics trajectories collection failed. This can usually be ignored."
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Show logs
+        if: ${{ steps.collect.outcome != 'success' }}
+        shell: bash
+        run: |
+          cp build/$(cat build/version.txt)/server/logs/latest.log server.log
+          cp build/$(cat build/version.txt)/client/logs/latest.log client.log
+          cat server.log
+          echo
+          echo
+          echo
+          cat client.log
+
+      - name: Upload logs
+        if: ${{ steps.collect.outcome != 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanilla_trajectories_logs
+          path: |
+            server.log
+            client.log
+
+      - name: Upload trajectories
+        if: ${{ steps.collect.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vanilla_trajectories
+          path: output
+
+
   # Make sure dependencies are in cache
   pre_configure:
     runs-on: ${{ inputs.os }}
@@ -89,6 +190,7 @@ jobs:
           name: MC-version
           path: ${{ runner.workspace }}/build/version.txt
           retention-days: 1
+
 
   build_doc:
     runs-on: ${{ inputs.os }}
@@ -165,6 +267,7 @@ jobs:
           name: botcraft-doc
           path: ${{ runner.workspace }}/build/output/doc/doc.zip
           retention-days: 1
+
 
   build:
     runs-on: ${{ inputs.os }}
@@ -264,6 +367,7 @@ jobs:
           path: ${{ runner.workspace }}/build
           key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
 
+
   test:
     runs-on: ${{ inputs.os }}
     needs:
@@ -325,3 +429,85 @@ jobs:
         with:
           name: test_server_${{runner.os }}
           path: ${{ runner.workspace }}/build/output/bin/test_servers
+
+
+  physics_test:
+    runs-on: ${{ inputs.os }}
+    if: inputs.run_physics_tests
+    needs:
+      - build
+      - generate_physics_trajectories
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          java-package: jre
+
+      - name: Install Linux deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y xorg-dev
+
+      - name: Create build folder
+        run: cmake -E make_directory ${{ runner.workspace }}/build
+
+      - name: Restore build folder
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.workspace }}/build
+          key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
+
+      - name: Download vanilla trajectories
+        continue-on-error: true
+        id: get_trajectories
+        uses: actions/download-artifact@v4
+        with:
+          name: vanilla_trajectories
+          path: ${{ runner.workspace }}/build/output/bin/test_server_files/runtime/physics_trajectories/vanilla
+
+      - name: Run physics tests
+        if: ${{ steps.get_trajectories.outcome == 'success' }}
+        working-directory: ${{ runner.workspace }}/build/output/bin
+        # TODO: what if there is a suffix like _d or _rd ? Would be better to find a way to forward the command line argument from ctest, something like ctest -R "botcraft_online_tests" -- [.physics]
+        run: ./botcraft_online_tests [.physics]
+
+      - name: Clone wiki
+        if: ${{ steps.get_trajectories.outcome == 'success' }}
+        shell: bash
+        run: git clone https://github.com/${{ github.repository }}.wiki.git wiki
+
+      - name: Update physics report
+        if: ${{ steps.get_trajectories.outcome == 'success' }}
+        shell: bash
+        run: |
+          mkdir splitted
+          cd splitted
+          # Split the physics comparison page by version with the global header kept in updated.md
+          awk 'NR==1 {f="../updated.md"} /^## /{if (f) close(f); f=$2} {if (!/^## /) print > f}' ../wiki/Physics-comparison-with-vanilla.md
+          cd ..
+          # Add header for the new physics report
+          echo -e "Last run on $(date '+%d-%m-%Y %H:%M'), commit [$(git rev-parse HEAD)](https://github.com/${{ github.repository }}/tree/$(git rev-parse HEAD))\n\n" > splitted/$(cat ${{ runner.workspace }}/build/version.txt)
+          # Copy the new report generated for the current version
+          cat ${{ runner.workspace }}/build/output/bin/test_server_files/runtime/physics_trajectories/$(cat ${{ runner.workspace }}/build/version.txt).md >> splitted/$(cat ${{ runner.workspace }}/build/version.txt)
+          # Concat each version report in the new file
+          for f in $(ls -1 splitted | sort -r); do echo "## $f" >> updated.md; cat "splitted/$f" >> updated.md; echo >> updated.md; done ;
+          # Replace the report with the updated one
+          mv -f updated.md wiki/Physics-comparison-with-vanilla.md
+
+      - name: Commit the wiki changes
+        if: ${{ steps.get_trajectories.outcome == 'success' }}
+        shell: bash
+        run: |
+          cd wiki
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Physics-comparison-with-vanilla.md
+          git commit -m 'Update physics report for version $(cat ${{ runner.workspace }}/build/version.txt)'
+          git push

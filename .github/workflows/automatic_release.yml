@@ -29,15 +29,18 @@ jobs:
         config:
           - {
               name: Windows,
-              os: windows-latest
+              os: windows-latest,
+              run_physics_tests: false
             }
           - {
               name: Linux,
-              os: ubuntu-latest
+              os: ubuntu-latest,
+              run_physics_tests: true
             }
     uses: ./.github/workflows/botcraft_build.yml
     with:
       os: ${{ matrix.config.os }}
+      run_physics_tests: ${{ matrix.config.run_physics_tests }}
 
 
   release:
