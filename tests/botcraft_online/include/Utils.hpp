@@ -4,6 +4,9 @@
 
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <botcraft/AI/TemplatedBehaviourClient.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
@@ -111,3 +114,5 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
 void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const std::map<Botcraft::Enchantment, int>& enchantments = {});
 
 void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const Botcraft::Enchantment enchantment);
+
+std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements = { {'"', "\\\""}, {'\n', "\\n"} });

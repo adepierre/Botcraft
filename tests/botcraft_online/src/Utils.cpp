@@ -94,3 +94,29 @@ void SendCommandSetItem(const std::string& botname, const std::string& item_name
 {
     return SendCommandSetItem(botname, item_name, slot, { {enchantment, 1} });
 }
+
+std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements)
+{
+    std::string output;
+    output.reserve(in.size());
+
+    for (size_t i = 0; i < in.size(); ++i)
+    {
+        bool found = false;
+        for (size_t j = 0; j < replacements.size(); ++j)
+        {
+            if (replacements[j].first == in[i])
+            {
+                output += replacements[j].second;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            output += in[i];
+        }
+    }
+
+    return output;
+}

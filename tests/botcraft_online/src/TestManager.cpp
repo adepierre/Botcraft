@@ -1,5 +1,6 @@
-#include "TestManager.hpp"
 #include "MinecraftServer.hpp"
+#include "TestManager.hpp"
+#include "Utils.hpp"
 
 #include <catch2/catch_test_case_info.hpp>
 
@@ -14,7 +15,6 @@
 #include <sstream>
 #include <regex>
 
-std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements = { {'"', "\\\""}, {'\n', "\\n"} });
 
 TestManager::TestManager()
 {
@@ -445,9 +445,10 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
     {
         no_space_filename = no_space_filename.substr(0, split_index);
     }
-    const std::string& loaded = std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt")) ?
-        no_space_filename :
-        "_default";
+    const std::string& loaded =
+        std::filesystem::exists(MinecraftServer::GetInstance().GetStructurePath() / (no_space_filename + ".nbt")) ?
+            no_space_filename :
+            "_default";
 
     SetBlock(
         "structure_block",
@@ -762,29 +763,3 @@ void TestManagerListener::testRunEnded(Catch::TestRunStats const& test_run_info)
     TestManager::GetInstance().testRunEnded(test_run_info);
 }
 CATCH_REGISTER_LISTENER(TestManagerListener)
-
-std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements)
-{
-    std::string output;
-    output.reserve(in.size());
-
-    for (size_t i = 0; i < in.size(); ++i)
-    {
-        bool found = false;
-        for (size_t j = 0; j < replacements.size(); ++j)
-        {
-            if (replacements[j].first == in[i])
-            {
-                output += replacements[j].second;
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            output += in[i];
-        }
-    }
-
-    return output;
-}
