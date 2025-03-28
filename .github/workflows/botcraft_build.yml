@@ -481,7 +481,7 @@ jobs:
       - name: Clone wiki
         uses: actions/checkout@v4
         with:
-          repository: ${{github.repository}}.wiki
+          repository: ${{ github.repository }}.wiki
           path: wiki
 
       - name: Update physics report
