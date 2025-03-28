@@ -63,12 +63,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: |
-            21
-            ${{ inputs.version < '1.17' && '8' ||
-                inputs.version < '1.18' && '16' ||
-                inputs.version < '1.20.5' && '17' ||
-                '21' }}
+          java-version: 21
 
       - name: Run collection
         continue-on-error: true
@@ -83,8 +78,7 @@ jobs:
           --structures tests/botcraft_online/runtime/structures
           --dat tests/botcraft_online/runtime/level.dat
           --patcher tests/botcraft_online/physics_trajectories/ClientPatcher.java
-          --java-build $JAVA_HOME_21_X64/bin/java
-          --java-run $JAVA_HOME/bin/java
+          --java $JAVA_HOME/bin/java
         env:
           PYTHONUNBUFFERED: 1
           XVFBCMD: ${{ runner.os == 'Linux' && 'xvfb-run' || '' }}

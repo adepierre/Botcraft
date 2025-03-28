@@ -822,7 +822,7 @@ public class ClientPatcher {
             // try
             mv.visitTryCatchBlock(labelTryStart, labelTryEnd, labelCatchStart, "java/lang/InterruptedException");
             mv.visitLabel(labelTryStart);
-                // I have no idea why, but adding a sleep in this screen sometimes prevents some crashes.
+                // I have no idea why, but adding a sleep in this screen sometimes prevents some crashes (know required version: 1.19)
                 // TODO: find the real cause of the crashes and fix it?
                 // Thread.sleep(10000);
                 mv.visitLdcInsn(10000L);

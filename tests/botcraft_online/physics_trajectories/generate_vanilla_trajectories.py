@@ -14,6 +14,7 @@ import urllib.request
 import zipfile
 
 MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+JAVA_RUNTIME_ALL_URL = "https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json"
 OBJECTS_URL = "https://resources.download.minecraft.net"
 ASM_URL = "https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm"
 ASM_VERSION = "9.7.1"
@@ -165,7 +166,7 @@ class Server:
             else:
                 time.sleep(0.001)
 
-def setup_client(base_folder: str, manifest: dict, patcher: str, java_patch_exe: str, java_run_exe: str) -> subprocess.Popen:
+def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) -> subprocess.Popen:
     print("Setup client...")
     print("\tDownload jar...")
     # Download Jar file
@@ -182,7 +183,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_patch_exe:
     download_file(f"{ASM_URL}/asm/{ASM_VERSION}/asm-{ASM_VERSION}.jar", os.path.join(folder, "patcher_libs"))
     download_file(f"{ASM_URL}/asm-commons/{ASM_VERSION}/asm-commons-{ASM_VERSION}.jar", os.path.join(folder, "patcher_libs"))
     subprocess.run([
-        java_patch_exe,
+        java_exe,
         "-cp", "patcher_libs/*",
         os.path.relpath(patcher, folder),
         filename,
@@ -368,10 +369,49 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_patch_exe:
         f.write("toggleSprint:false\n")
         f.write("tutorialStep:none\n")
 
+    # Using any other java sometimes causes crash for some reasons so play safe
+    print("\tInstall Minecraft JRE...")
+    all_jre = download_file(JAVA_RUNTIME_ALL_URL, os.path.join(base_folder, "../.."), True)
+    with open(all_jre, "r") as f:
+        all_jre = json.load(f)
+
+    jre_os_key = None
+    # MacOS
+    if current_os == "osx":
+        jre_os_key = "mac-os-arm64" if "arm" in platform.machine().lower() else "mac-os"
+    # Linux
+    elif current_os == "linux":
+        jre_os_key = "linux" if "64" in platform.machine() else "linux-i386"
+    # Windows
+    elif current_os == "windows":
+        jre_os_key = "windows-arm64" if "arm" in platform.machine().lower() else "windows-x64" if "64" in platform.machine() else "windows-x86"
+
+    if jre_os_key is None:
+        raise RuntimeError("Can't deduce JRE version")
+
+    jre_version = manifest["javaVersion"]["component"]
+    jre_manifest_path = download_file(all_jre[jre_os_key][jre_version][0]["manifest"]["url"], os.path.join(base_folder, "../../jre"))
+    with open(jre_manifest_path, "r") as f:
+        jre_manifest = json.load(f)
+    os.remove(jre_manifest_path)
+    def download_jre_file(p):
+        k, v = p
+        if v["type"] != "file":
+            return
+        try:
+            f = download_file(v["downloads"]["raw"]["url"], os.path.join(base_folder, "../../jre", jre_version, "/".join(k.split("/")[:-1])))
+            if v.get("executable", False):
+                os.chmod(f, 0o755)
+        except Exception as e:
+            print(f"Exception while processing JRE file {k}: {repr(e)}")
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        executor.map(lambda p: download_jre_file(p), jre_manifest["files"].items())
+
     # Launch client
     print("\tLaunch patched client...")
     client = subprocess.Popen(
-        [java_run_exe] + jvm_args + [manifest["mainClass"]] + game_args,
+        [os.path.abspath(os.path.join(base_folder, "../../jre", jre_version, "bin/java"))] + jvm_args + [manifest["mainClass"]] + game_args,
         cwd=base_folder,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
@@ -564,11 +604,11 @@ def main(args):
         os.remove(os.path.join(client_folder, "outFile.csv"))
 
     # Start server
-    server = Server(server_folder, version_manifest, args.dat, args.structures, args.java_run)
+    server = Server(server_folder, version_manifest, args.dat, args.structures, args.java)
 
     # Start client
     try:
-        client = setup_client(client_folder, version_manifest, args.patcher, args.java_build, args.java_run)
+        client = setup_client(client_folder, version_manifest, args.patcher, args.java)
     except Exception as e:
         server.close()
         raise e
@@ -604,8 +644,7 @@ if __name__ == "__main__":
     parser.add_argument("--structures", help="Path of the base folder containing all structure files", required=True)
     parser.add_argument("--dat", help="Path to a level.dat file to use for the server", default="")
     parser.add_argument("--patcher", help="Path to the java patcher file to apply before launching the client", default="ClientPatcher.java")
-    parser.add_argument("--java-build", help="java executable called to patch the client", default="java")
-    parser.add_argument("--java-run", help="java executable called to launch the client and the server", default="java")
+    parser.add_argument("--java", help="java executable called to patch the client and run the server (client will always use default Minecraft launcher JRE)", default="java")
 
     args = parser.parse_args()
     main(args)
