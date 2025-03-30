@@ -12,6 +12,9 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(PotionId, std::optional<VarInt>);
             SERIALIZED_FIELD(CustomColor, std::optional<int>);
             SERIALIZED_FIELD(CustomEffects, std::vector<MobEffectInstance>);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            SERIALIZED_FIELD(CustomName, std::optional<std::string>);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };
