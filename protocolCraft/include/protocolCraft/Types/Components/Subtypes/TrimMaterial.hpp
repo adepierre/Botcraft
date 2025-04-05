@@ -2,8 +2,11 @@
 #pragma once
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */ && PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Types/Components/Subtypes/MaterialAssetGroup.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -12,6 +15,7 @@ namespace ProtocolCraft
     {
         class TrimMaterial : public NetworkType
         {
+#if PROTOCOL_VERSION < 770 /* < 1.21.5*/
             SERIALIZED_FIELD(AssetName, std::string);
             SERIALIZED_FIELD(Ingredient, VarInt);
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
@@ -21,6 +25,9 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(OverrideArmorMaterials, std::map<VarInt, std::string>);
 #else
             SERIALIZED_FIELD(OverrideArmorMaterials, std::map<Identifier, std::string>);
+#endif
+#else
+            SERIALIZED_FIELD(Assets, MaterialAssetGroup);
 #endif
             SERIALIZED_FIELD(Description, Chat);
 

@@ -61,10 +61,10 @@ namespace ProtocolCraft
             template<
                 template<typename, typename> class C,
                 typename T,
-                typename A = std::allocator<T>,
+                typename A = T,
                 std::enable_if_t<std::is_convertible_v<T, Value>, bool> = true
             >
-            Value(const C<T, A>& c);
+            Value(const C<T, std::allocator<A>>& c);
 
             // Add support for any std::array<T, N> when T is compatible with Value
             template<
@@ -214,7 +214,7 @@ namespace ProtocolCraft
             typename A,
             std::enable_if_t<std::is_convertible_v<T, Value>, bool>
         >
-        Value::Value(const C<T, A>& c) : val(Array())
+        Value::Value(const C<T, std::allocator<A>>& c) : val(Array())
         {
             for (const auto& i : c)
             {

@@ -1,21 +1,22 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #pragma once
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
+#include <optional>
+
 namespace ProtocolCraft
 {
     namespace Components
     {
-        class TrimPattern : public NetworkType
+        class PaintingVariant : public NetworkType
         {
+            SERIALIZED_FIELD(Width, VarInt);
+            SERIALIZED_FIELD(Height, VarInt);
             SERIALIZED_FIELD(AssetId, Identifier);
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-            SERIALIZED_FIELD(TemplateItem, VarInt);
-#endif
-            SERIALIZED_FIELD(Description, Chat);
-            SERIALIZED_FIELD(Decal, bool);
+            SERIALIZED_FIELD(Title, std::optional<Chat>);
+            SERIALIZED_FIELD(Author, std::optional<Chat>);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

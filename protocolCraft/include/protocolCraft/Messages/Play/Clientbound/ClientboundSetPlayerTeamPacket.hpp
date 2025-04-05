@@ -28,8 +28,13 @@ namespace ProtocolCraft
 #else
         SERIALIZED_FIELD(DisplayName, Internal::Conditioned<Chat, &THIS::Method02>);
         SERIALIZED_FIELD(Options, Internal::Conditioned<char, &THIS::Method02>);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SERIALIZED_FIELD(NametagVisibility, Internal::Conditioned<std::string, &THIS::Method02>);
         SERIALIZED_FIELD(CollisionRule, Internal::Conditioned<std::string, &THIS::Method02>);
+#else
+        SERIALIZED_FIELD(NametagVisibility, Internal::Conditioned<VarInt, &THIS::Method02>);
+        SERIALIZED_FIELD(CollisionRule, Internal::Conditioned<VarInt, &THIS::Method02>);
+#endif
         SERIALIZED_FIELD(Color, Internal::Conditioned<VarInt, &THIS::Method02>);
         SERIALIZED_FIELD(PlayerPrefix, Internal::Conditioned<Chat, &THIS::Method02>);
         SERIALIZED_FIELD(PlayerSuffix, Internal::Conditioned<Chat, &THIS::Method02>);

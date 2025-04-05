@@ -78,6 +78,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ResourceKey,
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        ResourceSelector,
+#endif
         TemplateMirror,
         TemplateRotation,
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */

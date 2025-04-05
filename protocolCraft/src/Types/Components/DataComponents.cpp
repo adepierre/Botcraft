@@ -36,7 +36,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeTool.hpp"
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "protocolCraft/Types/Components/DataComponentTypeUnbreakable.hpp"
+#endif
 #include "protocolCraft/Types/Components/DataComponentTypeUnit.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWritableBookContent.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp"
@@ -51,6 +53,16 @@
 #include "protocolCraft/Types/Components/DataComponentTypeUseCooldown.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeUseRemainder.hpp"
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Types/Components/DataComponentTypeBlocksAttacks.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeBreakSound.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypePaintingVariant.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypePotionDurationScale.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeProvidesTrimMaterial.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeTooltipDisplay.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeVariantEnum.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeWeapon.hpp"
+#endif
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
@@ -64,15 +76,28 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(BannerPatternLayer);
         DEFINE_NETWORK_TYPE(BeehiveBlockEntityOccupant);
         DEFINE_NETWORK_TYPE(BlockPredicate);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DEFINE_NETWORK_TYPE(DamageReduction);
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         DEFINE_NETWORK_TYPE(Instrument);
 #endif
         DEFINE_NETWORK_TYPE(ItemAttributeModifiersEntry);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DEFINE_NETWORK_TYPE(ItemDamageFunction);
+#endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
         DEFINE_NETWORK_TYPE(JukeboxSong);
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DEFINE_NETWORK_TYPE(AssetInfo);
+        DEFINE_NETWORK_TYPE(MaterialAssetGroup);
+#endif
         DEFINE_NETWORK_TYPE(MobEffectInstance);
         DEFINE_NETWORK_TYPE(MobEffectInstanceDetails);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DEFINE_NETWORK_TYPE(PaintingVariant);
+#endif
         DEFINE_NETWORK_TYPE(PossibleEffect);
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
@@ -115,7 +140,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeResourceLocation);
         DEFINE_NETWORK_TYPE(DataComponentTypeSuspiciousStewEffects);
         DEFINE_NETWORK_TYPE(DataComponentTypeTool);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         DEFINE_NETWORK_TYPE(DataComponentTypeUnbreakable);
+#endif
         DEFINE_NETWORK_TYPE(DataComponentTypeUnit);
         DEFINE_NETWORK_TYPE(DataComponentTypeWritableBookContent);
         DEFINE_NETWORK_TYPE(DataComponentTypeWrittenBookContent);
@@ -129,6 +156,16 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeRepairable);
         DEFINE_NETWORK_TYPE(DataComponentTypeUseCooldown);
         DEFINE_NETWORK_TYPE(DataComponentTypeUseRemainder);
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeBlocksAttacks);
+        DEFINE_NETWORK_TYPE(DataComponentTypeBreakSound);
+        DEFINE_NETWORK_TYPE(DataComponentTypePaintingVariant);
+        DEFINE_NETWORK_TYPE(DataComponentTypePotionDurationScale);
+        DEFINE_NETWORK_TYPE(DataComponentTypeProvidesTrimMaterial);
+        DEFINE_NETWORK_TYPE(DataComponentTypeTooltipDisplay);
+        DEFINE_NETWORK_TYPE(DataComponentTypeVariantEnum);
+        DEFINE_NETWORK_TYPE(DataComponentTypeWeapon);
 #endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
@@ -151,8 +188,13 @@ namespace ProtocolCraft
                 "can_break",
                 "attribute_modifiers",
                 "custom_model_data",
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
                 "hide_additional_tooltip",
                 "hide_tooltip",
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "tooltip_display",
+#endif
                 "repair_cost",
                 "creative_slot_lock",
                 "enchantment_glint_override",
@@ -168,6 +210,9 @@ namespace ProtocolCraft
                 "damage_resistant",
 #endif
                 "tool",
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "weapon",
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                 "enchantable",
                 "equippable",
@@ -175,6 +220,9 @@ namespace ProtocolCraft
                 "glider",
                 "tooltip_style",
                 "death_protection",
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "blocks_attacks",
 #endif
                 "stored_enchantments",
                 "dyed_color",
@@ -185,6 +233,9 @@ namespace ProtocolCraft
                 "charged_projectiles",
                 "bundle_contents",
                 "potion_contents",
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "potion_duration_scale",
+#endif
                 "suspicious_stew_effects",
                 "writable_book_content",
                 "written_book_content",
@@ -194,9 +245,15 @@ namespace ProtocolCraft
                 "bucket_entity_data",
                 "block_entity_data",
                 "instrument",
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "provides_trim_material",
+#endif
                 "ominous_bottle_amplifier",
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
                 "jukebox_playable",
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "provides_banner_patterns",
 #endif
                 "recipes",
                 "lodestone_tracker",
@@ -212,6 +269,33 @@ namespace ProtocolCraft
                 "bees",
                 "lock",
                 "container_loot",
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                "break_sound",
+                "villager/variant",
+                "wolf/variant",
+                "wolf/sound_variant",
+                "wolf/collar",
+                "fox/variant",
+                "salmon/size",
+                "parrot/variant",
+                "tropical_fish/pattern",
+                "tropical_fish/base_color",
+                "tropical_fish/pattern_color",
+                "mooshroom/variant",
+                "rabbit/variant",
+                "pig/variant",
+                "cow/variant",
+                "chicken/variant",
+                "frog/variant",
+                "horse/variant",
+                "painting/variant",
+                "llama/variant",
+                "axolotl/variant",
+                "cat/variant",
+                "cat/collar",
+                "sheep/color",
+                "shulker/color",
+#endif
             };
             if (type <= DataComponentTypes::None || type >= DataComponentTypes::NUM_DATA_COMPONENT_TYPES)
             {
@@ -328,10 +412,17 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeSuspiciousStewEffects>();
             case DataComponentTypes::Tool:
                 return std::make_shared<DataComponentTypeTool>();
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             case DataComponentTypes::Unbreakable:
                 return std::make_shared<DataComponentTypeUnbreakable>();
+#else
+            // From custom Unbreakable to Unit in 1.21.5
+            case DataComponentTypes::Unbreakable:
+#endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             case DataComponentTypes::HideAdditionalTooltip:
             case DataComponentTypes::HideTooltip:
+#endif
             case DataComponentTypes::CreativeSlotLock:
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             case DataComponentTypes::FireResistant:
@@ -354,6 +445,46 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeUseCooldown>();
             case DataComponentTypes::UseRemainder:
                 return std::make_shared<DataComponentTypeUseRemainder>();
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            case DataComponentTypes::BlocksAttacks:
+                return std::make_shared<DataComponentTypeBlocksAttacks>();
+            case DataComponentTypes::BreakSound:
+                return std::make_shared<DataComponentTypeBreakSound>();
+            case DataComponentTypes::Painting_Variant:
+                return std::make_shared<DataComponentTypePaintingVariant>();
+            case DataComponentTypes::PotionDurationScale:
+                return std::make_shared<DataComponentTypePotionDurationScale>();
+            case DataComponentTypes::ProvidesTrimMaterial:
+                return std::make_shared<DataComponentTypeProvidesTrimMaterial>();
+            case DataComponentTypes::TooltipDisplay:
+                return std::make_shared<DataComponentTypeTooltipDisplay>();
+            case DataComponentTypes::Weapon:
+                return std::make_shared<DataComponentTypeWeapon>();
+            case DataComponentTypes::Axolotl_Variant:
+            case DataComponentTypes::Cat_Variant:
+            case DataComponentTypes::Chicken_Variant: // TODO: understand why there is an Either thing in MC code for this one?
+            case DataComponentTypes::Cow_Variant:
+            case DataComponentTypes::Frog_Variant:
+            case DataComponentTypes::Horse_Variant:
+            case DataComponentTypes::Llama_Variant:
+            case DataComponentTypes::Mooshroom_Variant:
+            case DataComponentTypes::Parrot_Variant:
+            case DataComponentTypes::Pig_Variant:
+            case DataComponentTypes::Rabbit_Variant:
+            case DataComponentTypes::Salmon_Size:
+            case DataComponentTypes::TropicalFish_Pattern:
+            case DataComponentTypes::Villager_Variant:
+            case DataComponentTypes::Wolf_SoundVariant:
+            case DataComponentTypes::Wolf_Variant:
+                return std::make_shared<DataComponentTypeVariantEnum>();
+            case DataComponentTypes::Cat_Collar:
+            case DataComponentTypes::TropicalFish_BaseColor:
+            case DataComponentTypes::TropicalFish_PatternColor:
+            case DataComponentTypes::Sheep_Color:
+            case DataComponentTypes::Shulker_Color:
+            case DataComponentTypes::Wolf_Collar:
+                return std::make_shared<DataComponentTypeDyeColor>();
 #endif
             default:
                 // Should never happen but will make the compilers happy
@@ -514,6 +645,47 @@ namespace ProtocolCraft
 
             return output;
         }
+
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        HashedDataComponentPatch::HashedDataComponentPatch(const DataComponentPatch& patch)
+        {
+            for (const auto& [k, v] : patch.GetMap())
+            {
+                if (v == nullptr)
+                {
+                    RemovedComponents.push_back(k);
+                }
+                else
+                {
+                    std::vector<unsigned char> serialized;
+                    WriteData<DataComponentTypes, VarInt>(k, serialized);
+                    v->Write(serialized);
+                    // CRC32c polynomial, from https://en.wikipedia.org/wiki/Cyclic_redundancy_check#Polynomial_representations
+                    // no idea why we need the reversed one but it works
+                    constexpr unsigned int polynomial = 0x82F63B78;
+
+                    unsigned int crc = 0xFFFFFFFF;
+
+                    for (const auto byte : serialized)
+                    {
+                        crc ^= byte;
+                        // TODO: replace slow loop with a faster version with lookup table and cool fancy stuff ?
+                        for (int i = 0; i < 8; ++i)
+                        {
+                            // Trick to replace if branch
+                            // if (crc & 1) crc = (crc >> 1) ^ polynomial;
+                            // else crc = crc >> 1;
+                            // Works because a ^ 0 == a
+                            crc = (crc >> 1) ^ (crc & 1) * polynomial;
+                        }
+                    }
+                    AddedComponents[k] = static_cast<int>(~crc);
+                }
+            }
+        }
+
+        DEFINE_NETWORK_TYPE(HashedDataComponentPatch);
+#endif
     }
 }
 #endif

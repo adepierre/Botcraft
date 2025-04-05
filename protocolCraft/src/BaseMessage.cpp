@@ -220,7 +220,9 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundCooldownPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetPassengersPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSoundPacket);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     DEFINE_MESSAGE_CLASS(ClientboundAddExperienceOrbPacket);
+#endif
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
     DEFINE_MESSAGE_CLASS(ClientboundAddGlobalEntityPacket);
 #endif
@@ -362,6 +364,9 @@ namespace ProtocolCraft
     DEFINE_MESSAGE_CLASS(ClientboundSetCursorItemPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetHeldSlotPacket);
     DEFINE_MESSAGE_CLASS(ClientboundSetPlayerInventoryPacket);
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    DEFINE_MESSAGE_CLASS(ClientboundTestInstanceBlockStatusPacket);
 #endif
 
 
@@ -526,5 +531,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     DEFINE_MESSAGE_CLASS(ServerboundClientTickEndPacket);
     DEFINE_MESSAGE_CLASS(ServerboundSelectBundleItemPacket);
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    DEFINE_MESSAGE_CLASS(ServerboundSetTestBlockPacket);
+    DEFINE_MESSAGE_CLASS(ServerboundTestInstanceBlockActionPacket);
 #endif
 }

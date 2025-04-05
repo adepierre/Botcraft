@@ -129,6 +129,9 @@ namespace ProtocolCraft
         case BrigadierPropertyType::ResourceOrTagKey:
         case BrigadierPropertyType::ResourceKey:
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        case BrigadierPropertyType::ResourceSelector:
+#endif
             return std::make_shared<BrigadierPropertyResourceOrTag>();
         default:
             return std::make_shared<BrigadierPropertyNone>();

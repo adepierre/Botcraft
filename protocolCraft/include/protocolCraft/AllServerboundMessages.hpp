@@ -173,9 +173,15 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundSetTestBlockPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSignUpdatePacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundSwingPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp"
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Messages/Play/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp"
+#endif
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp"
 #include "protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp"
 
@@ -369,9 +375,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ServerboundSetStructureBlockPacket,
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        ServerboundSetTestBlockPacket,
+#endif
         ServerboundSignUpdatePacket,
         ServerboundSwingPacket,
         ServerboundTeleportToEntityPacket,
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        ServerboundTestInstanceBlockActionPacket,
+#endif
         ServerboundUseItemOnPacket,
         ServerboundUseItemPacket
     >;

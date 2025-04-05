@@ -63,7 +63,9 @@
 
 // Play
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddEntityPacket.hpp"
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddExperienceOrbPacket.hpp"
+#endif
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundAddGlobalEntityPacket.hpp"
 #endif
@@ -351,6 +353,9 @@
 #endif
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTeleportEntityPacket.hpp"
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Messages/Play/Clientbound/ClientboundTestInstanceBlockStatusPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStatePacket.hpp"
 #include "protocolCraft/Messages/Play/Clientbound/ClientboundTickingStepPacket.hpp"
@@ -442,7 +447,9 @@ namespace ProtocolCraft
         ClientboundBundlePacket,
 #endif
         ClientboundAddEntityPacket,
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         ClientboundAddExperienceOrbPacket,
+#endif
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
         ClientboundAddGlobalEntityPacket,
 #endif
@@ -742,6 +749,9 @@ namespace ProtocolCraft
 #endif
         ClientboundTakeItemEntityPacket,
         ClientboundTeleportEntityPacket,
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        ClientboundTestInstanceBlockStatusPacket,
+#endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         ClientboundTickingStatePacket,
         ClientboundTickingStepPacket,

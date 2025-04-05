@@ -1,7 +1,11 @@
 #pragma once
 
 #include "protocolCraft/BaseMessage.hpp"
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "protocolCraft/Types/Item/Slot.hpp"
+#else
+#include "protocolCraft/Types/Item/HashedSlot.hpp"
+#endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include <map>
 #endif
@@ -27,10 +31,15 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Uid, short);
 #endif
         SERIALIZED_FIELD(ClickType, VarInt);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         SERIALIZED_FIELD(ChangedSlots, std::map<short, Slot>);
 #endif
         SERIALIZED_FIELD(CarriedItem, Slot);
+#else
+        SERIALIZED_FIELD(ChangedSlots, std::map<short, HashedSlot>);
+        SERIALIZED_FIELD(CarriedItem, HashedSlot);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

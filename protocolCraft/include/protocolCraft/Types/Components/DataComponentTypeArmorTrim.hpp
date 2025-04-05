@@ -13,7 +13,9 @@ namespace ProtocolCraft
         {
             SERIALIZED_FIELD(Material, Holder<TrimMaterial>);
             SERIALIZED_FIELD(Pattern, Holder<TrimPattern>);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             SERIALIZED_FIELD(ShowInTooltip, bool);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

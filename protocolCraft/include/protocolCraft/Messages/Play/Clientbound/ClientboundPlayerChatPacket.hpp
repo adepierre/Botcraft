@@ -38,6 +38,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Message_, PlayerChatMessage);
         SERIALIZED_FIELD(ChatType, ChatTypeBoundNetwork);
 #else
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        SERIALIZED_FIELD(GlobalIndex, VarInt);
+#endif
         SERIALIZED_FIELD(Sender, UUID);
         SERIALIZED_FIELD(Index, VarInt);
         SERIALIZED_FIELD(Signature, std::optional<std::array<unsigned char, 256>>);

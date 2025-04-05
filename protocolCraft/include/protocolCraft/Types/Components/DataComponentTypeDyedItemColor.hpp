@@ -9,7 +9,9 @@ namespace ProtocolCraft
         class DataComponentTypeDyedItemColor : public DataComponentType
         {
             SERIALIZED_FIELD(Rgb, int);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             SERIALIZED_FIELD(ShowInTooltip, bool);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

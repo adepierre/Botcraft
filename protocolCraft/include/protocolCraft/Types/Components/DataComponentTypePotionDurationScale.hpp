@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 770 /* < 1.21.5 */
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 
@@ -6,9 +6,9 @@ namespace ProtocolCraft
 {
     namespace Components
     {
-        class DataComponentTypeUnbreakable : public DataComponentType
+        class DataComponentTypePotionDurationScale : public DataComponentType
         {
-            SERIALIZED_FIELD(ShowInTooltip, bool);
+            SERIALIZED_FIELD(Scale, float);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

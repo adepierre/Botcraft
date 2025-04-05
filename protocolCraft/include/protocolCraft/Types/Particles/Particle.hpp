@@ -83,6 +83,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         PaleOakLeaves,
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        TintedLeaves,
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SculkSoul,
         SculkCharge,
@@ -204,6 +207,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         BlockCrumble,
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        Firefly,
 #endif
         NUM_PARTICLE_TYPES
     };

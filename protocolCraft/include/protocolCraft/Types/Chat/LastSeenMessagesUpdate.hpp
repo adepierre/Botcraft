@@ -20,6 +20,10 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Offset, VarInt);
         SERIALIZED_FIELD(Acknowledged, std::bitset<20>);
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        SERIALIZED_FIELD(Checksum, unsigned char);
+#endif
+
         DECLARE_READ_WRITE_SERIALIZE;
     };
 } // ProtocolCraft

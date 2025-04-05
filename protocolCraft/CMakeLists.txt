@@ -177,6 +177,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTagQueryPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTeleportEntityPacket.hpp
+    include/protocolCraft/Messages/Play/Clientbound/ClientboundTestInstanceBlockStatusPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTickingStatePacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTickingStepPacket.hpp
     include/protocolCraft/Messages/Play/Clientbound/ClientboundTransferPacket.hpp
@@ -251,9 +252,11 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSetCreativeModeSlotPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSetJigsawBlockPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundSetTestBlockPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSignUpdatePacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundSwingPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp
+    include/protocolCraft/Messages/Play/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundUseItemOnPacket.hpp
     include/protocolCraft/Messages/Play/Serverbound/ServerboundUseItemPacket.hpp
 
@@ -324,6 +327,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Record.hpp
     include/protocolCraft/Types/SaltSignature.hpp
     include/protocolCraft/Types/ServerLinksUnstrustedEntry.hpp
+    include/protocolCraft/Types/TestInstanceBlockEntityData.hpp
 
     include/protocolCraft/Types/Chat/Chat.hpp
     include/protocolCraft/Types/Chat/ChatMessageContent.hpp
@@ -358,7 +362,9 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeArmorTrim.hpp
     include/protocolCraft/Types/Components/DataComponentTypeBannerPatternLayers.hpp
     include/protocolCraft/Types/Components/DataComponentTypeBlockItemStateProperties.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBlocksAttacks.hpp
     include/protocolCraft/Types/Components/DataComponentTypeBoolean.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeBreakSound.hpp
     include/protocolCraft/Types/Components/DataComponentTypeBundleContents.hpp
     include/protocolCraft/Types/Components/DataComponentTypeChargedProjectiles.hpp
     include/protocolCraft/Types/Components/DataComponentTypeComponent.hpp
@@ -386,16 +392,22 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeMapItemColor.hpp
     include/protocolCraft/Types/Components/DataComponentTypeMapPostProcessing.hpp
     include/protocolCraft/Types/Components/DataComponentTypePotDecorations.hpp
+    include/protocolCraft/Types/Components/DataComponentTypePaintingVariant.hpp
     include/protocolCraft/Types/Components/DataComponentTypePotionContents.hpp
+    include/protocolCraft/Types/Components/DataComponentTypePotionDurationScale.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeProvidesTrimMaterial.hpp
     include/protocolCraft/Types/Components/DataComponentTypeRarity.hpp
     include/protocolCraft/Types/Components/DataComponentTypeRepairable.hpp
     include/protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp
     include/protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp
     include/protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp
     include/protocolCraft/Types/Components/DataComponentTypeTool.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeTooltipDisplay.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUnbreakable.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUnit.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUseRemainder.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeVariantEnum.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeWeapon.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUseCooldown.hpp
     include/protocolCraft/Types/Components/DataComponentTypeWritableBookContent.hpp
     include/protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp
@@ -404,11 +416,15 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/Subtypes/BannerPatternLayer.hpp
     include/protocolCraft/Types/Components/Subtypes/BeehiveBlockEntityOccupant.hpp
     include/protocolCraft/Types/Components/Subtypes/BlockPredicate.hpp
+    include/protocolCraft/Types/Components/Subtypes/DamageReduction.hpp
     include/protocolCraft/Types/Components/Subtypes/Instrument.hpp
     include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiersEntry.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemDamageFunction.hpp
     include/protocolCraft/Types/Components/Subtypes/JukeboxSong.hpp
+    include/protocolCraft/Types/Components/Subtypes/MaterialAssetGroup.hpp
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstance.hpp
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstanceDetails.hpp
+    include/protocolCraft/Types/Components/Subtypes/PaintingVariant.hpp
     include/protocolCraft/Types/Components/Subtypes/PossibleEffect.hpp
     include/protocolCraft/Types/Components/Subtypes/PropertyMatcher.hpp
     include/protocolCraft/Types/Components/Subtypes/StatePropertiesPredicate.hpp
@@ -432,6 +448,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
     include/protocolCraft/Types/GameProfile/ProfilePublicKey.hpp
 
+    include/protocolCraft/Types/Item/HashedSlot.hpp
     include/protocolCraft/Types/Item/ItemCost.hpp
     include/protocolCraft/Types/Item/MerchantOffer.hpp
     include/protocolCraft/Types/Item/Slot.hpp

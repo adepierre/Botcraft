@@ -146,6 +146,9 @@ namespace ProtocolCraft
     #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
             "pale_oak_leaves",
     #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            "tinted_leaves",
+#endif
     #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             "sculk_soul",
             "sculk_charge",
@@ -268,6 +271,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
             "block_crumble",
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            "firefly",
+#endif
         };
 #else
         static constexpr std::array<std::string_view, static_cast<size_t>(ParticleType::NUM_PARTICLE_TYPES)> names = {
@@ -377,6 +383,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         case ParticleType::EntityEffect:
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        case ParticleType::TintedLeaves:
+#endif
             Options = std::make_shared<ColorParticleOptions>();
             break;
 #endif
