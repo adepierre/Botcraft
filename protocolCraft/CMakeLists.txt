@@ -306,6 +306,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/ClientInformation.hpp
     include/protocolCraft/Types/CommonPlayerSpawnInfo.hpp
     include/protocolCraft/Types/CriterionProgress.hpp
+    include/protocolCraft/Types/Either.hpp
     include/protocolCraft/Types/EntityModifierData.hpp
     include/protocolCraft/Types/EntityProperty.hpp
     include/protocolCraft/Types/Filterable.hpp
@@ -372,7 +373,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeFireworkExplosion.hpp
     include/protocolCraft/Types/Components/DataComponentTypeFireworks.hpp
     include/protocolCraft/Types/Components/DataComponentTypeFoodProperties.hpp
-    include/protocolCraft/Types/Components/DataComponentTypeHolderInstrument.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeInstrument.hpp
     include/protocolCraft/Types/Components/DataComponentTypeInteger.hpp
     include/protocolCraft/Types/Components/DataComponentTypeItemAttributeModifiers.hpp
     include/protocolCraft/Types/Components/DataComponentTypeItemContainerContents.hpp
@@ -401,8 +402,11 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Types/Components/Subtypes/AttributeModifier.hpp
     include/protocolCraft/Types/Components/Subtypes/BannerPatternLayer.hpp
+    include/protocolCraft/Types/Components/Subtypes/BeehiveBlockEntityOccupant.hpp
     include/protocolCraft/Types/Components/Subtypes/BlockPredicate.hpp
+    include/protocolCraft/Types/Components/Subtypes/Instrument.hpp
     include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiersEntry.hpp
+    include/protocolCraft/Types/Components/Subtypes/JukeboxSong.hpp
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstance.hpp
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstanceDetails.hpp
     include/protocolCraft/Types/Components/Subtypes/PossibleEffect.hpp
@@ -410,6 +414,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/Subtypes/StatePropertiesPredicate.hpp
     include/protocolCraft/Types/Components/Subtypes/SuspiciousStewEntry.hpp
     include/protocolCraft/Types/Components/Subtypes/ToolRule.hpp
+    include/protocolCraft/Types/Components/Subtypes/TrimMaterial.hpp
+    include/protocolCraft/Types/Components/Subtypes/TrimPattern.hpp
 
     include/protocolCraft/Types/Components/Subtypes/Matcher/ExactMatcher.hpp
     include/protocolCraft/Types/Components/Subtypes/Matcher/RangedMatcher.hpp

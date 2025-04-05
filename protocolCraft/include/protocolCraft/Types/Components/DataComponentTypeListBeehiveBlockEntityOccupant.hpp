@@ -1,7 +1,7 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
-#include "protocolCraft/Types/Components/DataComponentTypeCustomData.hpp"
+#include "protocolCraft/Types/Components/Subtypes/BeehiveBlockEntityOccupant.hpp"
 
 namespace ProtocolCraft
 {
@@ -9,9 +9,7 @@ namespace ProtocolCraft
     {
         class DataComponentTypeListBeehiveBlockEntityOccupant : public DataComponentType
         {
-            SERIALIZED_FIELD(EntityData, DataComponentTypeCustomData);
-            SERIALIZED_FIELD(TicksInHive, VarInt);
-            SERIALIZED_FIELD(MinTicksInHive, VarInt);
+            SERIALIZED_FIELD(Bees, std::vector<BeehiveBlockEntityOccupant>);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

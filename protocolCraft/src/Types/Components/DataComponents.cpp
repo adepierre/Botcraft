@@ -18,7 +18,7 @@
 #include "protocolCraft/Types/Components/DataComponentTypeFireworkExplosion.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeFireworks.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeFoodProperties.hpp"
-#include "protocolCraft/Types/Components/DataComponentTypeHolderInstrument.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeInstrument.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeInteger.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeItemAttributeModifiers.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeItemContainerContents.hpp"
@@ -62,8 +62,15 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(RangedMatcher);
         DEFINE_NETWORK_TYPE(AttributeModifier);
         DEFINE_NETWORK_TYPE(BannerPatternLayer);
+        DEFINE_NETWORK_TYPE(BeehiveBlockEntityOccupant);
         DEFINE_NETWORK_TYPE(BlockPredicate);
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        DEFINE_NETWORK_TYPE(Instrument);
+#endif
         DEFINE_NETWORK_TYPE(ItemAttributeModifiersEntry);
+#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
+        DEFINE_NETWORK_TYPE(JukeboxSong);
+#endif
         DEFINE_NETWORK_TYPE(MobEffectInstance);
         DEFINE_NETWORK_TYPE(MobEffectInstanceDetails);
         DEFINE_NETWORK_TYPE(PossibleEffect);
@@ -71,6 +78,8 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
         DEFINE_NETWORK_TYPE(ToolRule);
         DEFINE_NETWORK_TYPE(PropertyMatcher);
+        DEFINE_NETWORK_TYPE(TrimMaterial);
+        DEFINE_NETWORK_TYPE(TrimPattern);
 
         DEFINE_NETWORK_TYPE(DataComponentTypeAdventureModePredicate);
         DEFINE_NETWORK_TYPE(DataComponentTypeArmorTrim);
@@ -88,7 +97,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeFireworkExplosion);
         DEFINE_NETWORK_TYPE(DataComponentTypeFireworks);
         DEFINE_NETWORK_TYPE(DataComponentTypeFoodProperties);
-        DEFINE_NETWORK_TYPE(DataComponentTypeHolderInstrument);
+        DEFINE_NETWORK_TYPE(DataComponentTypeInstrument);
         DEFINE_NETWORK_TYPE(DataComponentTypeInteger);
         DEFINE_NETWORK_TYPE(DataComponentTypeItemAttributeModifiers);
         DEFINE_NETWORK_TYPE(DataComponentTypeItemContainerContents);
@@ -267,7 +276,7 @@ namespace ProtocolCraft
             case DataComponentTypes::Food:
                 return std::make_shared<DataComponentTypeFoodProperties>();
             case DataComponentTypes::Instrument:
-                return std::make_shared<DataComponentTypeHolderInstrument>();
+                return std::make_shared<DataComponentTypeInstrument>();
             case DataComponentTypes::MaxStackSize:
             case DataComponentTypes::MaxDamage:
             case DataComponentTypes::Damage:
