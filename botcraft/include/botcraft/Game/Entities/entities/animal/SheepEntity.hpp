@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
@@ -39,3 +40,4 @@ namespace Botcraft
 
     };
 }
+#endif

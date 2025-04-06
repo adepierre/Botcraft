@@ -17,8 +17,10 @@ namespace Botcraft
     protected:
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         static constexpr int metadata_count = 6;
-#else
+#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         static constexpr int metadata_count = 3;
+#else
+        static constexpr int metadata_count = 2;
 #endif
         static const std::array<std::string, metadata_count> metadata_names;
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
@@ -43,18 +45,30 @@ namespace Botcraft
         int GetDataIdHurtdir() const;
         float GetDataIdDamage() const;
 #endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         int GetDataIdDisplayBlock() const;
+#else
+        int GetDataIdCustomDisplayBlock() const;
+#endif
         int GetDataIdDisplayOffset() const;
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         bool GetDataIdCustomDisplay() const;
+#endif
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         void SetDataIdHurt(const int data_id_hurt);
         void SetDataIdHurtdir(const int data_id_hurtdir);
         void SetDataIdDamage(const float data_id_damage);
 #endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         void SetDataIdDisplayBlock(const int data_id_display_block);
+#else
+        void SetDataIdCustomDisplayBlock(const int data_id_display_block);
+#endif
         void SetDataIdDisplayOffset(const int data_id_display_offset);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         void SetDataIdCustomDisplay(const bool data_id_custom_display);
+#endif
 
     };
 }

@@ -168,6 +168,10 @@
 #include "botcraft/Game/Entities/entities/monster/PillagerEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/PolarBearEntity.hpp"
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "botcraft/Game/Entities/entities/projectile/ThrownSplashPotionEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/PufferfishEntity.hpp"
@@ -179,7 +183,11 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/SalmonEntity.hpp"
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "botcraft/Game/Entities/entities/animal//sheep/SheepEntity.hpp"
+#else
 #include "botcraft/Game/Entities/entities/animal/SheepEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/monster/ShulkerEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ShulkerBulletEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp"
@@ -235,7 +243,11 @@
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp"
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "botcraft/Game/Entities/entities/animal/wolf/WolfEntity.hpp"
+#else
 #include "botcraft/Game/Entities/entities/animal/WolfEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp"
 #endif
@@ -375,7 +387,11 @@ namespace Botcraft
                 BlockPosition,
                 OptionalBlockPosition,
                 DirectionType,
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                OptionalLivingEntityReference, // Fancy new name for 1.21.5, but it's still an optional UUID
+#else
                 OptionalUUID,
+#endif
                 BlockstateType,
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
                 OptionalBlockstate,
@@ -394,10 +410,24 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 CatVariant,
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                CowVariant,
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
                 WolfVariant,
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                WolfSoundVariant,
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 FrogVariant,
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                PigVariant,
+                ChickenVariant,
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 OptionalGlobalPos,
                 PaintingVariant,
 #endif
@@ -486,7 +516,11 @@ namespace Botcraft
             case EntityMetadataTypes::DirectionType:
                 value = static_cast<Direction>(static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length)));
                 break;
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            case EntityMetadataTypes::OptionalLivingEntityReference:
+#else
             case EntityMetadataTypes::OptionalUUID:
+#endif
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
                     value = std::optional<ProtocolCraft::UUID>(ProtocolCraft::ReadData<ProtocolCraft::UUID>(iter, length));
@@ -554,14 +588,36 @@ namespace Botcraft
             case EntityMetadataTypes::CatVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            case EntityMetadataTypes::CowVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             case EntityMetadataTypes::WolfVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            case EntityMetadataTypes::WolfSoundVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             case EntityMetadataTypes::FrogVariant:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            case EntityMetadataTypes::PigVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+            case EntityMetadataTypes::ChickenVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             case EntityMetadataTypes::OptionalGlobalPos:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
                 {
@@ -1254,6 +1310,13 @@ namespace Botcraft
         return false;
     }
 
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    bool Entity::IsAbstractCow() const
+    {
+        return false;
+    }
+#endif
+
     bool Entity::IsAbstractMinecartContainer() const
     {
         return false;
@@ -1275,6 +1338,13 @@ namespace Botcraft
     {
         return false;
     }
+
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    bool Entity::IsAbstractThrownPotion() const
+    {
+        return false;
+    }
+#endif
 
     bool Entity::IsAbstractFish() const
     {
@@ -1707,8 +1777,15 @@ namespace Botcraft
             return std::make_shared<ThrownEnderpearlEntity>();
         case EntityType::ThrownExperienceBottle:
             return std::make_shared<ThrownExperienceBottleEntity>();
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         case EntityType::ThrownPotion:
             return std::make_shared<ThrownPotionEntity>();
+#else
+        case EntityType::ThrownSplashPotion:
+            return std::make_shared<ThrownSplashPotionEntity>();
+        case EntityType::ThrownLingeringPotion:
+            return std::make_shared<ThrownLingeringPotionEntity>();
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::ThrownTrident:
             return std::make_shared<ThrownTridentEntity>();

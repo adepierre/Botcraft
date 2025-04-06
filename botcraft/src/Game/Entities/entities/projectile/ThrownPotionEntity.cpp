@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp"
 
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -109,3 +110,4 @@ namespace Botcraft
     }
 
 }
+#endif

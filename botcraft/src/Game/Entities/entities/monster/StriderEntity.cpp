@@ -8,7 +8,9 @@ namespace Botcraft
     const std::array<std::string, StriderEntity::metadata_count> StriderEntity::metadata_names{ {
         "data_boost_time",
         "data_suffocating",
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         "data_saddle_id",
+#endif
     } };
 
     StriderEntity::StriderEntity()
@@ -16,7 +18,9 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataBoostTime(0);
         SetDataSuffocating(false);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetDataSaddleId(false);
+#endif
 
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MovementSpeed, EntityAttribute(EntityAttribute::Type::MovementSpeed, 0.175) });
@@ -59,7 +63,9 @@ namespace Botcraft
 
         output["metadata"]["data_boost_time"] = GetDataBoostTime();
         output["metadata"]["data_suffocating"] = GetDataSuffocating();
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         output["metadata"]["data_saddle_id"] = GetDataSaddleId();
+#endif
 
         return output;
     }
@@ -90,11 +96,13 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_suffocating"));
     }
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     bool StriderEntity::GetDataSaddleId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_saddle_id"));
     }
+#endif
 
 
     void StriderEntity::SetDataBoostTime(const int data_boost_time)
@@ -109,11 +117,13 @@ namespace Botcraft
         metadata["data_suffocating"] = data_suffocating;
     }
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void StriderEntity::SetDataSaddleId(const bool data_saddle_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_saddle_id"] = data_saddle_id;
     }
+#endif
 
 
     double StriderEntity::GetWidthImpl() const

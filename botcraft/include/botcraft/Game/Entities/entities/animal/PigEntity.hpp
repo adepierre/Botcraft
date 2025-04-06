@@ -29,11 +29,21 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         bool GetDataSaddleId() const;
+#endif
         int GetDataBoostTime() const;
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        int GetDataVariantId() const;
+#endif
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         void SetDataSaddleId(const bool data_saddle_id);
+#endif
         void SetDataBoostTime(const int data_boost_time);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        void SetDataVariantId(const int data_variant_id);
+#endif
 
     protected:
         virtual double GetWidthImpl() const override;

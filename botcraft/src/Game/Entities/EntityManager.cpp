@@ -180,6 +180,7 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& msg)
     {
         std::shared_ptr<Entity> entity = Entity::CreateEntity(EntityType::ExperienceOrb);
@@ -192,6 +193,7 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[msg.GetEntityId()] = entity;
     }
+#endif
 
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)

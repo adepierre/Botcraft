@@ -166,9 +166,12 @@ TEST_CASE("block entity 1_20")
         const ProtocolCraft::Json::Value back_content = ProtocolCraft::Json::Parse(back_line);
         CHECK(front_content["text"].get_string() == expected_lines[i]);
         CHECK(back_content["text"].get_string() == expected_lines_back[i]);
-#else
+#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         CHECK(front_line == "\"" + expected_lines[i] + "\"");
         CHECK(back_line == "\"" + expected_lines_back[i] + "\"");
+#else
+        CHECK(front_line == expected_lines[i]);
+        CHECK(back_line == expected_lines_back[i]);
 #endif
 #endif
     }

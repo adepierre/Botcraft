@@ -10,9 +10,15 @@ namespace Botcraft
         "data_id_hurtdir",
         "data_id_damage",
 #endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         "data_id_display_block",
+#else
+        "data_id_custom_display_block",
+#endif
         "data_id_display_offset",
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         "data_id_custom_display",
+#endif
     } };
 
     AbstractMinecartEntity::AbstractMinecartEntity()
@@ -23,9 +29,15 @@ namespace Botcraft
         SetDataIdHurtdir(1);
         SetDataIdDamage(0.0f);
 #endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetDataIdDisplayBlock(0);
+#else
+        SetDataIdCustomDisplayBlock(0);
+#endif
         SetDataIdDisplayOffset(6);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetDataIdCustomDisplay(false);
+#endif
     }
 
     AbstractMinecartEntity::~AbstractMinecartEntity()
@@ -52,9 +64,15 @@ namespace Botcraft
         output["metadata"]["data_id_hurtdir"] = GetDataIdHurtdir();
         output["metadata"]["data_id_damage"] = GetDataIdDamage();
 #endif
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         output["metadata"]["data_id_display_block"] = GetDataIdDisplayBlock();
+#else
+        output["metadata"]["data_id_custom_display_block"] = GetDataIdCustomDisplayBlock();
+#endif
         output["metadata"]["data_id_display_offset"] = GetDataIdDisplayOffset();
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         output["metadata"]["data_id_custom_display"] = GetDataIdCustomDisplay();
+#endif
 
         return output;
     }
@@ -97,11 +115,19 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     int AbstractMinecartEntity::GetDataIdDisplayBlock() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_id_display_block"));
     }
+#else
+    int AbstractMinecartEntity::GetDataIdCustomDisplayBlock() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<int>(metadata.at("data_id_custom_display_block"));
+    }
+#endif
 
     int AbstractMinecartEntity::GetDataIdDisplayOffset() const
     {
@@ -109,11 +135,13 @@ namespace Botcraft
         return std::any_cast<int>(metadata.at("data_id_display_offset"));
     }
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     bool AbstractMinecartEntity::GetDataIdCustomDisplay() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<bool>(metadata.at("data_id_custom_display"));
     }
+#endif
 
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
@@ -136,11 +164,19 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void AbstractMinecartEntity::SetDataIdDisplayBlock(const int data_id_display_block)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_display_block"] = data_id_display_block;
     }
+#else
+    void AbstractMinecartEntity::SetDataIdCustomDisplayBlock(const int data_id_custom_display_block)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["data_id_custom_display_block"] = data_id_custom_display_block;
+    }
+#endif
 
     void AbstractMinecartEntity::SetDataIdDisplayOffset(const int data_id_display_offset)
     {
@@ -148,10 +184,12 @@ namespace Botcraft
         metadata["data_id_display_offset"] = data_id_display_offset;
     }
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void AbstractMinecartEntity::SetDataIdCustomDisplay(const bool data_id_custom_display)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_id_custom_display"] = data_id_custom_display;
     }
+#endif
 
 }

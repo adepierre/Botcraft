@@ -363,8 +363,13 @@ namespace Botcraft
             unsigned int individual_value_mask = static_cast<unsigned int>((1 << bits_per_block) - 1);
 
             //Data array length
-            int data_array_size = ReadData<VarInt>(iter, length);
-
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+            const int data_array_size = ReadData<VarInt>(iter, length);
+#else
+            const int data_array_size = bits_per_block == 0 ? 0 :
+                ((SECTION_HEIGHT * CHUNK_WIDTH * CHUNK_WIDTH) / (64 / bits_per_block) +
+                    static_cast<int>((SECTION_HEIGHT * CHUNK_WIDTH * CHUNK_WIDTH) % (64 / bits_per_block) != 0));
+#endif
             //Data array
             std::vector<unsigned long long int> data_array(data_array_size);
             for (int i = 0; i < data_array_size; ++i)
@@ -1005,7 +1010,13 @@ namespace Botcraft
         unsigned int individual_value_mask = static_cast<unsigned int>((1 << bits_per_biome) - 1);
 
         //Data array length
-        int data_array_size = ReadData<VarInt>(iter, length);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+        const int data_array_size = ReadData<VarInt>(iter, length);
+#else
+        const int data_array_size = bits_per_biome == 0 ? 0 :
+            ((SECTION_HEIGHT / 4 * CHUNK_WIDTH / 4 * CHUNK_WIDTH / 4) / (64 / bits_per_biome) +
+                static_cast<int>((SECTION_HEIGHT / 4 * CHUNK_WIDTH / 4 * CHUNK_WIDTH / 4) % (64 / bits_per_biome) != 0));
+#endif
 
         //Data array
         std::vector<unsigned long long int> data_array = std::vector<unsigned long long int>(data_array_size);

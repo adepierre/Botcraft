@@ -6,7 +6,9 @@
 namespace Botcraft
 {
     const std::array<std::string, DolphinEntity::metadata_count> DolphinEntity::metadata_names{ {
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         "treasure_pos",
+#endif
         "got_fish",
         "moistness_level",
     } };
@@ -14,7 +16,9 @@ namespace Botcraft
     DolphinEntity::DolphinEntity()
     {
         // Initialize all metadata with default values
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetTreasurePos(Position(0, 0, 0));
+#endif
         SetGotFish(false);
         SetMoistnessLevel(2400);
 
@@ -60,7 +64,9 @@ namespace Botcraft
         ProtocolCraft::Json::Value output = AgeableWaterCreatureEntity::Serialize();
 #endif
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         output["metadata"]["treasure_pos"] = GetTreasurePos().Serialize();
+#endif
         output["metadata"]["got_fish"] = GetGotFish();
         output["metadata"]["moistness_level"] = GetMoistnessLevel();
 
@@ -87,11 +93,13 @@ namespace Botcraft
         }
     }
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     Position DolphinEntity::GetTreasurePos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<Position>(metadata.at("treasure_pos"));
     }
+#endif
 
     bool DolphinEntity::GetGotFish() const
     {
@@ -106,11 +114,13 @@ namespace Botcraft
     }
 
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void DolphinEntity::SetTreasurePos(const Position& treasure_pos)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["treasure_pos"] = treasure_pos;
     }
+#endif
 
     void DolphinEntity::SetGotFish(const bool got_fish)
     {

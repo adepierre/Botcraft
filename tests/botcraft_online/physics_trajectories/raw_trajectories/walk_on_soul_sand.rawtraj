@@ -122,12 +122,31 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 0;0;0;0;0;0;0;0;0
 
-forward swift sneak III
+forward soul speed III
 1.20.5
-
+1.21.4
 survival
 2.5;1.0;2.5;0.0;0.0
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={levels:{"minecraft:soul_speed":3}}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+forward;left;backward;right;jump;sneak;sprint;yRot;xRot
+0;0;0;0;0;0;0;0;0
+1;0;0;0;0;1;0;0;0
+1;0;0;0;0;1;0;0;0
+1;0;0;0;0;1;0;0;0
+1;0;0;0;0;1;0;0;0
+1;0;0;0;0;1;0;0;0
+0;0;0;0;0;1;0;0;0
+0;0;0;0;0;1;0;0;0
+0;0;0;0;0;0;0;0;0
+0;0;0;0;0;0;0;0;0
+
+forward soul speed III
+1.21.5
+
+survival
+2.5;1.0;2.5;0.0;0.0
+item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={"minecraft:soul_speed":3}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0

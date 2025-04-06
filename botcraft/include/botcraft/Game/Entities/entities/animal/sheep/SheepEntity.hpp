@@ -1,24 +1,20 @@
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #pragma once
 
-#include "botcraft/Game/Entities/entities/Entity.hpp"
+#include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
 
 namespace Botcraft
 {
-    class ExperienceOrbEntity : public Entity
+    class SheepEntity : public AnimalEntity
     {
     protected:
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        static constexpr int metadata_count = 0;
-#else
         static constexpr int metadata_count = 1;
         static const std::array<std::string, metadata_count> metadata_names;
-
-#endif
-        static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
+        static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
     public:
-        ExperienceOrbEntity();
-        virtual ~ExperienceOrbEntity();
+        SheepEntity();
+        virtual ~SheepEntity();
 
         // Object related stuff
         virtual std::string GetName() const override;
@@ -28,16 +24,15 @@ namespace Botcraft
         static std::string GetClassName();
         static EntityType GetClassType();
 
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        int GetDataValue() const;
+        char GetDataWoolId() const;
 
-        void SetDataValue(const int data_value);
-#endif
+        void SetDataWoolId(const char data_wool_id);
 
     protected:
         virtual double GetWidthImpl() const override;
@@ -45,3 +40,4 @@ namespace Botcraft
 
     };
 }
+#endif

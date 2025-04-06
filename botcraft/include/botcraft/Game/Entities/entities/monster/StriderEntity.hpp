@@ -8,7 +8,11 @@ namespace Botcraft
     class StriderEntity : public AnimalEntity
     {
     protected:
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         static constexpr int metadata_count = 3;
+#else
+        static constexpr int metadata_count = 2;
+#endif
         static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
@@ -32,11 +36,15 @@ namespace Botcraft
 
         int GetDataBoostTime() const;
         bool GetDataSuffocating() const;
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         bool GetDataSaddleId() const;
+#endif
 
         void SetDataBoostTime(const int data_boost_time);
         void SetDataSuffocating(const bool data_suffocating);
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         void SetDataSaddleId(const bool data_saddle_id);
+#endif
 
         // Attribute stuff
 #if PROTOCOL_VERSION < 767 /* < 1.21 */

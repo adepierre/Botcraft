@@ -26,7 +26,9 @@ namespace Botcraft
     struct InventoryTransaction
     {
         std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> msg;
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        // In 1.21.5+, ServerboundContainerClickPacket doesn't have the components data
+        // anymore, just hashed version so we need to store them somewhere
+#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 769 /* > 1.21.4 */
         std::map<short, ProtocolCraft::Slot> changed_slots;
         ProtocolCraft::Slot carried_item;
 #endif

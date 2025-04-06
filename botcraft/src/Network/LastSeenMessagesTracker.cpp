@@ -92,6 +92,24 @@ namespace Botcraft
         }
         output.second.SetAcknowledged(bitset);
 
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        // Compute the checksum for last seen messages for 1.21.5+
+        int checksum = 1;
+
+        for (const auto& signature : output.first)
+        {
+            int signature_hashcode = 1;
+            for (const unsigned char c : signature)
+            {
+                signature_hashcode = 31 * signature_hashcode + static_cast<int>(c);
+            }
+            checksum = 31 * checksum + signature_hashcode;
+        }
+
+        const unsigned char byte_checksum = static_cast<unsigned char>(checksum);
+        output.second.SetChecksum(byte_checksum == 0 ? 1 : byte_checksum);
+#endif
+
         return output;
     }
 
@@ -106,7 +124,7 @@ namespace Botcraft
     {
         return offset;
     }
-    
+
     int LastSeenMessagesTracker::GetAndResetOffset()
     {
         const int current_offset = offset;

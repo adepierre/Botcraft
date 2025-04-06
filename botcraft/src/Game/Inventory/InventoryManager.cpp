@@ -13,6 +13,9 @@ namespace Botcraft
         index_hotbar_selected = 0;
         cursor = Slot();
         inventories[Window::PLAYER_INVENTORY_INDEX] = std::make_shared<Window>(InventoryType::PlayerInventory);
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
+        trading_container_id = -1;
+#endif
     }
 
 
@@ -423,30 +426,42 @@ namespace Botcraft
             }
         }
 
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        transaction->SetCarriedItem(window->GetSlot(transaction->GetSlotNum()));
+        output.changed_slots = changed_slots;
+        output.carried_item = carried_item;
+
+        transaction->SetUid(window->GetNextTransactionId());
+#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         transaction->SetCarriedItem(carried_item);
         transaction->SetChangedSlots(changed_slots);
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
         transaction->SetStateId(window->GetStateId());
 #endif
 #else
-        transaction->SetCarriedItem(window->GetSlot(transaction->GetSlotNum()));
+        transaction->SetCarriedItem(static_cast<HashedSlot>(carried_item));
+        std::map<short, HashedSlot> hashed_changed_slots;
+        for (const auto& [k, v] : changed_slots)
+        {
+            hashed_changed_slots[k] = static_cast<HashedSlot>(v);
+        }
+        transaction->SetChangedSlots(hashed_changed_slots);
+        transaction->SetStateId(window->GetStateId());
+        // Store the real slots with the non-hashed components
         output.changed_slots = changed_slots;
         output.carried_item = carried_item;
-
-        transaction->SetUid(window->GetNextTransactionId());
 #endif
         return output;
     }
 
     void InventoryManager::ApplyTransactionImpl(const InventoryTransaction& transaction)
     {
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangedSlots();
-        cursor = transaction.msg->GetCarriedItem();
-#else
+#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 769 /* > 1.21.4 */
         const std::map<short, Slot>& modified_slots = transaction.changed_slots;
         cursor = transaction.carried_item;
+#else
+        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangedSlots();
+        cursor = transaction.msg->GetCarriedItem();
 #endif
 
         // Get the container
@@ -455,6 +470,9 @@ namespace Botcraft
         {
             window->SetSlot(p.first, p.second);
         }
+        LOG_INFO((inventories[Window::PLAYER_INVENTORY_INDEX] == window));
+        LOG_INFO("Cursor:" << cursor.Serialize().Dump());
+        LOG_INFO("Main hand:" << inventories[Window::PLAYER_INVENTORY_INDEX]->GetSlot(Window::INVENTORY_HOTBAR_START).Serialize().Dump());
     }
 
     void InventoryManager::ApplyTransaction(const InventoryTransaction& transaction)

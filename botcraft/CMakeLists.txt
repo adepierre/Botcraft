@@ -124,6 +124,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/monster/RavagerEntity.hpp
     include/botcraft/Game/Entities/entities/animal/SalmonEntity.hpp
     include/botcraft/Game/Entities/entities/animal/SheepEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/sheep/SheepEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ShulkerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ShulkerBulletEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp
@@ -143,7 +144,9 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/ThrownSplashPotionEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/TraderLlamaEntity.hpp
     include/botcraft/Game/Entities/entities/animal/TropicalFishEntity.hpp
@@ -161,6 +164,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp
     include/botcraft/Game/Entities/entities/animal/WolfEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/wolf/WolfEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ZombieEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/ZombieHorseEntity.hpp
@@ -179,6 +183,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/WaterAnimalEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/AbstractThrownPotionEntity.hpp
     include/botcraft/Game/Entities/entities/MobEntity.hpp
     include/botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SpellcasterIllagerEntity.hpp
@@ -198,6 +203,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/ShoulderRidingEntity.hpp
     include/botcraft/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.hpp
     include/botcraft/Game/Entities/entities/monster/AbstractIllagerEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/AbstractCowEntity.hpp
     include/botcraft/Game/Entities/entities/animal/AbstractFishEntity.hpp
     include/botcraft/Game/Entities/entities/raid/RaiderEntity.hpp
     include/botcraft/Game/Entities/entities/monster/AbstractSkeletonEntity.hpp
@@ -370,6 +376,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/monster/RavagerEntity.cpp
     src/Game/Entities/entities/animal/SalmonEntity.cpp
     src/Game/Entities/entities/animal/SheepEntity.cpp
+    src/Game/Entities/entities/animal/sheep/SheepEntity.cpp
     src/Game/Entities/entities/monster/ShulkerEntity.cpp
     src/Game/Entities/entities/projectile/ShulkerBulletEntity.cpp
     src/Game/Entities/entities/monster/SilverfishEntity.cpp
@@ -389,7 +396,9 @@ set(botcraft_SRC
     src/Game/Entities/entities/projectile/ThrownEggEntity.cpp
     src/Game/Entities/entities/projectile/ThrownEnderpearlEntity.cpp
     src/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.cpp
+    src/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.cpp
     src/Game/Entities/entities/projectile/ThrownPotionEntity.cpp
+    src/Game/Entities/entities/projectile/ThrownSplashPotionEntity.cpp
     src/Game/Entities/entities/projectile/ThrownTridentEntity.cpp
     src/Game/Entities/entities/animal/horse/TraderLlamaEntity.cpp
     src/Game/Entities/entities/animal/TropicalFishEntity.cpp
@@ -407,6 +416,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/monster/WitherSkeletonEntity.cpp
     src/Game/Entities/entities/projectile/WitherSkullEntity.cpp
     src/Game/Entities/entities/animal/WolfEntity.cpp
+    src/Game/Entities/entities/animal/wolf/WolfEntity.cpp
     src/Game/Entities/entities/monster/ZoglinEntity.cpp
     src/Game/Entities/entities/monster/ZombieEntity.cpp
     src/Game/Entities/entities/animal/horse/ZombieHorseEntity.cpp
@@ -425,6 +435,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/WaterAnimalEntity.cpp
     src/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.cpp
     src/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.cpp
+    src/Game/Entities/entities/projectile/AbstractThrownPotionEntity.cpp
     src/Game/Entities/entities/MobEntity.cpp
     src/Game/Entities/entities/OminousItemSpawnerEntity.cpp
     src/Game/Entities/entities/monster/SpellcasterIllagerEntity.cpp
@@ -440,6 +451,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/ShoulderRidingEntity.cpp
     src/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.cpp
     src/Game/Entities/entities/monster/AbstractIllagerEntity.cpp
+    src/Game/Entities/entities/animal/AbstractCowEntity.cpp
     src/Game/Entities/entities/animal/AbstractFishEntity.cpp
     src/Game/Entities/entities/raid/RaiderEntity.cpp
     src/Game/Entities/entities/monster/AbstractSkeletonEntity.cpp

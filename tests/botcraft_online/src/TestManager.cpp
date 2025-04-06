@@ -214,10 +214,17 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
                 << "pages:[";
     for (size_t i = 0; i < pages.size(); ++i)
     {
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         command
             << "'{"
             << "\"text\"" << ":" << "\"" << ReplaceCharacters(pages[i], { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"} }) << "\""
             << "}'" << ((i < pages.size() - 1) ? "," : "");
+#else
+        command
+            << "{"
+            << "\"text\"" << ":" << "\"" << ReplaceCharacters(pages[i], { {'"', "\\\""}, {'\\', "\\\\\\\\"}, {'\n', "\\n"}}) << "\""
+            << "}" << ((i < pages.size() - 1) ? "," : "");
+#endif
     }
     command << "]" // pages
         << "}"; // written_book_component
@@ -226,9 +233,15 @@ void TestManager::CreateBook(const Botcraft::Position& pos, const std::vector<st
         command << ",\"lore\":[";
         for (size_t i = 0; i < description.size(); ++i)
         {
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             command
                 << "'{\"text\":\"" << ReplaceCharacters(description[i], { {'"', "\\\\\""}, { '\'', "\\'" }, {'\n', "\\\\n"} }) << "\""
                 << "}'" << ((i < description.size() - 1) ? "," : "");
+#else
+            command
+                << "{\"text\":\"" << ReplaceCharacters(description[i], { {'"', "\\\""}, {'\\', "\\\\\\\\"}, {'\n', "\\n"} }) << "\""
+                << "}" << ((i < description.size() - 1) ? "," : "");
+#endif
         }
         command << "]"; // lore
     }
@@ -359,9 +372,15 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
             line
                 << "\"underlined\"" << ":" << "false" << ","
                 << "\"color\"" << ":" << "\"" << "black" << "\"" << ","
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
                 << "\"clickEvent\"" << ":" << "{"
                     << "\"action\"" << ":" << "\"run_command\"" << ","
                     << "\"value\"" << ":" << "\""
+#else
+                << "\"click_event\"" << ":" << "{"
+                    << "\"action\"" << ":" << "\"run_command\"" << ","
+                    << "\"command\"" << ":" << "\""
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                     << "teleport @s" << " " << offset_target.x << " " << offset_target.y << " " << offset_target.z
                     << " " << "facing" << " " << dst.x << " " << dst.y << " " << dst.z
@@ -397,6 +416,7 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
     text_content << "{\"messages\":[";
     for (size_t i = 0; i < 4ULL; ++i)
     {
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         if (i < lines.size())
         {
             text_content << "\"" << ReplaceCharacters(lines[i]) << "\"";
@@ -405,6 +425,17 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
         {
             text_content << "\"" << ReplaceCharacters("{\"text\":\"\"}") << "\"";
         }
+#else
+        // Commands are a bit less verbose in 1.21.5+, no need to quote the lines
+        if (i < lines.size())
+        {
+            text_content << ReplaceCharacters(lines[i], { {'\n', "\\n"} });
+        }
+        else
+        {
+            text_content << "\"\"";
+        }
+#endif
         if (i != 3ULL)
         {
             text_content << ",";
@@ -471,7 +502,8 @@ void TestManager::LoadStructure(const std::string& filename, const Botcraft::Pos
             {"posX", std::to_string(load_offset.x)},
             {"posY", std::to_string(load_offset.y)},
             {"posZ", std::to_string(load_offset.z)},
-            {"showboundingbox", "1"}
+            {"showboundingbox", "1"},
+            {"ignoreEntities", "0"}
         }
     );
     SetBlock("redstone_block", pos + Botcraft::Position(0, 1, 0));
@@ -667,7 +699,7 @@ void TestManager::testCasePartialEnded(Catch::TestCaseStats const& test_case_sta
             current_test_case_failures,
             "north",
             test_case_stats.testInfo->name + "#" + std::to_string(part_number),
-            "Botcraft Test Framework",
+            "Test Framework - Botcraft_" + std::to_string(bot_index - 1),
             section_stack
         );
     }

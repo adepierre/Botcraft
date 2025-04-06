@@ -53,8 +53,10 @@ void SendCommandSetItem(const std::string& botname, const std::string& item_name
         command += " {ench:[";
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
         command += "{Enchantments:[";
-#else
+#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         command += "[enchantments={levels:{";
+#else
+        command += "[enchantments={";
 #endif
 
         size_t index = 0;
@@ -77,8 +79,10 @@ void SendCommandSetItem(const std::string& botname, const std::string& item_name
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         command += "]}";
-#else
+#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         command += "}}]";
+#else
+        command += "}]";
 #endif
     }
 

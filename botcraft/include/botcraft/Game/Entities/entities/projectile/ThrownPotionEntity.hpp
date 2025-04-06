@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #pragma once
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
@@ -54,3 +55,4 @@ namespace Botcraft
 
     };
 }
+#endif
