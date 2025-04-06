@@ -386,9 +386,9 @@ namespace Botcraft
             {
                 msg->Read(packet_iterator, length);
             }
-            catch (const std::exception&)
+            catch (const std::exception& e)
             {
-                LOG_FATAL("Parsing exception while parsing message \"" << msg->GetName() << '"');
+                LOG_FATAL("Parsing exception while parsing message \"" << msg->GetName() << "\"\n" << e.what());
                 throw;
             }
             for (size_t i = 0; i < subscribed.size(); i++)
