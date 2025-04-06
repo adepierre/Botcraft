@@ -66,7 +66,7 @@ namespace Botcraft
                 throw std::out_of_range("invalid blackboard key: " + key);
             }
         }
-        
+
         /// @brief Get the map value at key, casting it to T.
         /// If the key is not present in the map, add
         /// it with default_value, and returns it.
@@ -155,7 +155,7 @@ namespace Botcraft
         /// @brief Remove a map entry if present
         /// @param key key we want to remove
         void Erase(const std::string& key);
-        
+
         /// @brief Clear all the entries in the blackboard and load new ones
         /// @param values Values to load into the blackboard after clearing
         void Reset(const std::map<std::string, std::any>& values = {});
@@ -163,6 +163,11 @@ namespace Botcraft
         void Subscribe(BlackboardObserver* observer);
 
         void Unsubscribe(BlackboardObserver* observer);
+
+        /// @brief Check if a specific key is present in the blackboard
+        /// @param key Key to find
+        /// @return True if there is a value in the blackboard at the given key, false otherwise
+        bool Contains(const std::string& key) const;
 
     private:
         void NotifyCleared() const;

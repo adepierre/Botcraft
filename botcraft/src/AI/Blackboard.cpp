@@ -56,6 +56,11 @@ namespace Botcraft
         }
     }
 
+    bool Blackboard::Contains(const std::string& key) const
+    {
+        return blackboard.find(key) != blackboard.end();
+    }
+
     void Blackboard::NotifyCleared() const
     {
         for (auto o : observers)
