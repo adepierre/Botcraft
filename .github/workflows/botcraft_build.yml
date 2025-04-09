@@ -26,6 +26,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 env:
   BUILD_TYPE: Release
