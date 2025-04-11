@@ -18,7 +18,7 @@ namespace Botcraft
         using ModifierKey = std::string;
 #endif
 
-        enum class Type : char
+        enum class Type : int
         {
             Unknown = -1,
             Armor,
