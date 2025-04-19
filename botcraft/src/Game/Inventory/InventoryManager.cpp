@@ -470,9 +470,6 @@ namespace Botcraft
         {
             window->SetSlot(p.first, p.second);
         }
-        LOG_INFO((inventories[Window::PLAYER_INVENTORY_INDEX] == window));
-        LOG_INFO("Cursor:" << cursor.Serialize().Dump());
-        LOG_INFO("Main hand:" << inventories[Window::PLAYER_INVENTORY_INDEX]->GetSlot(Window::INVENTORY_HOTBAR_START).Serialize().Dump());
     }
 
     void InventoryManager::ApplyTransaction(const InventoryTransaction& transaction)
