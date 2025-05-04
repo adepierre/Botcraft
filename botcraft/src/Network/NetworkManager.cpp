@@ -16,7 +16,7 @@
 
 
 #include "protocolCraft/BinaryReadWrite.hpp"
-#include "protocolCraft/MessageFactory.hpp"
+#include "protocolCraft/PacketFactory.hpp"
 
 using namespace ProtocolCraft;
 
@@ -62,20 +62,20 @@ namespace Botcraft
             return com->IsInitialized();
         }, 500, 0);
 
-        std::shared_ptr<ServerboundClientIntentionPacket> handshake_msg = std::make_shared<ServerboundClientIntentionPacket>();
-        handshake_msg->SetProtocolVersion(PROTOCOL_VERSION);
-        handshake_msg->SetHostName(com->GetIp());
-        handshake_msg->SetPort(com->GetPort());
-        handshake_msg->SetIntention(static_cast<int>(ConnectionState::Login));
-        Send(handshake_msg);
+        std::shared_ptr<ServerboundClientIntentionPacket> handshake_packet = std::make_shared<ServerboundClientIntentionPacket>();
+        handshake_packet->SetProtocolVersion(PROTOCOL_VERSION);
+        handshake_packet->SetHostName(com->GetIp());
+        handshake_packet->SetPort(com->GetPort());
+        handshake_packet->SetIntention(static_cast<int>(ConnectionState::Login));
+        Send(handshake_packet);
 
         state = ConnectionState::Login;
 
-        std::shared_ptr<ServerboundHelloPacket> loginstart_msg = std::make_shared<ServerboundHelloPacket>();
+        std::shared_ptr<ServerboundHelloPacket> loginstart_packet = std::make_shared<ServerboundHelloPacket>();
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-        loginstart_msg->SetGameProfile(name);
+        loginstart_packet->SetGameProfile(name);
 #else
-        loginstart_msg->SetName_(name);
+        loginstart_packet->SetName_(name);
         if (authentifier)
         {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -84,16 +84,16 @@ namespace Botcraft
             key.SetKey(Utilities::RSAToBytes(authentifier->GetPublicKey()));
             key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
-            loginstart_msg->SetPublicKey(key);
+            loginstart_packet->SetPublicKey(key);
 #else
             message_sent_index = 0;
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-            loginstart_msg->SetProfileId(authentifier->GetPlayerUUID());
+            loginstart_packet->SetProfileId(authentifier->GetPlayerUUID());
 #endif
         }
 #endif
-        Send(loginstart_msg);
+        Send(loginstart_packet);
     }
 
     NetworkManager::NetworkManager(const ConnectionState constant_connection_state)
@@ -132,34 +132,34 @@ namespace Botcraft
         subscribed.push_back(h);
     }
 
-    void NetworkManager::Send(const std::shared_ptr<Message> msg)
+    void NetworkManager::Send(const std::shared_ptr<Packet> packet)
     {
         if (com)
         {
             std::lock_guard<std::mutex> lock(mutex_send);
-            std::vector<unsigned char> msg_data;
-            msg_data.reserve(256);
-            msg->Write(msg_data);
+            std::vector<unsigned char> packet_data;
+            packet_data.reserve(256);
+            packet->Write(packet_data);
             if (compression == -1)
             {
-                com->SendPacket(msg_data);
+                com->SendPacket(packet_data);
             }
             else
             {
 #ifdef USE_COMPRESSION
-                if (msg_data.size() < compression)
+                if (packet_data.size() < compression)
                 {
-                    msg_data.insert(msg_data.begin(), 0x00);
-                    com->SendPacket(msg_data);
+                    packet_data.insert(packet_data.begin(), 0x00);
+                    com->SendPacket(packet_data);
                 }
                 else
                 {
-                    std::vector<unsigned char> compressed_msg;
-                    compressed_msg.reserve(msg_data.size() + 5);
-                    WriteData<VarInt>(static_cast<int>(msg_data.size()), compressed_msg);
-                    std::vector<unsigned char> compressed_data = Compress(msg_data);
-                    compressed_msg.insert(compressed_msg.end(), compressed_data.begin(), compressed_data.end());
-                    com->SendPacket(compressed_msg);
+                    std::vector<unsigned char> compressed_packet;
+                    compressed_packet.reserve(packet_data.size() + 5);
+                    WriteData<VarInt>(static_cast<int>(packet_data.size()), compressed_packet);
+                    std::vector<unsigned char> compressed_data = Compress(packet_data);
+                    compressed_packet.insert(compressed_packet.end(), compressed_data.begin(), compressed_data.end());
+                    com->SendPacket(compressed_packet);
                 }
 #else
                 throw std::runtime_error("Program compiled without ZLIB. Cannot send compressed message");
@@ -343,8 +343,8 @@ namespace Botcraft
                             {
                                 const int size_varint = static_cast<int>(packet.size() - length);
 
-                                std::vector<unsigned char> uncompressed_msg = Decompress(packet, size_varint);
-                                ProcessPacket(uncompressed_msg);
+                                std::vector<unsigned char> uncompressed_packet = Decompress(packet, size_varint);
+                                ProcessPacket(uncompressed_packet);
                             }
 #else
                             throw std::runtime_error("Program compiled without USE_COMPRESSION. Cannot read compressed message");
@@ -366,69 +366,69 @@ namespace Botcraft
         }
     }
 
-    void NetworkManager::ProcessPacket(const std::vector<unsigned char>& packet)
+    void NetworkManager::ProcessPacket(const std::vector<unsigned char>& bytes)
     {
-        if (packet.empty())
+        if (bytes.empty())
         {
             return;
         }
 
-        std::vector<unsigned char>::const_iterator packet_iterator = packet.begin();
-        size_t length = packet.size();
+        std::vector<unsigned char>::const_iterator packet_iterator = bytes.begin();
+        size_t length = bytes.size();
 
         const int packet_id = ReadData<VarInt>(packet_iterator, length);
 
-        std::shared_ptr<Message> msg = CreateClientboundMessage(state, packet_id);
+        std::shared_ptr<Packet> packet = CreateClientboundPacket(state, packet_id);
 
-        if (msg)
+        if (packet != nullptr)
         {
             try
             {
-                msg->Read(packet_iterator, length);
+                packet->Read(packet_iterator, length);
             }
             catch (const std::exception& e)
             {
-                LOG_FATAL("Parsing exception while parsing message \"" << msg->GetName() << "\"\n" << e.what());
+                LOG_FATAL("Parsing exception while parsing message \"" << packet->GetName() << "\"\n" << e.what());
                 throw;
             }
             for (size_t i = 0; i < subscribed.size(); i++)
             {
-                msg->Dispatch(subscribed[i]);
+                packet->Dispatch(subscribed[i]);
             }
         }
     }
 
-    void NetworkManager::OnNewRawData(const std::vector<unsigned char>& packet)
+    void NetworkManager::OnNewRawData(const std::vector<unsigned char>& bytes)
     {
         {
             std::unique_lock<std::mutex> lck(mutex_process);
-            packets_to_process.push(packet);
+            packets_to_process.push(bytes);
         }
         process_condition.notify_all();
     }
 
 
-    void NetworkManager::Handle(ClientboundLoginCompressionPacket& msg)
+    void NetworkManager::Handle(ClientboundLoginCompressionPacket& packet)
     {
-        compression = msg.GetCompressionThreshold();
+        compression = packet.GetCompressionThreshold();
     }
 
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-    void NetworkManager::Handle(ClientboundGameProfilePacket& msg)
+    void NetworkManager::Handle(ClientboundGameProfilePacket& packet)
 #else
-    void NetworkManager::Handle(ClientboundLoginFinishedPacket& msg)
+    void NetworkManager::Handle(ClientboundLoginFinishedPacket& packet)
 #endif
     {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         state = ConnectionState::Play;
 #else
         state = ConnectionState::Configuration;
-        std::shared_ptr<ServerboundLoginAcknowledgedPacket> login_ack_msg = std::make_shared<ServerboundLoginAcknowledgedPacket>();
-        Send(login_ack_msg);
+        std::shared_ptr<ServerboundLoginAcknowledgedPacket> login_ack_packet = std::make_shared<ServerboundLoginAcknowledgedPacket>();
+        Send(login_ack_packet);
 #endif
     }
 
-    void NetworkManager::Handle(ClientboundHelloPacket& msg)
+    void NetworkManager::Handle(ClientboundHelloPacket& packet)
     {
         if (authentifier == nullptr)
         {
@@ -443,41 +443,41 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         std::vector<unsigned char> encrypted_nonce;
-        encrypter->Init(msg.GetPublicKey(), msg.GetNonce(),
+        encrypter->Init(packet.GetPublicKey(), packet.GetNonce(),
             raw_shared_secret, encrypted_nonce, encrypted_shared_secret);
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<unsigned char> salted_nonce_signature;
         long long int salt;
-        encrypter->Init(msg.GetPublicKey(), msg.GetNonce(), authentifier->GetPrivateKey(),
+        encrypter->Init(packet.GetPublicKey(), packet.GetNonce(), authentifier->GetPrivateKey(),
             raw_shared_secret, encrypted_shared_secret,
             salt, salted_nonce_signature);
 #else
         std::vector<unsigned char> encrypted_challenge;
-        encrypter->Init(msg.GetPublicKey(), msg.GetChallenge(),
+        encrypter->Init(packet.GetPublicKey(), packet.GetChallenge(),
             raw_shared_secret, encrypted_shared_secret,
             encrypted_challenge);
 #endif
 
-        authentifier->JoinServer(msg.GetServerId(), raw_shared_secret, msg.GetPublicKey());
+        authentifier->JoinServer(packet.GetServerId(), raw_shared_secret, packet.GetPublicKey());
 
-        std::shared_ptr<ServerboundKeyPacket> response_msg = std::make_shared<ServerboundKeyPacket>();
-        response_msg->SetKeyBytes(encrypted_shared_secret);
+        std::shared_ptr<ServerboundKeyPacket> response_packet = std::make_shared<ServerboundKeyPacket>();
+        response_packet->SetKeyBytes(encrypted_shared_secret);
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         // Pre-1.19 behaviour, send encrypted nonce
-        response_msg->SetNonce(encrypted_nonce);
+        response_packet->SetNonce(encrypted_nonce);
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
         // 1.19, 1.19.1, 1.19.2 behaviour, send salted nonce signature
         SaltSignature salt_signature;
         salt_signature.SetSalt(salt);
         salt_signature.SetSignature(salted_nonce_signature);
-        response_msg->SetSaltSignature(salt_signature);
+        response_packet->SetSaltSignature(salt_signature);
 #else
         // 1.19.3+ behaviour, send encrypted challenge
-        response_msg->SetEncryptedChallenge(encrypted_challenge);
+        response_packet->SetEncryptedChallenge(encrypted_challenge);
 #endif
 
-        Send(response_msg);
+        Send(response_packet);
 
         // Enable encryption from now on
         com->SetEncrypter(encrypter);
@@ -486,38 +486,38 @@ namespace Botcraft
 #endif
     }
 
-    void NetworkManager::Handle(ClientboundKeepAlivePacket& msg)
+    void NetworkManager::Handle(ClientboundKeepAlivePacket& packet)
     {
-        std::shared_ptr<ServerboundKeepAlivePacket> keep_alive_msg = std::make_shared<ServerboundKeepAlivePacket>();
-        keep_alive_msg->SetId_(msg.GetId_());
-        Send(keep_alive_msg);
+        std::shared_ptr<ServerboundKeepAlivePacket> keep_alive_packet = std::make_shared<ServerboundKeepAlivePacket>();
+        keep_alive_packet->SetId_(packet.GetId_());
+        Send(keep_alive_packet);
     }
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    void NetworkManager::Handle(ClientboundPingPacket& msg)
+    void NetworkManager::Handle(ClientboundPingPacket& packet)
     {
-        std::shared_ptr<ServerboundPongPacket> pong_msg = std::make_shared<ServerboundPongPacket>();
-        pong_msg->SetId_(msg.GetId_());
-        Send(pong_msg);
+        std::shared_ptr<ServerboundPongPacket> pong_packet = std::make_shared<ServerboundPongPacket>();
+        pong_packet->SetId_(packet.GetId_());
+        Send(pong_packet);
     }
 #endif
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    void NetworkManager::Handle(ClientboundCustomQueryPacket& msg)
+    void NetworkManager::Handle(ClientboundCustomQueryPacket& packet)
     {
         // Vanilla like response when asked by fabric API
         // Not implemented in fabric before December 05 2020,
         // so not necessary before version 1.16.4
 #if PROTOCOL_VERSION > 753 /* > 1.16.3 */
-        if (msg.GetIdentifier().GetFull() == "fabric-networking-api-v1:early_registration")
+        if (packet.GetIdentifier().GetFull() == "fabric-networking-api-v1:early_registration")
         {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
             std::shared_ptr<ServerboundCustomQueryPacket> custom_query_anwser = std::make_shared<ServerboundCustomQueryPacket>();
-            custom_query_anwser->SetTransactionId(msg.GetTransactionId());
+            custom_query_anwser->SetTransactionId(packet.GetTransactionId());
             custom_query_anwser->SetData(std::nullopt);
 #else
             std::shared_ptr<ServerboundCustomQueryAnswerPacket> custom_query_anwser = std::make_shared<ServerboundCustomQueryAnswerPacket>();
-            custom_query_anwser->SetTransactionId(msg.GetTransactionId());
+            custom_query_anwser->SetTransactionId(packet.GetTransactionId());
             custom_query_anwser->SetPayload(std::nullopt);
 #endif
             Send(custom_query_anwser);
@@ -528,41 +528,41 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-    void NetworkManager::Handle(ClientboundPlayerChatPacket& msg)
+    void NetworkManager::Handle(ClientboundPlayerChatPacket& packet)
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        chat_context.AddSeenMessage(msg.GetMessage_().GetHeaderSignature(), msg.GetMessage_().GetSignedHeader().GetSender());
+        chat_context.AddSeenMessage(packet.GetMessage_().GetHeaderSignature(), packet.GetMessage_().GetSignedHeader().GetSender());
 #else
-        if (msg.GetSignature().has_value())
+        if (packet.GetSignature().has_value())
         {
             std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
 
-            chat_context.AddSeenMessage(std::vector<unsigned char>(msg.GetSignature().value().begin(), msg.GetSignature().value().end()));
+            chat_context.AddSeenMessage(std::vector<unsigned char>(packet.GetSignature().value().begin(), packet.GetSignature().value().end()));
 
             if (chat_context.GetOffset() > 64)
             {
-                std::shared_ptr<ServerboundChatAckPacket> ack_msg = std::make_shared<ServerboundChatAckPacket>();
-                ack_msg->SetOffset(chat_context.GetAndResetOffset());
-                Send(ack_msg);
+                std::shared_ptr<ServerboundChatAckPacket> ack_packet = std::make_shared<ServerboundChatAckPacket>();
+                ack_packet->SetOffset(chat_context.GetAndResetOffset());
+                Send(ack_packet);
             }
         }
 #endif
     }
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    void NetworkManager::Handle(ClientboundPlayerChatHeaderPacket& msg)
+    void NetworkManager::Handle(ClientboundPlayerChatHeaderPacket& packet)
     {
-        chat_context.AddSeenMessage(msg.GetHeaderSignature(), msg.GetHeader().GetSender());
+        chat_context.AddSeenMessage(packet.GetHeaderSignature(), packet.GetHeader().GetSender());
     }
 #endif
 #endif
 
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-    void NetworkManager::Handle(ClientboundLoginPacket& msg)
+    void NetworkManager::Handle(ClientboundLoginPacket& packet)
     {
         if (authentifier)
         {
-            std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_msg = std::make_shared<ServerboundChatSessionUpdatePacket>();
+            std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_packet = std::make_shared<ServerboundChatSessionUpdatePacket>();
             RemoteChatSessionData chat_session_data;
 
             ProfilePublicKey key;
@@ -580,59 +580,59 @@ namespace Botcraft
             }
             chat_session_data.SetUuid(chat_session_uuid);
 
-            chat_session_msg->SetChatSession(chat_session_data);
-            Send(chat_session_msg);
+            chat_session_packet->SetChatSession(chat_session_data);
+            Send(chat_session_packet);
         }
     }
 #endif
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    void NetworkManager::Handle(ClientboundFinishConfigurationPacket& msg)
+    void NetworkManager::Handle(ClientboundFinishConfigurationPacket& packet)
     {
         state = ConnectionState::Play;
-        std::shared_ptr<ServerboundFinishConfigurationPacket> finish_config_msg = std::make_shared<ServerboundFinishConfigurationPacket>();
-        Send(finish_config_msg);
+        std::shared_ptr<ServerboundFinishConfigurationPacket> finish_config_packet = std::make_shared<ServerboundFinishConfigurationPacket>();
+        Send(finish_config_packet);
     }
 
-    void NetworkManager::Handle(ClientboundKeepAliveConfigurationPacket& msg)
+    void NetworkManager::Handle(ClientboundKeepAliveConfigurationPacket& packet)
     {
-        std::shared_ptr<ServerboundKeepAliveConfigurationPacket> keep_alive_msg = std::make_shared<ServerboundKeepAliveConfigurationPacket>();
-        keep_alive_msg->SetId_(msg.GetId_());
-        Send(keep_alive_msg);
+        std::shared_ptr<ServerboundKeepAliveConfigurationPacket> keep_alive_packet = std::make_shared<ServerboundKeepAliveConfigurationPacket>();
+        keep_alive_packet->SetId_(packet.GetId_());
+        Send(keep_alive_packet);
     }
 
-    void NetworkManager::Handle(ClientboundPingConfigurationPacket& msg)
+    void NetworkManager::Handle(ClientboundPingConfigurationPacket& packet)
     {
-        std::shared_ptr<ServerboundPongConfigurationPacket> pong_msg = std::make_shared<ServerboundPongConfigurationPacket>();
-        pong_msg->SetId_(msg.GetId_());
-        Send(pong_msg);
+        std::shared_ptr<ServerboundPongConfigurationPacket> pong_packet = std::make_shared<ServerboundPongConfigurationPacket>();
+        pong_packet->SetId_(packet.GetId_());
+        Send(pong_packet);
     }
 
-    void NetworkManager::Handle(ClientboundStartConfigurationPacket& msg)
+    void NetworkManager::Handle(ClientboundStartConfigurationPacket& packet)
     {
         state = ConnectionState::Configuration;
-        std::shared_ptr<ServerboundConfigurationAcknowledgedPacket> config_ack_msg = std::make_shared<ServerboundConfigurationAcknowledgedPacket>();
-        Send(config_ack_msg);
+        std::shared_ptr<ServerboundConfigurationAcknowledgedPacket> config_ack_packet = std::make_shared<ServerboundConfigurationAcknowledgedPacket>();
+        Send(config_ack_packet);
     }
 
-    void NetworkManager::Handle(ClientboundChunkBatchStartPacket& msg)
+    void NetworkManager::Handle(ClientboundChunkBatchStartPacket& packet)
     {
         chunk_batch_start_time = std::chrono::steady_clock::now();
     }
 
-    void NetworkManager::Handle(ClientboundChunkBatchFinishedPacket& msg)
+    void NetworkManager::Handle(ClientboundChunkBatchFinishedPacket& packet)
     {
         using count_return = decltype(std::declval<std::chrono::milliseconds>().count());
         const count_return time_elapsed_ms = std::max(static_cast<count_return>(1), std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - chunk_batch_start_time).count());
-        std::shared_ptr<ServerboundChunkBatchReceivedPacket> chunk_per_tick_msg = std::make_shared<ServerboundChunkBatchReceivedPacket>();
+        std::shared_ptr<ServerboundChunkBatchReceivedPacket> chunk_per_tick_packet = std::make_shared<ServerboundChunkBatchReceivedPacket>();
         // Ask as many chunks as we can process in one tick (50 ms)
-        chunk_per_tick_msg->SetDesiredChunksPerTick(msg.GetBatchSize() * 50.0f / time_elapsed_ms);
-        Send(chunk_per_tick_msg);
+        chunk_per_tick_packet->SetDesiredChunksPerTick(packet.GetBatchSize() * 50.0f / time_elapsed_ms);
+        Send(chunk_per_tick_packet);
     }
 #endif
 
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    void NetworkManager::Handle(ProtocolCraft::ClientboundSelectKnownPacksPacket& msg)
+    void NetworkManager::Handle(ProtocolCraft::ClientboundSelectKnownPacksPacket& packet)
     {
         std::shared_ptr<ServerboundSelectKnownPacksPacket> select_known_packs = std::make_shared<ServerboundSelectKnownPacksPacket>();
         // Datapacks are not supported by Botcraft

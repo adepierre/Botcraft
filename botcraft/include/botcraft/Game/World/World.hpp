@@ -266,25 +266,25 @@ namespace Botcraft
         std::optional<Position> GetSupportingBlockPos(const AABB& aabb) const;
 
     protected:
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundBlockUpdatePacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& packet) override;
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-        virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLevelChunkPacket& packet) override;
 #else
-        virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& packet) override;
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLightUpdatePacket& packet) override;
 #endif
-        virtual void Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& packet) override;
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-        virtual void Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChunksBiomesPacket& packet) override;
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-        virtual void Handle(ProtocolCraft::ClientboundRegistryDataPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundRegistryDataPacket& packet) override;
 #endif
 
     private:

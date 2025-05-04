@@ -84,58 +84,58 @@ namespace Botcraft
             }
         }
 
-        std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_msg = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
-        place_block_msg->SetLocation(pos.ToNetworkPosition());
-        place_block_msg->SetDirection(static_cast<int>(face));
+        std::shared_ptr<ProtocolCraft::ServerboundUseItemOnPacket> place_block_packet = std::make_shared<ProtocolCraft::ServerboundUseItemOnPacket>();
+        place_block_packet->SetLocation(pos.ToNetworkPosition());
+        place_block_packet->SetDirection(static_cast<int>(face));
         switch (face)
         {
         case PlayerDiggingFace::Down:
-            place_block_msg->SetCursorPositionX(0.5f);
-            place_block_msg->SetCursorPositionY(0.0f);
-            place_block_msg->SetCursorPositionZ(0.5f);
+            place_block_packet->SetCursorPositionX(0.5f);
+            place_block_packet->SetCursorPositionY(0.0f);
+            place_block_packet->SetCursorPositionZ(0.5f);
             break;
         case PlayerDiggingFace::Up:
-            place_block_msg->SetCursorPositionX(0.5f);
-            place_block_msg->SetCursorPositionY(1.0f);
-            place_block_msg->SetCursorPositionZ(0.5f);
+            place_block_packet->SetCursorPositionX(0.5f);
+            place_block_packet->SetCursorPositionY(1.0f);
+            place_block_packet->SetCursorPositionZ(0.5f);
             break;
         case PlayerDiggingFace::North:
-            place_block_msg->SetCursorPositionX(0.5f);
-            place_block_msg->SetCursorPositionY(0.5f);
-            place_block_msg->SetCursorPositionZ(0.0f);
+            place_block_packet->SetCursorPositionX(0.5f);
+            place_block_packet->SetCursorPositionY(0.5f);
+            place_block_packet->SetCursorPositionZ(0.0f);
             break;
         case PlayerDiggingFace::South:
-            place_block_msg->SetCursorPositionX(0.5f);
-            place_block_msg->SetCursorPositionY(0.5f);
-            place_block_msg->SetCursorPositionZ(1.0f);
+            place_block_packet->SetCursorPositionX(0.5f);
+            place_block_packet->SetCursorPositionY(0.5f);
+            place_block_packet->SetCursorPositionZ(1.0f);
             break;
         case PlayerDiggingFace::East:
-            place_block_msg->SetCursorPositionX(1.0f);
-            place_block_msg->SetCursorPositionY(0.5f);
-            place_block_msg->SetCursorPositionZ(0.5f);
+            place_block_packet->SetCursorPositionX(1.0f);
+            place_block_packet->SetCursorPositionY(0.5f);
+            place_block_packet->SetCursorPositionZ(0.5f);
             break;
         case PlayerDiggingFace::West:
-            place_block_msg->SetCursorPositionX(0.0f);
-            place_block_msg->SetCursorPositionY(0.5f);
-            place_block_msg->SetCursorPositionZ(0.5f);
+            place_block_packet->SetCursorPositionX(0.0f);
+            place_block_packet->SetCursorPositionY(0.5f);
+            place_block_packet->SetCursorPositionZ(0.5f);
             break;
         default:
             break;
         }
 #if PROTOCOL_VERSION > 452 /* > 1.13.2 */
-        place_block_msg->SetInside(false);
+        place_block_packet->SetInside(false);
 #endif
-        place_block_msg->SetHand(static_cast<int>(Hand::Right));
+        place_block_packet->SetHand(static_cast<int>(Hand::Right));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        place_block_msg->SetSequence(client.GetWorld()->GetNextWorldInteractionSequenceId());
+        place_block_packet->SetSequence(client.GetWorld()->GetNextWorldInteractionSequenceId());
 #endif
-        client.GetNetworkManager()->Send(place_block_msg);
+        client.GetNetworkManager()->Send(place_block_packet);
 
         if (animation)
         {
-            std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_msg = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
-            animation_msg->SetHand(static_cast<int>(Hand::Right));
-            client.GetNetworkManager()->Send(animation_msg);
+            std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_packet = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
+            animation_packet->SetHand(static_cast<int>(Hand::Right));
+            client.GetNetworkManager()->Send(animation_packet);
         }
 
         LookAt(client, Vector3<double>(0.5) + pos, true);

@@ -25,7 +25,7 @@ namespace Botcraft
 
         void close();
 
-        void SendPacket(const std::vector<unsigned char>& msg);
+        void SendPacket(const std::vector<unsigned char>& bytes);
 #ifdef USE_ENCRYPTION
         void SetEncrypter(const std::shared_ptr<AESEncrypter> encrypter_);
 #endif
@@ -39,7 +39,7 @@ namespace Botcraft
 
         void handle_read(const asio::error_code& error, std::size_t bytes_transferred);
 
-        void do_write(const std::vector<unsigned char>& msg);
+        void do_write(const std::vector<unsigned char>& bytes);
 
         void handle_write(const asio::error_code& error);
 
@@ -55,9 +55,9 @@ namespace Botcraft
 
         std::thread thread_com;
 
-        std::array<unsigned char, 512> read_msg;
-        std::vector<unsigned char> input_msg;
-        std::deque<std::vector<unsigned char> > output_msg;
+        std::array<unsigned char, 512> read_packet;
+        std::vector<unsigned char> input_packet;
+        std::deque<std::vector<unsigned char> > output_packet;
 
         std::function<void(const std::vector<unsigned char>&)> NewPacketCallback;
         std::mutex mutex_output;

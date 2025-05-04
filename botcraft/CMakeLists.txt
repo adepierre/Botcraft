@@ -565,7 +565,7 @@ set_target_properties(botcraft PROPERTIES INSTALL_RPATH "$ORIGIN")
 if (BOTCRAFT_USE_PRECOMPILED_HEADERS AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_precompile_headers(botcraft PRIVATE
         include/botcraft/Game/Entities/entities/Entity.hpp
-        ${protocolCraft_SOURCE_DIR}/include/protocolCraft/AllMessages.hpp
+        ${protocolCraft_SOURCE_DIR}/include/protocolCraft/AllPackets.hpp
     )
 endif()
 

@@ -51,21 +51,21 @@ namespace Botcraft
         local_player->LookAt(entity_position + Vector3<double>(0, entity->GetHeight() / 2.0, 0), true);
 
         std::shared_ptr<NetworkManager> network_manager = client.GetNetworkManager();
-        std::shared_ptr<ServerboundInteractPacket> msg_interact = std::make_shared<ServerboundInteractPacket>();
-        msg_interact->SetEntityId(entity_id);
-        msg_interact->SetAction(0);
-        msg_interact->SetHand(static_cast<int>(hand)); 
+        std::shared_ptr<ServerboundInteractPacket> packet_interact = std::make_shared<ServerboundInteractPacket>();
+        packet_interact->SetEntityId(entity_id);
+        packet_interact->SetAction(0);
+        packet_interact->SetHand(static_cast<int>(hand)); 
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
-        msg_interact->SetUsingSecondaryAction(false);
+        packet_interact->SetUsingSecondaryAction(false);
 #endif
-        network_manager->Send(msg_interact);
+        network_manager->Send(packet_interact);
         
         if (swing)
         {
-            std::shared_ptr<ServerboundSwingPacket> msg_swing = std::make_shared<ServerboundSwingPacket>();
-            msg_swing->SetHand(static_cast<int>(hand));
+            std::shared_ptr<ServerboundSwingPacket> packet_swing = std::make_shared<ServerboundSwingPacket>();
+            packet_swing->SetHand(static_cast<int>(hand));
 
-            network_manager->Send(msg_swing);
+            network_manager->Send(packet_swing);
         }
 
         return Status::Success;

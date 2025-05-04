@@ -74,61 +74,61 @@ namespace Botcraft
     }
 
 
-    void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& msg)
+    void ConnectionClient::Handle(ClientboundLoginDisconnectPacket& packet)
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        LOG_INFO("Disconnect during login with reason: " << msg.GetReason().GetRawText());
+        LOG_INFO("Disconnect during login with reason: " << packet.GetReason().GetRawText());
 #else
-        LOG_INFO("Disconnect during login with reason: " << msg.GetReason());
+        LOG_INFO("Disconnect during login with reason: " << packet.GetReason());
 #endif
 
         should_be_closed = true;
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    void ConnectionClient::Handle(ClientboundContainerAckPacket& msg)
+    void ConnectionClient::Handle(ClientboundContainerAckPacket& packet)
     {
         // If the transaction was not accepted, we must apologize
         // else it's processed in InventoryManager
-        if (!msg.GetAccepted())
+        if (!packet.GetAccepted())
         {
-            std::shared_ptr<ServerboundContainerAckPacket> apologize_msg = std::make_shared<ServerboundContainerAckPacket>();
-            apologize_msg->SetContainerId(msg.GetContainerId());
-            apologize_msg->SetUid(msg.GetUid());
-            apologize_msg->SetAccepted(msg.GetAccepted());
+            std::shared_ptr<ServerboundContainerAckPacket> apologize_packet = std::make_shared<ServerboundContainerAckPacket>();
+            apologize_packet->SetContainerId(packet.GetContainerId());
+            apologize_packet->SetUid(packet.GetUid());
+            apologize_packet->SetAccepted(packet.GetAccepted());
 
-            network_manager->Send(apologize_msg);
+            network_manager->Send(apologize_packet);
         }
     }
 #endif
 
-    void ConnectionClient::Handle(ClientboundDisconnectPacket& msg)
+    void ConnectionClient::Handle(ClientboundDisconnectPacket& packet)
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().GetRawText());
+        LOG_INFO("Disconnect during playing with reason: " << packet.GetReason().GetRawText());
 #else
-        LOG_INFO("Disconnect during playing with reason: " << msg.GetReason().Serialize().Dump());
+        LOG_INFO("Disconnect during playing with reason: " << packet.GetReason().Serialize().Dump());
 #endif
 
         should_be_closed = true;
     }
 
-    void ConnectionClient::Handle(ClientboundPlayerPositionPacket& msg)
+    void ConnectionClient::Handle(ClientboundPlayerPositionPacket& packet)
     {
         // Confirmations have to be sent from here, as there is no PhysicsManager with a ConnectionClient
-        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_msg = std::make_shared<ServerboundAcceptTeleportationPacket>();
-        confirm_msg->SetId_(msg.GetId_());
+        std::shared_ptr<ServerboundAcceptTeleportationPacket> confirm_packet = std::make_shared<ServerboundAcceptTeleportationPacket>();
+        confirm_packet->SetId_(packet.GetId_());
 
-        network_manager->Send(confirm_msg);
+        network_manager->Send(confirm_packet);
     }
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    void ConnectionClient::Handle(ClientboundDisconnectConfigurationPacket& msg)
+    void ConnectionClient::Handle(ClientboundDisconnectConfigurationPacket& packet)
     {
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        LOG_INFO("Disconnect during configuration with reason: " << msg.GetReason().GetRawText());
+        LOG_INFO("Disconnect during configuration with reason: " << packet.GetReason().GetRawText());
 #else
-        LOG_INFO("Disconnect during configuration with reason: " << msg.GetReason().Serialize().Dump());
+        LOG_INFO("Disconnect during configuration with reason: " << packet.GetReason().Serialize().Dump());
 #endif
 
         should_be_closed = true;
@@ -136,12 +136,12 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-    void ConnectionClient::Handle(ClientboundLoginPacket& msg)
+    void ConnectionClient::Handle(ClientboundLoginPacket& packet)
     {
         network_manager->Send(std::make_shared<ServerboundPlayerLoadedPacket>());
     }
 
-    void ConnectionClient::Handle(ClientboundRespawnPacket& msg)
+    void ConnectionClient::Handle(ClientboundRespawnPacket& packet)
     {
         network_manager->Send(std::make_shared<ServerboundPlayerLoadedPacket>());
     }

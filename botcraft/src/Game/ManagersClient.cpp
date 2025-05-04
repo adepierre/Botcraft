@@ -173,9 +173,9 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-    void ManagersClient::Handle(ClientboundGameProfilePacket& msg)
+    void ManagersClient::Handle(ClientboundGameProfilePacket& packet)
 #else
-    void ManagersClient::Handle(ClientboundLoginFinishedPacket& msg)
+    void ManagersClient::Handle(ClientboundLoginFinishedPacket& packet)
 #endif
     {
         // Create all handlers
@@ -205,49 +205,49 @@ namespace Botcraft
         physics_manager->StartPhysics();
     }
 
-    void ManagersClient::Handle(ClientboundChangeDifficultyPacket& msg)
+    void ManagersClient::Handle(ClientboundChangeDifficultyPacket& packet)
     {
-        difficulty = static_cast<Difficulty>(msg.GetDifficulty());
+        difficulty = static_cast<Difficulty>(packet.GetDifficulty());
 #if PROTOCOL_VERSION > 463 /* > 1.13.2 */
-        difficulty_locked = msg.GetLocked();
+        difficulty_locked = packet.GetLocked();
 #endif
     }
 
-    void ManagersClient::Handle(ClientboundLoginPacket& msg)
+    void ManagersClient::Handle(ClientboundLoginPacket& packet)
     {
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-        ConnectionClient::Handle(msg);
+        ConnectionClient::Handle(packet);
 #endif
 
 #if PROTOCOL_VERSION > 737 /* > 1.16.1 */
-        is_hardcore = msg.GetHardcore();
+        is_hardcore = packet.GetHardcore();
 #else
-        is_hardcore = msg.GetGameType() & 0x08;
+        is_hardcore = packet.GetGameType() & 0x08;
 #endif
 
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
-        difficulty = static_cast<Difficulty>(msg.GetDifficulty());
+        difficulty = static_cast<Difficulty>(packet.GetDifficulty());
 #endif
     }
 
-    void ManagersClient::Handle(ClientboundSetHealthPacket& msg)
+    void ManagersClient::Handle(ClientboundSetHealthPacket& packet)
     {
-        if (msg.GetHealth() <= 0.0f && auto_respawn)
+        if (packet.GetHealth() <= 0.0f && auto_respawn)
         {
             Respawn();
         }
     }
 
-    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& msg)
+    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& packet)
     {
-        std::shared_ptr<ServerboundClientInformationPacket> settings_msg = std::make_shared<ServerboundClientInformationPacket>();
+        std::shared_ptr<ServerboundClientInformationPacket> settings_packet = std::make_shared<ServerboundClientInformationPacket>();
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        settings_msg->SetLanguage("fr_FR");
-        settings_msg->SetViewDistance(10);
-        settings_msg->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
-        settings_msg->SetChatColors(true);
-        settings_msg->SetModelCustomisation(0xFF);
-        settings_msg->SetMainHand(1); // 1 is right handed, 0 is left handed
+        settings_packet->SetLanguage("fr_FR");
+        settings_packet->SetViewDistance(10);
+        settings_packet->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
+        settings_packet->SetChatColors(true);
+        settings_packet->SetModelCustomisation(0xFF);
+        settings_packet->SetMainHand(1); // 1 is right handed, 0 is left handed
 #else
         ClientInformation info;
         info.SetLanguage("fr_FR");
@@ -259,49 +259,49 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         info.SetParticleStatus(2); // 0 is "all", 1 is "decreased" and 2 is "minimal"
 #endif
-        settings_msg->SetClientInformation(info);
+        settings_packet->SetClientInformation(info);
 #endif
 
-        network_manager->Send(settings_msg);
+        network_manager->Send(settings_packet);
     }
 
-    void ManagersClient::Handle(ClientboundPlayerPositionPacket& msg)
+    void ManagersClient::Handle(ClientboundPlayerPositionPacket& packet)
     {
         // Override the ConnectionClient Handle as the teleport confirmation is sent by the physics manager instead
     }
 
-    void ManagersClient::Handle(ClientboundRespawnPacket& msg)
+    void ManagersClient::Handle(ClientboundRespawnPacket& packet)
     {
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-        ConnectionClient::Handle(msg);
+        ConnectionClient::Handle(packet);
 #endif
 
 #if PROTOCOL_VERSION < 464 /* < 1.14 */
-        difficulty = static_cast<Difficulty>(msg.GetDifficulty());
+        difficulty = static_cast<Difficulty>(packet.GetDifficulty());
 #endif
     }
 
-    void ManagersClient::Handle(ClientboundSetTimePacket& msg)
+    void ManagersClient::Handle(ClientboundSetTimePacket& packet)
     {
         // abs because the server multiplies by -1 to indicate fixed daytime for versions < 1.21.2
-        day_time = std::abs(msg.GetDayTime()) % 24000;
+        day_time = std::abs(packet.GetDayTime()) % 24000;
     }
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    void ManagersClient::Handle(ClientboundPlayerInfoPacket& msg)
+    void ManagersClient::Handle(ClientboundPlayerInfoPacket& packet)
     {
-        if (msg.GetAction() == PlayerInfoAction::RemovePlayer)
+        if (packet.GetAction() == PlayerInfoAction::RemovePlayer)
         {
             std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-            for (const auto& [uuid, infos] : msg.GetEntries())
+            for (const auto& [uuid, infos] : packet.GetEntries())
             {
                 player_names.erase(uuid);
             }
         }
-        else if (msg.GetAction() == PlayerInfoAction::AddPlayer)
+        else if (packet.GetAction() == PlayerInfoAction::AddPlayer)
         {
             std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-            for (const auto& [uuid, infos] : msg.GetEntries())
+            for (const auto& [uuid, infos] : packet.GetEntries())
             {
                 if (infos.GetDisplayName().has_value())
                 {
@@ -313,10 +313,10 @@ namespace Botcraft
                 }
             }
         }
-        else if (msg.GetAction() == PlayerInfoAction::UpdateDisplayName)
+        else if (packet.GetAction() == PlayerInfoAction::UpdateDisplayName)
         {
             std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-            for (const auto& [uuid, infos] : msg.GetEntries())
+            for (const auto& [uuid, infos] : packet.GetEntries())
             {
                 if (infos.GetDisplayName().has_value())
                 {
@@ -326,23 +326,23 @@ namespace Botcraft
         }
     }
 #else
-    void ManagersClient::Handle(ClientboundPlayerInfoRemovePacket& msg)
+    void ManagersClient::Handle(ClientboundPlayerInfoRemovePacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-        for (const auto& uuid : msg.GetProfileIds())
+        for (const auto& uuid : packet.GetProfileIds())
         {
             player_names.erase(uuid);
         }
     }
 
-    void ManagersClient::Handle(ClientboundPlayerInfoUpdatePacket& msg)
+    void ManagersClient::Handle(ClientboundPlayerInfoUpdatePacket& packet)
     {
-        for (const auto& action : msg.GetActions())
+        for (const auto& action : packet.GetActions())
         {
             if (action == PlayerInfoUpdateAction::AddPlayer)
             {
                 std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-                for (const auto& [uuid, infos] : msg.GetEntries())
+                for (const auto& [uuid, infos] : packet.GetEntries())
                 {
                     player_names[uuid] = infos.game_profile.GetName();
                 }
@@ -351,7 +351,7 @@ namespace Botcraft
             if (action == PlayerInfoUpdateAction::UpdateDisplayName)
             {
                 std::scoped_lock<std::shared_mutex> lock(player_names_mutex);
-                for (const auto& [uuid, infos] : msg.GetEntries())
+                for (const auto& [uuid, infos] : packet.GetEntries())
                 {
                     if (infos.display_name.has_value())
                     {

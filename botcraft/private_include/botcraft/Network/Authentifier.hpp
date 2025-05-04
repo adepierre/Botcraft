@@ -159,7 +159,7 @@ namespace Botcraft
         /// @param msa_token Microsoft access token
         /// @return XBL token, empty if failed.
         const std::string GetXBLToken(const std::string& msa_token) const;
-                
+
         /// @brief Try to get XSTS token from XBL token.
         /// @param xbl_token XBL token
         /// @return Pair of {XSTS token, userhash}, empty if failed.
@@ -170,14 +170,14 @@ namespace Botcraft
         /// @param xsts_token XSTS Token
         /// @param user_hash User hash
         /// @return Minecraft token, empty if failed.
-        const std::string GetMCToken(const std::string& login, 
+        const std::string GetMCToken(const std::string& login,
             const std::string& xsts_token, const std::string& user_hash) const;
 
         /// @brief Try to get Minecraft profile from Minecraft token
         /// @param login Login used to store credentials in cache
         /// @param mc_token Minecraft token
         /// @return Pair of {MC UUID, MC name}, empty if failed.
-        const std::pair<std::string, std::string> GetMCProfile(const std::string& login, 
+        const std::pair<std::string, std::string> GetMCProfile(const std::string& login,
             const std::string& mc_token) const;
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
@@ -217,16 +217,16 @@ namespace Botcraft
 #endif
 
     private:
-        
+
         /// @brief Path to cache the credentials
         static const std::string cached_credentials_path;
-                
+
         /// @brief Botcraft app ID for microsoft auth
         static const std::string botcraft_app_id;
 
         /// @brief Default cached credentials JSON
         static const ProtocolCraft::Json::Value defaultCachedCredentials;
-        
+
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
@@ -240,6 +240,6 @@ namespace Botcraft
 
         std::mt19937 rnd;
 #endif
-        
+
     };
 }

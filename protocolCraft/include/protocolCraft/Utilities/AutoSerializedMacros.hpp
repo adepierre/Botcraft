@@ -235,9 +235,9 @@
     DEFINE_WRITE(ClassName);           \
     DEFINE_SERIALIZE(ClassName)
 
-// Define a Message with auto serializable fields
-#define DEFINE_MESSAGE_CLASS(ClassName)   \
+// Define a Packet with auto serializable fields
+#define DEFINE_PACKET_CLASS(ClassName)   \
     DEFINE_READ(ClassName);               \
     DEFINE_WRITE(ClassName);              \
     DEFINE_SERIALIZE(ClassName);          \
-    template class BaseMessage<ClassName>
+    template class BasePacket<ClassName>

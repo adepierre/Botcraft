@@ -39,18 +39,18 @@ namespace Botcraft
 
     protected:
         using ProtocolCraft::Handler::Handle; // Don't hide all Handle() functions from base classes
-        virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginDisconnectPacket& packet) override;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& packet) override;
 #endif
-        virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundDisconnectPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& packet) override;
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-        virtual void Handle(ProtocolCraft::ClientboundDisconnectConfigurationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundDisconnectConfigurationPacket& packet) override;
 #endif
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& packet) override;
 #endif
 
     protected:

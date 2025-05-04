@@ -25,7 +25,7 @@ namespace Botcraft
 
     struct InventoryTransaction
     {
-        std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> msg;
+        std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> packet;
         // In 1.21.5+, ServerboundContainerClickPacket doesn't have the components data
         // anymore, just hashed version so we need to store them somewhere
 #if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 769 /* > 1.21.4 */
@@ -53,7 +53,7 @@ namespace Botcraft
         TransactionState GetTransactionState(const short window_id, const int transaction_id) const;
         void AddPendingTransaction(const InventoryTransaction& transaction);
 #endif
-        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the msg
+        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the packet
         /// @param transaction The transaction to update with the modifications
         /// @return An InventoryTransaction with various info, depending on the version
         InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
@@ -80,24 +80,24 @@ namespace Botcraft
 #endif
 
     private:
-        virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerSetContentPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundOpenScreenPacket& packet) override;
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-        virtual void Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetCarriedItemPacket& packet) override;
 #else
-        virtual void Handle(ProtocolCraft::ClientboundSetHeldSlotPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHeldSlotPacket& packet) override;
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerAckPacket& packet) override;
 #endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-        virtual void Handle(ProtocolCraft::ClientboundMerchantOffersPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundMerchantOffersPacket& packet) override;
 #endif
-        virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundContainerClosePacket& packet) override;
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-        virtual void Handle(ProtocolCraft::ClientboundSetCursorItemPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetCursorItemPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& packet) override;
 #endif
 
         void ApplyTransactionImpl(const InventoryTransaction& transaction);

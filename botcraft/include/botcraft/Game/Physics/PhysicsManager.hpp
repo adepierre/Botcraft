@@ -53,13 +53,13 @@ namespace Botcraft
         double GetMsPerTick() const;
 
     protected:
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& packet) override;
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-        virtual void Handle(ProtocolCraft::ClientboundTickingStatePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundTickingStatePacket& packet) override;
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-        virtual void Handle(ProtocolCraft::ClientboundPlayerRotationPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerRotationPacket& packet) override;
 #endif
 
     private:

@@ -64,22 +64,22 @@ namespace Botcraft
     protected:
         using ConnectionClient::Handle; // Don't hide all Handle() functions from base classes
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-        virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundGameProfilePacket& packet) override;
 #else
-        virtual void Handle(ProtocolCraft::ClientboundLoginFinishedPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginFinishedPacket& packet) override;
 #endif
-        virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& packet) override;
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoPacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoPacket& packet) override;
 #else
-        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoRemovePacket& msg) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoUpdatePacket& msg) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoRemovePacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundPlayerInfoUpdatePacket& packet) override;
 #endif
 
     protected:

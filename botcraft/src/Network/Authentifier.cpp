@@ -138,7 +138,7 @@ namespace Botcraft
         // We assume you're using an account owning minecraft so
         // we don't check (and also a bit because it's complicated)
         // If you don't, Botcraft won't work on online mode.
-        // But you can buy yourself a copy of the game: 
+        // But you can buy yourself a copy of the game:
         // https://www.minecraft.net/get-minecraft
         LOG_INFO("Assuming the account owns Minecraft...");
 
@@ -249,8 +249,8 @@ namespace Botcraft
 
         if (post_response.status_code != 204)
         {
-            LOG_ERROR("Response returned with status code " << post_response.status_code 
-                << " (" << post_response.status_message << ") during server join:\n" 
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during server join:\n"
                 << post_response.response.Dump(4));
             return false;
         }
@@ -715,8 +715,8 @@ namespace Botcraft
             // file and restart the whole auth flow
             if (post_response.status_code != 200)
             {
-                LOG_ERROR("Response returned with status code " << post_response.status_code 
-                    << " (" << post_response.status_message << ") during Microsoft token refresh:\n" 
+                LOG_ERROR("Response returned with status code " << post_response.status_code
+                    << " (" << post_response.status_message << ") during Microsoft token refresh:\n"
                     << post_response.response.Dump(4));
                 UpdateCachedMSA(login, "", "", -1);
                 LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
@@ -776,7 +776,7 @@ namespace Botcraft
         if (post_response.status_code != 200)
         {
             LOG_ERROR("Response returned with status code " << post_response.status_code << " ("
-                << post_response.status_message << ") during microsoft authentification:\n" 
+                << post_response.status_message << ") during microsoft authentification:\n"
                 << post_response.response.Dump(4));
             return "";
         }
@@ -915,8 +915,8 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            LOG_ERROR("Response returned with status code " << post_response.status_code 
-                << " (" << post_response.status_message << ") during XBL authentication:\n" 
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during XBL authentication:\n"
                 << post_response.response.Dump(4));
             return "";
         }
@@ -949,8 +949,8 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            LOG_ERROR("Response returned with status code " << post_response.status_code 
-                << " (" << post_response.status_message << ") during XSTS authentication:\n" 
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during XSTS authentication:\n"
                 << post_response.response.Dump(4));
             return { "", "" };
         }
@@ -985,8 +985,8 @@ namespace Botcraft
 
         if (post_response.status_code != 200)
         {
-            LOG_ERROR("Response returned with status code " << post_response.status_code 
-                << " (" << post_response.status_message << ") during MC authentication:\n" 
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during MC authentication:\n"
                 << post_response.response.Dump(4));
             return "";
         }
@@ -1058,7 +1058,7 @@ namespace Botcraft
     {
         // Retrieve cached certificates
         Json::Value cached = GetCachedCredentials(login);
-        
+
         const bool invalid_cached_values = !cached.contains("certificates") || !cached["certificates"].is_object() ||
             !cached["certificates"].contains("private_key") || !cached["certificates"]["private_key"].is_string() ||
             !cached["certificates"].contains("public_key") || !cached["certificates"]["public_key"].is_string() ||
@@ -1139,7 +1139,7 @@ namespace Botcraft
 
             // Convert expires date in ISO8601 to ms since UNIX epoch
             const long long int expires_timestamp = Utilities::TimestampMilliFromISO8601(response["expiresAt"].get_string());
-            
+
             UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get_string(),
                 response["keyPair"]["publicKey"].get_string(), response["publicKeySignature"].get_string(),
                 response["publicKeySignatureV2"].get_string(), expires_timestamp

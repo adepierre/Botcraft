@@ -163,15 +163,15 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
-        pending_transactions[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), transaction));
-        transaction_states[transaction.msg->GetContainerId()].insert(std::make_pair(transaction.msg->GetUid(), TransactionState::Waiting));
+        pending_transactions[transaction.packet->GetContainerId()].insert(std::make_pair(transaction.packet->GetUid(), transaction));
+        transaction_states[transaction.packet->GetContainerId()].insert(std::make_pair(transaction.packet->GetUid(), TransactionState::Waiting));
 
         // Clean oldest transaction to avoid infinite growing map
-        for (auto it = transaction_states[transaction.msg->GetContainerId()].begin(); it != transaction_states[transaction.msg->GetContainerId()].end(); )
+        for (auto it = transaction_states[transaction.packet->GetContainerId()].begin(); it != transaction_states[transaction.packet->GetContainerId()].end(); )
         {
-            if (std::abs(it->first - transaction.msg->GetUid()) > 25)
+            if (std::abs(it->first - transaction.packet->GetUid()) > 25)
             {
-                it = transaction_states[transaction.msg->GetContainerId()].erase(it);
+                it = transaction_states[transaction.packet->GetContainerId()].erase(it);
             }
             else
             {
@@ -460,12 +460,12 @@ namespace Botcraft
         const std::map<short, Slot>& modified_slots = transaction.changed_slots;
         cursor = transaction.carried_item;
 #else
-        const std::map<short, Slot>& modified_slots = transaction.msg->GetChangedSlots();
-        cursor = transaction.msg->GetCarriedItem();
+        const std::map<short, Slot>& modified_slots = transaction.packet->GetChangedSlots();
+        cursor = transaction.packet->GetCarriedItem();
 #endif
 
         // Get the container
-        std::shared_ptr<Window> window = inventories[transaction.msg->GetContainerId()];
+        std::shared_ptr<Window> window = inventories[transaction.packet->GetContainerId()];
         for (const auto& p : modified_slots)
         {
             window->SetSlot(p.first, p.second);
@@ -499,60 +499,60 @@ namespace Botcraft
 #endif
 
 
-    void InventoryManager::Handle(ClientboundContainerSetSlotPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerSetSlotPacket& packet)
     {
-        if (msg.GetContainerId() == -1 && msg.GetSlot() == -1)
+        if (packet.GetContainerId() == -1 && packet.GetSlot() == -1)
         {
-            SetCursor(msg.GetItemStack());
+            SetCursor(packet.GetItemStack());
         }
         // Slot index is starting in the hotbar, THEN in the main storage in this case :)
-        else if (msg.GetContainerId() == -2)
+        else if (packet.GetContainerId() == -2)
         {
-            if (msg.GetSlot() < Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START)
+            if (packet.GetSlot() < Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START)
             {
-                SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + msg.GetSlot(), msg.GetItemStack());
+                SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + packet.GetSlot(), packet.GetItemStack());
             }
             else
             {
-                SetSlot(Window::PLAYER_INVENTORY_INDEX, msg.GetSlot() + Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START, msg.GetItemStack());
+                SetSlot(Window::PLAYER_INVENTORY_INDEX, packet.GetSlot() + Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START, packet.GetItemStack());
             }
         }
-        else if (msg.GetContainerId() >= 0)
+        else if (packet.GetContainerId() >= 0)
         {
-            SetSlot(msg.GetContainerId(), msg.GetSlot(), msg.GetItemStack());
+            SetSlot(packet.GetContainerId(), packet.GetSlot(), packet.GetItemStack());
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-            SetStateId(msg.GetContainerId(), msg.GetStateId());
+            SetStateId(packet.GetContainerId(), packet.GetStateId());
 #endif
         }
         else
         {
-            LOG_WARNING("Unknown window called during ClientboundContainerSetSlotPacket Handle : " << msg.GetContainerId() << ", " << msg.GetSlot());
+            LOG_WARNING("Unknown window called during ClientboundContainerSetSlotPacket Handle : " << packet.GetContainerId() << ", " << packet.GetSlot());
         }
     }
 
-    void InventoryManager::Handle(ClientboundContainerSetContentPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerSetContentPacket& packet)
     {
-        std::shared_ptr<Window> window = GetWindow(msg.GetContainerId());
+        std::shared_ptr<Window> window = GetWindow(packet.GetContainerId());
         if (window != nullptr)
         {
-            window->SetContent(msg.GetItems());
+            window->SetContent(packet.GetItems());
         }
 
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
-        if (msg.GetContainerId() >= 0)
+        if (packet.GetContainerId() >= 0)
         {
-            SetStateId(msg.GetContainerId(), msg.GetStateId());
+            SetStateId(packet.GetContainerId(), packet.GetStateId());
         }
 #endif
     }
 
-    void InventoryManager::Handle(ClientboundOpenScreenPacket& msg)
+    void InventoryManager::Handle(ClientboundOpenScreenPacket& packet)
     {
 #if PROTOCOL_VERSION < 452 /* < 1.14 */
         InventoryType type = InventoryType::Default;
-        if (msg.GetType() == "minecraft:chest")
+        if (packet.GetType() == "minecraft:chest")
         {
-            switch (msg.GetNumberOfSlots())
+            switch (packet.GetNumberOfSlots())
             {
             case 9*3:
                 type = InventoryType::Generic9x3;
@@ -561,48 +561,48 @@ namespace Botcraft
                 type = InventoryType::Generic9x6;
                 break;
             default:
-                LOG_ERROR("Not implemented chest type : " << msg.GetType());
+                LOG_ERROR("Not implemented chest type : " << packet.GetType());
                 break;
             }
         }
-        else if (msg.GetType() == "minecraft:crafting_table")
+        else if (packet.GetType() == "minecraft:crafting_table")
         {
             type = InventoryType::Crafting;
         }
         else
         {
-            LOG_ERROR("Not implemented container type : " << msg.GetType());
+            LOG_ERROR("Not implemented container type : " << packet.GetType());
         }
-        AddInventory(msg.GetContainerId(), type);
+        AddInventory(packet.GetContainerId(), type);
 #else
-        AddInventory(msg.GetContainerId(), static_cast<InventoryType>(msg.GetType()));
+        AddInventory(packet.GetContainerId(), static_cast<InventoryType>(packet.GetType()));
 #endif
     }
 
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-    void InventoryManager::Handle(ClientboundSetCarriedItemPacket& msg)
+    void InventoryManager::Handle(ClientboundSetCarriedItemPacket& packet)
 #else
-    void InventoryManager::Handle(ClientboundSetHeldSlotPacket& msg)
+    void InventoryManager::Handle(ClientboundSetHeldSlotPacket& packet)
 #endif
     {
-        SetHotbarSelected(msg.GetSlot());
+        SetHotbarSelected(packet.GetSlot());
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    void InventoryManager::Handle(ClientboundContainerAckPacket& msg)
+    void InventoryManager::Handle(ClientboundContainerAckPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
 
         // Update the new state of the transaction
-        auto it_container = transaction_states.find(msg.GetContainerId());
+        auto it_container = transaction_states.find(packet.GetContainerId());
         if (it_container == transaction_states.end())
         {
-            transaction_states[msg.GetContainerId()] = std::map<short, TransactionState>();
-            it_container = transaction_states.find(msg.GetContainerId());
+            transaction_states[packet.GetContainerId()] = std::map<short, TransactionState>();
+            it_container = transaction_states.find(packet.GetContainerId());
         }
-        it_container->second[msg.GetUid()] = msg.GetAccepted() ? TransactionState::Accepted : TransactionState::Refused;
+        it_container->second[packet.GetUid()] = packet.GetAccepted() ? TransactionState::Accepted : TransactionState::Refused;
 
-        auto container_transactions = pending_transactions.find(msg.GetContainerId());
+        auto container_transactions = pending_transactions.find(packet.GetContainerId());
 
         if (container_transactions == pending_transactions.end())
         {
@@ -610,7 +610,7 @@ namespace Botcraft
             return;
         }
 
-        auto transaction = container_transactions->second.find(msg.GetUid());
+        auto transaction = container_transactions->second.find(packet.GetUid());
 
         // Get the corresponding transaction
         if (transaction == container_transactions->second.end())
@@ -619,7 +619,7 @@ namespace Botcraft
             return;
         }
 
-        if (msg.GetAccepted())
+        if (packet.GetAccepted())
         {
             ApplyTransactionImpl(transaction->second);
         }
@@ -630,29 +630,29 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
-    void InventoryManager::Handle(ClientboundMerchantOffersPacket& msg)
+    void InventoryManager::Handle(ClientboundMerchantOffersPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
-        trading_container_id = msg.GetContainerId();
-        available_trades = msg.GetOffers();
+        trading_container_id = packet.GetContainerId();
+        available_trades = packet.GetOffers();
     }
 #endif
 
-    void InventoryManager::Handle(ClientboundContainerClosePacket& msg)
+    void InventoryManager::Handle(ClientboundContainerClosePacket& packet)
     {
-        EraseInventory(static_cast<short>(msg.GetContainerId()));
+        EraseInventory(static_cast<short>(packet.GetContainerId()));
     }
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-    void InventoryManager::Handle(ClientboundSetCursorItemPacket& msg)
+    void InventoryManager::Handle(ClientboundSetCursorItemPacket& packet)
     {
         // Not sure about this one, I can't figure out when it's sent by the server
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, msg.GetContents());
+        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, packet.GetContents());
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& msg)
+    void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& packet)
     {
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, static_cast<short>(msg.GetSlot()), msg.GetContents());
+        SetSlot(Window::PLAYER_INVENTORY_INDEX, static_cast<short>(packet.GetSlot()), packet.GetContents());
     }
 #endif
 

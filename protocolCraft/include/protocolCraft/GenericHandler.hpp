@@ -6,8 +6,8 @@ namespace ProtocolCraft
 {
     // This class is inspired by https://arobenko.gitbooks.io/comms-protocols-cpp/content/
 
-    // TCommon is common interface class for all the messages
-    // TAll is all the message types, that need to be handled, bundled in std::tuple
+    // TCommon is common interface class for all the packets
+    // TAll is all the packets types, that need to be handled, bundled in std::tuple
     template <typename TCommon, typename TAll>
     class GenericHandler;
 

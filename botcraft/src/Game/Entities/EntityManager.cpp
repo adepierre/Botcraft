@@ -42,40 +42,40 @@ namespace Botcraft
     }
 
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundLoginPacket& packet)
     {
         local_player = std::make_shared<LocalPlayer>();
-        local_player->SetEntityID(msg.GetPlayerId());
+        local_player->SetEntityID(packet.GetPlayerId());
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        local_player->SetGameMode(static_cast<GameType>(msg.GetGameType() & 0x03));
+        local_player->SetGameMode(static_cast<GameType>(packet.GetGameType() & 0x03));
 #else
-        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType()));
+        local_player->SetGameMode(static_cast<GameType>(packet.GetCommonPlayerSpawnInfo().GetGameType()));
 #endif
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities[msg.GetPlayerId()] = local_player;
+        entities[packet.GetPlayerId()] = local_player;
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        auto it = entities.find(msg.GetEntityId());
+        auto it = entities.find(packet.GetEntityId());
         if (it == entities.end())
         {
             std::shared_ptr<Entity> entity = std::make_shared<UnknownEntity>();
-            entity->SetEntityID(msg.GetEntityId());
-            entities[msg.GetEntityId()] = entity;
+            entity->SetEntityID(packet.GetEntityId());
+            entities[packet.GetEntityId()] = entity;
         }
     }
 #endif
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -86,21 +86,21 @@ namespace Botcraft
         {
             const Vector3<double> entity_position = entity->GetPosition();
             entity->SetPosition(Vector3<double>(
-                (msg.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
-                (msg.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
-                (msg.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
+                (packet.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
+                (packet.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
+                (packet.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
             ));
-            entity->SetOnGround(msg.GetOnGround());
+            entity->SetOnGround(packet.GetOnGround());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -111,23 +111,23 @@ namespace Botcraft
         {
             const Vector3<double> entity_position = entity->GetPosition();
             entity->SetPosition(Vector3<double>(
-                (msg.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
-                (msg.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
-                (msg.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
+                (packet.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
+                (packet.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
+                (packet.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
             ));
-            entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-            entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-            entity->SetOnGround(msg.GetOnGround());
+            entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+            entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
+            entity->SetOnGround(packet.GetOnGround());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -136,92 +136,92 @@ namespace Botcraft
 
         if (entity != nullptr)
         {
-            entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-            entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-            entity->SetOnGround(msg.GetOnGround());
+            entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+            entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
+            entity->SetOnGround(packet.GetOnGround());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddEntityPacket& packet)
     {
 #if PROTOCOL_VERSION < 458 /* < 1.14 */
-        std::shared_ptr<Entity> entity = Entity::CreateObjectEntity(static_cast<ObjectEntityType>(msg.GetType()));
+        std::shared_ptr<Entity> entity = Entity::CreateObjectEntity(static_cast<ObjectEntityType>(packet.GetType()));
 #else
-        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(packet.GetType()));
 #endif
 
-        entity->SetEntityID(msg.GetEntityId());
-        entity->SetX(msg.GetX());
-        entity->SetY(msg.GetY());
-        entity->SetZ(msg.GetZ());
-        entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-        entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-        entity->SetUUID(msg.GetUuid());
+        entity->SetEntityID(packet.GetEntityId());
+        entity->SetX(packet.GetX());
+        entity->SetY(packet.GetY());
+        entity->SetZ(packet.GetZ());
+        entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+        entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
+        entity->SetUUID(packet.GetUuid());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities[msg.GetEntityId()] = entity;
+        entities[packet.GetEntityId()] = entity;
     }
 
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& packet)
     {
-        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(packet.GetType()));
 
-        entity->SetEntityID(msg.GetEntityId());
-        entity->SetX(msg.GetX());
-        entity->SetY(msg.GetY());
-        entity->SetZ(msg.GetZ());
-        entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-        entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-        entity->SetUUID(msg.GetUuid());
+        entity->SetEntityID(packet.GetEntityId());
+        entity->SetX(packet.GetX());
+        entity->SetY(packet.GetY());
+        entity->SetZ(packet.GetZ());
+        entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+        entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
+        entity->SetUUID(packet.GetUuid());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities[msg.GetEntityId()] = entity;
+        entities[packet.GetEntityId()] = entity;
     }
 #endif
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddExperienceOrbPacket& packet)
     {
         std::shared_ptr<Entity> entity = Entity::CreateEntity(EntityType::ExperienceOrb);
 
-        entity->SetEntityID(msg.GetEntityId());
-        entity->SetX(msg.GetX());
-        entity->SetY(msg.GetY());
-        entity->SetZ(msg.GetZ());
+        entity->SetEntityID(packet.GetEntityId());
+        entity->SetX(packet.GetX());
+        entity->SetY(packet.GetY());
+        entity->SetZ(packet.GetZ());
         // What do we do with the xp value?
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities[msg.GetEntityId()] = entity;
+        entities[packet.GetEntityId()] = entity;
     }
 #endif
 
 #if PROTOCOL_VERSION < 721 /* < 1.16 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddGlobalEntityPacket& packet)
     {
-        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(msg.GetType()));
+        std::shared_ptr<Entity> entity = Entity::CreateEntity(static_cast<EntityType>(packet.GetType()));
 
-        entity->SetEntityID(msg.GetEntityId());
-        entity->SetX(msg.GetX());
-        entity->SetY(msg.GetY());
-        entity->SetZ(msg.GetZ());
+        entity->SetEntityID(packet.GetEntityId());
+        entity->SetX(packet.GetX());
+        entity->SetY(packet.GetY());
+        entity->SetZ(packet.GetZ());
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities[msg.GetEntityId()] = entity;
+        entities[packet.GetEntityId()] = entity;
     }
 #endif
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it == entities.end())
             {
                 entity = Entity::CreateEntity(EntityType::Player);
-                entities[msg.GetEntityId()] = entity;
+                entities[packet.GetEntityId()] = entity;
             }
             else
             {
@@ -229,32 +229,32 @@ namespace Botcraft
             }
         }
 
-        entity->SetEntityID(msg.GetEntityId());
+        entity->SetEntityID(packet.GetEntityId());
         entity->SetPosition(Vector3<double>(
-            msg.GetX(),
-            msg.GetY(),
-            msg.GetZ()
+            packet.GetX(),
+            packet.GetY(),
+            packet.GetZ()
         ));
-        entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-        entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
-        entity->SetUUID(msg.GetPlayerId());
+        entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+        entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
+        entity->SetUUID(packet.GetPlayerId());
     }
 #endif
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundSetHealthPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetHealthPacket& packet)
     {
-        local_player->SetHealth(msg.GetHealth());
-        local_player->SetFood(msg.GetFood());
-        local_player->SetFoodSaturation(msg.GetFoodSaturation());
+        local_player->SetHealth(packet.GetHealth());
+        local_player->SetFood(packet.GetFood());
+        local_player->SetFoodSaturation(packet.GetFoodSaturation());
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -265,77 +265,77 @@ namespace Botcraft
         {
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             entity->SetPosition(Vector3<double>(
-                msg.GetX(),
-                msg.GetY(),
-                msg.GetZ()
+                packet.GetX(),
+                packet.GetY(),
+                packet.GetZ()
             ));
-            entity->SetYaw(360.0f * msg.GetYRot() / 256.0f);
-            entity->SetPitch(360.0f * msg.GetXRot() / 256.0f);
+            entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
+            entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
 #else
             entity->SetPosition(Vector3<double>(
-                msg.GetRelatives() & (1 << 0) ? entity->GetX() + msg.GetChange().GetPosition()[0] : msg.GetChange().GetPosition()[0],
-                msg.GetRelatives() & (1 << 1) ? entity->GetY() + msg.GetChange().GetPosition()[1] : msg.GetChange().GetPosition()[1],
-                msg.GetRelatives() & (1 << 2) ? entity->GetZ() + msg.GetChange().GetPosition()[2] : msg.GetChange().GetPosition()[2]
+                packet.GetRelatives() & (1 << 0) ? entity->GetX() + packet.GetChange().GetPosition()[0] : packet.GetChange().GetPosition()[0],
+                packet.GetRelatives() & (1 << 1) ? entity->GetY() + packet.GetChange().GetPosition()[1] : packet.GetChange().GetPosition()[1],
+                packet.GetRelatives() & (1 << 2) ? entity->GetZ() + packet.GetChange().GetPosition()[2] : packet.GetChange().GetPosition()[2]
             ));
-            entity->SetYaw(msg.GetRelatives() & (1 << 3) ? entity->GetYaw() + msg.GetChange().GetYRot() : msg.GetChange().GetYRot());
-            entity->SetPitch(msg.GetRelatives() & (1 << 4) ? entity->GetPitch() + msg.GetChange().GetXRot() : msg.GetChange().GetXRot());
+            entity->SetYaw(packet.GetRelatives() & (1 << 3) ? entity->GetYaw() + packet.GetChange().GetYRot() : packet.GetChange().GetYRot());
+            entity->SetPitch(packet.GetRelatives() & (1 << 4) ? entity->GetPitch() + packet.GetChange().GetXRot() : packet.GetChange().GetXRot());
 #endif
-            entity->SetOnGround(msg.GetOnGround());
+            entity->SetOnGround(packet.GetOnGround());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& packet)
     {
-        local_player->SetAbilitiesFlags(msg.GetFlags());
-        local_player->SetFlyingSpeed(msg.GetFlyingSpeed());
-        local_player->SetWalkingSpeed(msg.GetWalkingSpeed());
+        local_player->SetAbilitiesFlags(packet.GetFlags());
+        local_player->SetFlyingSpeed(packet.GetFlyingSpeed());
+        local_player->SetWalkingSpeed(packet.GetWalkingSpeed());
     }
 
 #if PROTOCOL_VERSION == 755 /* 1.17 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntityPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        entities.erase(msg.GetEntityId());
+        entities.erase(packet.GetEntityId());
     }
 #else
-    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveEntitiesPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-        for (int i = 0; i < msg.GetEntityIds().size(); ++i)
+        for (int i = 0; i < packet.GetEntityIds().size(); ++i)
         {
-            entities.erase(msg.GetEntityIds()[i]);
+            entities.erase(packet.GetEntityIds()[i]);
         }
     }
 #endif
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundRespawnPacket& packet)
     {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        local_player->SetGameMode(static_cast<GameType>(msg.GetPlayerGameType()));
+        local_player->SetGameMode(static_cast<GameType>(packet.GetPlayerGameType()));
 #else
-        local_player->SetGameMode(static_cast<GameType>(msg.GetCommonPlayerSpawnInfo().GetGameType()));
+        local_player->SetGameMode(static_cast<GameType>(packet.GetCommonPlayerSpawnInfo().GetGameType()));
 #endif
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundGameEventPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundGameEventPacket& packet)
     {
-        switch (msg.GetType())
+        switch (packet.GetType())
         {
         case 3: // CHANGE_GAME_MODE
-            local_player->SetGameMode(static_cast<GameType>(msg.GetParam()));
+            local_player->SetGameMode(static_cast<GameType>(packet.GetParam()));
             break;
         default:
             break;
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -348,17 +348,17 @@ namespace Botcraft
         }
         else
         {
-            entity->LoadMetadataFromRawArray(msg.GetPackedItems());
+            entity->LoadMetadataFromRawArray(packet.GetPackedItems());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -372,17 +372,17 @@ namespace Botcraft
         else
         {
             // Packet data is in 1/8000 of block per tick, so convert it back to block/tick
-            entity->SetSpeed(Vector3<double>(msg.GetXA(), msg.GetYA(), msg.GetZA()) / 8000.0);
+            entity->SetSpeed(Vector3<double>(packet.GetXA(), packet.GetYA(), packet.GetZA()) / 8000.0);
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundSetEquipmentPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundSetEquipmentPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -396,23 +396,23 @@ namespace Botcraft
         else
         {
 #if PROTOCOL_VERSION > 730 /* > 1.15.2 */
-            for (auto& p : msg.GetSlots())
+            for (auto& p : packet.GetSlots())
             {
                 entity->SetEquipment(static_cast<EquipmentSlot>(p.first), p.second);
             }
 #else
-            entity->SetEquipment(static_cast<EquipmentSlot>(msg.GetSlot().first), msg.GetSlot().second);
+            entity->SetEquipment(static_cast<EquipmentSlot>(packet.GetSlot().first), packet.GetSlot().second);
 #endif
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -430,7 +430,7 @@ namespace Botcraft
         else
         {
             std::shared_ptr<LivingEntity> living_entity = std::dynamic_pointer_cast<LivingEntity>(entity);
-            for (const auto& a : msg.GetAttributes())
+            for (const auto& a : packet.GetAttributes())
             {
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
                 const EntityAttribute::Type type = static_cast<EntityAttribute::Type>(a.GetKey());
@@ -456,13 +456,13 @@ namespace Botcraft
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -476,21 +476,21 @@ namespace Botcraft
         else
         {
             entity->AddEffect(EntityEffect {
-                static_cast<EntityEffectType>(msg.GetEffectId()), // type
-                static_cast<unsigned char>(msg.GetEffectAmplifier()), //amplifier
-                std::chrono::steady_clock::now() + std::chrono::milliseconds(50 * msg.GetEffectDurationTicks()) // end
+                static_cast<EntityEffectType>(packet.GetEffectId()), // type
+                static_cast<unsigned char>(packet.GetEffectAmplifier()), //amplifier
+                std::chrono::steady_clock::now() + std::chrono::milliseconds(50 * packet.GetEffectDurationTicks()) // end
             });
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& packet)
     {
 
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -503,18 +503,18 @@ namespace Botcraft
         }
         else
         {
-            entity->RemoveEffect(static_cast<EntityEffectType>(msg.GetEffect()));
+            entity->RemoveEffect(static_cast<EntityEffectType>(packet.GetEffect()));
         }
     }
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-    void EntityManager::Handle(ProtocolCraft::ClientboundEntityPositionSyncPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundEntityPositionSyncPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -523,24 +523,24 @@ namespace Botcraft
 
         if (entity != nullptr)
         {
-            entity->SetPosition(msg.GetValues().GetPosition());
+            entity->SetPosition(packet.GetValues().GetPosition());
             if (entity == local_player)
             {
                 return;
             }
-            entity->SetYaw(msg.GetValues().GetYRot());
-            entity->SetPitch(msg.GetValues().GetXRot());
-            entity->SetOnGround(msg.GetOnGround());
+            entity->SetYaw(packet.GetValues().GetYRot());
+            entity->SetPitch(packet.GetValues().GetXRot());
+            entity->SetOnGround(packet.GetOnGround());
         }
     }
 
-    void EntityManager::Handle(ProtocolCraft::ClientboundMoveMinecartPacket& msg)
+    void EntityManager::Handle(ProtocolCraft::ClientboundMoveMinecartPacket& packet)
     {
         std::shared_ptr<Entity> entity = nullptr;
 
         {
             std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(msg.GetEntityId());
+            auto it = entities.find(packet.GetEntityId());
             if (it != entities.end())
             {
                 entity = it->second;
@@ -554,7 +554,7 @@ namespace Botcraft
 
         // Don't lerp, directly set the position to the last lerp step
 
-        const ProtocolCraft::MinecartBehaviorMinecartStep& step = msg.GetLerpSteps().back();
+        const ProtocolCraft::MinecartBehaviorMinecartStep& step = packet.GetLerpSteps().back();
         entity->SetPosition(step.GetPosition());
         entity->SetYaw(360.0f * step.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * step.GetXRot() / 256.0f);

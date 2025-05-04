@@ -705,26 +705,26 @@ namespace Botcraft
         return output;
     }
 
-    void World::Handle(ProtocolCraft::ClientboundLoginPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundLoginPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
+        SetCurrentDimensionImpl(static_cast<Dimension>(packet.GetDimension()));
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        SetCurrentDimensionImpl(msg.GetDimension().GetFull());
+        SetCurrentDimensionImpl(packet.GetDimension().GetFull());
 #else
-        SetCurrentDimensionImpl(msg.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
+        SetCurrentDimensionImpl(packet.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
 #endif
 
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
 #if PROTOCOL_VERSION < 751 /* < 1.16.2 */
-        for (const auto& d : msg.GetRegistryHolder()["dimension"].as_list_of<ProtocolCraft::NBT::TagCompound>())
+        for (const auto& d : packet.GetRegistryHolder()["dimension"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_ultrawarm[dim_name] = static_cast<bool>(d["ultrawarm"].get<char>());
         }
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
+        for (const auto& d : packet.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
@@ -737,62 +737,62 @@ namespace Botcraft
 #endif
     }
 
-    void World::Handle(ProtocolCraft::ClientboundRespawnPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundRespawnPacket& packet)
     {
         UnloadAllChunks(std::this_thread::get_id());
 
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
-        SetCurrentDimensionImpl(static_cast<Dimension>(msg.GetDimension()));
+        SetCurrentDimensionImpl(static_cast<Dimension>(packet.GetDimension()));
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        SetCurrentDimensionImpl(msg.GetDimension().GetFull());
+        SetCurrentDimensionImpl(packet.GetDimension().GetFull());
 #else
-        SetCurrentDimensionImpl(msg.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
+        SetCurrentDimensionImpl(packet.GetCommonPlayerSpawnInfo().GetDimension().GetFull());
 #endif
 
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-        dimension_ultrawarm[current_dimension] = static_cast<bool>(msg.GetDimensionType()["ultrawarm"].get<char>());
+        dimension_ultrawarm[current_dimension] = static_cast<bool>(packet.GetDimensionType()["ultrawarm"].get<char>());
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-        dimension_height[current_dimension] = msg.GetDimensionType()["height"].get<int>();
-        dimension_min_y[current_dimension] = msg.GetDimensionType()["min_y"].get<int>();
+        dimension_height[current_dimension] = packet.GetDimensionType()["height"].get<int>();
+        dimension_min_y[current_dimension] = packet.GetDimensionType()["min_y"].get<int>();
 #endif
 #endif
     }
 
-    void World::Handle(ProtocolCraft::ClientboundBlockUpdatePacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundBlockUpdatePacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
         int id;
         unsigned char metadata;
-        Blockstate::IdToIdMetadata(msg.GetBlockstate(), id, metadata);
-        SetBlockImpl(msg.GetPos(), { id, metadata });
+        Blockstate::IdToIdMetadata(packet.GetBlockstate(), id, metadata);
+        SetBlockImpl(packet.GetPos(), { id, metadata });
 #else
-        SetBlockImpl(msg.GetPos(), msg.GetBlockstate());
+        SetBlockImpl(packet.GetPos(), packet.GetBlockstate());
 #endif
     }
 
-    void World::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundSectionBlocksUpdatePacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
-        for (size_t i = 0; i < msg.GetRecords().size(); ++i)
+        for (size_t i = 0; i < packet.GetRecords().size(); ++i)
         {
-            unsigned char x = (msg.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
-            unsigned char z = msg.GetRecords()[i].GetHorizontalPosition() & 0x0F;
+            unsigned char x = (packet.GetRecords()[i].GetHorizontalPosition() >> 4) & 0x0F;
+            unsigned char z = packet.GetRecords()[i].GetHorizontalPosition() & 0x0F;
 
-            const int x_pos = CHUNK_WIDTH * msg.GetChunkX() + x;
-            const int y_pos = msg.GetRecords()[i].GetYCoordinate();
-            const int z_pos = CHUNK_WIDTH * msg.GetChunkZ() + z;
+            const int x_pos = CHUNK_WIDTH * packet.GetChunkX() + x;
+            const int y_pos = packet.GetRecords()[i].GetYCoordinate();
+            const int z_pos = CHUNK_WIDTH * packet.GetChunkZ() + z;
 #else
-        const int chunk_x = CHUNK_WIDTH * (msg.GetSectionPos() >> 42); // 22 bits
-        const int chunk_z = CHUNK_WIDTH * (msg.GetSectionPos() << 22 >> 42); // 22 bits
-        const int chunk_y = SECTION_HEIGHT * (msg.GetSectionPos() << 44 >> 44); // 20 bits
+        const int chunk_x = CHUNK_WIDTH * (packet.GetSectionPos() >> 42); // 22 bits
+        const int chunk_z = CHUNK_WIDTH * (packet.GetSectionPos() << 22 >> 42); // 22 bits
+        const int chunk_y = SECTION_HEIGHT * (packet.GetSectionPos() << 44 >> 44); // 20 bits
 
-        for (size_t i = 0; i < msg.GetPosState().size(); ++i)
+        for (size_t i = 0; i < packet.GetPosState().size(); ++i)
         {
-            const unsigned int block_id = msg.GetPosState()[i] >> 12;
-            const short position = msg.GetPosState()[i] & 0xFFFl;
+            const unsigned int block_id = packet.GetPosState()[i] >> 12;
+            const short position = packet.GetPosState()[i] & 0xFFFl;
 
             const int x_pos = chunk_x + ((position >> 8) & 0xF);
             const int z_pos = chunk_z + ((position >> 4) & 0xF);
@@ -804,11 +804,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
                 int id;
                 unsigned char metadata;
-                Blockstate::IdToIdMetadata(msg.GetRecords()[i].GetBlockId(), id, metadata);
+                Blockstate::IdToIdMetadata(packet.GetRecords()[i].GetBlockId(), id, metadata);
 
                 SetBlockImpl(cube_pos, { id, metadata });
 #elif PROTOCOL_VERSION < 739 /* < 1.16.2 */
-                SetBlockImpl(cube_pos, msg.GetRecords()[i].GetBlockId());
+                SetBlockImpl(cube_pos, packet.GetRecords()[i].GetBlockId());
 #else
                 SetBlockImpl(cube_pos, block_id);
 #endif
@@ -816,24 +816,24 @@ namespace Botcraft
         }
     }
 
-    void World::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundForgetLevelChunkPacket& packet)
     {
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        UnloadChunk(msg.GetX(), msg.GetZ(), std::this_thread::get_id());
+        UnloadChunk(packet.GetX(), packet.GetZ(), std::this_thread::get_id());
 #else
-        UnloadChunk(msg.GetPos().GetX(), msg.GetPos().GetZ(), std::this_thread::get_id());
+        UnloadChunk(packet.GetPos().GetX(), packet.GetPos().GetZ(), std::this_thread::get_id());
 #endif
     }
 
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-    void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundLevelChunkPacket& packet)
     {
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        if (msg.GetFullChunk())
+        if (packet.GetFullChunk())
         {
 #endif
-            LoadChunk(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
+            LoadChunk(packet.GetX(), packet.GetZ(), current_dimension, std::this_thread::get_id());
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         }
 #endif
@@ -841,7 +841,7 @@ namespace Botcraft
         { // lock scope
             std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-            if (auto it = delayed_light_updates.find({ msg.GetX(), msg.GetZ() }); it != delayed_light_updates.end())
+            if (auto it = delayed_light_updates.find({ packet.GetX(), packet.GetZ() }); it != delayed_light_updates.end())
             {
                 UpdateChunkLight(it->second.GetX(), it->second.GetZ(), current_dimension,
                     it->second.GetSkyYMask(), it->second.GetEmptySkyYMask(), it->second.GetSkyUpdates(), true);
@@ -851,73 +851,73 @@ namespace Botcraft
             }
 #endif
 #if PROTOCOL_VERSION < 552 /* < 1.15 */
-            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections(), msg.GetFullChunk());
+            LoadDataInChunk(packet.GetX(), packet.GetZ(), packet.GetBuffer(), packet.GetAvailableSections(), packet.GetFullChunk());
 #else
-            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBuffer(), msg.GetAvailableSections());
+            LoadDataInChunk(packet.GetX(), packet.GetZ(), packet.GetBuffer(), packet.GetAvailableSections());
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-            if (msg.GetBiomes().has_value())
+            if (packet.GetBiomes().has_value())
             {
 #if PROTOCOL_VERSION < 751 /* < 1.16.2 */
                 // Copy to convert the std::array to std::vector
-                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), std::vector<int>(msg.GetBiomes().value().begin(), msg.GetBiomes().value().end()));
+                LoadBiomesInChunk(packet.GetX(), packet.GetZ(), std::vector<int>(packet.GetBiomes().value().begin(), packet.GetBiomes().value().end()));
 #else
-                LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes().value());
+                LoadBiomesInChunk(packet.GetX(), packet.GetZ(), packet.GetBiomes().value());
 #endif
             }
 #else
-            LoadBiomesInChunk(msg.GetX(), msg.GetZ(), msg.GetBiomes());
+            LoadBiomesInChunk(packet.GetX(), packet.GetZ(), packet.GetBiomes());
 #endif
 #endif
-            LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetBlockEntitiesTags());
+            LoadBlockEntityDataInChunk(packet.GetX(), packet.GetZ(), packet.GetBlockEntitiesTags());
         }
     }
 #else
-    void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundLevelChunkWithLightPacket& packet)
     {
             std::scoped_lock<std::shared_mutex> lock(world_mutex);
-            LoadChunkImpl(msg.GetX(), msg.GetZ(), current_dimension, std::this_thread::get_id());
-            LoadDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBuffer());
-            LoadBlockEntityDataInChunk(msg.GetX(), msg.GetZ(), msg.GetChunkData().GetBlockEntitiesData());
-            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-                msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
-            UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-                msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
+            LoadChunkImpl(packet.GetX(), packet.GetZ(), current_dimension, std::this_thread::get_id());
+            LoadDataInChunk(packet.GetX(), packet.GetZ(), packet.GetChunkData().GetBuffer());
+            LoadBlockEntityDataInChunk(packet.GetX(), packet.GetZ(), packet.GetChunkData().GetBlockEntitiesData());
+            UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+                packet.GetLightData().GetSkyYMask(), packet.GetLightData().GetEmptySkyYMask(), packet.GetLightData().GetSkyUpdates(), true);
+            UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+                packet.GetLightData().GetBlockYMask(), packet.GetLightData().GetEmptyBlockYMask(), packet.GetLightData().GetBlockUpdates(), false);
     }
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    void World::Handle(ProtocolCraft::ClientboundLightUpdatePacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundLightUpdatePacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-        if (terrain.find({ msg.GetX(), msg.GetZ() }) == terrain.end())
+        if (terrain.find({ packet.GetX(), packet.GetZ() }) == terrain.end())
         {
-            delayed_light_updates[{msg.GetX(), msg.GetZ()}] = msg;
+            delayed_light_updates[{packet.GetX(), packet.GetZ()}] = packet;
             return;
         }
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetSkyYMask(), msg.GetEmptySkyYMask(), msg.GetSkyUpdates(), true);
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetBlockYMask(), msg.GetEmptyBlockYMask(), msg.GetBlockUpdates(), false);
+        UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+            packet.GetSkyYMask(), packet.GetEmptySkyYMask(), packet.GetSkyUpdates(), true);
+        UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+            packet.GetBlockYMask(), packet.GetEmptyBlockYMask(), packet.GetBlockUpdates(), false);
 #else
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetLightData().GetSkyYMask(), msg.GetLightData().GetEmptySkyYMask(), msg.GetLightData().GetSkyUpdates(), true);
-        UpdateChunkLight(msg.GetX(), msg.GetZ(), current_dimension,
-            msg.GetLightData().GetBlockYMask(), msg.GetLightData().GetEmptyBlockYMask(), msg.GetLightData().GetBlockUpdates(), false);
+        UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+            packet.GetLightData().GetSkyYMask(), packet.GetLightData().GetEmptySkyYMask(), packet.GetLightData().GetSkyUpdates(), true);
+        UpdateChunkLight(packet.GetX(), packet.GetZ(), current_dimension,
+            packet.GetLightData().GetBlockYMask(), packet.GetLightData().GetEmptyBlockYMask(), packet.GetLightData().GetBlockUpdates(), false);
 #endif
     }
 #endif
 
-    void World::Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundBlockEntityDataPacket& packet)
     {
-        SetBlockEntityData(msg.GetPos(), msg.GetTag());
+        SetBlockEntityData(packet.GetPos(), packet.GetTag());
     }
 
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-    void World::Handle(ProtocolCraft::ClientboundChunksBiomesPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundChunksBiomesPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        for (const auto& chunk_data : msg.GetChunkBiomeData())
+        for (const auto& chunk_data : packet.GetChunkBiomeData())
         {
             auto it = terrain.find({ chunk_data.GetPos().GetX(), chunk_data.GetPos().GetZ()});
             if (it != terrain.end())
@@ -933,11 +933,11 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-    void World::Handle(ProtocolCraft::ClientboundRegistryDataPacket& msg)
+    void World::Handle(ProtocolCraft::ClientboundRegistryDataPacket& packet)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        for (const auto& d : msg.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
+        for (const auto& d : packet.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
@@ -945,12 +945,12 @@ namespace Botcraft
             dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
         }
 #else
-        if (msg.GetRegistry().GetFull() != "minecraft:dimension_type")
+        if (packet.GetRegistry().GetFull() != "minecraft:dimension_type")
         {
             return;
         }
 
-        const auto& entries = msg.GetEntries();
+        const auto& entries = packet.GetEntries();
         for (size_t i = 0; i < entries.size(); ++i)
         {
             const std::string dim_name = entries[i].GetId().GetFull();

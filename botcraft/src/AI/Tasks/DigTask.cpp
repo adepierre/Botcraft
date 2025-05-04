@@ -195,14 +195,14 @@ namespace Botcraft
         local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
 
         std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
-        std::shared_ptr<ServerboundPlayerActionPacket> msg_digging = std::make_shared<ServerboundPlayerActionPacket>();
-        msg_digging->SetAction(static_cast<int>(PlayerDiggingStatus::StartDigging));
-        msg_digging->SetPos(pos.ToNetworkPosition());
-        msg_digging->SetDirection(static_cast<int>(face));
+        std::shared_ptr<ServerboundPlayerActionPacket> packet_digging = std::make_shared<ServerboundPlayerActionPacket>();
+        packet_digging->SetAction(static_cast<int>(PlayerDiggingStatus::StartDigging));
+        packet_digging->SetPos(pos.ToNetworkPosition());
+        packet_digging->SetDirection(static_cast<int>(face));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        msg_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
+        packet_digging->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
-        network_manager->Send(msg_digging);
+        network_manager->Send(packet_digging);
 
         std::shared_ptr<ServerboundSwingPacket> swing_packet;
         std::chrono::steady_clock::time_point last_time_send_swing;
@@ -228,14 +228,14 @@ namespace Botcraft
             if (elapsed >= expected_mining_time_s * 1000.0f
                 && !finished_sent)
             {
-                std::shared_ptr<ServerboundPlayerActionPacket> msg_finish(new ServerboundPlayerActionPacket);
-                msg_finish->SetAction(static_cast<int>(PlayerDiggingStatus::FinishDigging));
-                msg_finish->SetPos(pos.ToNetworkPosition());
-                msg_finish->SetDirection(static_cast<int>(face));
+                std::shared_ptr<ServerboundPlayerActionPacket> packet_finish(new ServerboundPlayerActionPacket);
+                packet_finish->SetAction(static_cast<int>(PlayerDiggingStatus::FinishDigging));
+                packet_finish->SetPos(pos.ToNetworkPosition());
+                packet_finish->SetDirection(static_cast<int>(face));
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-                msg_finish->SetSequence(world->GetNextWorldInteractionSequenceId());
+                packet_finish->SetSequence(world->GetNextWorldInteractionSequenceId());
 #endif
-                network_manager->Send(msg_finish);
+                network_manager->Send(packet_finish);
 
                 finished_sent = true;
             }
