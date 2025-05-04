@@ -494,43 +494,47 @@ public class ClientPatcher {
                 // else if (inFile == null)
                 mv.visitFieldInsn(GETSTATIC, classes.get(cLocalPlayer).name, inFile, "Ljava/io/BufferedReader;");
                 mv.visitJumpInsn(IFNONNULL, labelElseInFileNullEnd);
-                    // if (Files.exists(Paths.get("inFile.csv")))
-                    mv.visitLdcInsn(inFile + ".csv");
-                    mv.visitInsn(ICONST_0);
-                    mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
-                    mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Paths", "get", "(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;", false);
-                    mv.visitInsn(ICONST_0);
-                    mv.visitTypeInsn(ANEWARRAY, "java/nio/file/LinkOption");
-                    mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Files", "exists", "(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z", false);
+                    // if (this.onGround) // don't start reading the trajectory if not already in a stable onGround state
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitFieldInsn(GETFIELD, classes.get(cEntity).name, classes.get(cEntity).fields.get(fOnGround), "Z");
                     mv.visitJumpInsn(IFEQ, labelElseInFileNullEnd);
-                        // inFile = new BufferedReader(new FileReader("inFile.csv"));
-                        mv.visitTypeInsn(NEW, "java/io/BufferedReader");
-                        mv.visitInsn(DUP);
-                        mv.visitTypeInsn(NEW, "java/io/FileReader");
-                        mv.visitInsn(DUP);
+                        // if (Files.exists(Paths.get("inFile.csv")))
                         mv.visitLdcInsn(inFile + ".csv");
-                        mv.visitMethodInsn(INVOKESPECIAL, "java/io/FileReader", "<init>", "(Ljava/lang/String;)V", false);
-                        mv.visitMethodInsn(INVOKESPECIAL, "java/io/BufferedReader", "<init>", "(Ljava/io/Reader;)V", false);
-                        mv.visitFieldInsn(PUTSTATIC, classes.get(cLocalPlayer).name, inFile, "Ljava/io/BufferedReader;");
-                        // outFile = new BufferedWriter(new FileWriter("outFile.csv"));
-                        mv.visitTypeInsn(NEW, "java/io/BufferedWriter");
-                        mv.visitInsn(DUP);
-                        mv.visitTypeInsn(NEW, "java/io/FileWriter");
-                        mv.visitInsn(DUP);
-                        mv.visitLdcInsn(outFile + ".csv");
-                        mv.visitMethodInsn(INVOKESPECIAL, "java/io/FileWriter", "<init>", "(Ljava/lang/String;)V", false);
-                        mv.visitMethodInsn(INVOKESPECIAL, "java/io/BufferedWriter", "<init>", "(Ljava/io/Writer;)V", false);
-                        mv.visitFieldInsn(PUTSTATIC, classes.get(cLocalPlayer).name, outFile, "Ljava/io/BufferedWriter;");
-                        // outFile.write("forward;left;backward;right;jump;sneak;sprint;yRot;xRot;position.x;position.y;position.z;onGround\n")
-                        mv.visitFieldInsn(GETSTATIC, classes.get(cLocalPlayer).name, outFile, "Ljava/io/BufferedWriter;");
-                        mv.visitLdcInsn("forward;left;backward;right;jump;sneak;sprint;yRot;xRot;position.x;position.y;position.z;onGround\n");
-                        mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/BufferedWriter", "write", "(Ljava/lang/String;)V", false);
-                        // Files.delete(Paths.get("ready"));
-                        mv.visitLdcInsn(readyFile);
                         mv.visitInsn(ICONST_0);
                         mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
                         mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Paths", "get", "(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;", false);
-                        mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Files", "delete", "(Ljava/nio/file/Path;)V", false);
+                        mv.visitInsn(ICONST_0);
+                        mv.visitTypeInsn(ANEWARRAY, "java/nio/file/LinkOption");
+                        mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Files", "exists", "(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z", false);
+                        mv.visitJumpInsn(IFEQ, labelElseInFileNullEnd);
+                            // inFile = new BufferedReader(new FileReader("inFile.csv"));
+                            mv.visitTypeInsn(NEW, "java/io/BufferedReader");
+                            mv.visitInsn(DUP);
+                            mv.visitTypeInsn(NEW, "java/io/FileReader");
+                            mv.visitInsn(DUP);
+                            mv.visitLdcInsn(inFile + ".csv");
+                            mv.visitMethodInsn(INVOKESPECIAL, "java/io/FileReader", "<init>", "(Ljava/lang/String;)V", false);
+                            mv.visitMethodInsn(INVOKESPECIAL, "java/io/BufferedReader", "<init>", "(Ljava/io/Reader;)V", false);
+                            mv.visitFieldInsn(PUTSTATIC, classes.get(cLocalPlayer).name, inFile, "Ljava/io/BufferedReader;");
+                            // outFile = new BufferedWriter(new FileWriter("outFile.csv"));
+                            mv.visitTypeInsn(NEW, "java/io/BufferedWriter");
+                            mv.visitInsn(DUP);
+                            mv.visitTypeInsn(NEW, "java/io/FileWriter");
+                            mv.visitInsn(DUP);
+                            mv.visitLdcInsn(outFile + ".csv");
+                            mv.visitMethodInsn(INVOKESPECIAL, "java/io/FileWriter", "<init>", "(Ljava/lang/String;)V", false);
+                            mv.visitMethodInsn(INVOKESPECIAL, "java/io/BufferedWriter", "<init>", "(Ljava/io/Writer;)V", false);
+                            mv.visitFieldInsn(PUTSTATIC, classes.get(cLocalPlayer).name, outFile, "Ljava/io/BufferedWriter;");
+                            // outFile.write("forward;left;backward;right;jump;sneak;sprint;yRot;xRot;position.x;position.y;position.z;onGround\n")
+                            mv.visitFieldInsn(GETSTATIC, classes.get(cLocalPlayer).name, outFile, "Ljava/io/BufferedWriter;");
+                            mv.visitLdcInsn("forward;left;backward;right;jump;sneak;sprint;yRot;xRot;position.x;position.y;position.z;onGround\n");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/BufferedWriter", "write", "(Ljava/lang/String;)V", false);
+                            // Files.delete(Paths.get("ready"));
+                            mv.visitLdcInsn(readyFile);
+                            mv.visitInsn(ICONST_0);
+                            mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
+                            mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Paths", "get", "(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;", false);
+                            mv.visitMethodInsn(INVOKESTATIC, "java/nio/file/Files", "delete", "(Ljava/nio/file/Path;)V", false);
                 mv.visitLabel(labelElseInFileNullEnd);
                 // Reset all key press states to false
                 setKeyDown(fKeyForward, false);
