@@ -173,17 +173,17 @@ TEST_CASE("place block")
     SECTION("no mid air")
     {
         pos = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
-        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, Botcraft::PlayerDiggingFace::Up, true, false);
+        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, Botcraft::PlayerDiggingFace::Up, true, false, false);
     }
     SECTION("mid air")
     {
         pos = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 1, 1);
-        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, Botcraft::PlayerDiggingFace::Up, true, true);
+        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, Botcraft::PlayerDiggingFace::Up, true, true, false);
     }
     SECTION("automatic face detection")
     {
         pos = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
-        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, std::nullopt, true, false);
+        bot->SyncAction(5000, Botcraft::PlaceBlock, "minecraft:diamond_block", pos, std::nullopt, true, false, false);
     }
 
     const Botcraft::Blockstate* block = world->GetBlock(pos);
