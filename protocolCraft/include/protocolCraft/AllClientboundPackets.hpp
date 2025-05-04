@@ -62,319 +62,319 @@
 #endif
 
 // Play
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddEntityPacket.hpp"
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddExperienceOrbPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddExperienceOrbPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 735 /* < 1.16 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddGlobalEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddGlobalEntityPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddMobPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddPaintingPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddMobPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddPaintingPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddPlayerPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddPlayerPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAnimatePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundAwardStatsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAnimatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAwardStatsPacket.hpp"
 #if PROTOCOL_VERSION > 490 /* > 1.14.3 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockBreakAckPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockBreakAckPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockChangedAckPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockChangedAckPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockDestructionPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockEntityDataPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockEventPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBlockUpdatePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBossEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockDestructionPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockEntityDataPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBlockUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBossEventPacket.hpp"
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundBundlePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundBundlePacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChangeDifficultyPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChangeDifficultyPacket.hpp"
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChunkBatchFinishedPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChunkBatchStartPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChunkBatchFinishedPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChunkBatchStartPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChunksBiomesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChunksBiomesPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChatPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundChatPreviewPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundChatPreviewPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundClearTitlesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundClearTitlesPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCommandSuggestionsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCommandSuggestionsPacket.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCommandsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCommandsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundContainerAckPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundContainerAckPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundContainerClosePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundContainerSetContentPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundContainerSetDataPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundContainerSetSlotPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundContainerClosePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundContainerSetContentPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundContainerSetDataPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundContainerSetSlotPacket.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCookieRequestPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCookieRequestPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCooldownPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCooldownPacket.hpp"
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCustomChatCompletionsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCustomChatCompletionsPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCustomPayloadPacket.hpp"
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCustomReportDetailsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCustomReportDetailsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundCustomSoundPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundCustomSoundPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundDamageEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDamageEventPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundDebugSamplePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugSamplePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundDeleteChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDeleteChatPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundDisconnectPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDisconnectPacket.hpp"
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundDisguisedChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDisguisedChatPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundEntityEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundEntityEventPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundEntityPositionSyncPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundEntityPositionSyncPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundExplodePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundGameEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundExplodePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundGameEventPacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundHorseScreenOpenPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundHorseScreenOpenPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundHurtAnimationPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundHurtAnimationPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundInitializeBorderPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundInitializeBorderPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundKeepAlivePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundKeepAlivePacket.hpp"
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLevelChunkPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelChunkPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 756 /* > 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLevelChunkWithLightPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelChunkWithLightPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLevelEventPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLevelParticlesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelEventPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelParticlesPacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLightUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLightUpdatePacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundLoginPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMapItemDataPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundLoginPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMapItemDataPacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMerchantOffersPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMerchantOffersPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveEntityPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveEntityPacketPos.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveEntityPacketPosRot.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveEntityPacketRot.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveEntityPacketPos.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveEntityPacketPosRot.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveEntityPacketRot.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveMinecartPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveMinecartPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundMoveVehiclePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveVehiclePacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundOpenBookPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundOpenBookPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundOpenScreenPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundOpenSignEditorPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundOpenScreenPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundOpenSignEditorPacket.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPingPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPingPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlaceGhostRecipePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerAbilitiesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlaceGhostRecipePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerAbilitiesPacket.hpp"
 #if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerChatHeaderPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerChatHeaderPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerChatPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerCombatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerCombatPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerCombatEndPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerCombatEnterPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerCombatKillPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerCombatEndPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerCombatEnterPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerCombatKillPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerInfoPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerInfoPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerInfoRemovePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerInfoRemovePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerInfoUpdatePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerLookAtPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerLookAtPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerPositionPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerPositionPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPlayerRotationPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerRotationPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundPongResponsePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPongResponsePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundProjectilePowerPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundProjectilePowerPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRecipeBookAddPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRecipeBookRemovePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRecipeBookSettingsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipeBookAddPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipeBookRemovePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipeBookSettingsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRecipePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipePacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 755 /* > 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRemoveEntitiesPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 756 /* < 1.17.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRemoveEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRemoveEntityPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRemoveMobEffectPacket.hpp"
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundResetScorePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundResetScorePacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundResourcePackPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundResourcePackPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundResourcePackPopPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundResourcePackPushPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundResourcePackPopPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundResourcePackPushPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRespawnPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundRotateHeadPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRespawnPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundRotateHeadPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundServerDataPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundServerDataPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundServerLinksPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundServerLinksPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetActionBarTextPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderCenterPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderLerpSizePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetActionBarTextPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderCenterPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderLerpSizePacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderSizePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderWarningDelayPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetBorderWarningDistancePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderSizePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderWarningDelayPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetBorderWarningDistancePacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetCameraPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetCameraPacket.hpp"
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetCarriedItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetCarriedItemPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetChunkCacheCenterPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetChunkCacheRadiusPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetChunkCacheCenterPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetChunkCacheRadiusPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetCursorItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetCursorItemPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetDefaultSpawnPositionPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetDefaultSpawnPositionPacket.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetDisplayChatPreviewPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetDisplayChatPreviewPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetDisplayObjectivePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetEntityDataPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetEntityLinkPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetEntityMotionPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetEquipmentPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetExperiencePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetHealthPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetDisplayObjectivePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityDataPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityLinkPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityMotionPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetEquipmentPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetExperiencePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetHealthPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetHeldSlotPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetHeldSlotPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetObjectivePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetPassengersPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetObjectivePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetPassengersPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetPlayerInventoryPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetPlayerInventoryPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetScorePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetScorePacket.hpp"
 #if PROTOCOL_VERSION > 756 /* > 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetSimulationDistancePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetSimulationDistancePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetSubtitleTextPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetSubtitleTextPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetTimePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTimePacket.hpp"
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetTitlesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTitlesPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetTitleTextPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSetTitlesAnimationPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTitleTextPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTitlesAnimationPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSoundEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSoundPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSoundPacket.hpp"
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundStartConfigurationPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundStartConfigurationPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundStopSoundPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundStopSoundPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundStoreCookiePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundStoreCookiePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundSystemChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSystemChatPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTabListPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTabListPacket.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTagQueryPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTagQueryPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTakeItemEntityPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTeleportEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTakeItemEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTeleportEntityPacket.hpp"
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTestInstanceBlockStatusPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTestInstanceBlockStatusPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTickingStatePacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTickingStepPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTickingStatePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTickingStepPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundTransferPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTransferPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateAdvancementsPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateAttributesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAdvancementsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAttributesPacket.hpp"
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateMobEffectPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateMobEffectPacket.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateRecipesPacket.hpp"
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUpdateTagsPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateRecipesPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateTagsPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-#include "protocolCraft/Packets/Play/Clientbound/ClientboundUseBedPacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundUseBedPacket.hpp"
 #endif
 
 // Status

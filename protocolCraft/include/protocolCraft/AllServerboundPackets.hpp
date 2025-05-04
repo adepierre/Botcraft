@@ -21,7 +21,7 @@
 #endif
 
 // Handshaking
-#include "protocolCraft/Packets/Handshaking/Serverbound/ServerboundClientIntentionPacket.hpp"
+#include "protocolCraft/Packets/Handshake/Serverbound/ServerboundClientIntentionPacket.hpp"
 
 // Login
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -40,150 +40,150 @@
 #endif
 
 // Play
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundBlockEntityTagQueryPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundBlockEntityTagQueryPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChangeDifficultyPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChangeDifficultyPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatAckPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatAckPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatCommandPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatCommandPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatCommandSignedPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatCommandSignedPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatPacket.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatPreviewPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatPreviewPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChatSessionUpdatePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundChunkBatchReceivedPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChunkBatchReceivedPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundClientCommandPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundClientInformationPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundCommandSuggestionPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundClientCommandPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundClientInformationPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundCommandSuggestionPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundClientTickEndPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundClientTickEndPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundConfigurationAcknowledgedPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundConfigurationAcknowledgedPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundContainerAckPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundContainerAckPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundContainerButtonClickPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundContainerButtonClickPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundContainerClickPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundContainerClosePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundContainerClickPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundContainerClosePacket.hpp"
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundCookieResponsePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundCookieResponsePacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundCustomPayloadPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundCustomPayloadPacket.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundEditBookPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundEditBookPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundEnchantItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundEnchantItemPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundEntityTagQueryPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundEntityTagQueryPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundInteractPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundInteractPacket.hpp"
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundJigsawGeneratePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundJigsawGeneratePacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundKeepAlivePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundKeepAlivePacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundLockDifficultyPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundLockDifficultyPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMovePlayerPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMovePlayerPacketPos.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMovePlayerPacketPosRot.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMovePlayerPacketRot.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacketPos.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacketPosRot.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacketRot.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundMoveVehiclePacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPaddleBoatPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundMoveVehiclePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPaddleBoatPacket.hpp"
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPickItemFromBlockPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPickItemFromEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPickItemFromBlockPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPickItemFromEntityPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 769 /* < 1.21.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPickItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPickItemPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPingRequestPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPingRequestPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlaceRecipePacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlayerAbilitiesPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlayerActionPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlayerCommandPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlayerInputPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlaceRecipePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlayerAbilitiesPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlayerActionPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlayerCommandPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlayerInputPacket.hpp"
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPlayerLoadedPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPlayerLoadedPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundPongPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPongPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 751 /* < 1.16.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundRenameItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundRenameItemPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundResourcePackPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSeenAdvancementsPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundResourcePackPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSeenAdvancementsPacket.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSelectBundleItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSelectBundleItemPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSelectTradePacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetBeaconPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSelectTradePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetBeaconPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetCarriedItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetCarriedItemPacket.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetCommandBlockPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetCommandMinecartPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetCommandBlockPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetCommandMinecartPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetCreativeModeSlotPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetCreativeModeSlotPacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetJigsawBlockPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetJigsawBlockPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetStructureBlockPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetStructureBlockPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSetTestBlockPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSetTestBlockPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSignUpdatePacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundSwingPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundTeleportToEntityPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSignUpdatePacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSwingPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundTeleportToEntityPacket.hpp"
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp"
 #endif
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundUseItemOnPacket.hpp"
-#include "protocolCraft/Packets/Play/Serverbound/ServerboundUseItemPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundUseItemOnPacket.hpp"
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundUseItemPacket.hpp"
 
 // Status
 #include "protocolCraft/Packets/Status/Serverbound/ServerboundPingRequestPacket.hpp"
