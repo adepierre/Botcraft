@@ -581,6 +581,8 @@ set_property(TARGET protocolCraft PROPERTY CXX_STANDARD 17)
 set_property(TARGET protocolCraft PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_target_properties(protocolCraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(protocolCraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
+# Add special $ORIGIN to rpath so Linux can find shared libraries in same folder
+set_target_properties(protocolCraft PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 if(MSVC)
     # To avoid having folder for each configuration when building with Visual

@@ -558,6 +558,8 @@ endif(BOTCRAFT_STATIC)
 set_property(TARGET botcraft PROPERTY CXX_STANDARD 17)
 set_target_properties(botcraft PROPERTIES DEBUG_POSTFIX "_d")
 set_target_properties(botcraft PROPERTIES RELWITHDEBINFO_POSTFIX "_rd")
+# Add special $ORIGIN to rpath so Linux can find shared libraries in same folder
+set_target_properties(botcraft PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 # Enable precompiled headers, except on GCC because it's hurting performances
 if (BOTCRAFT_USE_PRECOMPILED_HEADERS AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

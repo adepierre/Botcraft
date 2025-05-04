@@ -21,7 +21,8 @@ macro(add_example include_folders source_files)
     else()
         set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${BOTCRAFT_OUTPUT_DIR}/bin")
     endif(MSVC)
-
+    # Add special $ORIGIN to rpath so Linux can find shared libraries in same folder
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endmacro()
 
