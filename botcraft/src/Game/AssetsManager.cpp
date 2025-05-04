@@ -130,6 +130,32 @@ namespace Botcraft
 #endif
     }
 
+    std::vector<const Blockstate*> AssetsManager::GetBlockstates(const std::string& name) const
+    {
+        std::vector<const Blockstate*> output;
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        for (const auto& [id, m] : blockstates)
+        {
+            for (const auto& [id2, block] : m)
+            {
+                if (block->GetName() == name)
+                {
+                    output.push_back(block.get());
+                }
+            }
+        }
+#else
+        for (const auto& block : flattened_blockstates)
+        {
+            if (block->GetName() == name)
+            {
+                output.push_back(block);
+            }
+        }
+#endif
+        return output;
+    }
+
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
     const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& AssetsManager::Biomes() const
 #else

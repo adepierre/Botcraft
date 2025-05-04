@@ -34,7 +34,12 @@ namespace Botcraft
         /// @param name Name of the blockstate
         /// @return A blockstate matching the given name, or default block if not found
         const Blockstate* GetBlockstate(const std::string& name) const;
-        
+
+        /// @brief Get all blockstates that match a given name
+        /// @param name Name of the blockstate
+        /// @return A vector of all blockstates matching the given name
+        std::vector<const Blockstate*> GetBlockstates(const std::string& name) const;
+
 #if PROTOCOL_VERSION < 358 /* < 1.13 */
         const std::unordered_map<unsigned char, std::unique_ptr<Biome> >& Biomes() const;
         const Biome* GetBiome(const unsigned char id) const;
