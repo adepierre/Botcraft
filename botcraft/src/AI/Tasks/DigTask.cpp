@@ -246,7 +246,14 @@ namespace Botcraft
             }
             const Blockstate* block = world->GetBlock(pos);
 
-            if (block == nullptr || block->IsAir())
+            if (block == nullptr ||
+                block->IsAir() ||
+                // Block could now be fluid if it was a waterlogged block or if a neighbour is flowing
+                // or even a different blockstate for the same block (like a dripleaf changing state while
+                // being mined) so we need to check the name (and first compare id cause it should be more
+                // faster to compare before comparing the string names)
+                (blockstate->GetId() != block->GetId() && blockstate->GetName() != block->GetName())
+            )
             {
                 return Status::Success;
             }
