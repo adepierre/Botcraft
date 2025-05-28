@@ -16,7 +16,11 @@ namespace ProtocolCraft
         {
             SERIALIZED_FIELD(Slot, VarInt);
             SERIALIZED_FIELD(EquipSound, Holder<SoundEvent>);
+#if PROTOCOL_VERSION < 769 /* < 1.21.4 */
             SERIALIZED_FIELD(Model, std::optional<Identifier>);
+#else
+            SERIALIZED_FIELD(AssetId, std::optional<Identifier>);
+#endif
             SERIALIZED_FIELD(CameraOverlay, std::optional<Identifier>);
             SERIALIZED_FIELD(AllowedEntities, std::optional<HolderSet>);
             SERIALIZED_FIELD(Dispensable, bool);
