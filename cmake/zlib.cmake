@@ -24,7 +24,7 @@ if(NOT TARGET ZLIB::ZLIB)
         file(MAKE_DIRECTORY "${ZLIB_BUILD_PATH}")
 
         execute_process(
-            COMMAND "${CMAKE_COMMAND}" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+            COMMAND "${CMAKE_COMMAND}" "${ZLIB_SRC_PATH}" "-G" "${CMAKE_GENERATOR}" "-A" "${CMAKE_GENERATOR_PLATFORM}" "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}" "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_INSTALL_PREFIX=install" "-DCMAKE_POSITION_INDEPENDENT_CODE=ON" "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW" "-DZLIB_BUILD_SHARED=OFF"
             WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
 
         execute_process(COMMAND "${CMAKE_COMMAND}" "--build" "." "--target" "install" "--parallel" "2" "--config" "Release" WORKING_DIRECTORY "${ZLIB_BUILD_PATH}")
@@ -36,17 +36,19 @@ if(NOT TARGET ZLIB::ZLIB)
     # but before, we need to do it in a more manual way
     if(${CMAKE_VERSION} VERSION_LESS "3.24.0")
         set(_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-        set(CMAKE_FIND_LIBRARY_SUFFIXES "static.lib" ".a")
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "static.lib" "s.lib" ".a")
     else()
         set(ZLIB_USE_STATIC_LIBS "ON")
     endif()
 
-    set(ZLIB_ROOT "${ZLIB_BUILD_PATH}/install")
-    find_package(ZLIB QUIET)
+    find_package(ZLIB QUIET NO_DEFAULT_PATH PATHS "${ZLIB_BUILD_PATH}/install")
+
+    # We link to ZLIB::ZLIB so we need an alias if we're using the static local version
+    add_library(ZLIB::ZLIB ALIAS ZLIB::ZLIBSTATIC)
 
     # Revert library suffix to what they were
     if(${CMAKE_VERSION} VERSION_LESS "3.24.0")
-        set(CMAKE_FIND_LIBRARY_SUFFIXES ${_CMAKE_FIND_LIBRARY_SUFFIXES}) 
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ${_CMAKE_FIND_LIBRARY_SUFFIXES})
         unset(_CMAKE_FIND_LIBRARY_SUFFIXES)
     endif()
 endif()
