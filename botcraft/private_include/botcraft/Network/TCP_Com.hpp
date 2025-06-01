@@ -6,7 +6,7 @@
 #include <mutex>
 #include <asio/error_code.hpp>
 #include <asio/ip/tcp.hpp>
-#include <asio/io_service.hpp>
+#include <asio/io_context.hpp>
 
 namespace Botcraft
 {
@@ -49,8 +49,8 @@ namespace Botcraft
 
 
     private:
-        // io_service must be declared before socket
-        asio::io_service io_service;
+        // io_context must be declared before socket
+        asio::io_context io_context;
         asio::ip::tcp::socket socket;
 
         std::thread thread_com;

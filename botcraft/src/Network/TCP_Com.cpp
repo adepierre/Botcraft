@@ -19,21 +19,20 @@ namespace Botcraft
 {
     TCP_Com::TCP_Com(const std::string& address,
         std::function<void(const std::vector<unsigned char>&)> callback)
-        : socket(io_service), initialized(false)
+        : socket(io_context), initialized(false)
     {
         NewPacketCallback = callback;
 
         SetIPAndPortFromAddress(address);
 
-        asio::ip::tcp::resolver resolver(io_service);
-        asio::ip::tcp::resolver::query query(ip, std::to_string(port));
-        asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
+        asio::ip::tcp::resolver resolver(io_context);
+        asio::ip::tcp::resolver::results_type results = resolver.resolve(ip, std::to_string(port));
         LOG_INFO("Trying to connect to " << ip << ":" << port);
-        asio::async_connect(socket, iterator,
+        asio::async_connect(socket, results,
             std::bind(&TCP_Com::handle_connect, this,
             std::placeholders::_1));
 
-        thread_com = std::thread([&] { io_service.run(); });
+        thread_com = std::thread([&] { io_context.run(); });
         Logger::GetInstance().RegisterThread(thread_com.get_id(), "NetworkIOService");
     }
 
@@ -62,14 +61,14 @@ namespace Botcraft
         if (encrypter != nullptr)
         {
             std::vector<unsigned char> encrypted = encrypter->Encrypt(sized_packet);
-            io_service.post(std::bind(&TCP_Com::do_write, this, encrypted));
+            asio::post(io_context, std::bind(&TCP_Com::do_write, this, encrypted));
         }
         else
         {
-            io_service.post(std::bind(&TCP_Com::do_write, this, sized_packet));
+            asio::post(io_context, std::bind(&TCP_Com::do_write, this, sized_packet));
         }
 #else
-        io_service.post(std::bind(&TCP_Com::do_write, this, sized_packet));
+        asio::post(io_context, std::bind(&TCP_Com::do_write, this, sized_packet));
 #endif
     }
 
@@ -92,7 +91,7 @@ namespace Botcraft
 
     void TCP_Com::close()
     {
-        io_service.post(std::bind(&TCP_Com::do_close, this));
+        asio::post(io_context, std::bind(&TCP_Com::do_close, this));
     }
 
     void TCP_Com::handle_connect(const asio::error_code& error)
@@ -253,7 +252,7 @@ namespace Botcraft
 
         // If port is unknown we first try a SRV DNS lookup
         LOG_INFO("Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint");
-        asio::ip::udp::socket udp_socket(io_service);
+        asio::ip::udp::socket udp_socket(io_context);
 
         // Create the query
         DNSMessage query;
@@ -282,7 +281,7 @@ namespace Botcraft
         std::vector<unsigned char> encoded_query;
         query.Write(encoded_query);
         udp_socket.open(asio::ip::udp::v4());
-        asio::ip::udp::endpoint endpoint(asio::ip::address::from_string("8.8.8.8"), 53);
+        asio::ip::udp::endpoint endpoint(asio::ip::make_address("8.8.8.8"), 53);
         udp_socket.send_to(asio::buffer(encoded_query), endpoint);
 
         // Wait for the answer
