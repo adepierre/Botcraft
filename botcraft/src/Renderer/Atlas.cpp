@@ -8,7 +8,7 @@
 #include <stb_image/stb_image.h>
 
 // rectpack2D
-#include "finders_interface.h"
+#include "rectpack2D/finders_interface.h"
 
 #include <fstream>
 #include <string>
@@ -142,7 +142,7 @@ namespace Botcraft
                 );
 
             LOG_INFO("All textures packed, resultant atlas size: " << result_size.h << "x" << result_size.w);
-            
+
             //Compute the global texture image
             Reset(result_size.h, result_size.w);
 
@@ -157,7 +157,7 @@ namespace Botcraft
             for (int i = 0; i < kept_textures.size(); ++i)
             {
                 const rect_type& rectangle = rectangles[i + 1];
-                
+
                 textures_map[kept_textures[i].identifier] = TextureData{
                     { rectangle.w, rectangle.h }, // size
                     { rectangle.x, rectangle.y }, // position
