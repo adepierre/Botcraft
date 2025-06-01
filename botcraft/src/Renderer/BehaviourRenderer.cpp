@@ -137,13 +137,13 @@ namespace Botcraft
 
                 ImDrawList* draw_list = ImGui::GetWindowDrawList();
                 draw_list->AddRectFilled(
-                    ImVec2(button_min_rect.x + 0.2f * button_size.x, button_min_rect.y + 0.1f * button_size.y),
-                    ImVec2(button_min_rect.x + 0.4f * button_size.x, button_min_rect.y + 0.9f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.2f * button_size.x, button_min_rect.y + 0.2f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.4f * button_size.x, button_min_rect.y + 0.8f * button_size.y),
                     ImGui::GetColorU32(ImGuiCol_Text)
                 );
                 draw_list->AddRectFilled(
-                    ImVec2(button_min_rect.x + 0.6f * button_size.x, button_min_rect.y + 0.1f * button_size.y),
-                    ImVec2(button_min_rect.x + 0.8f * button_size.x, button_min_rect.y + 0.9f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.6f * button_size.x, button_min_rect.y + 0.2f * button_size.y),
+                    ImVec2(button_min_rect.x + 0.8f * button_size.x, button_min_rect.y + 0.8f * button_size.y),
                     ImGui::GetColorU32(ImGuiCol_Text)
                 );
             }
