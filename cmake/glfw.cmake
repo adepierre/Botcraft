@@ -2,7 +2,7 @@
 
 # We first try to find glfw in the system
 if(NOT BOTCRAFT_FORCE_LOCAL_GLFW)
-    find_package(glfw3 3.3 QUIET)
+    find_package(glfw3 3.4 QUIET)
 endif()
 
 # If not found, build from sources
@@ -32,5 +32,5 @@ if(NOT TARGET glfw)
 
 
     # Find the freshly built library
-    find_package(glfw3 3.3 REQUIRED PATHS "${GLFW_BUILD_PATH}/install/${CMAKE_INSTALL_LIBDIR}/cmake/glfw3")
+    find_package(glfw3 3.4 REQUIRED PATHS "${GLFW_BUILD_PATH}/install/${CMAKE_INSTALL_LIBDIR}/cmake/glfw3")
 endif()
