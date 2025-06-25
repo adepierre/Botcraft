@@ -1,8 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Types/GameProfile/ProfilePublicKey.hpp"
 #endif
 
