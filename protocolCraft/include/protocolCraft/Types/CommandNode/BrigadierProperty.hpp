@@ -31,6 +31,9 @@ namespace ProtocolCraft
         ItemStack,
         ItemPredicate,
         Color,
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        HexColor,
+#endif
         Component,
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         Style,
@@ -90,6 +93,9 @@ namespace ProtocolCraft
         LootTable,
         LootPredicate,
         LootModifier,
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        Dialog,
 #endif
         Uuid,
         NUM_BRIGADIER_PROPERTY_TYPE

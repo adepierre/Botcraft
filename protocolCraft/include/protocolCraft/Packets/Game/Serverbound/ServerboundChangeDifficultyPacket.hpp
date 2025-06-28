@@ -10,7 +10,11 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Change Difficulty";
 
-        SERIALIZED_FIELD(Difficulty, char);
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
+        SERIALIZED_FIELD(Difficulty, unsigned char);
+#else
+        SERIALIZED_FIELD(Difficulty, VarInt);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

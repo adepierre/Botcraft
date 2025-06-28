@@ -110,6 +110,10 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundCustomReportDetailsConfigurationPacket);
     DEFINE_PACKET_CLASS(ClientboundServerLinksConfigurationPacket);
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    DEFINE_PACKET_CLASS(ClientboundClearDialogConfigurationPacket);
+    DEFINE_PACKET_CLASS(ClientboundShowDialogConfigurationPacket);
+#endif
 #endif
 
     // Play clientbound
@@ -368,6 +372,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     DEFINE_PACKET_CLASS(ClientboundTestInstanceBlockStatusPacket);
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    DEFINE_PACKET_CLASS(ClientboundTrackedWaypointPacket);
+    DEFINE_PACKET_CLASS(ClientboundClearDialogPacket);
+    DEFINE_PACKET_CLASS(ClientboundShowDialogPacket);
+#endif
 
 
     // Explicit instantiation for each serverbound packet class
@@ -404,6 +413,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ServerboundKeepAliveConfigurationPacket);
     DEFINE_PACKET_CLASS(ServerboundPongConfigurationPacket);
     DEFINE_PACKET_CLASS(ServerboundResourcePackConfigurationPacket);
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    DEFINE_PACKET_CLASS(ServerboundCustomClickActionConfigurationPacket);
+#endif
 #endif
 
     // Play serverbound
@@ -535,5 +547,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     DEFINE_PACKET_CLASS(ServerboundSetTestBlockPacket);
     DEFINE_PACKET_CLASS(ServerboundTestInstanceBlockActionPacket);
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    DEFINE_PACKET_CLASS(ServerboundChangeGameModePacket);
+    DEFINE_PACKET_CLASS(ServerboundCustomClickActionPacket);
 #endif
 }

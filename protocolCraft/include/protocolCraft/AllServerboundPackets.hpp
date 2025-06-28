@@ -19,6 +19,9 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Configuration/Serverbound/ServerboundSelectKnownPacksPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Configuration/Serverbound/ServerboundCustomClickActionPacket.hpp"
+#endif
 
 // Handshaking
 #include "protocolCraft/Packets/Handshake/Serverbound/ServerboundClientIntentionPacket.hpp"
@@ -46,6 +49,9 @@
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundChangeDifficultyPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundChangeGameModePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundChatAckPacket.hpp"
@@ -88,6 +94,9 @@
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundCookieResponsePacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundCustomClickActionPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundCustomPayloadPacket.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -207,6 +216,10 @@ namespace ProtocolCraft
         ,
         ServerboundSelectKnownPacksPacket
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        ,
+        ServerboundCustomClickActionConfigurationPacket
+#endif
     >;
 #endif
 
@@ -245,6 +258,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ServerboundChangeDifficultyPacket,
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        ServerboundChangeGameModePacket,
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         ServerboundChatAckPacket,
@@ -386,6 +402,10 @@ namespace ProtocolCraft
 #endif
         ServerboundUseItemOnPacket,
         ServerboundUseItemPacket
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        ,
+        ServerboundCustomClickActionPacket
+#endif
     >;
 
     using AllServerboundStatusPackets = std::tuple<

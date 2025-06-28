@@ -26,6 +26,11 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(Dispensable, bool);
             SERIALIZED_FIELD(Swappable, bool);
             SERIALIZED_FIELD(DamageOnHurt, bool);
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+            SERIALIZED_FIELD(EquipOnInteract, bool);
+            SERIALIZED_FIELD(CanBeSheared, bool);
+            SERIALIZED_FIELD(ShearingSound, Holder<SoundEvent>);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

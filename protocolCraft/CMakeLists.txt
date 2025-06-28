@@ -55,6 +55,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundChunkBatchFinishedPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundChunkBatchStartPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundChunksBiomesPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundClearDialogPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundClearTitlesPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundCommandsPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundCommandSuggestionsPacket.hpp
@@ -167,6 +168,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetTitlesAnimationPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetTitlesPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetTitleTextPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundShowDialogPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSoundEntityPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSoundPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundStartConfigurationPacket.hpp
@@ -180,6 +182,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundTestInstanceBlockStatusPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundTickingStatePacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundTickingStepPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundTrackedWaypointPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundTransferPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAdvancementsPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAttributesPacket.hpp
@@ -192,6 +195,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Serverbound/ServerboundAcceptTeleportationPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundBlockEntityTagQueryPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundChangeDifficultyPacket.hpp
+    include/protocolCraft/Packets/Game/Serverbound/ServerboundChangeGameModePacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundChatAckPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundChatCommandSignedPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundChatCommandPacket.hpp
@@ -210,6 +214,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Serverbound/ServerboundContainerClosePacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundContainerSlotStateChangedPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundCookieResponsePacket.hpp
+    include/protocolCraft/Packets/Game/Serverbound/ServerboundCustomClickActionPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundCustomPayloadPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundEditBookPacket.hpp
@@ -268,6 +273,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Status/Serverbound/ServerboundStatusRequestPacket.hpp
 
 
+    include/protocolCraft/Packets/Configuration/Clientbound/ClientboundClearDialogPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCustomPayloadPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCustomReportDetailsPacket.hpp
@@ -282,6 +288,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundResourcePackPushConfigurationPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundSelectKnownPacksPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundServerLinksPacket.hpp
+    include/protocolCraft/Packets/Configuration/Clientbound/ClientboundShowDialogPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundTransferPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
@@ -289,6 +296,7 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundClientInformationPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundCookieResponsePacket.hpp
+    include/protocolCraft/Packets/Configuration/Serverbound/ServerboundCustomClickActionPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundCustomPayloadPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundFinishConfigurationPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundKeepAlivePacket.hpp
@@ -418,7 +426,6 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/Subtypes/BlockPredicate.hpp
     include/protocolCraft/Types/Components/Subtypes/DamageReduction.hpp
     include/protocolCraft/Types/Components/Subtypes/Instrument.hpp
-    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiersEntry.hpp
     include/protocolCraft/Types/Components/Subtypes/ItemDamageFunction.hpp
     include/protocolCraft/Types/Components/Subtypes/JukeboxSong.hpp
     include/protocolCraft/Types/Components/Subtypes/MaterialAssetGroup.hpp
@@ -443,6 +450,13 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/Subtypes/ConsumeEffects/PlaySoundConsumeEffect.hpp
     include/protocolCraft/Types/Components/Subtypes/ConsumeEffects/RemoveStatusEffectsConsumeEffect.hpp
     include/protocolCraft/Types/Components/Subtypes/ConsumeEffects/TeleportRandomlyConsumeEffect.hpp
+
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/DefaultDisplay.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/ItemAttributeModifiersDisplay.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/ItemAttributeModifiersDisplayData.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/ItemAttributeModifiersEntry.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/HiddenDisplay.hpp
+    include/protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/OverrideDisplay.hpp
 
     include/protocolCraft/Types/GameProfile/GameProfile.hpp
     include/protocolCraft/Types/GameProfile/GameProfileProperty.hpp
@@ -511,6 +525,14 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Vibrations/PositionSource.hpp
     include/protocolCraft/Types/Vibrations/VibrationPath.hpp
 
+    include/protocolCraft/Types/Waypoints/AzimuthWaypoint.hpp
+    include/protocolCraft/Types/Waypoints/ChunkWaypoint.hpp
+    include/protocolCraft/Types/Waypoints/EmptyWaypoint.hpp
+    include/protocolCraft/Types/Waypoints/TrackedWaypoint.hpp
+    include/protocolCraft/Types/Waypoints/TrackedWaypointData.hpp
+    include/protocolCraft/Types/Waypoints/Vec3iWaypoint.hpp
+    include/protocolCraft/Types/Waypoints/WaypointIcon.hpp
+
     include/protocolCraft/Utilities/AutoSerializedMacros.hpp
     include/protocolCraft/Utilities/AutoSerializedToJson.hpp
     include/protocolCraft/Utilities/ConstexprStrProcessing.hpp
@@ -538,6 +560,8 @@ set(protocolCraft_SRC
 
     src/Types/Components/Subtypes/ConsumeEffects/ConsumeEffect.cpp
 
+    src/Types/Components/Subtypes/ItemAttributeModifiers/Display.cpp
+
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp
 
@@ -548,6 +572,8 @@ set(protocolCraft_SRC
     src/Types/Recipes/SlotDisplay.cpp
 
     src/Types/Vibrations/PositionSource.cpp
+
+    src/Types/Waypoints/TrackedWaypoint.cpp
 
     src/Utilities/GZip.cpp
     src/Utilities/Json.cpp

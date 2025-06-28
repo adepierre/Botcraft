@@ -3,6 +3,9 @@
 #include "protocolCraft/Utilities/Templates.hpp"
 
 // Configuration
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Configuration/Clientbound/ClientboundClearDialogPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp"
 #endif
@@ -34,6 +37,9 @@
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundServerLinksPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Configuration/Clientbound/ClientboundShowDialogPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundStoreCookiePacket.hpp"
@@ -102,6 +108,9 @@
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundChunksBiomesPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundClearDialogPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundChatPacket.hpp"
@@ -331,6 +340,9 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTitleTextPacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSetTitlesAnimationPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundShowDialogPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSoundEntityPacket.hpp"
 #endif
@@ -359,6 +371,9 @@
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundTickingStatePacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundTickingStepPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundTrackedWaypointPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundTransferPacket.hpp"
@@ -419,6 +434,11 @@ namespace ProtocolCraft
         ,
         ClientboundCustomReportDetailsConfigurationPacket,
         ClientboundServerLinksConfigurationPacket
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        ,
+        ClientboundClearDialogConfigurationPacket,
+        ClientboundShowDialogConfigurationPacket
 #endif
     >;
 #endif
@@ -782,6 +802,12 @@ namespace ProtocolCraft
         ,
         ClientboundCustomReportDetailsPacket,
         ClientboundServerLinksPacket
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        ,
+        ClientboundTrackedWaypointPacket,
+        ClientboundClearDialogPacket,
+        ClientboundShowDialogPacket
 #endif
     >;
 

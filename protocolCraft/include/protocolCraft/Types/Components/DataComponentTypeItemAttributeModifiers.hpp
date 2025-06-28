@@ -1,7 +1,7 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
-#include "protocolCraft/Types/Components/Subtypes/ItemAttributeModifiersEntry.hpp"
+#include "protocolCraft/Types/Components/Subtypes/ItemAttributeModifiers/ItemAttributeModifiersEntry.hpp"
 
 #include <vector>
 

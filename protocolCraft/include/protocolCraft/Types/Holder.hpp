@@ -10,6 +10,18 @@ namespace ProtocolCraft
     class Holder : public NetworkType
     {
     public:
+        Holder() = default;
+
+        template <typename U>
+        Holder(const Holder<U>& other)
+        {
+            id = other.GetId();
+            if (other.GetValue().has_value())
+            {
+                value = static_cast<T>(other.GetValue().value());
+            }
+        }
+
         virtual ~Holder()
         {
 
