@@ -42,7 +42,6 @@ namespace ProtocolCraft
             break;
         default: // Should not happen
             throw std::runtime_error("Unable to create TrackedWaypointData with id: " + std::to_string(static_cast<int>(Type)) + ".");
-            Data = nullptr;
             break;
         }
         return *this;
@@ -50,8 +49,9 @@ namespace ProtocolCraft
 
     void TrackedWaypoint::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        Type = ReadData<TrackedWaypointType, VarInt>(iter, length);
-        SetType(Type);
+        Identifier = ReadData<Either<UUID, std::string>>(iter, length);
+        Icon = ReadData<WaypointIcon>(iter, length);
+        SetType(ReadData<TrackedWaypointType, VarInt>(iter, length));
         if (Data != nullptr)
         {
             Data->Read(iter, length);
@@ -60,6 +60,8 @@ namespace ProtocolCraft
 
     void TrackedWaypoint::WriteImpl(WriteContainer& container) const
     {
+        WriteData<Either<UUID, std::string>>(Identifier, container);
+        WriteData<WaypointIcon>(Icon, container);
         WriteData<TrackedWaypointType, VarInt>(Type, container);
         if (Data != nullptr)
         {
@@ -71,6 +73,8 @@ namespace ProtocolCraft
     {
         Json::Value output;
 
+        output[std::string(field_name<Identifier_index>)] = Identifier;
+        output[std::string(field_name<Icon_index>)] = Icon;
         output[std::string(field_name<Type_index>)] = Type;
         output[std::string(field_name<Data_index>)] = Data == nullptr ? Json::Object() : Data->Serialize();
 
