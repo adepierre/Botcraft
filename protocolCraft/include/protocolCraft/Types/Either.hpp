@@ -21,7 +21,7 @@ namespace ProtocolCraft
             return left;
         }
 
-        const std::optional<T>& GetRight() const
+        const std::optional<U>& GetRight() const
         {
             return right;
         }
@@ -37,7 +37,7 @@ namespace ProtocolCraft
             return *this;
         }
 
-        auto& SetRight(const std::optional<T>& right_)
+        auto& SetRight(const std::optional<U>& right_)
         {
             right = right_;
             if (right.has_value())
