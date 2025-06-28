@@ -67,6 +67,7 @@ namespace Botcraft
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
+            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
             metadata[metadata_names[index - hierarchy_metadata_count]] = value;
         }
     }
