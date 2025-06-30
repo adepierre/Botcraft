@@ -2,6 +2,7 @@ project(protocolCraft_tests)
 
 set(SRC_FILES
     src/constexpr_string_processing.cpp
+    src/hashed_slot.cpp
     src/json.cpp
     src/nbt.cpp
     src/serialization.cpp
