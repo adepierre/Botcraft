@@ -102,6 +102,10 @@ namespace Botcraft
         double GetAttributeMovementEfficiencyValue() const;
         double GetAttributeAttackKnockbackValue() const;
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        double GetAttributeCameraDistanceValue() const;
+        double GetAttributeWaypointTransmitRangeValue() const;
+#endif
 
 #if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 87f46a96-686f-4796-b035-22e16ee9e038

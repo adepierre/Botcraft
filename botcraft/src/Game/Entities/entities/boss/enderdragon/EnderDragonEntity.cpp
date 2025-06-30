@@ -15,6 +15,9 @@ namespace Botcraft
 
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 200.0) });
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        attributes.insert({ EntityAttribute::Type::CameraDistance, EntityAttribute(EntityAttribute::Type::CameraDistance, 16.0) });
+#endif
     }
 
     EnderDragonEntity::~EnderDragonEntity()

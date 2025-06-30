@@ -72,6 +72,9 @@ namespace Botcraft
         double GetAttributePlayerMiningEfficiencyValue() const;
         double GetAttributePlayerSweepingDamageRatioValue() const;
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        double GetAttributeWaypointReceiveRangeValue() const;
+#endif
 
     protected:
         virtual double GetEyeHeightImpl() const;

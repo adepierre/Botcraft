@@ -39,6 +39,10 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::PlayerMiningEfficiency, EntityAttribute(EntityAttribute::Type::PlayerMiningEfficiency, 0.0) });
         attributes.insert({ EntityAttribute::Type::PlayerSweepingDamageRatio, EntityAttribute(EntityAttribute::Type::PlayerSweepingDamageRatio, 0.0) });
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        attributes.insert({ EntityAttribute::Type::WaypointTransmitRange, EntityAttribute(EntityAttribute::Type::WaypointTransmitRange, 6.0) });
+        attributes.insert({ EntityAttribute::Type::WaypointReceiveRange, EntityAttribute(EntityAttribute::Type::WaypointReceiveRange, 6.0) });
+#endif
     }
 
     PlayerEntity::~PlayerEntity()
@@ -137,6 +141,9 @@ namespace Botcraft
         output["attributes"]["sneaking_speed"] = GetAttributePlayerSneakingSpeedValue();
         output["attributes"]["mining_efficiency"] = GetAttributePlayerMiningEfficiencyValue();
         output["attributes"]["sweeping_damage_ratio"] = GetAttributePlayerSweepingDamageRatioValue();
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        output["attributes"]["waypoint_receive_range"] = GetAttributeWaypointReceiveRangeValue();
 #endif
 
         return output;
@@ -301,6 +308,14 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::PlayerSweepingDamageRatio).GetValue();
+    }
+#endif
+
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    double PlayerEntity::GetAttributeWaypointReceiveRangeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::WaypointReceiveRange).GetValue();
     }
 #endif
 

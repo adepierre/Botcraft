@@ -16,6 +16,10 @@ namespace Botcraft
         // Initialize all attributes with default values
         attributes.insert({ EntityAttribute::Type::MaxHealth, EntityAttribute(EntityAttribute::Type::MaxHealth, 10.0) });
         attributes.insert({ EntityAttribute::Type::FollowRange, EntityAttribute(EntityAttribute::Type::FollowRange, 100.0) });
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        attributes.insert({ EntityAttribute::Type::CameraDistance, EntityAttribute(EntityAttribute::Type::CameraDistance, 8.0) });
+        attributes.insert({ EntityAttribute::Type::FlyingSpeed, EntityAttribute(EntityAttribute::Type::FlyingSpeed, 0.06) });
+#endif
     }
 
     GhastEntity::~GhastEntity()
@@ -48,9 +52,17 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value GhastEntity::Serialize() const
     {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         ProtocolCraft::Json::Value output = FlyingMobEntity::Serialize();
+#else
+        ProtocolCraft::Json::Value output = MobEntity::Serialize();
+#endif
 
         output["metadata"]["data_is_charging"] = GetDataIsCharging();
+
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        output["attributes"]["flying_speed"] = GetAttributeFlyingSpeedValue();
+#endif
 
         return output;
     }
@@ -60,7 +72,11 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
             FlyingMobEntity::SetMetadataValue(index, value);
+#else
+            MobEntity::SetMetadataValue(index, value);
+#endif
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {
@@ -81,6 +97,15 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_is_charging"] = data_is_charging;
     }
+
+
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    double GhastEntity::GetAttributeFlyingSpeedValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FlyingSpeed).GetValue();
+    }
+#endif
 
 
     double GhastEntity::GetWidthImpl() const

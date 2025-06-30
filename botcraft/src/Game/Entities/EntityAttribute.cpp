@@ -411,6 +411,17 @@ namespace Botcraft
             current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        case Type::CameraDistance:
+            current_value = std::clamp(current_value, 0.0, 32.0);
+            break;
+        case Type::WaypointTransmitRange:
+            current_value = std::clamp(current_value, 0.0, 6.0e7);
+            break;
+        case Type::WaypointReceiveRange:
+            current_value = std::clamp(current_value, 0.0, 6.0e7);
+            break;
+#endif
         default:
             // No min or max value in case of Unknown attribute
             break;

@@ -67,6 +67,10 @@ namespace Botcraft
         attributes.insert({ EntityAttribute::Type::MovementEfficiency, EntityAttribute(EntityAttribute::Type::MovementEfficiency, 0.0) });
         attributes.insert({ EntityAttribute::Type::AttackKnockback, EntityAttribute(EntityAttribute::Type::AttackKnockback, 0.0) });
 #endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        attributes.insert({ EntityAttribute::Type::CameraDistance, EntityAttribute(EntityAttribute::Type::CameraDistance, 4.0) });
+        attributes.insert({ EntityAttribute::Type::WaypointTransmitRange, EntityAttribute(EntityAttribute::Type::WaypointTransmitRange, 0.0) });
+#endif
     }
 
     LivingEntity::~LivingEntity()
@@ -125,6 +129,10 @@ namespace Botcraft
         output["attributes"]["water_movement_efficiency"] = GetAttributeWaterMovementEfficiencyValue();
         output["attributes"]["movement_efficiency"] = GetAttributeMovementEfficiencyValue();
         output["attributes"]["attack_knockback"] = GetAttributeAttackKnockbackValue();
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        output["attributes"]["camera_distance"] = GetAttributeCameraDistanceValue();
+        output["attributes"]["waypoint_transmit_range"] = GetAttributeWaypointTransmitRangeValue();
 #endif
 
         return output;
@@ -434,6 +442,20 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::AttackKnockback).GetValue();
+    }
+#endif
+
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+    double LivingEntity::GetAttributeCameraDistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::CameraDistance).GetValue();
+    }
+
+    double LivingEntity::GetAttributeWaypointTransmitRangeValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::WaypointTransmitRange).GetValue();
     }
 #endif
 

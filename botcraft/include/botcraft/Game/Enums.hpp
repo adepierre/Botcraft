@@ -369,8 +369,10 @@ namespace Botcraft
 
     enum class PlayerCommandAction
     {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         PressShiftKey,
         ReleaseShifKey,
+#endif
         StopSleeping,
         StartSprinting,
         StopSprinting,

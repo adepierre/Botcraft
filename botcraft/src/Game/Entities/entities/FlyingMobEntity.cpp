@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
 #include "botcraft/Game/Entities/entities/FlyingMobEntity.hpp"
 
 namespace Botcraft
@@ -18,3 +19,4 @@ namespace Botcraft
     }
 
 }
+#endif

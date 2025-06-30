@@ -45,7 +45,11 @@ namespace Botcraft
 
     ProtocolCraft::Json::Value PhantomEntity::Serialize() const
     {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         ProtocolCraft::Json::Value output = FlyingMobEntity::Serialize();
+#else
+        ProtocolCraft::Json::Value output = MobEntity::Serialize();
+#endif
 
         output["metadata"]["id_size"] = GetIdSize();
 
@@ -57,7 +61,11 @@ namespace Botcraft
     {
         if (index < hierarchy_metadata_count)
         {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
             FlyingMobEntity::SetMetadataValue(index, value);
+#else
+            MobEntity::SetMetadataValue(index, value);
+#endif
         }
         else if (index - hierarchy_metadata_count < metadata_count)
         {

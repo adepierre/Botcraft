@@ -55,6 +55,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/ChickenEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CodEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CowEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/HappyGhastEntity.hpp
     include/botcraft/Game/Entities/entities/monster/CreeperEntity.hpp
     include/botcraft/Game/Entities/entities/animal/DolphinEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/DonkeyEntity.hpp
@@ -307,6 +308,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/ChickenEntity.cpp
     src/Game/Entities/entities/animal/CodEntity.cpp
     src/Game/Entities/entities/animal/CowEntity.cpp
+    src/Game/Entities/entities/animal/HappyGhastEntity.cpp
     src/Game/Entities/entities/monster/CreeperEntity.cpp
     src/Game/Entities/entities/animal/DolphinEntity.cpp
     src/Game/Entities/entities/animal/horse/DonkeyEntity.cpp

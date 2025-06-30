@@ -1,16 +1,28 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #pragma once
 
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
 #include "botcraft/Game/Entities/entities/FlyingMobEntity.hpp"
+#else
+#include "botcraft/Game/Entities/entities/MobEntity.hpp"
+#endif
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
     class PhantomEntity : public FlyingMobEntity
+#else
+    class PhantomEntity : public MobEntity
+#endif
     {
     protected:
         static constexpr int metadata_count = 1;
         static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         static constexpr int hierarchy_metadata_count = FlyingMobEntity::metadata_count + FlyingMobEntity::hierarchy_metadata_count;
+#else
+        static constexpr int hierarchy_metadata_count = MobEntity::metadata_count + MobEntity::hierarchy_metadata_count;
+#endif
 
     public:
         PhantomEntity();

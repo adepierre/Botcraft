@@ -33,6 +33,9 @@ namespace Botcraft
             PlayerBlockInteractionRange,
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             BurningTime,
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+            CameraDistance,
+#endif
             ExplosionKnockbackResistance,
 #endif
             PlayerEntityInteractionRange,
@@ -80,6 +83,10 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             WaterMovementEfficiency,
+#endif
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+            WaypointTransmitRange,
+            WaypointReceiveRange,
 #endif
             NUM_ENTITY_ATTRIBUTES
         };

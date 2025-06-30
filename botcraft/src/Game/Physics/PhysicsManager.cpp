@@ -937,6 +937,8 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         // Before 1.21.2, shift was sent after jump
+        // After 1.21.5 the ServerboundPlayerCommandPacket is not sent anymore
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         const bool shift_key_down = player->inputs.sneak;
         if (shift_key_down != player->previous_shift_key_down)
         {
@@ -946,6 +948,7 @@ namespace Botcraft
             network_manager->Send(player_command_packet);
             player->previous_shift_key_down = shift_key_down;
         }
+#endif
 
         if (player->last_sent_inputs.sneak        != player->inputs.sneak ||
             player->last_sent_inputs.jump         != player->inputs.jump ||

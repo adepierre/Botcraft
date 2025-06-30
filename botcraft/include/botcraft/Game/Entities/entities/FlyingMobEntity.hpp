@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/MobEntity.hpp"
@@ -17,3 +18,4 @@ namespace Botcraft
         virtual bool IsFlyingMob() const override;
     };
 }
+#endif

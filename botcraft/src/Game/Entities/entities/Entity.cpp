@@ -106,6 +106,9 @@
 #include "botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include "botcraft/Game/Entities/entities/animal/HappyGhastEntity.hpp"
+#endif
 #include "botcraft/Game/Entities/entities/monster/GiantEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp"
@@ -1280,10 +1283,12 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
     bool Entity::IsFlyingMob() const
     {
         return false;
     }
+#endif
 
     bool Entity::IsAbstractHorse() const
     {
@@ -1609,6 +1614,10 @@ namespace Botcraft
 #endif
         case EntityType::Ghast:
             return std::make_shared<GhastEntity>();
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        case EntityType::HappyGhast:
+            return std::make_shared<HappyGhastEntity>();
+#endif
         case EntityType::Giant:
             return std::make_shared<GiantEntity>();
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
