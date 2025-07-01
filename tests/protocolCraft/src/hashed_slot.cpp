@@ -16,7 +16,7 @@ TEST_CASE("Hash value", "[!shouldfail]")
     std::map<Components::DataComponentTypes, std::shared_ptr<Components::DataComponentType>> components;
     std::map<Components::DataComponentTypes, int> expected_hash;
 
-    auto& check_result = [&]() {
+    auto check_result = [&]() {
         slot.SetComponents(Components::DataComponentPatch().SetMap(components));
 
         HashedSlot hashed_slot(slot);
