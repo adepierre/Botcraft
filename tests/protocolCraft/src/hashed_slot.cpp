@@ -70,7 +70,7 @@ TEST_CASE("Hash value", "[!shouldfail]")
         WriteData<char>(8, bytes); // TagString
         WriteData<unsigned short>(static_cast<unsigned short>(s.size()), bytes);
         WriteRawString(s, bytes);
-        auto iter = bytes.begin();
+        ReadIterator iter = bytes.begin();
         size_t length = bytes.size();
         Chat c;
         c.Read(iter, length);
