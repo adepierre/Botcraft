@@ -2,6 +2,10 @@
 
 #include "botcraft/Game/Enums.hpp"
 
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+#include <mutex>
+#endif
+
 namespace Botcraft
 {
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
