@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
         }
 
         UserControlledClient client(args.connect, true);
-        
+
         if (args.connect)
         {
             client.SetAutoRespawn(true);
