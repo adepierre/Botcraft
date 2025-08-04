@@ -277,11 +277,11 @@ namespace Botcraft
         question.SetNameLabels(Utilities::SplitString("_minecraft._tcp." + address, '.'));
         query.SetQuestions({ question });
 
-        // Write the request and send it to google DNS
+        // Write the request and send it to DNS4EU
         std::vector<unsigned char> encoded_query;
         query.Write(encoded_query);
         udp_socket.open(asio::ip::udp::v4());
-        asio::ip::udp::endpoint endpoint(asio::ip::make_address("8.8.8.8"), 53);
+        asio::ip::udp::endpoint endpoint(asio::ip::make_address("86.54.11.100" /* unfiltered DNS4EU server */), 53);
         udp_socket.send_to(asio::buffer(encoded_query), endpoint);
 
         // Wait for the answer
