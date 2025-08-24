@@ -371,7 +371,7 @@ namespace Botcraft
     {
 #if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         PressShiftKey,
-        ReleaseShifKey,
+        ReleaseShiftKey,
 #endif
         StopSleeping,
         StartSprinting,

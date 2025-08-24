@@ -943,7 +943,7 @@ namespace Botcraft
         if (shift_key_down != player->previous_shift_key_down)
         {
             std::shared_ptr<ServerboundPlayerCommandPacket> player_command_packet = std::make_shared<ServerboundPlayerCommandPacket>();
-            player_command_packet->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShifKey));
+            player_command_packet->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShiftKey));
             player_command_packet->SetId_(player->entity_id);
             network_manager->Send(player_command_packet);
             player->previous_shift_key_down = shift_key_down;
@@ -985,7 +985,7 @@ namespace Botcraft
         if (shift_key_down != player->previous_shift_key_down)
         {
             std::shared_ptr<ServerboundPlayerCommandPacket> player_command_packet = std::make_shared<ServerboundPlayerCommandPacket>();
-            player_command_packet->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShifKey));
+            player_command_packet->SetAction(static_cast<int>(shift_key_down ? PlayerCommandAction::PressShiftKey : PlayerCommandAction::ReleaseShiftKey));
             player_command_packet->SetId_(player->entity_id);
             network_manager->Send(player_command_packet);
             player->previous_shift_key_down = shift_key_down;
