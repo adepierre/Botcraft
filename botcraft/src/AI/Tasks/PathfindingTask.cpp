@@ -137,6 +137,11 @@ namespace Botcraft
         bool end_is_inside_solid = false;
         block = world->GetBlock(end);
         end_is_inside_solid = block != nullptr && block->IsSolid();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        const float step_height = static_cast<float>(client.GetLocalPlayer()->GetAttributeStepHeightValue());
+#else
+        const float step_height = 0.6f;
+#endif
 
         while (!nodes_to_explore.empty())
         {
@@ -178,6 +183,9 @@ namespace Botcraft
             pos = current_node.pos.first;
             block = world->GetBlock(pos);
             vertical_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
+            const bool can_jump =
+                vertical_surroundings[2].GetBlockstate() != nullptr &&
+                vertical_surroundings[2].GetBlockstate()->CanJumpWhenFeetInsideBlock();
 
             // if 2 is solid or hazardous, no down pathfinding is possible,
             // so we can skip a few checks
@@ -241,12 +249,12 @@ namespace Botcraft
             // o
             // ?
             // ?
-            if (vertical_surroundings[1].IsClimbable()
+            if (can_jump
+                && vertical_surroundings[1].IsClimbable()
                 && !vertical_surroundings[0].IsSolid()
                 && !vertical_surroundings[0].IsHazardous()
                 && (vertical_surroundings[2].IsSolid() || // we stand on top of 2
-                    (!vertical_surroundings[2].IsClimbable() && vertical_surroundings[3].IsSolid()) // if not, it means we stand on 3. Height difference check is not necessary, as the feet are in 2, we know 3 is at least 1 tall
-                   )
+                    vertical_surroundings[3].IsSolid()) // if not, it means we stand on 3. Height difference check is not necessary, as the feet are in 2, we know 3 is at least 1 tall
                 )
             {
                 const float new_cost = cost[current_node.pos] + 1.5f;
@@ -463,9 +471,9 @@ namespace Botcraft
                     horizontal_surroundings[5] = PathfindingBlockstate(block, pos, takes_damage);
                 }
 
-                // You can't make large jumps if your feet are in a climbable block
+                // We can't make large jumps if our feet are in an incompatible block
                 // If we can jump, then we need the third column
-                if (allow_jump && !vertical_surroundings[2].IsClimbable())
+                if (allow_jump && can_jump)
                 {
                     pos = next_next_location + Position(0, 2, 0);
                     block = world->GetBlock(pos);
@@ -537,10 +545,10 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (!vertical_surroundings[0].IsSolid()
+                if (can_jump
+                    && !vertical_surroundings[0].IsSolid()
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
-                    && !vertical_surroundings[2].IsClimbable()
                     && (vertical_surroundings[2].IsSolid() || !vertical_surroundings[3].IsClimbable())
                     && !horizontal_surroundings[0].IsSolid()
                     && !horizontal_surroundings[0].IsHazardous()
@@ -574,7 +582,8 @@ namespace Botcraft
                 //--- ?  ?
                 //    ?  ?
                 //    ?  ?
-                if (!vertical_surroundings[0].IsSolid()
+                if ((can_jump || horizontal_surroundings[2].GetHeight() - current_node.pos.second < step_height)
+                    && !vertical_surroundings[0].IsSolid()
                     && !vertical_surroundings[0].IsHazardous()
                     && vertical_surroundings[1].IsEmpty()
                     && (vertical_surroundings[2].IsSolid() || (vertical_surroundings[2].IsEmpty() && vertical_surroundings[3].IsSolid()))
@@ -731,10 +740,10 @@ namespace Botcraft
                 // If we can't make jumps, don't bother explore the rest
                 // of the cases
                 if (!allow_jump
+                    || !can_jump
                     || vertical_surroundings[0].IsSolid()       // Block above
                     || vertical_surroundings[0].IsHazardous()   // Block above
                     || !vertical_surroundings[1].IsEmpty()      // Block above
-                    || vertical_surroundings[2].IsClimbable()   // Feet inside climbable
                     || vertical_surroundings[3].IsFluid()       // "Walking" on fluid
                     || vertical_surroundings[3].IsEmpty()       // Feet on nothing (inside climbable)
                     || horizontal_surroundings[0].IsSolid()     // Block above next column

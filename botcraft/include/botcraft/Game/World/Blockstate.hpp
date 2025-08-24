@@ -144,6 +144,9 @@ namespace Botcraft
         bool IsDownBubbleColumn() const;
         bool IsBerryBush() const;
         bool IsPowderSnow() const;
+
+        bool CanJumpWhenFeetInsideBlock() const;
+
         float GetHardness() const;
         float GetFriction() const;
         TintType GetTintType() const;
