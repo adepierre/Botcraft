@@ -342,3 +342,20 @@ TEST_CASE("wall carpet pathfinding")
     CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
     CHECK_THAT(local_player->GetHealth(), Catch::Matchers::WithinAbs(20.0, 0.01));
 }
+
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+TEST_CASE("powder snow pathfinding")
+{
+    std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(0.5, 2.01, 0.5));
+    const Botcraft::Position delta(0, 0, 3);
+
+    std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
+    std::shared_ptr<Botcraft::World> world = bot->GetWorld();
+
+    const Botcraft::Vector3<double> init_position = local_player->GetPosition();
+    const Botcraft::Position init_position_int = Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z));
+
+    bot->SyncAction(15000, Botcraft::GoTo, init_position_int + delta, 0, 0, 0, true, false, 1.0f);
+    CHECK(SameBlock(local_player->GetPosition(), init_position + delta));
+}
+#endif

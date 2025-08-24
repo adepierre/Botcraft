@@ -819,10 +819,11 @@ namespace Botcraft
 #endif
     }
 
-    bool Blockstate::CanJumpWhenFeetInsideBlock() const
+    bool Blockstate::CanJumpWhenFeetInside() const
     {
         return
             !IsClimbable() &&
+            !IsBerryBush() &&
             !IsCobweb() &&
             !IsPowderSnow() &&
             !IsHoney(); // As honey is < 1 block high, you're technically "inside" it and not on top of it

@@ -185,7 +185,7 @@ namespace Botcraft
             vertical_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
             const bool can_jump =
                 vertical_surroundings[2].GetBlockstate() != nullptr &&
-                vertical_surroundings[2].GetBlockstate()->CanJumpWhenFeetInsideBlock();
+                vertical_surroundings[2].GetBlockstate()->CanJumpWhenFeetInside();
 
             // if 2 is solid or hazardous, no down pathfinding is possible,
             // so we can skip a few checks

@@ -145,7 +145,7 @@ namespace Botcraft
         bool IsBerryBush() const;
         bool IsPowderSnow() const;
 
-        bool CanJumpWhenFeetInsideBlock() const;
+        bool CanJumpWhenFeetInside() const;
 
         float GetHardness() const;
         float GetFriction() const;
