@@ -112,6 +112,13 @@ namespace Botcraft
         unsigned char GetModelId(const Position& pos) const;
         size_t GetNumModels() const;
         const std::string& GetName() const;
+        /// @brief Return a map with all the variables set for this block (powered, facing, opened...)
+        /// @return A map (note it's a copy, as it's stored in a fancy way in here to save memory°.
+        /// To access individual variable efficiently, use GetVariableValue instead
+        std::map<std::string, std::string> GetVariables() const;
+        /// @brief Access the value of the variable
+        /// @param variable The key to fetch (must exist for this blockstate, you can fetch all existing values with GetVariables instead)
+        /// @return The string value of this variable as defined in Blocks.json
         const std::string& GetVariableValue(const std::string& variable) const;
         Vector3<double> GetHorizontalOffsetAtPos(const Position& pos) const;
         std::set<AABB> GetCollidersAtPos(const Position& pos) const;

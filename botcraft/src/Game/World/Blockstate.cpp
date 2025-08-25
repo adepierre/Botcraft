@@ -672,6 +672,16 @@ namespace Botcraft
         return closest_point;
     }
 
+    std::map<std::string, std::string> Blockstate::GetVariables() const
+    {
+        std::map<std::string, std::string> output;
+        for (const auto& [k, v] : variables)
+        {
+            output[*k] = *v;
+        }
+        return output;
+    }
+
     bool Blockstate::IsAir() const
     {
         return flags[static_cast<size_t>(BlockstateFlags::Air)];
