@@ -46,6 +46,8 @@ PHYSICS_TEST_CASE("block transition");
 
 PHYSICS_TEST_CASE("collisions");
 
+// NON TRAJECTORY TESTS BELOW
+
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 TEST_CASE("tick rate jump")
 {
@@ -69,6 +71,7 @@ TEST_CASE("tick rate jump")
     SECTION("40")
     {
         tick_rate = 40.0;
+        // Speeding up the tick rate does not speed up the physics
         expected_time_ms = 50.0 * 12;
     }
 
@@ -100,6 +103,76 @@ TEST_CASE("tick rate jump")
     MinecraftServer::GetInstance().WaitLine(".*: Set the target tick rate to.*", 5000);
 }
 #endif
+
+TEST_CASE("elytra rocket boost")
+{
+    std::unique_ptr<SimpleBehaviourClient> bot = SetupTestBot<SimpleBehaviourClient>();
+    const std::string& botname = bot->GetNetworkManager()->GetMyName();
+    std::shared_ptr<InventoryManager> inventory_manager = bot->GetInventoryManager();
+    std::shared_ptr<LocalPlayer> player = bot->GetLocalPlayer();
+    const ItemId elytra_id = AssetsManager::getInstance().GetItemID("minecraft:elytra");
+    const ItemId firework_id = AssetsManager::getInstance().GetItemID("minecraft:firework_rocket");
+
+    SendCommandSetItem(botname, "minecraft:elytra", EquipmentSlot::ChestPlate);
+    // Wait for chestplate to be elytra
+    CHECK(Utilities::WaitForCondition([&]() {
+        return inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_CHEST_ARMOR).GetItemId() == elytra_id;
+    }, 5000));
+    SendCommandSetItem(botname, "minecraft:firework_rocket", EquipmentSlot::MainHand);
+    // Wait for main hand to be a rocket
+    CHECK(Utilities::WaitForCondition([&]() {
+        return inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemId() == firework_id;
+    }, 5000));
+
+    // Jump and wait for going up then falling back to trigger elytra flying mode
+    player->SetInputsJump(true);
+    Utilities::WaitForCondition([&]() -> bool {
+        if (player->GetDirtyInputs())
+        {
+            return false;
+        }
+        player->SetInputsJump(false);
+        return player->GetSpeedY() > 0.0;
+    }, 1500);
+    Utilities::WaitForCondition([&]() -> bool {
+        if (player->GetDirtyInputs())
+        {
+            return false;
+        }
+        player->SetInputsJump(false);
+        return player->GetSpeedY() < 0.0;
+    }, 1500);
+    player->SetInputsJump(true);
+    // Wait for fly mode to start
+    REQUIRE(Utilities::WaitForCondition([&]() {
+        return player->GetDataSharedFlagsId(EntitySharedFlagsId::FallFlying);
+    }, 5000));
+
+    float previous_z_speed = player->GetSpeedZ();
+
+    std::shared_ptr<ProtocolCraft::ServerboundUseItemPacket> use_item_packet = std::make_shared<ProtocolCraft::ServerboundUseItemPacket>();
+    use_item_packet->SetHand(static_cast<int>(Hand::Main));
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+    use_item_packet->SetSequence(bot->GetWorld()->GetNextWorldInteractionSequenceId());
+#endif
+    bot->GetNetworkManager()->Send(use_item_packet);
+
+    // Wait for a big speed boost on Z axis
+    REQUIRE(Utilities::WaitForCondition([&]() {
+        if (player->GetDirtyInputs())
+        {
+            return false;
+        }
+        player->SetInputsJump(false);
+        const float current_speed = player->GetSpeedZ();
+        if (current_speed - previous_z_speed > 0.5)
+        {
+            return true;
+        }
+        previous_z_speed = current_speed;
+        return false;
+    }, 5000));
+}
 
 void TestPhysicsTrajectory(const std::string& test_name)
 {
