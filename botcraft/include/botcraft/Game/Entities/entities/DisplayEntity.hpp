@@ -68,7 +68,7 @@ namespace Botcraft
         void SetDataWidthId(const float data_width_id);
         void SetDataHeightId(const float data_height_id);
         void SetDataGlowColorOverrideId(const int data_glow_color_override_id);
-        
+
     };
 }
 #endif

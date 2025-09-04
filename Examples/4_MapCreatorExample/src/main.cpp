@@ -290,7 +290,7 @@ std::shared_ptr<BehaviourTree<SimpleBehaviourClient>> GenerateMapArtCreatorTree(
             .leaf(WarnConsole, "Task fully completed!")
             .repeater(0).inverter().leaf(Yield)
         .end();
-    
+
     auto disconnect_subtree = Builder<SimpleBehaviourClient>("disconnect")
         .sequence()
             .leaf("disconnect", Disconnect)

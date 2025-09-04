@@ -31,7 +31,7 @@ TEST_CASE("LeafTree")
         CHECK(tree->Tick(i) == Status::Success);
         CHECK(i == 2);
     }
-    
+
     SECTION("NamedFunction")
     {
         auto tree = Builder<int>()
@@ -103,7 +103,7 @@ TEST_CASE("LeafTree")
         CHECK(tree->Tick(i) == Status::Success);
         CHECK(i == 2);
     }
-    
+
     SECTION("NamedLambda")
     {
         auto tree = Builder<int>()
@@ -279,7 +279,7 @@ TEST_CASE("Composite")
         CHECK(tree->Tick(i) == Status::Success);
         CHECK(i == 6);
     }
-    
+
     SECTION("NamedSequence")
     {
         auto tree = Builder<int>()
@@ -468,7 +468,7 @@ TEST_CASE("Exceptions")
             );
         }
     }
-    
+
     SECTION("Named")
     {
         auto tree = Builder<int>("tree")

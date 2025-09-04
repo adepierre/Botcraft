@@ -608,7 +608,7 @@ TEST_CASE("Dump")
 
         j = { "a", 1, true, 2.0, { {}, nullptr} };
         CHECK(j.Dump() == "[\"a\",1,true,2.0,[null,null]]");
-        CHECK(j.Dump(0) == 
+        CHECK(j.Dump(0) ==
             "[\n"
             "\"a\",\n"
             "1,\n"
@@ -619,7 +619,7 @@ TEST_CASE("Dump")
             "null\n"
             "]\n"
             "]");
-        CHECK(j.Dump(4) == 
+        CHECK(j.Dump(4) ==
             "[\n"
             "    \"a\",\n"
             "    1,\n"
@@ -630,7 +630,7 @@ TEST_CASE("Dump")
             "        null\n"
             "    ]\n"
             "]");
-        CHECK(j.Dump(1, '\t') == 
+        CHECK(j.Dump(1, '\t') ==
             "[\n"
             "\t\"a\",\n"
             "\t1,\n"

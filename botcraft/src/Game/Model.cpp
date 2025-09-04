@@ -39,7 +39,7 @@ namespace Botcraft
     Model::Model(const std::string& filepath, const bool custom)
     {
         std::string full_filepath;
-        
+
         if (custom)
         {
             full_filepath = ASSETS_PATH + std::string("/custom/models/") + filepath + ".json";
@@ -51,7 +51,7 @@ namespace Botcraft
 
         bool error = filepath == "";
         Json::Value obj;
-        
+
         if (!error)
         {
             try
@@ -271,7 +271,7 @@ namespace Botcraft
                         {
                             current_face.orientation = Orientation::West;
                         }
-                                                
+
                         if (face_params.contains("uv"))
                         {
                             current_face.transformations.offset_x1 = face_params["uv"][0].get_number<float>();

@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
             clients[i]->Connect(args.address, names[i], false);
             // Start behaviour thread and set active tree
             clients[i]->StartBehaviour();
-            clients[i]->SetBehaviourTree(eater_behaviour_tree, { 
+            clients[i]->SetBehaviourTree(eater_behaviour_tree, {
                 { "Eater.bot_index" , i },
                 { "Eater.num_bot", args.num_bot },
                 { "Eater.start_block", args.start },

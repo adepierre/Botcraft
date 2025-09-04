@@ -92,7 +92,7 @@ namespace Botcraft
             glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Face), (void*)(16 * sizeof(float)));
             //Specify that only one instance of this must be sent to one index
             glVertexAttribDivisor(5, 1);
-            
+
             glEnableVertexAttribArray(6);
             //tex_coords_overlay(u0, v0, u1, v1) for one face
             glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Face), (void*)(20 * sizeof(float)));

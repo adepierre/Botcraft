@@ -28,7 +28,7 @@ namespace Botcraft
         {
             return Slot();
         }
-        
+
         return slots.at(index);
     }
 

@@ -23,7 +23,7 @@ namespace Botcraft
         // Static stuff, for easier comparison
         static std::string GetClassName();
         static EntityType GetClassType();
-        
+
 
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
@@ -32,7 +32,7 @@ namespace Botcraft
 
         ProtocolCraft::Slot GetDataItemStackId() const;
         char GetDataItemDisplayId() const;
-        
+
         void SetDataItemStackId(const ProtocolCraft::Slot& data_item_stack_id);
         void SetDataItemDisplayId(const char data_item_display_id);
 

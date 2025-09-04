@@ -23,7 +23,7 @@ namespace Botcraft
         // Static stuff, for easier comparison
         static std::string GetClassName();
         static EntityType GetClassType();
-        
+
 
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
@@ -31,9 +31,9 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
         int GetDataBlockStateId() const;
-        
+
         void SetDataBlockStateId(const int data_block_state_id);
-        
+
     protected:
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

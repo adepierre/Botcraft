@@ -43,13 +43,13 @@ namespace Botcraft
     {
         return EntityType::DisplayItemDisplay;
     }
-    
+
 
 
     ProtocolCraft::Json::Value DisplayItemDisplayEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = DisplayEntity::Serialize();
-        
+
         output["metadata"]["data_item_stack_id"] = GetDataItemStackId().Serialize();
         output["metadata"]["data_item_display_id"] = GetDataItemDisplayId();
 
@@ -70,26 +70,26 @@ namespace Botcraft
         }
     }
 
-    
+
     ProtocolCraft::Slot DisplayItemDisplayEntity::GetDataItemStackId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_item_stack_id"));
     }
-    
+
     char DisplayItemDisplayEntity::GetDataItemDisplayId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_item_display_id"));
     }
-    
-    
+
+
     void DisplayItemDisplayEntity::SetDataItemStackId(const ProtocolCraft::Slot& data_item_stack_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_item_stack_id"] = data_item_stack_id;
     }
-    
+
     void DisplayItemDisplayEntity::SetDataItemDisplayId(const char data_item_display_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);

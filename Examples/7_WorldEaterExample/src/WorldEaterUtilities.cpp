@@ -455,7 +455,7 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
     to_process.push(&root);
 
     std::array<Position, 4> potential_neighbours;
-    
+
     if (orientation == Direction::East || orientation == Direction::West)
     {
         potential_neighbours = {
@@ -474,7 +474,7 @@ std::vector<Position> ComputeBlockOrder(std::unordered_set<Position> blocks, con
             Position(1, 0, 0)     // east
         };
     }
-    
+
 
     while (blocks.size() > 0)
     {

@@ -282,7 +282,7 @@ namespace Botcraft
             output["number_answer"] = number_answer;
             output["number_authority"] = number_authority;
             output["number_additional_rr"] = number_additional_rr;
-            
+
             output["questions"] = Json::Array();
             for (int i = 0; i < number_question; ++i)
             {

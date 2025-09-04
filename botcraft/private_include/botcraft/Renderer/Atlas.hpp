@@ -26,7 +26,7 @@ namespace Botcraft
 
             void Reset(const int height_, const int width_);
 
-            // Load data 
+            // Load data
             void LoadData(const std::vector<std::pair<std::string, std::string> >& textures_path);
 
             int GetWidth() const;

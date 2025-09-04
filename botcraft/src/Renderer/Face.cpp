@@ -21,7 +21,7 @@ namespace Botcraft
         };
 
         const std::vector<float> Face::base_face = {
-            //   x         y         z    
+            //   x         y         z
             -0.9999f, -0.9999f, -0.9999f,
             0.9999f, -0.9999f, -0.9999f,
             -0.9999f, -0.9999f, 0.9999f,
@@ -107,7 +107,7 @@ namespace Botcraft
                 model_matrix[i] = model_ptr[i];
             }
 
-            texture_coords = { 
+            texture_coords = {
                 static_cast<float>(transformations.offset_x1),
                 static_cast<float>(transformations.offset_y2),
                 static_cast<float>(transformations.offset_x2),

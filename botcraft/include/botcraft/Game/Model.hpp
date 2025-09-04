@@ -15,7 +15,7 @@
 #include "botcraft/Renderer/Face.hpp"
 #endif
 
-namespace Botcraft 
+namespace Botcraft
 {
 #if USE_GUI
     struct FaceDescriptor

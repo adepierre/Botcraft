@@ -47,11 +47,11 @@ class DoxygenAwesomeFragmentCopyButton extends HTMLElement {
                         const fragmentCopyButton = document.createElement("doxygen-awesome-fragment-copy-button")
                         fragmentCopyButton.innerHTML = DoxygenAwesomeFragmentCopyButton.copyIcon
                         fragmentCopyButton.title = DoxygenAwesomeFragmentCopyButton.title
-                
+
                         fragment.parentNode.replaceChild(fragmentWrapper, fragment)
                         fragmentWrapper.appendChild(fragment)
                         fragmentWrapper.appendChild(fragmentCopyButton)
-            
+
                     }
                 }
             })

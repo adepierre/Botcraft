@@ -54,12 +54,12 @@ namespace Botcraft
         std::shared_ptr<ServerboundInteractPacket> packet_interact = std::make_shared<ServerboundInteractPacket>();
         packet_interact->SetEntityId(entity_id);
         packet_interact->SetAction(0);
-        packet_interact->SetHand(static_cast<int>(hand)); 
+        packet_interact->SetHand(static_cast<int>(hand));
 #if PROTOCOL_VERSION > 722 /* > 1.15.2 */
         packet_interact->SetUsingSecondaryAction(false);
 #endif
         network_manager->Send(packet_interact);
-        
+
         if (swing)
         {
             std::shared_ptr<ServerboundSwingPacket> packet_swing = std::make_shared<ServerboundSwingPacket>();

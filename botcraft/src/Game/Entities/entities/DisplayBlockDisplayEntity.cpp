@@ -41,13 +41,13 @@ namespace Botcraft
     {
         return EntityType::DisplayBlockDisplay;
     }
-    
+
 
 
     ProtocolCraft::Json::Value DisplayBlockDisplayEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = DisplayEntity::Serialize();
-        
+
         output["metadata"]["data_block_state_id"] = GetDataBlockStateId();
 
         return output;
@@ -67,14 +67,14 @@ namespace Botcraft
         }
     }
 
-    
+
     int DisplayBlockDisplayEntity::GetDataBlockStateId() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_block_state_id"));
     }
-    
-    
+
+
     void DisplayBlockDisplayEntity::SetDataBlockStateId(const int data_block_state_id)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);

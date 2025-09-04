@@ -68,7 +68,7 @@ namespace Botcraft
         {
             return BehaviourNodeType::Composite;
         }
-        
+
         virtual size_t GetNumChildren() const override
         {
             return children.size();
@@ -327,7 +327,7 @@ namespace Botcraft
 
 
     // Common Decorators implementations
-        
+
     /// @brief A Decorator that inverts the result of its child.
     /// @tparam Context The tree context type
     template<typename Context>
@@ -421,9 +421,9 @@ namespace Botcraft
         }
 
         /// @brief To add an anonymous leaf
-        /// @tparam ...Args 
-        /// @param ...args 
-        /// @return 
+        /// @tparam ...Args
+        /// @param ...args
+        /// @return
         template<typename... Args>
         CompositeBuilder leaf(Args&&... args)
         {

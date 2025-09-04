@@ -47,13 +47,13 @@ namespace Botcraft
     {
         return EntityType::Sniffer;
     }
-    
+
 
 
     ProtocolCraft::Json::Value SnifferEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = AnimalEntity::Serialize();
-        
+
         output["metadata"]["data_state"] = GetDataState();
         output["metadata"]["data_drop_seed_at_tick"] = GetDataDropSeedAtTick();
 
@@ -74,26 +74,26 @@ namespace Botcraft
         }
     }
 
-    
+
     int SnifferEntity::GetDataState() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_state"));
     }
-    
+
     int SnifferEntity::GetDataDropSeedAtTick() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<int>(metadata.at("data_drop_seed_at_tick"));
     }
-    
-    
+
+
     void SnifferEntity::SetDataState(const int data_state)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_state"] = data_state;
     }
-    
+
     void SnifferEntity::SetDataDropSeedAtTick(const int data_drop_seed_at_tick)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);

@@ -98,7 +98,7 @@ namespace Botcraft
         /// @param thread_id Id of the thread
         /// @return Number of remaining loaders
         size_t RemoveLoader(const std::thread::id& thread_id);
-        
+
     private:
         bool IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const;
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */

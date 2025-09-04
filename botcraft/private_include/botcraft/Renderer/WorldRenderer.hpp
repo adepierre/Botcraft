@@ -31,7 +31,7 @@ namespace Botcraft
         enum class FrustumResult
         {
             Outside = 0, // Box is outside the frustum
-            Intersect,   // Box intersects with the frustum 
+            Intersect,   // Box intersects with the frustum
             Inside         // Box is inside the frustum
         };
 

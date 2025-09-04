@@ -1,6 +1,6 @@
 #pragma once
 
-/// @brief Base functions you can use as tree leaf 
+/// @brief Base functions you can use as tree leaf
 /// in any Botcraft behaviour tree. When a function
 /// has some arguments, there are three versions:
 /// 1. XXXImpl is the actual task implementation. It

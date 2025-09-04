@@ -32,7 +32,7 @@ TEST_CASE("Blackboard Read/Write values")
 
     REQUIRE_NOTHROW(blackboard.Reset());
     REQUIRE_THROWS(blackboard.Get<int>("hello"));
-    
+
     REQUIRE_NOTHROW(blackboard.Reset({ { "hello", 42 } }));
     REQUIRE(blackboard.Get<int>("hello") == 42);
 }

@@ -27,9 +27,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const std::vector<unsigned char>& GetLastSignature() const;
         void SetLastSignature(const std::vector<unsigned char>& last_signature_sent_);
-        
+
         void AddSeenMessage(const std::vector<unsigned char>& signature, const ProtocolCraft::UUID& sender);
-        
+
         ProtocolCraft::LastSeenMessagesUpdate GetLastSeenMessagesUpdate() const;
 #else
         /// @brief Get both a vector of previous messages signatures and the LastSeenMessagesUpdate object
@@ -40,7 +40,7 @@ namespace Botcraft
 
         int GetOffset() const;
         int GetAndResetOffset();
-#endif        
+#endif
 
     private:
         std::mutex mutex;

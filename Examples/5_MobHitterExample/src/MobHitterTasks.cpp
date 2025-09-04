@@ -13,7 +13,7 @@ Status HitCloseHostiles(BehaviourClient& c)
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
     std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
     Blackboard& blackboard = c.GetBlackboard();
-    
+
     const NotifyOnEndUseRef<std::map<int, std::chrono::steady_clock::time_point>> last_time_hit_wrapper = blackboard.GetRef("Entities.LastTimeHit", std::map<int, std::chrono::steady_clock::time_point>());
     std::map<int, std::chrono::steady_clock::time_point>& last_time_hit = last_time_hit_wrapper.ref();
 

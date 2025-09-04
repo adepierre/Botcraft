@@ -11,7 +11,7 @@ namespace Botcraft
     {
     public:
         SimpleBehaviourClient(const bool use_renderer_);
-        
+
         virtual ~SimpleBehaviourClient();
     };
 } // namespace Botcraft
