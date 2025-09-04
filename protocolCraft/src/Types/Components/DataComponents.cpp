@@ -657,9 +657,11 @@ namespace ProtocolCraft
                 }
                 else
                 {
+                    // TODO: Fix this, this is *NOT* how the components are serialized to bytes
                     std::vector<unsigned char> serialized;
                     WriteData<DataComponentTypes, VarInt>(k, serialized);
                     v->Write(serialized);
+                    // This however should be the right CRC32C hash calculation
                     // CRC32c polynomial, from https://en.wikipedia.org/wiki/Cyclic_redundancy_check#Polynomial_representations
                     // no idea why we need the reversed one but it works
                     constexpr unsigned int polynomial = 0x82F63B78;
