@@ -430,7 +430,11 @@ namespace Botcraft
 
     void NetworkManager::Handle(ClientboundHelloPacket& packet)
     {
-        if (authentifier == nullptr)
+        if (authentifier == nullptr
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+            && packet.GetShouldAuthenticate()
+#endif
+        )
         {
             throw std::runtime_error("Authentication asked while no valid account has been provided, make sure to connect with a valid Microsoft Account, or to a server with online-mode=false");
         }
@@ -458,7 +462,13 @@ namespace Botcraft
             encrypted_challenge);
 #endif
 
-        authentifier->JoinServer(packet.GetServerId(), raw_shared_secret, packet.GetPublicKey());
+        // In 1.20.5+, encryption can be enabled even in offline mode
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        if (packet.GetShouldAuthenticate())
+#endif
+        {
+            authentifier->JoinServer(packet.GetServerId(), raw_shared_secret, packet.GetPublicKey());
+        }
 
         std::shared_ptr<ServerboundKeyPacket> response_packet = std::make_shared<ServerboundKeyPacket>();
         response_packet->SetKeyBytes(encrypted_shared_secret);
