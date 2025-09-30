@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_left_chest",
+	"textures": {
+		"all": "entity/chest/copper_oxidized_left"
+	},
+	"textures_base_size": {
+		"entity/chest/copper_oxidized_left": [64, 64]
+	}
+}
