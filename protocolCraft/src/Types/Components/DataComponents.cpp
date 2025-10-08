@@ -63,6 +63,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypeVariantEnum.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeWeapon.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/Components/DataComponentTypeTypedEntityData.hpp"
+#endif
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
@@ -97,6 +100,10 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(MobEffectInstanceDetails);
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         DEFINE_NETWORK_TYPE(PaintingVariant);
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        DEFINE_NETWORK_TYPE(PartialResolvableProfile);
+        DEFINE_NETWORK_TYPE(PlayerSkinPatch);
 #endif
         DEFINE_NETWORK_TYPE(PossibleEffect);
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
@@ -166,6 +173,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeTooltipDisplay);
         DEFINE_NETWORK_TYPE(DataComponentTypeVariantEnum);
         DEFINE_NETWORK_TYPE(DataComponentTypeWeapon);
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeTypedEntityData);
 #endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
@@ -331,9 +341,11 @@ namespace ProtocolCraft
             case DataComponentTypes::CustomName:
             case DataComponentTypes::ItemName:
                 return std::make_shared<DataComponentTypeComponent>();
-            case DataComponentTypes::BlockEntityData:
             case DataComponentTypes::BucketEntityData:
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
+            case DataComponentTypes::BlockEntityData:
             case DataComponentTypes::EntityData:
+#endif
                 return std::make_shared<DataComponentTypeCustomData>();
             case DataComponentTypes::CustomModelData:
                 return std::make_shared<DataComponentTypeCustomModelData>();
@@ -485,6 +497,11 @@ namespace ProtocolCraft
             case DataComponentTypes::Shulker_Color:
             case DataComponentTypes::Wolf_Collar:
                 return std::make_shared<DataComponentTypeDyeColor>();
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+            case DataComponentTypes::BlockEntityData:
+            case DataComponentTypes::EntityData:
+                return std::make_shared<DataComponentTypeTypedEntityData>();
 #endif
             default:
                 // Should never happen but will make the compilers happy

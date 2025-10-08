@@ -27,6 +27,9 @@ namespace ProtocolCraft
 #endif
         Bubble,
         Cloud,
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        CopperFireFlame,
+#endif
         Crit,
         DamageIndicator,
         DragonBreath,

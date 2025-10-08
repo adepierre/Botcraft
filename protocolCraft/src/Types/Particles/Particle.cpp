@@ -26,6 +26,14 @@
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "protocolCraft/Types/Particles/TrailParticleOptions.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/Particles/PowerParticleOption.hpp"
+#include "protocolCraft/Types/Particles/SpellParticleOption.hpp"
+#endif
+
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/Particles/ExplosionParticleInfo.hpp" // Not a particle info type, used in ClientboundExplodePacket
+#endif
 
 #include <array>
 #include <stdexcept>
@@ -59,6 +67,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     DEFINE_NETWORK_TYPE(TrailParticleOptions);
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+    DEFINE_NETWORK_TYPE(PowerParticleOptions);
+    DEFINE_NETWORK_TYPE(SpellParticleOptions);
+#endif
+
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+    DEFINE_NETWORK_TYPE(ExplosionParticleInfo); // Not a particle info type, used in ClientboundExplodePacket
+#endif
 
     Particle::Particle()
     {
@@ -90,6 +106,9 @@ namespace ProtocolCraft
     #endif
             "bubble",
             "cloud",
+    #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+            "copper_fire_flame",
+    #endif
             "crit",
             "damage_indicator",
             "dragon_breath",
@@ -386,12 +405,24 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         case ParticleType::TintedLeaves:
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        case ParticleType::Flash:
+#endif
             Options = std::make_shared<ColorParticleOptions>();
             break;
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         case ParticleType::Trail:
             Options = std::make_shared<TrailParticleOptions>();
+            break;
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        case ParticleType::DragonBreath:
+            Options = std::make_shared<PowerParticleOptions>();
+            break;
+        case ParticleType::Effect:
+        case ParticleType::InstantEffect:
+            Options = std::make_shared<SpellParticleOptions>();
             break;
 #endif
 #else //1.12.2

@@ -71,6 +71,10 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundCustomReportDetailsPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundCustomSoundPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundDamageEventPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundDebugBlockValuePacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundDebugChunkValuePacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundDebugEntityValuePacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundDebugEventPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundDebugSamplePacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundDeleteChatPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundDisconnectPacket.hpp
@@ -80,6 +84,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundExplodePacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundForgetLevelChunkPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundGameEventPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundGameTestHighlightPosPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundHorseScreenOpenPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundHurtAnimationPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundInitializeBorderPacket.hpp
@@ -217,6 +222,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Serverbound/ServerboundCustomClickActionPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundCustomPayloadPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp
+    include/protocolCraft/Packets/Game/Serverbound/ServerboundDebugSubscriptionRequestPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundEditBookPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundEnchantItemPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundEntityTagQueryPacket.hpp
@@ -274,6 +280,7 @@ set(protocolCraft_PUBLIC_HDR
 
 
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundClearDialogPacket.hpp
+    include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCodeOfConductPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCookieRequestPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCustomPayloadPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundCustomReportDetailsPacket.hpp
@@ -294,6 +301,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
     include/protocolCraft/Packets/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp
 
+    include/protocolCraft/Packets/Configuration/Serverbound/ServerboundAcceptCodeOfConductPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundClientInformationPacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundCookieResponsePacket.hpp
     include/protocolCraft/Packets/Configuration/Serverbound/ServerboundCustomClickActionPacket.hpp
@@ -326,6 +334,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/HolderSet.hpp
     include/protocolCraft/Types/Identifier.hpp
     include/protocolCraft/Types/KnownPack.hpp
+    include/protocolCraft/Types/LevelDataRespawnData.hpp
+    include/protocolCraft/Types/LpVec3.hpp
     include/protocolCraft/Types/MapDecoration.hpp
     include/protocolCraft/Types/MinecartBehaviorMinecartStep.hpp
     include/protocolCraft/Types/NetworkPosition.hpp
@@ -349,6 +359,32 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Chat/RemoteChatSessionData.hpp
     include/protocolCraft/Types/Chat/SignedMessageHeader.hpp
     include/protocolCraft/Types/Chat/SignedMessageBody.hpp
+
+    include/protocolCraft/Types/Debug/DebugSubscription.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionData.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataBeeInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataBrainDump.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataBreezeInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataEmpty.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataEntityBlockIntersection.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataGameEventInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataGameEventListenerInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataGoalInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataHiveInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataNeighbor.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataOrientation.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataPathInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataPoiInfo.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataRaids.hpp
+    include/protocolCraft/Types/Debug/DebugSubscriptionDataStructures.hpp
+
+    include/protocolCraft/Types/Debug/Subtypes/BoundingBox.hpp
+    include/protocolCraft/Types/Debug/Subtypes/DebugGoal.hpp
+    include/protocolCraft/Types/Debug/Subtypes/DebugStructureInfo.hpp
+    include/protocolCraft/Types/Debug/Subtypes/DebugStructureInfoPiece.hpp
+    include/protocolCraft/Types/Debug/Subtypes/Node.hpp
+    include/protocolCraft/Types/Debug/Subtypes/Path.hpp
+    include/protocolCraft/Types/Debug/Subtypes/PathDebugData.hpp
 
     include/protocolCraft/Types/CommandNode/BrigadierProperty.hpp
     include/protocolCraft/Types/CommandNode/BrigadierPropertyDouble.hpp
@@ -411,6 +447,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp
     include/protocolCraft/Types/Components/DataComponentTypeTool.hpp
     include/protocolCraft/Types/Components/DataComponentTypeTooltipDisplay.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeTypedEntityData.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUnbreakable.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUnit.hpp
     include/protocolCraft/Types/Components/DataComponentTypeUseRemainder.hpp
@@ -432,6 +469,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstance.hpp
     include/protocolCraft/Types/Components/Subtypes/MobEffectInstanceDetails.hpp
     include/protocolCraft/Types/Components/Subtypes/PaintingVariant.hpp
+    include/protocolCraft/Types/Components/Subtypes/PartialResolvableProfile.hpp
+    include/protocolCraft/Types/Components/Subtypes/PlayerSkinPatch.hpp
     include/protocolCraft/Types/Components/Subtypes/PossibleEffect.hpp
     include/protocolCraft/Types/Components/Subtypes/PropertyMatcher.hpp
     include/protocolCraft/Types/Components/Subtypes/StatePropertiesPredicate.hpp
@@ -479,9 +518,12 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/DustColorTransitionOptions.hpp
     include/protocolCraft/Types/Particles/DustParticleOptions.hpp
     include/protocolCraft/Types/Particles/EmptyParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ExplosionParticleInfo.hpp
     include/protocolCraft/Types/Particles/ItemParticleOptions.hpp
+    include/protocolCraft/Types/Particles/PowerParticleOption.hpp
     include/protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp
     include/protocolCraft/Types/Particles/ShriekParticleOptions.hpp
+    include/protocolCraft/Types/Particles/SpellParticleOption.hpp
     include/protocolCraft/Types/Particles/TrailParticleOptions.hpp
     include/protocolCraft/Types/Particles/VibrationParticleOptions.hpp
 
@@ -561,6 +603,8 @@ set(protocolCraft_SRC
     src/Types/Components/Subtypes/ConsumeEffects/ConsumeEffect.cpp
 
     src/Types/Components/Subtypes/ItemAttributeModifiers/Display.cpp
+
+    src/Types/Debug/DebugSubscription.cpp
 
     src/Types/NBT/NBT.cpp
     src/Types/NBT/Tag.cpp

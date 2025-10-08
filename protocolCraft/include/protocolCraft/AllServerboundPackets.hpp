@@ -22,6 +22,9 @@
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
 #include "protocolCraft/Packets/Configuration/Serverbound/ServerboundCustomClickActionPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Packets/Configuration/Serverbound/ServerboundAcceptCodeOfConductPacket.hpp"
+#endif
 
 // Handshaking
 #include "protocolCraft/Packets/Handshake/Serverbound/ServerboundClientIntentionPacket.hpp"
@@ -99,8 +102,11 @@
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundCustomClickActionPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundCustomPayloadPacket.hpp"
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 773 /* < 1.21.9 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundDebugSampleSubscriptionPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundDebugSubscriptionRequestPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundEditBookPacket.hpp"
@@ -220,6 +226,10 @@ namespace ProtocolCraft
         ,
         ServerboundCustomClickActionConfigurationPacket
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ,
+        ServerboundAcceptCodeOfConductPacket
+#endif
     >;
 #endif
 
@@ -310,8 +320,11 @@ namespace ProtocolCraft
         ServerboundCookieResponsePacket,
 #endif
         ServerboundCustomPayloadPacket,
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 773 /* < 1.21.9 */
         ServerboundDebugSampleSubscriptionPacket,
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ServerboundDebugSubscriptionRequestPacket,
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ServerboundEditBookPacket,

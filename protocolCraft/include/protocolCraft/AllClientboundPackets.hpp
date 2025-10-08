@@ -49,6 +49,9 @@
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundUpdateTagsPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Packets/Configuration/Clientbound/ClientboundCodeOfConductPacket.hpp"
+#endif
 
 // Login
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -150,6 +153,12 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundDamageEventPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugBlockValuePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugChunkValuePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugEntityValuePacket.hpp"
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugEventPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundDebugSamplePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
@@ -166,6 +175,9 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundExplodePacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundForgetLevelChunkPacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundGameEventPacket.hpp"
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundGameTestHighlightPosPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundHorseScreenOpenPacket.hpp"
 #endif
@@ -460,6 +472,10 @@ namespace ProtocolCraft
         ,
         ClientboundCookieRequestLoginPacket
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ,
+        ClientboundCodeOfConductPacket
+#endif
     >;
 
     using AllClientboundPlayPackets = std::tuple<
@@ -544,6 +560,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         ClientboundDamageEventPacket,
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ClientboundDebugBlockValuePacket,
+        ClientboundDebugChunkValuePacket,
+        ClientboundDebugEntityValuePacket,
+        ClientboundDebugEventPacket,
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ClientboundDebugSamplePacket,
 #endif
@@ -567,6 +589,9 @@ namespace ProtocolCraft
         ClientboundExplodePacket,
         ClientboundForgetLevelChunkPacket,
         ClientboundGameEventPacket,
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ClientboundGameTestHighlightPosPacket,
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ClientboundHorseScreenOpenPacket,
 #endif

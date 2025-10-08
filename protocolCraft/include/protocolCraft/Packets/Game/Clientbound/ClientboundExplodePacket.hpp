@@ -11,6 +11,9 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Holder.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/Particles/ExplosionParticleInfo.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -19,6 +22,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Explode";
 
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
     private:
         std::vector<NetworkPosition> ReadToBlow(ReadIterator& iter, size_t& length) const
         {
@@ -55,6 +59,7 @@ namespace ProtocolCraft
                 WriteData<int, char>(to_blow[i].GetZ(), container);
             }
         }
+#endif
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         SERIALIZED_FIELD(X, float);
@@ -66,6 +71,10 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Z, double);
 #else
         SERIALIZED_FIELD(Center, std::array<double, 3>);
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        SERIALIZED_FIELD(Radius, float);
+        SERIALIZED_FIELD(BlockCount, int);
 #endif
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(Power, float);
@@ -90,6 +99,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(ExplosionSound, SoundEvent);
 #elif PROTOCOL_VERSION > 764 /* > 1.20.2 */
         SERIALIZED_FIELD(ExplosionSound, Holder<SoundEvent>);
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        SERIALIZED_FIELD(BlockParticles, std::vector<std::pair<VarInt, ExplosionParticleInfo>>);
 #endif
 
         DECLARE_READ_WRITE_SERIALIZE;

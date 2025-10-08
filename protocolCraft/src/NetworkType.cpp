@@ -62,6 +62,10 @@
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #include "protocolCraft/Types/TestInstanceBlockEntityData.hpp"
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/LpVec3.hpp"
+#include "protocolCraft/Types/LevelDataRespawnData.hpp"
+#endif
 
 // Chat
 #if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -195,6 +199,10 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     DEFINE_NETWORK_TYPE(TestInstanceBlockEntityData);
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+    DEFINE_SERIALIZE(LpVec3);
+    DEFINE_NETWORK_TYPE(LevelDataRespawnData);
 #endif
 
     // Chat

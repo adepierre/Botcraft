@@ -1,6 +1,9 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/LpVec3.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -19,6 +22,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        SERIALIZED_FIELD(Movement, LpVec3);
+#endif
         SERIALIZED_FIELD(XRot, unsigned char);
         SERIALIZED_FIELD(YRot, unsigned char);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
@@ -29,9 +35,11 @@ namespace ProtocolCraft
 #else
         SERIALIZED_FIELD(Data, VarInt);
 #endif
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         SERIALIZED_FIELD(Xa, short);
         SERIALIZED_FIELD(Ya, short);
         SERIALIZED_FIELD(Za, short);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
