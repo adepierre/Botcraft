@@ -1084,7 +1084,10 @@ namespace Botcraft
                     }
 
                     const Vector3<double> current_pos = local_player->GetPosition();
-                    if (Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) < (0.5 - half_player_width) * (0.5 - half_player_width))
+                    const Vector3<double> current_motion_vector = target_position - current_pos;
+                    // If we moved past the target (dot product between initial and current motion vector < 0 ) or we're close enough
+                    if ((current_motion_vector.x * motion_vector.x + current_motion_vector.z * motion_vector.z) < 0.0 ||
+                        Vector3<double>(current_pos.x, 0.0, current_pos.z).SqrDist(horizontal_target_position) < (0.5 - half_player_width) * (0.5 - half_player_width))
                     {
                         return true;
                     }

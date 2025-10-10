@@ -289,6 +289,10 @@ TEST_CASE("speed pathfinding")
         }
     }
 
+    INFO("Sprint: " << sprint);
+    INFO("Speed effect: " << speed_effect);
+    INFO("Botcraft speed multiplier: " << botcraft_speed_factor);
+
     if (speed_effect > 0)
     {
         // Speed N is given using N-1
