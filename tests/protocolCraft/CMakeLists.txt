@@ -7,6 +7,7 @@ set(SRC_FILES
     src/nbt.cpp
     src/serialization.cpp
     src/templates.cpp
+    src/types.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
