@@ -3,6 +3,8 @@
 
 #include "protocolCraft/NetworkType.hpp"
 
+#include <cmath>
+
 namespace ProtocolCraft
 {
     class LpVec3 : public NetworkType
