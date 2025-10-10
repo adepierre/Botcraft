@@ -3,7 +3,12 @@
 #include "protocolCraft/Types/Item/Slot.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 #include "protocolCraft/Types/Particles/Particle.hpp"
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp"
+#endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/VillagerData.hpp"
 #endif
@@ -65,6 +70,9 @@
 #include "botcraft/Game/Entities/entities/animal/ChickenEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/CodEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "botcraft/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/animal/CowEntity.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
@@ -139,6 +147,9 @@
 #include "botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/MarkerEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "botcraft/Game/Entities/entities/decoration/MannequinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/vehicle/MinecartEntity.hpp"
 #include "botcraft/Game/Entities/entities/vehicle/MinecartChestEntity.hpp"
@@ -399,7 +410,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
                 OptionalBlockstate,
 #endif
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
                 NBT,
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
                 Particle,
 #endif
@@ -439,8 +452,15 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
                 ArmadilloState,
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+                CopperGolemState,
+                WeatheringCopperState,
+#endif
                 Vec3,
                 Quaternion,
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+                ResolvableProfile,
+#endif
 #endif
             };
 
@@ -548,6 +568,7 @@ namespace Botcraft
                 }
                 break;
 #endif
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
             case EntityMetadataTypes::NBT:
             {
                 ProtocolCraft::NBT::UnnamedValue unnamed_value;
@@ -555,6 +576,7 @@ namespace Botcraft
                 value = ProtocolCraft::NBT::Value(unnamed_value);
                 break;
             }
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
             case EntityMetadataTypes::Particle:
             {
@@ -652,6 +674,14 @@ namespace Botcraft
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+            case EntityMetadataTypes::CopperGolemState:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+            case EntityMetadataTypes::WeatheringCopperState:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
             case EntityMetadataTypes::Vec3:
             {
                 const float x = ProtocolCraft::ReadData<float>(iter, length);
@@ -669,6 +699,11 @@ namespace Botcraft
                 value = std::array<float, 4>{x, y, z, w};
             }
             break;
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+            case EntityMetadataTypes::ResolvableProfile:
+                value = ProtocolCraft::ReadData<ProtocolCraft::Components::DataComponentTypeResolvableProfile>(iter, length);
+                break;
 #endif
             default:
                 LOG_ERROR("Unknown type in entity metadata : " << type << ".Stopping current metadata parsing.");
@@ -1452,6 +1487,12 @@ namespace Botcraft
         return false;
     }
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+    bool Entity::IsAvatar() const
+    {
+        return false;
+    }
+#endif
 
 
     std::shared_ptr<Entity> Entity::CreateEntity(const EntityType type)
@@ -1549,6 +1590,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         case EntityType::Cod:
             return std::make_shared<CodEntity>();
+#endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        case EntityType::CopperGolem:
+            return std::make_shared<CopperGolemEntity>();
 #endif
         case EntityType::Cow:
             return std::make_shared<CowEntity>();
@@ -1668,6 +1713,10 @@ namespace Botcraft
             return std::make_shared<LlamaSpitEntity>();
         case EntityType::MagmaCube:
             return std::make_shared<MagmaCubeEntity>();
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        case EntityType::Mannequin:
+            return std::make_shared<MannequinEntity>();
+#endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case EntityType::Marker:
             return std::make_shared<MarkerEntity>();

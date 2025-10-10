@@ -157,6 +157,12 @@ namespace Botcraft
         entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
         entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
         entity->SetUUID(packet.GetUuid());
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
+        // Packet data is in 1/8000 of block per tick, so convert it back to block/tick
+        entity->SetSpeed(Vector3<double>(packet.GetXa(), packet.GetYa(), packet.GetZa()) / 8000.0);
+#else
+        entity->SetSpeed(Vector3<double>(packet.GetMovement()));
+#endif
 
         std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[packet.GetEntityId()] = entity;
@@ -371,8 +377,12 @@ namespace Botcraft
         }
         else
         {
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
             // Packet data is in 1/8000 of block per tick, so convert it back to block/tick
             entity->SetSpeed(Vector3<double>(packet.GetXA(), packet.GetYA(), packet.GetZA()) / 8000.0);
+#else
+            entity->SetSpeed(Vector3<double>(packet.GetMovement()));
+#endif
         }
     }
 

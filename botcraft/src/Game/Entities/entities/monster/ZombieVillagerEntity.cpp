@@ -18,7 +18,7 @@ namespace Botcraft
         // Initialize all metadata with default values
         SetDataConvertingId(false);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        SetDataVillagerData(VillagerData{ 2, 0, 1 });
+        SetDataVillagerData(VillagerData{ 2, 0, 1 }); // TODO: from 1.21.9 it's a random profession and a type depending on the biome, but we don't really care on the clientside I guess
 #else
         SetDataVillagerProfessionId(0);
 #endif

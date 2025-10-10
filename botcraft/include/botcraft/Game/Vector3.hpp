@@ -5,6 +5,9 @@
 #include <cmath>
 
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#include "protocolCraft/Types/LpVec3.hpp"
+#endif
 
 namespace Botcraft
 {
@@ -31,6 +34,15 @@ namespace Botcraft
             y = position.GetY();
             z = position.GetZ();
         }
+
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        Vector3(const ProtocolCraft::LpVec3& v)
+        {
+            x = v.GetX();
+            y = v.GetY();
+            z = v.GetZ();
+        }
+#endif
 
         template <typename U>
         Vector3(const Vector3<U>& position)

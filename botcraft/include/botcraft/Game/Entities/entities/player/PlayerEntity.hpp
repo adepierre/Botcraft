@@ -1,16 +1,30 @@
 #pragma once
 
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
 #include "botcraft/Game/Entities/entities/LivingEntity.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
+#else
+#include "botcraft/Game/Entities/entities/AvatarEntity.hpp"
+#endif
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
     class PlayerEntity : public LivingEntity
+#else
+    class PlayerEntity : public AvatarEntity
+#endif
     {
     protected:
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         static constexpr int metadata_count = 6;
         static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = LivingEntity::metadata_count + LivingEntity::hierarchy_metadata_count;
+#else
+        static constexpr int metadata_count = 4;
+        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int hierarchy_metadata_count = AvatarEntity::metadata_count + AvatarEntity::hierarchy_metadata_count;
+#endif
 
     public:
         PlayerEntity();
@@ -41,19 +55,30 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
+
         float GetDataPlayerAbsorptionId() const;
         int GetDataScoreId() const;
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         char GetDataPlayerModeCustomisation() const;
         char GetDataPlayerMainHand() const;
         ProtocolCraft::NBT::Value GetDataShoulderLeft() const;
         ProtocolCraft::NBT::Value GetDataShoulderRight() const;
+#else
+        const std::optional<int>& GetDataShoulderParrotLeft() const;
+        const std::optional<int>& GetDataShoulderParrotRight() const;
+#endif
 
         void SetDataPlayerAbsorptionId(const float data_player_absorption_id);
         void SetDataScoreId(const int data_score_id);
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         void SetDataPlayerModeCustomisation(const char data_player_mode_customisation);
         void SetDataPlayerMainHand(const char data_player_main_hand);
         void SetDataShoulderLeft(const ProtocolCraft::NBT::Value& data_shoulder_left);
         void SetDataShoulderRight(const ProtocolCraft::NBT::Value& data_shoulder_right);
+#else
+        void SetDataShoulderParrotLeft(const std::optional<int>& data_shoulder_parrot_left);
+        void SetDataShoulderParrotRight(const std::optional<int>& data_shoulder_parrot_right);
+#endif
 
         virtual bool IsRemotePlayer() const override;
 

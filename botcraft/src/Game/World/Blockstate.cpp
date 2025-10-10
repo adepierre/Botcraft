@@ -890,6 +890,9 @@ namespace Botcraft
                 2.0f,
                 12.0f,
                 4.0f,
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+                5.0f,
+#endif
                 6.0f,
                 8.0f,
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */

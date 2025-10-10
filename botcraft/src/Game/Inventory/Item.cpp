@@ -114,6 +114,12 @@ namespace Botcraft
         {
             tool_material = ToolMaterial::Stone;
         }
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        else if (sub_parts[0] == "copper")
+        {
+            tool_material = ToolMaterial::Copper;
+        }
+#endif
         else if (sub_parts[0] == "iron")
         {
             tool_material = ToolMaterial::Iron;

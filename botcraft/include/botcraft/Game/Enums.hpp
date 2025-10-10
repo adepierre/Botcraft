@@ -285,12 +285,15 @@ namespace Botcraft
 #endif
     };
 
-    enum class ToolMaterial: char
+    enum class ToolMaterial : char
     {
         None = 0,
         Wood,
         Gold,
         Stone,
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        Copper,
+#endif
         Iron,
         Diamond,
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */

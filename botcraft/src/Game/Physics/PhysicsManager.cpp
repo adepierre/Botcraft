@@ -221,8 +221,13 @@ namespace Botcraft
         }
 
         std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         player->yaw = packet.GetYRot();
         player->pitch = packet.GetXRot();
+#else
+        player->yaw = player->yaw * packet.GetRelativeY() + packet.GetYRot();
+        player->pitch = player->pitch * packet.GetRelativeX() + packet.GetXRot();
+#endif
         player->previous_yaw = player->yaw;
         player->previous_pitch = player->pitch;
     }

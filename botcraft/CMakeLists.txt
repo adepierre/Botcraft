@@ -37,6 +37,7 @@ set(botcraft_PUBLIC_HDR
 
     include/botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp
     include/botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp
+    include/botcraft/Game/Entities/entities/AvatarEntity.hpp
     include/botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/BlockAttachedEntity.hpp
@@ -51,6 +52,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.hpp
     include/botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp
     include/botcraft/Game/Entities/entities/animal/ChickenEntity.hpp
     include/botcraft/Game/Entities/entities/animal/CodEntity.hpp
@@ -93,6 +95,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/item/ItemEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/LargeFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/decoration/MannequinEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/LeashFenceKnotEntity.hpp
     include/botcraft/Game/Entities/entities/LightningBoltEntity.hpp
     include/botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp
@@ -290,6 +293,7 @@ set(botcraft_SRC
 
     src/Game/Entities/entities/animal/allay/AllayEntity.cpp
     src/Game/Entities/entities/AreaEffectCloudEntity.cpp
+    src/Game/Entities/entities/AvatarEntity.cpp
     src/Game/Entities/entities/animal/armadillo/ArmadilloEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
     src/Game/Entities/entities/decoration/BlockAttachedEntity.cpp
@@ -304,6 +308,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
     src/Game/Entities/entities/animal/CatEntity.cpp
     src/Game/Entities/entities/animal/camel/CamelEntity.cpp
+    src/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.cpp
     src/Game/Entities/entities/monster/CaveSpiderEntity.cpp
     src/Game/Entities/entities/animal/ChickenEntity.cpp
     src/Game/Entities/entities/animal/CodEntity.cpp
@@ -362,6 +367,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/horse/MuleEntity.cpp
     src/Game/Entities/entities/animal/MushroomCowEntity.cpp
     src/Game/Entities/entities/animal/OcelotEntity.cpp
+    src/Game/Entities/entities/decoration/MannequinEntity.cpp
     src/Game/Entities/entities/decoration/PaintingEntity.cpp
     src/Game/Entities/entities/animal/PandaEntity.cpp
     src/Game/Entities/entities/animal/ParrotEntity.cpp
