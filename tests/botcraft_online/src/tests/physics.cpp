@@ -10,6 +10,8 @@
 
 #include <fstream>
 #include <iomanip>
+#include <sstream>
+#include <vector>
 
 using namespace Botcraft;
 
@@ -174,6 +176,20 @@ TEST_CASE("elytra rocket boost")
     }, 5000));
 }
 
+std::vector<int> StrVersionToVectorInt(const std::string& version)
+{
+    std::string token;
+    std::vector<int> output;
+
+    std::stringstream s(version);
+
+    while (std::getline(s, token, '.'))
+    {
+        output.push_back(std::stoi(token));
+    }
+    return output;
+}
+
 void TestPhysicsTrajectory(const std::string& test_name)
 {
     static std::string current_test = "";
@@ -196,8 +212,8 @@ void TestPhysicsTrajectory(const std::string& test_name)
     std::string test_max_version;
     std::getline(buffer, test_min_version);
     std::getline(buffer, test_max_version);
-    if ((!test_min_version.empty() && game_version < test_min_version) ||
-        (!test_max_version.empty() && game_version > test_max_version)
+    if ((!test_min_version.empty() && StrVersionToVectorInt(game_version) < StrVersionToVectorInt(test_min_version)) ||
+        (!test_max_version.empty() && StrVersionToVectorInt(game_version) > StrVersionToVectorInt(test_max_version))
     )
     {
         SKIP("skipped for version " + game_version);
@@ -223,8 +239,8 @@ void TestPhysicsTrajectory(const std::string& test_name)
         std::getline(buffer, commands_post_run);
         std::getline(buffer, csv_key_header);
         const bool keep_section =
-            (section_min_version.empty() || game_version >= section_min_version) &&
-            (section_max_version.empty() || game_version <= section_max_version);
+            (section_min_version.empty() || StrVersionToVectorInt(game_version) >= StrVersionToVectorInt(section_min_version)) &&
+            (section_max_version.empty() || StrVersionToVectorInt(game_version) <= StrVersionToVectorInt(section_max_version));
 
         // Read all trajectory ticks
         std::vector<std::string> section_lines;

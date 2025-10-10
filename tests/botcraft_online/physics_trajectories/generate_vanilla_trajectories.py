@@ -42,13 +42,16 @@ def download_file(url: str, destination_folder: str, validate_size: bool = False
 
     return destination
 
+def str_to_tuple_version(version: str):
+    return tuple(int(s) for s in version.split("."))
+
 class Server:
     def __init__(self, base_folder: str, manifest: dict, dat_path: str, structures_folder: str, java_exe: str):
         print("Setup server...")
         print("\tCopy files...")
-        version = manifest["id"]
+        version = str_to_tuple_version(manifest["id"])
         # Copy structure files
-        structure_folder_dst = os.path.join(base_folder, "world", "generated", "minecraft", "structures") if version > "1.12.2" else os.path.join(base_folder, "world", "structures")
+        structure_folder_dst = os.path.join(base_folder, "world", "generated", "minecraft", "structures") if version > str_to_tuple_version("1.12.2") else os.path.join(base_folder, "world", "structures")
         os.makedirs(structure_folder_dst, exist_ok=True)
         if structures_folder:
             for f in os.listdir(structures_folder):
@@ -64,14 +67,14 @@ class Server:
 
         # Set server properties
         with open(os.path.join(base_folder, "server.properties"), "w") as f:
-            if version < "1.14":
+            if version < str_to_tuple_version("1.14"):
                 f.write("difficulty=3\n")
                 f.write("gamemode=1\n")
             else:
                 f.write("difficulty=hard\n")
                 f.write("gamemode=creative\n")
             f.write("enable-command-block=true\n")
-            if version > "1.18.2":
+            if version > str_to_tuple_version("1.18.2"):
                 f.write("enforce-secure-profile=false\n")
             f.write("force-gamemode=true\n")
             f.write("generate-structures=false\n")
@@ -110,18 +113,18 @@ class Server:
         # Set all custom gamerules
         print("\tSet gamerules...")
         self._set_gamerule("announceAdvancements", "false")
-        if version > "1.14.2":
+        if version > str_to_tuple_version("1.14.2"):
             self._set_gamerule("disableRaids", "true")
         self._set_gamerule("doDaylightCycle", "false")
         self._set_gamerule("doFireTick", "false")
-        if version > "1.14.4":
+        if version > str_to_tuple_version("1.14.4"):
             self._set_gamerule("doInsomnia", "false")
         self._set_gamerule("doMobSpawning", "false")
-        if version > "1.15.1":
+        if version > str_to_tuple_version("1.15.1"):
             self._set_gamerule("doPatrolSpawning", "false")
             self._set_gamerule("doTraderSpawning", "false")
         self._set_gamerule("doWeatherCycle", "false")
-        if version > "1.18.2":
+        if version > str_to_tuple_version("1.18.2"):
             self._set_gamerule("doWardenSpawning", "false")
         self._set_gamerule("mobGriefing", "false")
         self._set_gamerule("randomTickSpeed", "0")
@@ -169,12 +172,13 @@ class Server:
 def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) -> subprocess.Popen:
     print("Setup client...")
     print("\tDownload jar...")
+    version = str_to_tuple_version(manifest["id"])
     # Download Jar file
     client_jar = download_file(manifest["downloads"]["client"]["url"], base_folder, True)
 
     # Setup patcher and patch the client
     print("\tPatch client...")
-    if manifest["id"] < "1.14.4":
+    if version < str_to_tuple_version("1.14.4"):
         mapping_file = download_file(f"{MCP_URL}/{manifest['id']}/joined.tsrg", base_folder)
     else:
         mapping_file = download_file(manifest["downloads"]["client_mappings"]["url"], base_folder)
@@ -281,7 +285,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
             key = m.group(1)
             game_args[i] = game_args[i].replace("${" + key + "}", game_args_vals[key])
 
-    if manifest["id"] >= "1.20":
+    if version >= str_to_tuple_version("1.20"):
         game_args += [
             "--quickPlayMultiplayer",
             "127.0.0.1:25565"
@@ -356,7 +360,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
         f.write("bobView:false\n")
         f.write("entityShadows:false\n")
         f.write("graphicsMode:0\n")
-        if manifest["id"] >= "1.16.4":
+        if version >= str_to_tuple_version("1.16.4"):
             f.write("joinedFirstServer:true\n")
         f.write("maxFps:10\n") # FPS don't impact tick, lower it as much as possible
         f.write("mipmapLevels:0\n")
@@ -421,7 +425,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
     print("Client started!")
     return client
 
-def collect_trajectories(server: Server, in_folder: str, out_folder: str, client_folder: str, version: str, result_queue: Queue) -> None:
+def collect_trajectories(server: Server, in_folder: str, out_folder: str, client_folder: str, version: tuple[int, ...], result_queue: Queue) -> None:
     try:
         print("Wait for the client to connect to the server...")
         server.wait_regex(f".*? {PLAYER_NAME} joined the game.*", 120)
@@ -433,10 +437,10 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
             with open(path, "r") as f:
                 lines = f.readlines()
             test_min_version = lines[0].strip()
-            if test_min_version and version < test_min_version:
+            if test_min_version and version < str_to_tuple_version(test_min_version):
                 continue
             test_max_version = lines[1].strip()
-            if test_max_version and version > test_max_version:
+            if test_max_version and version > str_to_tuple_version(test_max_version):
                 continue
             outpath = os.path.join(out_folder, file.replace(".rawtraj", ".traj"))
             with open(outpath, "w") as f:
@@ -456,7 +460,7 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
                 assert len(csv_key_header) == len(INPUTS_KEYS)
                 for k in INPUTS_KEYS:
                     assert k in csv_key_header
-                keep_section = (not section_min_version or version >= section_min_version) and (not section_max_version or version <= section_max_version)
+                keep_section = (not section_min_version or version >= str_to_tuple_version(section_min_version)) and (not section_max_version or version <= str_to_tuple_version(section_max_version))
                 line_index += 8
                 trajectory_lines = []
                 while line_index < len(lines) and lines[line_index].strip():
@@ -476,15 +480,15 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
                 server.wait_regex(f".*?Teleported {PLAYER_NAME} to.*", 5)
                 # Load structure block
                 set_structure_block_command = "setblock 0 1 0 minecraft:structure_block"
-                if version < "1.13":
+                if version < str_to_tuple_version("1.13"):
                     set_structure_block_command += " 0 replace "
                 set_structure_block_command += "{" + f"mode:LOAD,name:{structure_block_name},posX:0,posY:1,posZ:0,showboundingbox:1b" + "}"
-                if version > "1.12.2":
+                if version > str_to_tuple_version("1.12.2"):
                     set_structure_block_command += " replace"
                 server.send_command(set_structure_block_command)
-                server.wait_regex(".*: Changed the block at 0, 1, 0.*" if version > "1.12.2" else ".*: Block placed.*", 5)
-                server.send_command(f"setblock 0 0 0 minecraft:redstone_block{' 0' if version < '1.13' else ''} replace")
-                server.wait_regex(".*: Changed the block at 0, 0, 0.*" if version > "1.12.2" else ".*: Block placed.*", 5)
+                server.wait_regex(".*: Changed the block at 0, 1, 0.*" if version > str_to_tuple_version("1.12.2") else ".*: Block placed.*", 5)
+                server.send_command(f"setblock 0 0 0 minecraft:redstone_block{' 0' if version < str_to_tuple_version('1.13') else ''} replace")
+                server.wait_regex(".*: Changed the block at 0, 0, 0.*" if version > str_to_tuple_version("1.12.2") else ".*: Block placed.*", 5)
 
                 # TP the player at the offset location
                 server.send_command(f"teleport {PLAYER_NAME} {' '.join([str(p + float(o)) for p, o in zip([0, 2, 0, 0, 0], tp_offsets)])}")
@@ -545,16 +549,16 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
                     server.send_command(command.replace("${PLAYER_NAME}", PLAYER_NAME))
                     server.wait_regex(regex.replace("${PLAYER_NAME}", PLAYER_NAME), 5)
                 # Cleanup for next iteration
-                server.send_command(f"setblock 0 1 0 minecraft:air{' 0' if version < '1.13' else ''} replace")
-                server.wait_regex(".*: Changed the block at 0, 1, 0.*" if version > "1.12.2" else ".*: Block placed.*", 5)
-                server.send_command(f"setblock 0 0 0 minecraft:air{' 0' if version < '1.13' else ''} replace")
-                server.wait_regex(".*: Changed the block at 0, 0, 0.*" if version > "1.12.2" else ".*: Block placed.*", 5)
+                server.send_command(f"setblock 0 1 0 minecraft:air{' 0' if version < str_to_tuple_version('1.13') else ''} replace")
+                server.wait_regex(".*: Changed the block at 0, 1, 0.*" if version > str_to_tuple_version("1.12.2") else ".*: Block placed.*", 5)
+                server.send_command(f"setblock 0 0 0 minecraft:air{' 0' if version < str_to_tuple_version('1.13') else ''} replace")
+                server.wait_regex(".*: Changed the block at 0, 0, 0.*" if version > str_to_tuple_version("1.12.2") else ".*: Block placed.*", 5)
                 if gamemode != "creative":
                     server.send_command(f"gamemode creative {PLAYER_NAME}")
                     server.wait_regex(f".*? Set {PLAYER_NAME}'s game mode to.*", 5)
-                server.send_command(f"effect {'give ' if version > '1.12.2' else ''}{PLAYER_NAME} regeneration 1 255")
+                server.send_command(f"effect {'give ' if version > str_to_tuple_version('1.12.2') else ''}{PLAYER_NAME} regeneration 1 255")
                 server.wait_regex(f".*?: .* to {PLAYER_NAME}.*")
-                server.send_command(f"effect {'give ' if version > '1.12.2' else ''}{PLAYER_NAME} saturation 1 255")
+                server.send_command(f"effect {'give ' if version > str_to_tuple_version('1.12.2') else ''}{PLAYER_NAME} saturation 1 255")
                 server.wait_regex(f".*?: .* to {PLAYER_NAME}.*")
                 # Wait for a couple of ticks to make sure it's registered
                 # TODO: find a proper way to be sure?
@@ -615,7 +619,7 @@ def main(args):
 
     try:
         collect_result = Queue()
-        collect_thread = threading.Thread(target=collect_trajectories, args=(server, args.input, os.path.join(args.output, mc_version), client_folder, mc_version, collect_result), daemon=True)
+        collect_thread = threading.Thread(target=collect_trajectories, args=(server, args.input, os.path.join(args.output, mc_version), client_folder, str_to_tuple_version(mc_version), collect_result), daemon=True)
         collect_thread.start()
         while collect_result.empty():
             # Client is still running

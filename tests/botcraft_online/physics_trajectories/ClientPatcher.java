@@ -143,7 +143,7 @@ public class ClientPatcher {
 
     // Map all the keys to their corresponding non-obfuscated names, while defining the class/fields/methods structure
     private static void initializeClasses(String version) {
-        final boolean isMojangMapping = version.compareTo("1.14.4") >= 0; // version >= 1.14.4
+        final boolean isMojangMapping = version.compareTo("1.14.4") >= 0; // version >= 1.14.4 TODO: "real" semver comparison instead of string. Should be fine just to compare to 1.14.4 though
         classes.clear();
         classes.put(
             cLocalPlayer, new ObfuscatedClass(
