@@ -493,7 +493,7 @@ jobs:
           # Copy the new report generated for the current version
           cat ${{ runner.workspace }}/build/output/bin/test_server_files/runtime/physics_trajectories/$(cat ${{ runner.workspace }}/build/version.txt).md >> splitted/$(cat ${{ runner.workspace }}/build/version.txt)
           # Concat each version report in the new file
-          for f in $(ls -1 splitted | sort -r); do echo "## $f" >> updated.md; cat "splitted/$f" >> updated.md; echo >> updated.md; done ;
+          for f in $(ls -1 splitted | sort -r -V); do echo "## $f" >> updated.md; cat "splitted/$f" >> updated.md; echo >> updated.md; done ;
           # Replace the report with the updated one
           mv -f updated.md wiki/Physics-comparison-with-vanilla.md
 
