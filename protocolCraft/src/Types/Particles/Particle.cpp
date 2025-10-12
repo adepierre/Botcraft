@@ -106,7 +106,7 @@ namespace ProtocolCraft
     #endif
             "bubble",
             "cloud",
-    #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+    #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
             "copper_fire_flame",
     #endif
             "crit",
