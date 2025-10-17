@@ -2,6 +2,7 @@
 #include <catch2/generators/catch_generators.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include "protocolCraft/NetworkType.hpp"
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Types/LpVec3.hpp"
 
