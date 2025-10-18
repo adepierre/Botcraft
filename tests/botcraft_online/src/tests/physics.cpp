@@ -113,14 +113,22 @@ TEST_CASE("elytra rocket boost")
     std::shared_ptr<InventoryManager> inventory_manager = bot->GetInventoryManager();
     std::shared_ptr<LocalPlayer> player = bot->GetLocalPlayer();
     const ItemId elytra_id = AssetsManager::getInstance().GetItemID("minecraft:elytra");
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     const ItemId firework_id = AssetsManager::getInstance().GetItemID("minecraft:firework_rocket");
+#else
+    const ItemId firework_id = AssetsManager::getInstance().GetItemID("minecraft:fireworks");
+#endif
 
     SendCommandSetItem(botname, "minecraft:elytra", EquipmentSlot::ChestPlate);
     // Wait for chestplate to be elytra
     CHECK(Utilities::WaitForCondition([&]() {
         return inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_CHEST_ARMOR).GetItemId() == elytra_id;
     }, 5000));
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     SendCommandSetItem(botname, "minecraft:firework_rocket", EquipmentSlot::MainHand);
+#else
+    SendCommandSetItem(botname, "minecraft:fireworks", EquipmentSlot::MainHand);
+#endif
     // Wait for main hand to be a rocket
     CHECK(Utilities::WaitForCondition([&]() {
         return inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemId() == firework_id;
