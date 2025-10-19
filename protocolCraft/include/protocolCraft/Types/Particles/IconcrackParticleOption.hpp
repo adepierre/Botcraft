@@ -1,11 +1,11 @@
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 namespace ProtocolCraft
 {
-    class IconcrackParticleOptions : public ParticleOptions
+    class IconcrackParticleOption : public ParticleOption
     {
         SERIALIZED_FIELD(Argument1, VarInt);
         SERIALIZED_FIELD(Argument2, VarInt);

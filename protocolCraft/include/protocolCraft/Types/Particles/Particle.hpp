@@ -273,7 +273,7 @@ namespace ProtocolCraft
     };
 #endif
 
-    class ParticleOptions;
+    class ParticleOption;
 
     class Particle : public NetworkType
     {
@@ -283,10 +283,10 @@ namespace ProtocolCraft
         std::string_view GetName() const;
 
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Options, std::shared_ptr<ParticleOptions>);
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Option, std::shared_ptr<ParticleOption>);
 
         GETTER(ParticleType);
-        GETTER(Options);
+        GETTER(Option);
 
         Particle& SetParticleType(const ProtocolCraft::ParticleType particle_type_);
 
@@ -294,8 +294,8 @@ namespace ProtocolCraft
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     public:
-        void ReadOptions(ReadIterator& iter, size_t& length);
-        void WriteOptions(WriteContainer& container) const;
+        void ReadOption(ReadIterator& iter, size_t& length);
+        void WriteOption(WriteContainer& container) const;
 #endif
     };
 }

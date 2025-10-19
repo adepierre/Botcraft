@@ -1,11 +1,11 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 namespace ProtocolCraft
 {
-    class ShriekParticleOptions : public ParticleOptions
+    class ShriekParticleOption : public ParticleOption
     {
         SERIALIZED_FIELD(Delay, VarInt);
 

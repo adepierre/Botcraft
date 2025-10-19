@@ -1,7 +1,7 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include <array>
@@ -9,7 +9,7 @@
 
 namespace ProtocolCraft
 {
-    class DustColorTransitionOptions : public ParticleOptions
+    class DustColorTransitionOption : public ParticleOption
     {
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(FromColor, std::array<float, 3>);

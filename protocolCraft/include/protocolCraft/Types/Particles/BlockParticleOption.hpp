@@ -1,10 +1,10 @@
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 namespace ProtocolCraft
 {
-    class BlockParticleOptions : public ParticleOptions
+    class BlockParticleOption : public ParticleOption
     {
         SERIALIZED_FIELD(State, VarInt);
 

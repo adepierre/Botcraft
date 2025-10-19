@@ -18,13 +18,13 @@ namespace ProtocolCraft
         {
             ProtocolCraft::Particle particle;
             particle.SetParticleType(GetParticleType());
-            particle.ReadOptions(iter, length);
+            particle.ReadOption(iter, length);
             return particle;
         }
 
         void WriteParticle(const Particle& particle, WriteContainer& container) const
         {
-            particle.WriteOptions(container);
+            particle.WriteOption(container);
         }
 #endif
 

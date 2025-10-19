@@ -4,9 +4,9 @@
 
 namespace ProtocolCraft
 {
-    class ParticleOptions : public NetworkType
+    class ParticleOption : public NetworkType
     {
     public:
-        virtual ~ParticleOptions() override {}
+        virtual ~ParticleOption() override {}
     };
 }

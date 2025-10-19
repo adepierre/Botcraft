@@ -1,7 +1,7 @@
 #include "botcraft/Game/Entities/entities/AreaEffectCloudEntity.hpp"
 
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ColorParticleOption.hpp"
 #endif
 
 #include <mutex>
@@ -37,7 +37,7 @@ namespace Botcraft
         ProtocolCraft::Particle particle;
         particle.SetParticleType(ProtocolCraft::ParticleType::EntityEffect);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        std::dynamic_pointer_cast<ProtocolCraft::ColorParticleOptions>(particle.GetOptions())->SetColor(-1);
+        std::dynamic_pointer_cast<ProtocolCraft::ColorParticleOption>(particle.GetOption())->SetColor(-1);
 #endif
         SetDataParticle(particle);
 #else

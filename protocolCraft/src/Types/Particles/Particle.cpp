@@ -1,30 +1,30 @@
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
-#include "protocolCraft/Types/Particles/BlockParticleOptions.hpp"
-#include "protocolCraft/Types/Particles/EmptyParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
+#include "protocolCraft/Types/Particles/BlockParticleOption.hpp"
+#include "protocolCraft/Types/Particles/EmptyParticleOption.hpp"
 
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
-#include "protocolCraft/Types/Particles/DustParticleOptions.hpp"
-#include "protocolCraft/Types/Particles/ItemParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/DustParticleOption.hpp"
+#include "protocolCraft/Types/Particles/ItemParticleOption.hpp"
 #else
-#include "protocolCraft/Types/Particles/IconcrackParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/IconcrackParticleOption.hpp"
 #endif
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Types/Particles/DustColorTransitionOptions.hpp"
-#include "protocolCraft/Types/Particles/VibrationParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/DustColorTransitionOption.hpp"
+#include "protocolCraft/Types/Particles/VibrationParticleOption.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp"
-#include "protocolCraft/Types/Particles/ShriekParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/SculkChargeParticleOption.hpp"
+#include "protocolCraft/Types/Particles/ShriekParticleOption.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "protocolCraft/Types/Particles/ColorParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ColorParticleOption.hpp"
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "protocolCraft/Types/Particles/TrailParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/TrailParticleOption.hpp"
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Types/Particles/PowerParticleOption.hpp"
@@ -40,36 +40,36 @@
 
 namespace ProtocolCraft
 {
-    // ParticlesOptions
-    DEFINE_NETWORK_TYPE(BlockParticleOptions);
+    // ParticlesOption subtypes
+    DEFINE_NETWORK_TYPE(BlockParticleOption);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-    DEFINE_NETWORK_TYPE(ColorParticleOptions);
+    DEFINE_NETWORK_TYPE(ColorParticleOption);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    DEFINE_NETWORK_TYPE(DustColorTransitionOptions);
+    DEFINE_NETWORK_TYPE(DustColorTransitionOption);
 #endif
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
-    DEFINE_NETWORK_TYPE(DustParticleOptions);
+    DEFINE_NETWORK_TYPE(DustParticleOption);
 #endif
-    DEFINE_NETWORK_TYPE(EmptyParticleOptions);
+    DEFINE_NETWORK_TYPE(EmptyParticleOption);
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
-    DEFINE_NETWORK_TYPE(IconcrackParticleOptions);
+    DEFINE_NETWORK_TYPE(IconcrackParticleOption);
 #endif
 #if PROTOCOL_VERSION > 392 /* > 1.12.2 */
-    DEFINE_NETWORK_TYPE(ItemParticleOptions);
+    DEFINE_NETWORK_TYPE(ItemParticleOption);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    DEFINE_NETWORK_TYPE(SculkChargeParticleOptions);
+    DEFINE_NETWORK_TYPE(SculkChargeParticleOption);
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    DEFINE_NETWORK_TYPE(ShriekParticleOptions);
+    DEFINE_NETWORK_TYPE(ShriekParticleOption);
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-    DEFINE_NETWORK_TYPE(TrailParticleOptions);
+    DEFINE_NETWORK_TYPE(TrailParticleOption);
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
-    DEFINE_NETWORK_TYPE(PowerParticleOptions);
-    DEFINE_NETWORK_TYPE(SpellParticleOptions);
+    DEFINE_NETWORK_TYPE(PowerParticleOption);
+    DEFINE_NETWORK_TYPE(SpellParticleOption);
 #endif
 
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
@@ -376,28 +376,28 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         case ParticleType::BlockCrumble:
 #endif
-            Options = std::make_shared<BlockParticleOptions>();
+            Option = std::make_shared<BlockParticleOption>();
             break;
         case ParticleType::Dust:
-            Options = std::make_shared<DustParticleOptions>();
+            Option = std::make_shared<DustParticleOption>();
             break;
         case ParticleType::Item:
-            Options = std::make_shared<ItemParticleOptions>();
+            Option = std::make_shared<ItemParticleOption>();
             break;
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         case ParticleType::DustColorTransition:
-            Options = std::make_shared<DustColorTransitionOptions>();
+            Option = std::make_shared<DustColorTransitionOption>();
             break;
         case ParticleType::Vibration:
-            Options = std::make_shared<VibrationParticleOptions>();
+            Option = std::make_shared<VibrationParticleOption>();
             break;
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case ParticleType::SculkCharge:
-            Options = std::make_shared<SculkChargeParticleOptions>();
+            Option = std::make_shared<SculkChargeParticleOption>();
             break;
         case ParticleType::Shriek:
-            Options = std::make_shared<ShriekParticleOptions>();
+            Option = std::make_shared<ShriekParticleOption>();
             break;
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -408,54 +408,54 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         case ParticleType::Flash:
 #endif
-            Options = std::make_shared<ColorParticleOptions>();
+            Option = std::make_shared<ColorParticleOption>();
             break;
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         case ParticleType::Trail:
-            Options = std::make_shared<TrailParticleOptions>();
+            Option = std::make_shared<TrailParticleOption>();
             break;
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         case ParticleType::DragonBreath:
-            Options = std::make_shared<PowerParticleOptions>();
+            Option = std::make_shared<PowerParticleOption>();
             break;
         case ParticleType::Effect:
         case ParticleType::InstantEffect:
-            Options = std::make_shared<SpellParticleOptions>();
+            Option = std::make_shared<SpellParticleOption>();
             break;
 #endif
 #else //1.12.2
         case ParticleType::Blockcrack:
         case ParticleType::Blockdust:
         case ParticleType::FallingDust:
-            Options = std::make_shared<BlockParticleOptions>();
+            Option = std::make_shared<BlockParticleOption>();
             break;
         case ParticleType::Iconcrack:
-            Options = std::make_shared<IconcrackParticleOptions>();
+            Option = std::make_shared<IconcrackParticleOption>();
             break;
 #endif
         default:
-            Options = std::make_shared<EmptyParticleOptions>();
+            Option = std::make_shared<EmptyParticleOption>();
             break;
         }
         return *this;
     }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-    void Particle::ReadOptions(ReadIterator& iter, size_t& length)
+    void Particle::ReadOption(ReadIterator& iter, size_t& length)
     {
-        if (Options != nullptr)
+        if (Option != nullptr)
         {
-            Options->Read(iter, length);
+            Option->Read(iter, length);
         }
     }
 
-    void Particle::WriteOptions(WriteContainer& container) const
+    void Particle::WriteOption(WriteContainer& container) const
     {
-        if (Options != nullptr)
+        if (Option != nullptr)
         {
-            Options->Write(container);
+            Option->Write(container);
         }
     }
 #endif
@@ -464,18 +464,18 @@ namespace ProtocolCraft
     {
         ParticleType = ReadData<ProtocolCraft::ParticleType, VarInt>(iter, length);
         SetParticleType(ParticleType);
-        if (Options != nullptr)
+        if (Option != nullptr)
         {
-            Options->Read(iter, length);
+            Option->Read(iter, length);
         }
     }
 
     void Particle::WriteImpl(WriteContainer& container) const
     {
         WriteData<ProtocolCraft::ParticleType, VarInt>(ParticleType, container);
-        if (Options != nullptr)
+        if (Option != nullptr)
         {
-            Options->Write(container);
+            Option->Write(container);
         }
     }
 
@@ -484,7 +484,7 @@ namespace ProtocolCraft
         Json::Value output;
 
         output[std::string(field_name<ParticleType_index>)] = GetName();
-        output[std::string(field_name<Options_index>)] = Options == nullptr ? Json::Object() : Options->Serialize();
+        output[std::string(field_name<Option_index>)] = Option == nullptr ? Json::Object() : Option->Serialize();
 
         return output;
     }

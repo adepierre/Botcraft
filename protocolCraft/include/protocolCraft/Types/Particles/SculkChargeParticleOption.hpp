@@ -1,11 +1,11 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 namespace ProtocolCraft
 {
-    class SculkChargeParticleOptions : public ParticleOptions
+    class SculkChargeParticleOption : public ParticleOption
     {
         SERIALIZED_FIELD(Roll, float);
 

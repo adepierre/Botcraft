@@ -510,22 +510,22 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/NBT/Tag.hpp
 
     include/protocolCraft/Types/Particles/Particle.hpp
-    include/protocolCraft/Types/Particles/ParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ParticleOption.hpp
 
-    include/protocolCraft/Types/Particles/BlockParticleOptions.hpp
-    include/protocolCraft/Types/Particles/ColorParticleOptions.hpp
-    include/protocolCraft/Types/Particles/IconcrackParticleOptions.hpp
-    include/protocolCraft/Types/Particles/DustColorTransitionOptions.hpp
-    include/protocolCraft/Types/Particles/DustParticleOptions.hpp
-    include/protocolCraft/Types/Particles/EmptyParticleOptions.hpp
+    include/protocolCraft/Types/Particles/BlockParticleOption.hpp
+    include/protocolCraft/Types/Particles/ColorParticleOption.hpp
+    include/protocolCraft/Types/Particles/IconcrackParticleOption.hpp
+    include/protocolCraft/Types/Particles/DustColorTransitionOption.hpp
+    include/protocolCraft/Types/Particles/DustParticleOption.hpp
+    include/protocolCraft/Types/Particles/EmptyParticleOption.hpp
     include/protocolCraft/Types/Particles/ExplosionParticleInfo.hpp
-    include/protocolCraft/Types/Particles/ItemParticleOptions.hpp
+    include/protocolCraft/Types/Particles/ItemParticleOption.hpp
     include/protocolCraft/Types/Particles/PowerParticleOption.hpp
-    include/protocolCraft/Types/Particles/SculkChargeParticleOptions.hpp
-    include/protocolCraft/Types/Particles/ShriekParticleOptions.hpp
+    include/protocolCraft/Types/Particles/SculkChargeParticleOption.hpp
+    include/protocolCraft/Types/Particles/ShriekParticleOption.hpp
     include/protocolCraft/Types/Particles/SpellParticleOption.hpp
-    include/protocolCraft/Types/Particles/TrailParticleOptions.hpp
-    include/protocolCraft/Types/Particles/VibrationParticleOptions.hpp
+    include/protocolCraft/Types/Particles/TrailParticleOption.hpp
+    include/protocolCraft/Types/Particles/VibrationParticleOption.hpp
 
     include/protocolCraft/Types/Recipes/CompositeSlotDisplay.hpp
     include/protocolCraft/Types/Recipes/FurnaceRecipeDisplay.hpp

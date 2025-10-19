@@ -1,11 +1,11 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #pragma once
 
-#include "protocolCraft/Types/Particles/ParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/ParticleOption.hpp"
 
 namespace ProtocolCraft
 {
-    class SpellParticleOptions : public ParticleOptions
+    class SpellParticleOption : public ParticleOption
     {
         SERIALIZED_FIELD(Color, int);
         SERIALIZED_FIELD(Power, float);
