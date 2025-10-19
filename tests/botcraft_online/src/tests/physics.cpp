@@ -28,25 +28,17 @@ static const std::vector<double> precision_check = { 1e-3, 1e-6 };
 // Would be cool if we could just automatically have one test per file in the folder
 // but I don't think it's possible to register tests at runtime with Catch2 :(
 // So instead we need to manually add each trajectory file here
-PHYSICS_TEST_CASE("fall on");
-
-PHYSICS_TEST_CASE("walk on concrete");
-
-PHYSICS_TEST_CASE("walk on concrete#sprint");
-
-PHYSICS_TEST_CASE("walk on concrete#sneak");
-
-PHYSICS_TEST_CASE("walk on concrete#jump");
-
-PHYSICS_TEST_CASE("walk on ice");
-
-PHYSICS_TEST_CASE("walk on soul sand");
-
-PHYSICS_TEST_CASE("jump bump");
-
 PHYSICS_TEST_CASE("block transition");
-
 PHYSICS_TEST_CASE("collisions");
+PHYSICS_TEST_CASE("elytra");
+PHYSICS_TEST_CASE("fall on");
+PHYSICS_TEST_CASE("jump bump");
+PHYSICS_TEST_CASE("walk on concrete#jump");
+PHYSICS_TEST_CASE("walk on concrete#sneak");
+PHYSICS_TEST_CASE("walk on concrete#sprint");
+PHYSICS_TEST_CASE("walk on concrete");
+PHYSICS_TEST_CASE("walk on ice");
+PHYSICS_TEST_CASE("walk on soul sand");
 
 // NON TRAJECTORY TESTS BELOW
 
