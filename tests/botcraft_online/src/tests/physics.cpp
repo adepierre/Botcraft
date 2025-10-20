@@ -17,8 +17,6 @@ using namespace Botcraft;
 
 void TestPhysicsTrajectory(const std::string& test_name);
 
-static const std::vector<double> precision_check = { 1e-3, 1e-6 };
-
 // Physics tests requiring tick-precision accuracy are marked as mayfail
 // as they can potentially break because of bad thread timing
 // They also don't run by default, and need the [.physics] tag to
@@ -274,18 +272,8 @@ void TestPhysicsTrajectory(const std::string& test_name)
                 trajectory_file << test_min_version << '\n';
                 trajectory_file << test_max_version << '\n';
                 recap_file << "\n\n#### " << test_name << "\n\n";
-                recap_file << "|  |";
-                for (const auto d : precision_check)
-                {
-                    recap_file << ' ' << std::scientific << std::setprecision(0) << d << " |";
-                }
-                recap_file << '\n';
-                recap_file << "|---|";
-                for (const auto d : precision_check)
-                {
-                    recap_file << "---|";
-                }
-                recap_file << '\n';
+                recap_file << "| Test | Result |\n";
+                recap_file << "|---|---|\n";
                 current_test = test_name;
             }
 
@@ -442,26 +430,66 @@ void TestPhysicsTrajectory(const std::string& test_name)
                 MinecraftServer::GetInstance().WaitLine(regex, 5000);
             }
 
-            std::vector<bool> validate_precision(precision_check.size(), true);
+            bool is_same = true;
             for (size_t i = 0; i < section_lines.size(); ++i)
             {
                 const double position_error = std::sqrt((vanilla_positions[i] - botcraft_positions[i]).SqrNorm());
-                for (size_t j = 0; j < precision_check.size(); ++j)
-                {
-                    validate_precision[j] =
-                        validate_precision[j] &&
-                        position_error < precision_check[j] &&
-                        vanilla_on_ground[i] == botcraft_on_ground[i];
-                }
+                is_same =
+                    is_same &&
+                    position_error < 1e-6 &&
+                    vanilla_on_ground[i] == botcraft_on_ground[i];
             }
 
-            // Write report and trajectory files
-            for (const bool b : validate_precision)
+            // Write recap
+            // If the trajectories are the same, just add a checkmark
+            if (is_same)
             {
-                recap_file << ' ' << (b ? "\xE2\x9C\x94" /* green checkmark */ : "\xE2\x9D\x8C" /* red cross */) << " |";
+                recap_file << " \xE2\x9C\x94 |" /* green checkmark */;
+            }
+            // If not, add a collapsed html section with the two trajectories to compare
+            else
+            {
+                recap_file << " <details><summary>\xE2\x9D\x8C</summary><table>"
+                    << "<thead>"
+                        << "<tr>"
+                            << "<th colspan=\"9\">Inputs</th><th colspan=\"2\">X</th><th colspan=\"2\">Y</th><th colspan=\"2\">Z</th><th colspan=\"2\">On Ground</th>"
+                        << "</tr>"
+                        << "<tr>"
+                            << "<th>\xe2\x86\x91</th><th>\xe2\x86\x90</th><th>\xe2\x86\x93</th><th>\xe2\x86\x92</th><th>Jump</th><th>Sneak</th><th>Sprint</th><th>Yaw</th><th>Pitch</th><th>V</th><th>B</th><th>V</th><th>B</th><th>V</th><th>B</th><th>V</th><th>B</th>"
+                        << "</tr>"
+                    << "</thead>";
+                recap_file << "<tbody>";
+                for (size_t i = 0; i < section_lines.size(); ++i)
+                {
+                    const bool x_match = std::abs(vanilla_positions[i].x - botcraft_positions[i].x) < 1e-6;
+                    const bool y_match = std::abs(vanilla_positions[i].y - botcraft_positions[i].y) < 1e-6;
+                    const bool z_match = std::abs(vanilla_positions[i].z - botcraft_positions[i].z) < 1e-6;
+                    const bool on_ground_match = vanilla_on_ground[i] == botcraft_on_ground[i];
+                    recap_file << "<tr>";
+                    recap_file << "<td>" << (keyboard_inputs[i].forward_axis > 0.5f) << "</td>";
+                    recap_file << "<td>" << (keyboard_inputs[i].left_axis > 0.5f) << "</td>";
+                    recap_file << "<td>" << (keyboard_inputs[i].forward_axis < -0.5f) << "</td>";
+                    recap_file << "<td>" << (keyboard_inputs[i].left_axis < -0.5f) << "</td>";
+                    recap_file << "<td>" << keyboard_inputs[i].jump << "</td>";
+                    recap_file << "<td>" << keyboard_inputs[i].sneak << "</td>";
+                    recap_file << "<td>" << keyboard_inputs[i].sprint << "</td>";
+                    recap_file << "<td>" << rotation_inputs[i].first << "</td>";
+                    recap_file << "<td>" << rotation_inputs[i].second << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << vanilla_positions[i].x << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << (x_match ? "" : "${\\color{red}") << botcraft_positions[i].x << (x_match ? "" : "}$") << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << vanilla_positions[i].y << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << (y_match ? "" : "${\\color{red}") << botcraft_positions[i].y << (y_match ? "" : "}$") << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << vanilla_positions[i].z << "</td>";
+                    recap_file << std::setprecision(6) << "<td>" << (z_match ? "" : "${\\color{red}") << botcraft_positions[i].z << (z_match ? "" : "}$") << "</td>";
+                    recap_file << "<td>" << vanilla_on_ground[i] << "</td>";
+                    recap_file << "<td>" << (on_ground_match ? "" : "${\\color{red}") << botcraft_on_ground[i] << (on_ground_match ? "" : "}$") << "</td>";
+                    recap_file << "</tr>";
+                }
+                recap_file << "</tbody></table></details> |";
             }
             recap_file << '\n';
 
+            // Write trajectory file
             for (size_t i = 0; i < section_lines.size(); ++i)
             {
                 trajectory_file << std::setprecision(16)
