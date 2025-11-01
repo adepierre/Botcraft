@@ -166,7 +166,39 @@ namespace Botcraft
 #endif
     }
 
-    bool Authentifier::JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const
+    bool Authentifier::AuthMCToken(const std::string& mc_token)
+    {
+#ifndef USE_ENCRYPTION
+        return false;
+#else
+        mc_access_token = mc_token;
+
+        LOG_INFO("Trying to get MC profile...");
+        if (!GetMCProfile(std::nullopt))
+        {
+            LOG_ERROR("Unable to get a MC profile");
+            return false;
+        }
+        UpdateUUIDBytes();
+        LOG_INFO("MC profile obtained!");
+
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        LOG_INFO("Getting player certificates...");
+        if (!GetPlayerCertificates())
+        {
+            LOG_ERROR("Unable to get player certificates");
+            return false;
+        }
+        LOG_INFO("Player certificates obtained!");
+#endif
+
+        LOG_INFO("Authentication completed!");
+
+        return true;
+#endif
+    }
+
+    bool Authentifier::JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& server_public_key) const
     {
 #ifndef USE_ENCRYPTION
         return false;
@@ -182,7 +214,7 @@ namespace Botcraft
 
         SHA1_Update(&sha_context, server_id.c_str(), server_id.length());
         SHA1_Update(&sha_context, shared_secret.data(), shared_secret.size());
-        SHA1_Update(&sha_context, public_key.data(), public_key.size());
+        SHA1_Update(&sha_context, server_public_key.data(), server_public_key.size());
 
         std::vector<unsigned char> digest(SHA_DIGEST_LENGTH);
         SHA1_Final(digest.data(), &sha_context);

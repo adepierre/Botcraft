@@ -22,25 +22,32 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login, const bool force_microsoft_auth, const std::vector<Handler*>& handlers)
+    NetworkManager::NetworkManager(const std::string& address, const std::string& login_or_microsoft_cache_key_or_mc_token, const AuthType auth_type, const std::vector<Handler*>& handlers)
     {
         com = nullptr;
 
-        // Online mode with Microsoft login flow
-        if (login.empty() || force_microsoft_auth)
+        switch (auth_type)
         {
+        case AuthType::Offline:
+            authentifier = nullptr;
+            name = login_or_microsoft_cache_key_or_mc_token;
+            break;
+        case AuthType::Microsoft:
             authentifier = std::make_shared<Authentifier>();
-            if (!authentifier->AuthMicrosoft(login))
+            if (!authentifier->AuthMicrosoft(login_or_microsoft_cache_key_or_mc_token))
             {
                 throw std::runtime_error("Error trying to authenticate on Mojang server using Microsoft auth flow");
             }
             name = authentifier->GetPlayerDisplayName();
-        }
-        // Online mode false
-        else
-        {
-            authentifier = nullptr;
-            name = login;
+            break;
+        case AuthType::McToken:
+            authentifier = std::make_shared<Authentifier>();
+            if (!authentifier->AuthMCToken(login_or_microsoft_cache_key_or_mc_token))
+            {
+                throw std::runtime_error("Error trying to authenticate on Mojang server using provided mc token");
+            }
+            name = authentifier->GetPlayerDisplayName();
+            break;
         }
 
         compression = -1;

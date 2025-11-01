@@ -37,8 +37,13 @@ namespace Botcraft
         /// @return True if successfully authenticated, false otherwise
         bool AuthMicrosoft(const std::string& cache_key);
 
+        /// @brief Authentication using a minecraft token
+        /// @param mc_token Minecraft token, must be valid
+        /// @return True if successfully authenticated, false otherwise
+        bool AuthMCToken(const std::string& mc_token);
+
         // Join a server after encryption request
-        bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
+        bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& server_public_key) const;
 
         const std::string& GetPlayerDisplayName() const;
         const std::array<unsigned char, 16>& GetPlayerUUID() const;

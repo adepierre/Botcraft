@@ -17,9 +17,26 @@ namespace Botcraft
         Disconnect();
     }
 
-    void ConnectionClient::Connect(const std::string& address, const std::string& login, const bool force_microsoft_account)
+    void ConnectionClient::Connect(const std::string& address, const std::string& login)
     {
-        network_manager = std::make_shared<NetworkManager>(address, login, force_microsoft_account, std::vector<Handler*>(1, this));
+        if (login.empty())
+        {
+            ConnectMicrosoft(address);
+        }
+        else
+        {
+            network_manager = std::make_shared<NetworkManager>(address, login, NetworkManager::AuthType::Offline, std::vector<Handler*>{ this });
+        }
+    }
+
+    void ConnectionClient::ConnectMicrosoft(const std::string& address, const std::string& cache_key)
+    {
+        network_manager = std::make_shared<NetworkManager>(address, cache_key, NetworkManager::AuthType::Microsoft, std::vector<Handler*>{ this });
+    }
+
+    void ConnectionClient::ConnectMinecraftToken(const std::string& address, const std::string& minecraft_token)
+    {
+        network_manager = std::make_shared<NetworkManager>(address, minecraft_token, NetworkManager::AuthType::McToken, std::vector<Handler*>{ this });
     }
 
     void ConnectionClient::Disconnect()

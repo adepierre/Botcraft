@@ -14,11 +14,19 @@ namespace Botcraft
         ConnectionClient();
         virtual ~ConnectionClient();
 
-        /// @brief Connect the client to the server at address
-        /// @param address Address to connect to, as written in minecraft multiplayer window
-        /// @param login If login is empty, will try to connect with a Microsoft account
-        /// @param force_microsoft_account If true, then Microsoft auth flow will be used. In this case, login is used as key to cache the credentials
-        void Connect(const std::string& address, const std::string& login, const bool force_microsoft_account = false);
+        /// @brief Connect the client in offline mode if login is not empty, fallback to Microsoft auth flow if empty.
+        /// @param address Address to connect to, same format as one would type it in a vanilla client
+        /// @param login Username the bot will use to connect, will default back to Microsoft auth if empty
+        void Connect(const std::string& address, const std::string& login);
+        /// @brief Connect the client in online mode. Will prompt user to auth with a valid Microsoft account
+        /// @param address Address to connect to, same format as one would type it in a vanilla client
+        /// @param cache_key Will be used to store the auth tokens in a cache file to speed up future connection with the same account.
+        /// Use different cache keys to store multiple accounts
+        void ConnectMicrosoft(const std::string& address, const std::string& cache_key = "");
+        /// @brief Connect the client in online mode using the provided minecraft token
+        /// @param address Address to connect to, same format as one would type it in a vanilla client
+        /// @param minecraft_token Minecraft token to use for auth. It's the user responsability to make sure it's valid.
+        void ConnectMinecraftToken(const std::string& address, const std::string& minecraft_token);
         virtual void Disconnect();
 
         bool GetShouldBeClosed() const;

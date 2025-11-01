@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
             clients[i] = std::make_shared<WorldEaterClient>(args.stopword, false);
             clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->SetAutoRespawn(true);
-            clients[i]->Connect(args.address, names[i], false);
+            clients[i]->Connect(args.address, names[i]);
             // Start behaviour thread and set active tree
             clients[i]->StartBehaviour();
             clients[i]->SetBehaviourTree(eater_behaviour_tree, {
