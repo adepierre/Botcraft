@@ -1,6 +1,7 @@
 #pragma once
-#include <string>
 #include <array>
+#include <optional>
+#include <string>
 
 #include "protocolCraft/Utilities/Json.hpp"
 
@@ -26,14 +27,13 @@ namespace Botcraft
         Authentifier();
         ~Authentifier();
 
-        /// @brief Authentication using a Microsoft account. If
-        /// login is set, use it to identify the cached credentials.
-        /// @param login Login is used as key to identify the credentials in cache file
+        /// @brief Authentication using a Microsoft account, storing the credentials in the cache file
+        /// @param cache_key used as key to identify the credentials in cache file
         /// @return True if successfully authenticated, false otherwise
-        const bool AuthMicrosoft(const std::string& login);
+        bool AuthMicrosoft(const std::string& cache_key);
 
-        // Join a server after encryption request arrived
-        const bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
+        // Join a server after encryption request
+        bool JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const;
 
         const std::string& GetPlayerDisplayName() const;
         const std::array<unsigned char, 16>& GetPlayerUUID() const;
@@ -50,8 +50,7 @@ namespace Botcraft
         /// @param salt Output salt used to generate the signature
         /// @param timestamp Output timestamp in ms used to generate the signature
         /// @return The message signature
-        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
-            long long int& salt, long long int& timestamp);
+        std::vector<unsigned char> GetMessageSignature(const std::string& message, long long int& salt, long long int& timestamp);
 #elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
         /// @brief Compute the signature of a message
         /// @param message Message to send
@@ -60,7 +59,7 @@ namespace Botcraft
         /// @param salt Output salt used to generate the signature
         /// @param timestamp Output timestamp in ms used to generate the signature
         /// @return The message signature
-        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
+        std::vector<unsigned char> GetMessageSignature(const std::string& message,
             const std::vector<unsigned char>& previous_signature, const std::vector<ProtocolCraft::LastSeenMessagesEntry>& last_seen,
             long long int& salt, long long int& timestamp);
 #else
@@ -72,7 +71,7 @@ namespace Botcraft
         /// @param salt Output salt used to generate the signature
         /// @param timestamp Output timestamp in ms used to generate the signature
         /// @return The message signature
-        const std::vector<unsigned char> GetMessageSignature(const std::string& message,
+        std::vector<unsigned char> GetMessageSignature(const std::string& message,
             const int message_sent_index, const ProtocolCraft::UUID& chat_session_uuid,
             const std::vector<std::vector<unsigned char>>& last_seen,
             long long int& salt, long long int& timestamp);
@@ -86,107 +85,54 @@ namespace Botcraft
 #ifdef USE_ENCRYPTION
         /// @brief Get the content of the whole cache file
         /// @return The content in JSON
-        ProtocolCraft::Json::Value GetCachedProfiles() const;
+        ProtocolCraft::Json::Value GetAllCachedAccounts() const;
 
-        /// @brief Try to find a cached account corresponding to login.
-        /// Only one Microsoft account can be cached using an empty login.
-        /// @param login Login of the account
-        /// @return Cached credentials for the corresponding account
-        ProtocolCraft::Json::Value GetCachedCredentials(const std::string& login) const;
-
-        /// @brief Extract the token, the name and the uuid from a server response
-        /// @param response The json response sent by the auth server
-        /// @return A tuple containing <the new token, the new name, the new uuid>, all empty if failed
-        const std::tuple<std::string, std::string, std::string> ExtractMCFromResponse(const ProtocolCraft::Json::Value& response) const;
-
-        /// @brief Check if a validity time is in the present or in the future
-        /// @param t The expiration timestamp
-        /// @return True if expired, false if valid
-        const bool IsTokenExpired(const long long int& t) const;
+        /// @brief Get the cached credentials for a key
+        /// @return Cached credentials for the given account, or default if not found in cached
+        ProtocolCraft::Json::Value GetCachedAccountOrDefault(const std::optional<std::string>& cache_key) const;
 
         /// @brief Save a profiles list to cache file
         /// @param profiles A json object with logins as keys and cache credentials as values
         void WriteCacheFile(const ProtocolCraft::Json::Value& profiles) const;
 
-        /// @brief Update the cached MSA data for the given login
-        /// @param login The login we want to update the data for
-        /// @param access_token New access token
-        /// @param refresh_token New refresh token
-        /// @param expiration New expiration date
-        void UpdateCachedMSA(const std::string& login, const std::string& access_token,
-            const std::string& refresh_token, const long long int& expiration) const;
-
-        /// @brief Update the cached MC token data for the given login
-        /// @param login The login we want to update the data for
-        /// @param mc_token New MC token
-        /// @param expiration New token expiration date
-        void UpdateCachedMCToken(const std::string& login, const std::string& mc_token,
-        const long long int& expiration) const;
-
-        /// @brief Update the cached MC profile data for the given login
-        /// @param login The login we want to update the data for
-        /// @param name New MC name
-        /// @param id New MC uuid
-        void UpdateCachedMCProfile(const std::string& login, const std::string& name,
-            const std::string& id) const;
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        /// @brief Update the cached player certificates for the given login
-        /// @param login The login we want to update the data for
-        /// @param private_k New private key
-        /// @param public_k New public key
-        /// @param signature_v1 Signature v1 of the given login
-        /// @param signature_v2 Signature v2 of the given login
-        /// @param expiration New keys expiration date
-        void UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
-            const std::string& public_k, const std::string& signature_v1,
-            const std::string& signature_v2, const long long int& expiration) const;
-#endif
-
         /// @brief Check if there is a saved credentials file and
         /// if the token is still valid. Refresh it if not.
         /// If file doesn't exist, launch auth device flow
-        /// @param login Login used as key for the cached credentials
+        /// @param cache_key If present, the value will be stored in the cache file under the given key
         /// @return The microsoft access token, empty if failed.
-        const std::string GetMSAToken(const std::string& login) const;
+        std::string GetMSAToken(const std::optional<std::string>& cache_key) const;
 
         /// @brief Try to authenticate with microsoft account using device flow.
-        /// Save the credentials to cached file if success.
+        /// @param cache_key If present, the values will be stored in the cache file under the given key
         /// @return The microsoft access token, empty if failed.
-        const std::string MSAAuthDeviceFlow(const std::string& login) const;
+        std::string MSAAuthDeviceFlow(const std::optional<std::string>& cache_key) const;
 
         /// @brief Try to get XBox Live token from Microsoft token.
         /// @param msa_token Microsoft access token
         /// @return XBL token, empty if failed.
-        const std::string GetXBLToken(const std::string& msa_token) const;
+        std::string GetXBLToken(const std::string& msa_token) const;
 
         /// @brief Try to get XSTS token from XBL token.
         /// @param xbl_token XBL token
         /// @return Pair of {XSTS token, userhash}, empty if failed.
-        const std::pair<std::string, std::string> GetXSTSToken(const std::string& xbl_token) const;
+        std::pair<std::string, std::string> GetXSTSToken(const std::string& xbl_token) const;
 
-        /// @brief Try to get MC token from XSTS token and user hash.
-        /// @param login Login used to store credentials in cache
+        /// @brief Try to get MC token from XSTS token and user hash
         /// @param xsts_token XSTS Token
         /// @param user_hash User hash
-        /// @return Minecraft token, empty if failed.
-        const std::string GetMCToken(const std::string& login,
-            const std::string& xsts_token, const std::string& user_hash) const;
+        /// @param cache_key If present, the value will be stored in the cache file under the given key
+        /// @return True if minecraft token was correctly updated, false otherwise
+        bool GetMCToken(const std::string& xsts_token, const std::string& user_hash, const std::optional<std::string>& cache_key);
 
         /// @brief Try to get Minecraft profile from Minecraft token
-        /// @param login Login used to store credentials in cache
-        /// @param mc_token Minecraft token
-        /// @return Pair of {MC UUID, MC name}, empty if failed.
-        const std::pair<std::string, std::string> GetMCProfile(const std::string& login,
-            const std::string& mc_token) const;
+        /// @param cache_key If present, the values will be stored in the cache file under the given key
+        /// @return True if the profile was correctly updated, false otherwise
+        bool GetMCProfile(const std::optional<std::string>& cache_key);
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        /// @brief Try to get player certificates from Minecraft token
-        /// @param login Login used to store credentials in cache
-        /// @param mc_token Minecraft token
-        /// @return Tuple of {private key, public key, signature, timestamp }, empty if failed
-        const std::tuple<std::string, std::string, std::string, long long int> GetPlayerCertificates(const std::string& login,
-            const std::string& mc_token) const;
+        /// @brief Try to get player certificates using Minecraft token
+        /// @return True if the certificates were correctly fetched, false otherwise
+        bool GetPlayerCertificates();
 #endif
 
         /// @brief Send a web request with ssl stuff

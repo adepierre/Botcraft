@@ -34,17 +34,9 @@ namespace Botcraft
         { "name", nullptr },
         { "id", nullptr },
         { "mc_token", nullptr },
-        { "expires_date", nullptr },
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        { "certificates", {
-            { "private_key", nullptr },
-            { "public_key", nullptr },
-            { "expires_date", nullptr },
-            { "signature_v1", nullptr },
-            { "signature_v2", nullptr }
-        }}
-#endif
+        { "expires_date", nullptr }
     };
+
 
     Authentifier::Authentifier()
     {
@@ -60,12 +52,13 @@ namespace Botcraft
 
     }
 
-    const bool Authentifier::AuthMicrosoft(const std::string& login)
+    bool Authentifier::AuthMicrosoft(const std::string& cache_key)
     {
 #ifndef USE_ENCRYPTION
         return false;
 #else
-        const Json::Value cached = GetCachedCredentials(login);
+
+        const Json::Value cached = GetCachedAccountOrDefault(cache_key);
         if (!cached.contains("mc_token") || !cached["mc_token"].is_string() ||
             !cached.contains("expires_date") || !cached["expires_date"].is_number() ||
             !cached.contains("name") || !cached["name"].is_string() ||
@@ -73,7 +66,7 @@ namespace Botcraft
         {
             LOG_WARNING("Missing or malformed cached credentials for Microsoft account, starting auth flow...");
         }
-        else if (IsTokenExpired(cached["expires_date"].get<long long int>()))
+        else if (cached["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
         {
             LOG_INFO("Cached Minecraft token for Microsoft account expired, starting auth flow...");
         }
@@ -87,8 +80,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             LOG_INFO("Getting player certificates...");
-            std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
-            if (private_key.empty() || public_key.empty() || key_signature.empty())
+            if (!GetPlayerCertificates())
             {
                 LOG_ERROR("Unable to get player certificates");
                 return false;
@@ -98,9 +90,9 @@ namespace Botcraft
             return true;
         }
 
-        // This auth flow is directly inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
+        // This auth flow is initially inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
         LOG_INFO("Trying to get Microsoft access token...");
-        const std::string msa_token = GetMSAToken(login);
+        const std::string msa_token = GetMSAToken(cache_key);
         if (msa_token.empty())
         {
             LOG_ERROR("Unable to get a microsoft auth token");
@@ -126,8 +118,7 @@ namespace Botcraft
         LOG_INFO("XSTS token obtained!");
 
         LOG_INFO("Trying to get MC token...");
-        mc_access_token = GetMCToken(login, xsts_token, xsts_userhash);
-        if (mc_access_token.empty())
+        if (!GetMCToken(xsts_token, xsts_userhash, cache_key))
         {
             LOG_ERROR("Unable to get a MC token");
             return false;
@@ -143,8 +134,7 @@ namespace Botcraft
         LOG_INFO("Assuming the account owns Minecraft...");
 
         LOG_INFO("Trying to get MC profile...");
-        std::tie(mc_player_uuid, player_display_name) = GetMCProfile(login, mc_access_token);
-        if (mc_player_uuid.empty())
+        if (!GetMCProfile(cache_key))
         {
             LOG_ERROR("Unable to get a MC profile");
             return false;
@@ -154,8 +144,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         LOG_INFO("Getting player certificates...");
-        std::tie(private_key, public_key, key_signature, key_timestamp) = GetPlayerCertificates(login, mc_access_token);
-        if (private_key.empty() || public_key.empty() || key_signature.empty())
+        if (!GetPlayerCertificates())
         {
             LOG_ERROR("Unable to get player certificates");
             return false;
@@ -169,7 +158,7 @@ namespace Botcraft
 #endif
     }
 
-    const bool Authentifier::JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const
+    bool Authentifier::JoinServer(const std::string& server_id, const std::vector<unsigned char>& shared_secret, const std::vector<unsigned char>& public_key) const
     {
 #ifndef USE_ENCRYPTION
         return false;
@@ -291,14 +280,13 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION == 759 /* 1.19 */
-    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
-        long long int& salt, long long int& timestamp)
+    std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message, long long int& salt, long long int& timestamp)
 #elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
-    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+    std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
         const std::vector<unsigned char>& previous_signature, const std::vector<LastSeenMessagesEntry>& last_seen,
         long long int& salt, long long int& timestamp)
 #else
-    const std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
+    std::vector<unsigned char> Authentifier::GetMessageSignature(const std::string& message,
         const int message_sent_index, const UUID& chat_session_uuid,
         const std::vector<std::vector<unsigned char>>& last_seen,
         long long int& salt, long long int& timestamp)
@@ -438,7 +426,7 @@ namespace Botcraft
     }
 
 #ifdef USE_ENCRYPTION
-    Json::Value Authentifier::GetCachedProfiles() const
+    Json::Value Authentifier::GetAllCachedAccounts() const
     {
         std::ifstream cache_file(cached_credentials_path);
         if (!cache_file.good())
@@ -452,60 +440,23 @@ namespace Botcraft
         return cached_content;
     }
 
-    Json::Value Authentifier::GetCachedCredentials(const std::string& login) const
+    Json::Value Authentifier::GetCachedAccountOrDefault(const std::optional<std::string>& cache_key) const
     {
-        const Json::Value profiles = GetCachedProfiles();
+        if (!cache_key.has_value())
+        {
+            return defaultCachedCredentials;
+        }
+
+        const Json::Value profiles = GetAllCachedAccounts();
 
         if (profiles.size() > 0 &&
-            profiles.contains(login) &&
-            profiles[login].is_object())
+            profiles.contains(cache_key.value()) &&
+            profiles[cache_key.value()].is_object())
         {
-            return profiles[login];
+            return profiles[cache_key.value()];
         }
 
         return defaultCachedCredentials;
-    }
-
-    const std::tuple<std::string, std::string, std::string> Authentifier::ExtractMCFromResponse(const Json::Value& response) const
-    {
-        if (response.contains("error"))
-        {
-            LOG_ERROR("Error trying to authenticate: " << response["errorMessage"].get_string());
-            return { "","","" };
-        }
-
-        if (!response.contains("accessToken"))
-        {
-            LOG_ERROR("Error trying to authenticate, no accessToken returned");
-            return { "","","" };
-        }
-
-        if (!response.contains("selectedProfile"))
-        {
-            LOG_ERROR("Error trying to authenticate, no selectedProfile item found");
-            return { "","","" };
-        }
-
-        const Json::Value& profile = response.get_object().at("selectedProfile");
-
-        if (!profile.contains("name"))
-        {
-            LOG_ERROR("Error trying to authenticate, no name in selected profile");
-            return { "","","" };
-        }
-
-        if (!profile.contains("id"))
-        {
-            LOG_ERROR("Error trying to authenticate, no id in selected profile");
-            return { "","","" };
-        }
-
-        return { response["accessToken"].get_string(), profile["name"].get_string(), profile["id"].get_string() };
-    }
-
-    const bool Authentifier::IsTokenExpired(const long long int& t) const
-    {
-        return t < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 
     void Authentifier::WriteCacheFile(const Json::Value& profiles) const
@@ -519,173 +470,17 @@ namespace Botcraft
         cached_ofile.close();
     }
 
-    void Authentifier::UpdateCachedMSA(const std::string& login,
-        const std::string& access_token, const std::string& refresh_token,
-        const long long int& expiration) const
-    {
-        Json::Value profiles = GetCachedProfiles();
-
-        if (!profiles.contains(login))
-        {
-            profiles[login] = defaultCachedCredentials;
-        }
-
-        if (access_token.empty())
-        {
-            profiles[login]["msa"]["access_token"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["msa"]["access_token"] = access_token;
-        }
-
-        if (refresh_token.empty())
-        {
-            profiles[login]["msa"]["refresh_token"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["msa"]["refresh_token"] = refresh_token;
-        }
-
-        if (expiration == -1)
-        {
-            profiles[login]["msa"]["expires_date"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["msa"]["expires_date"] = expiration;
-        }
-
-        WriteCacheFile(profiles);
-    }
-
-    void Authentifier::UpdateCachedMCToken(const std::string& login,
-        const std::string& mc_token, const long long int& expiration) const
-    {
-        Json::Value profiles = GetCachedProfiles();
-
-        if (!profiles.contains(login))
-        {
-            profiles[login] = defaultCachedCredentials;
-        }
-
-        if (mc_token.empty())
-        {
-            profiles[login]["mc_token"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["mc_token"] = mc_token;
-        }
-
-        if (expiration == -1)
-        {
-            profiles[login]["expires_date"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["expires_date"] = expiration;
-        }
-
-        WriteCacheFile(profiles);
-    }
-
-    void Authentifier::UpdateCachedMCProfile(const std::string& login, const std::string& name, const std::string& id) const
-    {
-        Json::Value profiles = GetCachedProfiles();
-
-        if (!profiles.contains(login))
-        {
-            profiles[login] = defaultCachedCredentials;
-        }
-
-        if (name.empty())
-        {
-            profiles[login]["name"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["name"] = name;
-        }
-
-        if (id.empty())
-        {
-            profiles[login]["id"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["id"] = id;
-        }
-
-        WriteCacheFile(profiles);
-    }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    void Authentifier::UpdateCachedPlayerCertificates(const std::string& login, const std::string& private_k,
-        const std::string& public_k, const std::string& signature_v1,
-        const std::string& signature_v2, const long long int& expiration) const
-    {
-        Json::Value profiles = GetCachedProfiles();
-
-        if (!profiles.contains(login))
-        {
-            profiles[login] = defaultCachedCredentials;
-        }
-
-        if (private_k.empty())
-        {
-            profiles[login]["certificates"]["private_key"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["certificates"]["private_key"] = private_k;
-        }
-
-        if (public_k.empty())
-        {
-            profiles[login]["certificates"]["public_key"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["certificates"]["public_key"] = public_k;
-        }
-
-        if (signature_v1.empty())
-        {
-            profiles[login]["certificates"]["signature_v1"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["certificates"]["signature_v1"] = signature_v1;
-        }
-
-        if (signature_v2.empty())
-        {
-            profiles[login]["certificates"]["signature_v2"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["certificates"]["signature_v2"] = signature_v2;
-        }
-
-        if (expiration == -1)
-        {
-            profiles[login]["certificates"]["expires_date"] = nullptr;
-        }
-        else
-        {
-            profiles[login]["certificates"]["expires_date"] = expiration;
-        }
-
-        WriteCacheFile(profiles);
-    }
-#endif
-
-    const std::string Authentifier::GetMSAToken(const std::string& login) const
+    std::string Authentifier::GetMSAToken(const std::optional<std::string>& cache_key) const
     {
         // Retrieve cached microsoft credentials
-        const Json::Value cached = GetCachedCredentials(login);
+        Json::Value cached = GetCachedAccountOrDefault(cache_key);
+
+        auto save_cache = [&] {
+            if (!cache_key.has_value()) { return; }
+            Json::Value profiles = GetAllCachedAccounts();
+            profiles[cache_key.value()] = cached;
+            WriteCacheFile(profiles);
+        };
 
         // In case there is something wrong in the cached data
         if (!cached.contains("msa") || !cached["msa"].is_object() ||
@@ -694,33 +489,34 @@ namespace Botcraft
             !cached["msa"].contains("expires_date") || !cached["msa"]["expires_date"].is_number())
         {
             LOG_ERROR("Error trying to get cached Microsoft credentials");
-            UpdateCachedMSA(login, "", "", -1);
+            cached.get_object().erase("msa");
+            save_cache();
             LOG_INFO("Starting authentication process...");
-            return MSAAuthDeviceFlow(login);
+            return MSAAuthDeviceFlow(cache_key);
         }
 
-        if (IsTokenExpired(cached["msa"]["expires_date"].get<long long int>()))
+        if (cached["msa"]["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
         {
             LOG_INFO("Refreshing Microsoft token...");
-            std::string refresh_data;
-            refresh_data += "client_id=" + botcraft_app_id;
-            refresh_data += "&refresh_token=" + cached["msa"]["refresh_token"].get_string();
-            refresh_data += "&grant_type=refresh_token";
-            refresh_data += "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
+            const std::string refresh_data =
+                "client_id=" + botcraft_app_id +
+                "&refresh_token=" + cached["msa"]["refresh_token"].get_string() +
+                "&grant_type=refresh_token" +
+                "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
 
             const WebRequestResponse post_response = POSTRequest("login.live.com", "/oauth20_token.srf",
                 "application/x-www-form-urlencoded", "*/*", "", refresh_data);
 
-            // If refresh fails, remove the cache
-            // file and restart the whole auth flow
+            // If refresh fails restart the whole auth flow
             if (post_response.status_code != 200)
             {
                 LOG_ERROR("Response returned with status code " << post_response.status_code
                     << " (" << post_response.status_message << ") during Microsoft token refresh:\n"
                     << post_response.response.Dump(4));
-                UpdateCachedMSA(login, "", "", -1);
-                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(login);
+                cached.get_object().erase("msa");
+                save_cache();
+                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
+                return MSAAuthDeviceFlow(cache_key);
             }
 
             const Json::Value& response = post_response.response;
@@ -728,47 +524,51 @@ namespace Botcraft
             if (!response.contains("expires_in"))
             {
                 LOG_ERROR("Error trying to refresh Microsoft token, no expires_in in response");
-                UpdateCachedMSA(login, "", "", -1);
-                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(login);
+                cached.get_object().erase("msa");
+                save_cache();
+                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
+                return MSAAuthDeviceFlow(cache_key);
             }
 
             if (!response.contains("refresh_token"))
             {
                 LOG_ERROR("Error trying to refresh microsoft token, no refresh_token in response");
-                UpdateCachedMSA(login, "", "", -1);
-                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(login);
+                cached.get_object().erase("msa");
+                save_cache();
+                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
+                return MSAAuthDeviceFlow(cache_key);
             }
 
             if (!response.contains("access_token"))
             {
                 LOG_ERROR("Error trying to refresh microsoft token, no access_token in response");
-                UpdateCachedMSA(login, "", "", -1);
-                LOG_WARNING("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(login);
+                cached.get_object().erase("msa");
+                save_cache();
+                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
+                return MSAAuthDeviceFlow(cache_key);
             }
 
-            UpdateCachedMSA(login, response["access_token"].get_string(),
-                response["refresh_token"].get_string(),
-                response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-            );
+            cached["msa"] = {
+                { "access_token", response["access_token"].get_string() },
+                { "refresh_token", response["refresh_token"].get_string() },
+                { "expires_date", response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() },
+            };
+
+            save_cache();
 
             LOG_INFO("Cached Microsoft token refreshed");
 
             return response["access_token"].get_string();
         }
 
-        LOG_INFO("Microsoft token obtained from cache");
+        LOG_INFO("Cached Microsoft token still valid");
 
         return cached["msa"]["access_token"].get_string();
     }
 
-    const std::string Authentifier::MSAAuthDeviceFlow(const std::string& login) const
+    std::string Authentifier::MSAAuthDeviceFlow(const std::optional<std::string>& cache_key) const
     {
-        std::string auth_data = "";
-        auth_data += "client_id=" + botcraft_app_id;
-        auth_data += "&scope=XboxLive.signin%20offline_access";
+        const std::string auth_data = "client_id=" + botcraft_app_id + "&scope=XboxLive.signin%20offline_access";
 
         const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/devicecode",
             "application/x-www-form-urlencoded", "*/*", "", auth_data);
@@ -802,8 +602,7 @@ namespace Botcraft
         }
 
         // Display the instructions the user has to follow to authenticate in the console
-        std::cout << auth_response["message"].get_string() << std::endl;
-        LOG_INFO(auth_response["message"].get_string());
+        LOG_ALWAYS(auth_response["message"].get_string());
 
         const long long int pool_interval = auth_response["interval"].get_number<long long int>();
         while (true)
@@ -811,10 +610,10 @@ namespace Botcraft
             std::this_thread::sleep_for(std::chrono::seconds(pool_interval + 1));
 
             const std::string check_auth_status_data =
-            "client_id=" + botcraft_app_id +
-            "&scope=XboxLive.signin%20offline_access" +
-            "&grant_type=urn:ietf:params:oauth:grant-type:device_code" +
-            "&device_code=" + auth_response["device_code"].get_string();
+                "client_id=" + botcraft_app_id +
+                "&scope=XboxLive.signin%20offline_access" +
+                "&grant_type=urn:ietf:params:oauth:grant-type:device_code" +
+                "&device_code=" + auth_response["device_code"].get_string();
 
             const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/token",
                 "application/x-www-form-urlencoded", "*/*", "", check_auth_status_data);
@@ -879,11 +678,16 @@ namespace Botcraft
                     return "";
                 }
 
-                UpdateCachedMSA(login,
-                    status_response["access_token"].get_string(),
-                    status_response["refresh_token"].get_string(),
-                    status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-                );
+                if (cache_key.has_value())
+                {
+                    Json::Value profiles = GetAllCachedAccounts();
+                    profiles[cache_key.value()]["msa"] = {
+                        { "access_token", status_response["access_token"].get_string() },
+                        { "refresh_token", status_response["refresh_token"].get_string() },
+                        { "expires_date", status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() },
+                    };
+                    WriteCacheFile(profiles);
+                }
 
                 LOG_INFO("Newly obtained Microsoft token stored in cache");
 
@@ -897,7 +701,7 @@ namespace Botcraft
         }
     }
 
-    const std::string Authentifier::GetXBLToken(const std::string& msa_token) const
+    std::string Authentifier::GetXBLToken(const std::string& msa_token) const
     {
         Json::Value request_data = {
             { "Properties", {
@@ -932,7 +736,7 @@ namespace Botcraft
         return response["Token"].get_string();
     }
 
-    const std::pair<std::string, std::string> Authentifier::GetXSTSToken(const std::string& xbl_token) const
+    std::pair<std::string, std::string> Authentifier::GetXSTSToken(const std::string& xbl_token) const
     {
         Json::Value request_data = {
             { "Properties", {
@@ -974,8 +778,17 @@ namespace Botcraft
         return { response["Token"].get_string(), response["DisplayClaims"]["xui"][0]["uhs"].get_string() };
     }
 
-    const std::string Authentifier::GetMCToken(const std::string& login, const std::string& xsts_token, const std::string& user_hash) const
+    bool Authentifier::GetMCToken(const std::string& xsts_token, const std::string& user_hash, const std::optional<std::string>& cache_key)
     {
+        Json::Value cached = GetCachedAccountOrDefault(cache_key);
+
+        auto save_cache = [&] {
+            if (!cache_key.has_value()) { return; }
+            Json::Value profiles = GetAllCachedAccounts();
+            profiles[cache_key.value()] = cached;
+            WriteCacheFile(profiles);
+        };
+
         Json::Value request_data = {
             { "identityToken", "XBL3.0 x=" + user_hash + ";" + xsts_token }
         };
@@ -988,7 +801,10 @@ namespace Botcraft
             LOG_ERROR("Response returned with status code " << post_response.status_code
                 << " (" << post_response.status_message << ") during MC authentication:\n"
                 << post_response.response.Dump(4));
-            return "";
+            cached.get_object().erase("mc_token");
+            cached.get_object().erase("expires_date");
+            save_cache();
+            return false;
         }
 
         const Json::Value& response = post_response.response;
@@ -996,33 +812,54 @@ namespace Botcraft
         if (!response.contains("access_token"))
         {
             LOG_ERROR("Error trying to get MC token, no access_token in authentication response");
-            return "";
+            cached.get_object().erase("mc_token");
+            cached.get_object().erase("expires_date");
+            save_cache();
+            return false;
         }
 
         if (!response.contains("expires_in"))
         {
             LOG_WARNING("No expires_in in authentication response of MC");
+            cached.get_object().erase("mc_token");
+            cached.get_object().erase("expires_date");
+            save_cache();
+            mc_access_token = response["access_token"].get_string();
             // if no expires_in assuming it is one-time, don't need to cache it
-            return response["access_token"].get_string();
+            return true;
         }
 
-        UpdateCachedMCToken(login,
-            response["access_token"].get_string(),
-            response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-        );
+        mc_access_token = response["access_token"].get_string();
 
-        return response["access_token"].get_string();
+        cached["mc_token"] = mc_access_token;
+        cached["expires_date"] = response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+        save_cache();
+
+        return true;
     }
 
-    const std::pair<std::string, std::string> Authentifier::GetMCProfile(const std::string& login, const std::string& mc_token) const
+    bool Authentifier::GetMCProfile(const std::optional<std::string>& cache_key)
     {
+        Json::Value cached = GetCachedAccountOrDefault(cache_key);
+
+        auto save_cache = [&] {
+            if (!cache_key.has_value()) { return; }
+            Json::Value profiles = GetAllCachedAccounts();
+            profiles[cache_key.value()] = cached;
+            WriteCacheFile(profiles);
+        };
+
         const WebRequestResponse get_response = GETRequest("api.minecraftservices.com", "/minecraft/profile",
-            "Bearer " + mc_token);
+            "Bearer " + mc_access_token);
 
         if (get_response.status_code != 200)
         {
             LOG_ERROR("Response returned with status code " << get_response.status_code << " (" << get_response.status_message << ") during MC profile retrieval");
-            return { "", "" };
+            cached.get_object().erase("name");
+            cached.get_object().erase("id");
+            save_cache();
+            return false;
         }
 
         const Json::Value& response = get_response.response;
@@ -1030,142 +867,105 @@ namespace Botcraft
         if (response.contains("errorMessage"))
         {
             LOG_ERROR("Error trying to get MC profile : " << response["errorMessage"].get_string());
-            return { "", "" };
+            cached.get_object().erase("name");
+            cached.get_object().erase("id");
+            save_cache();
+            return false;
         }
 
         if (!response.contains("id"))
         {
             LOG_ERROR("Error trying to get MC profile, no id in response");
-            return { "", "" };
+            cached.get_object().erase("name");
+            cached.get_object().erase("id");
+            save_cache();
+            return false;
         }
 
         if (!response.contains("name"))
         {
             LOG_ERROR("Error trying to get MC profile, no name in response");
-            return { "", "" };
+            cached.get_object().erase("name");
+            cached.get_object().erase("id");
+            save_cache();
+            return false;
         }
 
-        UpdateCachedMCProfile(login,
-            response["name"].get_string(),
-            response["id"].get_string()
-        );
-        return { response["id"].get_string(), response["name"].get_string() };
+        mc_player_uuid = response["id"].get_string();
+        UpdateUUIDBytes();
+        player_display_name = response["name"].get_string();
+
+        cached["id"] = mc_player_uuid;
+        cached["name"] = player_display_name;
+        save_cache();
+
+        return true;
     }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    const std::tuple<std::string, std::string, std::string, long long int> Authentifier::GetPlayerCertificates(const std::string& login,
-        const std::string& mc_token) const
+    bool Authentifier::GetPlayerCertificates()
     {
-        // Retrieve cached certificates
-        Json::Value cached = GetCachedCredentials(login);
+        // Certificates are not cached cause they're sometimes made invalid before the expire date (not sure why or when)
+        // So instead we get new ones for each connection (vanilla like behaviour)
 
-        const bool invalid_cached_values = !cached.contains("certificates") || !cached["certificates"].is_object() ||
-            !cached["certificates"].contains("private_key") || !cached["certificates"]["private_key"].is_string() ||
-            !cached["certificates"].contains("public_key") || !cached["certificates"]["public_key"].is_string() ||
+        LOG_INFO("Starting player certificates acquisition process...");
+
+        const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/player/certificates",
+            "application/json", "application/json", "Bearer " + mc_access_token, "");
+
+        if (post_response.status_code != 200)
+        {
+            LOG_ERROR("Response returned with status code " << post_response.status_code
+                << " (" << post_response.status_message << ") during player certificates acquisition:\n"
+                << post_response.response.Dump(4));
+            return false;
+        }
+
+        const Json::Value& response = post_response.response;
+
+        if (!response.contains("keyPair"))
+        {
+            LOG_ERROR("Error trying to get player certificates, no keyPair in response");
+            return false;
+        }
+
+        if (!response["keyPair"].contains("privateKey"))
+        {
+            LOG_ERROR("Error trying to get player certificates, no privateKey in response");
+            return false;
+        }
+
+        if (!response["keyPair"].contains("publicKey"))
+        {
+            LOG_ERROR("Error trying to get player certificates, no publicKey in response");
+            return false;
+        }
+
 #if PROTOCOL_VERSION == 759 /* 1.19 */
-            !cached["certificates"].contains("signature_v1") || !cached["certificates"]["signature_v1"].is_string() ||
+        if (!response.contains("publicKeySignature"))
+        {
+            LOG_ERROR("Error trying to get player certificates, no publicKeySignature in response");
+            return false;
+        }
 #else
-            !cached["certificates"].contains("signature_v2") || !cached["certificates"]["signature_v2"].is_string() ||
+        if (!response.contains("publicKeySignatureV2"))
+        {
+            LOG_ERROR("Error trying to get player certificates, no publicKeySignatureV2 in response");
+            return false;
+        }
 #endif
-            !cached["certificates"].contains("expires_date") || !cached["certificates"]["expires_date"].is_number();
 
-        if (invalid_cached_values)
-        {
-            LOG_INFO("Invalid player certificates cached data");
-        }
-
-        // Divided by 1000 because this one is stored in ms
-        // TODO: investigate why it sometimes wrongly detects expired keys as still valid
-        const bool expired = !invalid_cached_values && IsTokenExpired(cached["certificates"]["expires_date"].get<long long int>() / 1000);
-
-        if (expired)
-        {
-            LOG_INFO("Player certificates expired");
-        }
-
-        // In case there is something wrong in the cached data
-        if (invalid_cached_values || expired)
-        {
-            LOG_INFO("Starting player certificates acquisition process...");
-
-            const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/player/certificates",
-                "application/json", "application/json", "Bearer " + mc_token, "");
-
-            if (post_response.status_code != 200)
-            {
-                LOG_ERROR("Response returned with status code " << post_response.status_code
-                    << " (" << post_response.status_message << ") during player certificates acquisition:\n"
-                    << post_response.response.Dump(4));
-                return { "", "", "", 0};
-            }
-
-            const Json::Value& response = post_response.response;
-
-            if (!response.contains("keyPair"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no keyPair in response");
-                return { "", "", "", 0};
-            }
-
-            if (!response["keyPair"].contains("privateKey"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no privateKey in response");
-                return { "", "", "", 0 };
-            }
-
-            if (!response["keyPair"].contains("publicKey"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no publicKey in response");
-                return { "", "", "", 0 };
-            }
-
-            if (!response.contains("publicKeySignature"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no publicKeySignature in response");
-                return { "", "", "", 0 };
-            }
-
-            if (!response.contains("publicKeySignatureV2"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no publicKeySignatureV2 in response");
-                return { "", "", "", 0 };
-            }
-
-            if (!response.contains("expiresAt"))
-            {
-                LOG_ERROR("Error trying to get player certificates, no expiresAt in response");
-                return { "", "", "", 0 };
-            }
-
-            // Convert expires date in ISO8601 to ms since UNIX epoch
-            const long long int expires_timestamp = Utilities::TimestampMilliFromISO8601(response["expiresAt"].get_string());
-
-            UpdateCachedPlayerCertificates(login, response["keyPair"]["privateKey"].get_string(),
-                response["keyPair"]["publicKey"].get_string(), response["publicKeySignature"].get_string(),
-                response["publicKeySignatureV2"].get_string(), expires_timestamp
-            );
-
-            return { response["keyPair"]["privateKey"].get_string(),
-                response["keyPair"]["publicKey"].get_string(),
+        private_key = response["keyPair"]["privateKey"].get_string();
+        public_key = response["keyPair"]["publicKey"].get_string();
 #if PROTOCOL_VERSION == 759 /* 1.19 */
-                response["publicKeySignature"].get_string(),
+        key_signature = response["publicKeySignature"].get_string();
 #else
-                response["publicKeySignatureV2"].get_string(),
+        key_signature = response["publicKeySignatureV2"].get_string();
 #endif
-                expires_timestamp
-            };
-        }
+        // Convert expires date in ISO8601 to ms since UNIX epoch
+        key_timestamp = Utilities::TimestampMilliFromISO8601(response["expiresAt"].get_string());
 
-        LOG_INFO("Cached player certificates still valid!");
-        return { cached["certificates"]["private_key"].get_string(),
-            cached["certificates"]["public_key"].get_string(),
-        #if PROTOCOL_VERSION == 759 /* 1.19 */
-            cached["certificates"]["signature_v1"].get_string(),
-#else
-            cached["certificates"]["signature_v2"].get_string(),
-#endif
-            cached["certificates"]["expires_date"].get<long long int>(),
-        };
+        return true;
     }
 #endif
 

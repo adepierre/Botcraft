@@ -44,6 +44,7 @@ constexpr const char* file_name(const char* path)
 #define LOG_WARNING(osstream) LOG(osstream, Botcraft::LogLevel::Warning)
 #define LOG_ERROR(osstream)   LOG(osstream, Botcraft::LogLevel::Error)
 #define LOG_FATAL(osstream)   LOG(osstream, Botcraft::LogLevel::Fatal)
+#define LOG_ALWAYS(osstream)  LOG(osstream, Botcraft::LogLevel::NUM_LOG_LEVEL)
 
 namespace Botcraft
 {
