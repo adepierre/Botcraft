@@ -7,7 +7,12 @@
 #include <string>
 #endif
 
+struct evp_cipher_ctx_st;
 typedef struct evp_cipher_ctx_st EVP_CIPHER_CTX;
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
+struct rsa_st;
+typedef struct rsa_st RSA;
+#endif
 
 namespace Botcraft
 {
@@ -34,7 +39,7 @@ namespace Botcraft
         /// @param encrypted_shared_secret Shared secret encrypted using server public key
         /// @param salt Output random salt used to compute the signature
         /// @param salted_nonce_signature Output signature of the salted nonce
-        void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
+        void Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, RSA* private_key,
             std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
             long long int& salt, std::vector<unsigned char>& salted_nonce_signature);
 #else

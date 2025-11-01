@@ -49,7 +49,15 @@ namespace Botcraft
 
     Authentifier::~Authentifier()
     {
-
+#ifdef USE_ENCRYPTION
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+        if (private_key != nullptr)
+        {
+            RSA_free(private_key);
+            private_key = nullptr;
+        }
+#endif
+#endif
     }
 
     bool Authentifier::AuthMicrosoft(const std::string& cache_key)
@@ -90,7 +98,7 @@ namespace Botcraft
             return true;
         }
 
-        // This auth flow is initially inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
+        // This auth flow was initially inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
         LOG_INFO("Trying to get Microsoft access token...");
         const std::string msa_token = GetMSAToken(cache_key);
         if (msa_token.empty())
@@ -259,7 +267,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    const std::string& Authentifier::GetPrivateKey() const
+    RSA* Authentifier::GetPrivateKey() const
     {
         return private_key;
     }
@@ -296,9 +304,9 @@ namespace Botcraft
         LOG_ERROR("Trying to compute message signature while botcraft was compiled without USE_ENCRYPTION.");
         return {};
 #else
-        if (mc_player_uuid.empty() || private_key.empty())
+        if (mc_player_uuid.empty() || private_key == nullptr)
         {
-            LOG_ERROR("Trying to join a server before authentication");
+            LOG_ERROR("Trying to compute message signature before authentication");
             return {};
         }
 
@@ -394,21 +402,11 @@ namespace Botcraft
 #endif
         SHA256_Final(signature_hash.data(), &sha256);
 
-        // Extract signature key from PEM string
-        // TODO: store RSA key so we don't have to extract it every chat message?
-        // it's not that important as you're not supposed to spam chat hundreds of times per second anyway
-        RSA* rsa_signature = nullptr;
-        const char* c_string = private_key.c_str();
-        BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);
-        rsa_signature = PEM_read_bio_RSAPrivateKey(keybio, &rsa_signature, NULL, NULL);
-        BIO_free(keybio);
-
         // Compute signature
-        const int rsa_signature_size = RSA_size(rsa_signature);
-        std::vector<unsigned char> signature(rsa_signature_size);
+        const int private_key_size = RSA_size(private_key);
+        std::vector<unsigned char> signature(private_key_size);
         unsigned int signature_size;
-        RSA_sign(NID_sha256, signature_hash.data(), static_cast<unsigned int>(signature_hash.size()), signature.data(), &signature_size, rsa_signature);
-        RSA_free(rsa_signature);
+        RSA_sign(NID_sha256, signature_hash.data(), static_cast<unsigned int>(signature_hash.size()), signature.data(), &signature_size, private_key);
         signature.resize(signature_size);
 
         return signature;
@@ -955,7 +953,16 @@ namespace Botcraft
         }
 #endif
 
-        private_key = response["keyPair"]["privateKey"].get_string();
+        // Extract signature key from PEM string
+        if (private_key != nullptr)
+        {
+            RSA_free(private_key);
+        }
+        private_key = nullptr;
+        BIO* keybio = BIO_new_mem_buf((void*)response["keyPair"]["privateKey"].get_string().c_str(), -1);
+        private_key = PEM_read_bio_RSAPrivateKey(keybio, &private_key, NULL, NULL);
+        BIO_free(keybio);
+
         public_key = response["keyPair"]["publicKey"].get_string();
 #if PROTOCOL_VERSION == 759 /* 1.19 */
         key_signature = response["publicKeySignature"].get_string();

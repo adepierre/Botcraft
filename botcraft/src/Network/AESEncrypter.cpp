@@ -44,7 +44,7 @@ namespace Botcraft
     void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_nonce, std::vector<unsigned char>& encrypted_shared_secret)
 #elif PROTOCOL_VERSION < 761 /* < 1.19.3 */
-    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, const std::string& private_key,
+    void AESEncrypter::Init(const std::vector<unsigned char>& pub_key, const std::vector<unsigned char>& input_nonce, RSA* private_key,
         std::vector<unsigned char>& raw_shared_secret, std::vector<unsigned char>& encrypted_shared_secret,
         long long int& salt, std::vector<unsigned char>& salted_nonce_signature)
 #else
@@ -92,19 +92,11 @@ namespace Botcraft
         SHA256_Update(&sha256, salt_bytes.data(), salt_bytes.size());
         SHA256_Final(salted_hash.data(), &sha256);
 
-        // Extract signature key from PEM string
-        RSA* rsa_signature = nullptr;
-        const char* c_string = private_key.c_str();
-        BIO* keybio = BIO_new_mem_buf((void*)c_string, -1);
-        rsa_signature = PEM_read_bio_RSAPrivateKey(keybio, &rsa_signature, NULL, NULL);
-        BIO_free(keybio);
-
         // Compute signature
-        const int rsa_signature_size = RSA_size(rsa_signature);
-        salted_nonce_signature = std::vector<unsigned char>(rsa_signature_size);
+        const int private_key_size = RSA_size(private_key);
+        salted_nonce_signature = std::vector<unsigned char>(private_key_size);
         unsigned int salted_nonce_signature_size;
-        RSA_sign(NID_sha256, salted_hash.data(), static_cast<unsigned int>(salted_hash.size()), salted_nonce_signature.data(), &salted_nonce_signature_size, rsa_signature);
-        RSA_free(rsa_signature);
+        RSA_sign(NID_sha256, salted_hash.data(), static_cast<unsigned int>(salted_hash.size()), salted_nonce_signature.data(), &salted_nonce_signature_size, private_key);
         salted_nonce_signature.resize(salted_nonce_signature_size);
 #else
         // 1.19.3 behaviour, back to compute encrypted challenge

@@ -12,6 +12,11 @@
 #include "protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp"
 #endif
 
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+struct rsa_st;
+typedef struct rsa_st RSA;
+#endif
+
 namespace Botcraft
 {
     struct WebRequestResponse
@@ -39,7 +44,7 @@ namespace Botcraft
         const std::array<unsigned char, 16>& GetPlayerUUID() const;
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        const std::string& GetPrivateKey() const;
+        RSA* GetPrivateKey() const;
         const std::string& GetPublicKey() const;
         const std::string& GetKeySignature() const;
         const long long int GetKeyTimestamp() const;
@@ -179,7 +184,7 @@ namespace Botcraft
         std::array<unsigned char, 16> mc_player_uuid_bytes;
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        std::string private_key;
+        RSA* private_key = nullptr;
         std::string public_key;
         std::string key_signature;
         long long int key_timestamp;
