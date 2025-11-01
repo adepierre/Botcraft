@@ -541,7 +541,15 @@ namespace Botcraft
     void NetworkManager::Handle(ClientboundPlayerChatPacket& packet)
     {
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
-        chat_context.AddSeenMessage(packet.GetMessage_().GetHeaderSignature(), packet.GetMessage_().GetSignedHeader().GetSender());
+        // Ugly stuff because there is a GetMessage macro in Windows API somewhere :)
+#if _MSC_VER || __MINGW32__
+#pragma push_macro("GetMessage")
+#undef GetMessage
+#endif
+        chat_context.AddSeenMessage(packet.GetMessage().GetHeaderSignature(), packet.GetMessage().GetSignedHeader().GetSender());
+#if _MSC_VER || __MINGW32__
+#pragma pop_macro("GetMessage")
+#endif
 #else
         if (packet.GetSignature().has_value())
         {
