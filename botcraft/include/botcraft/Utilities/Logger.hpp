@@ -66,7 +66,7 @@ namespace Botcraft
     private:
         Logger();
     public:
-        static constexpr std::array<std::string_view, static_cast<size_t>(LogLevel::NUM_LOG_LEVEL)> level_strings =
+        static constexpr std::array<std::string_view, static_cast<size_t>(LogLevel::NUM_LOG_LEVEL) + 1> level_strings =
         {
              "[ TRACE ]",
              "[ DEBUG ]",
@@ -74,7 +74,8 @@ namespace Botcraft
              "[WARNING]",
              "[ ERROR ]",
              "[ FATAL ]",
-             "[       ]"
+             "[       ]",
+             "[ALWAYS ]"
         };
         Logger(const Logger&) = delete;
         Logger& operator=(const Logger&) = delete;
