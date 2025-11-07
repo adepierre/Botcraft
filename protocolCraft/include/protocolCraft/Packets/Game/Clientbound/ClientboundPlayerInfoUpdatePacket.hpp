@@ -21,11 +21,11 @@ namespace ProtocolCraft
         UpdateListed,
         UpdateLatency,
         UpdateDisplayName,
-#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-        UpdateHat,
-#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         UpdateListOrder,
+#endif
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        UpdateHat,
 #endif
         NUM_PLAYERINFOUPDATEACTION
     };
