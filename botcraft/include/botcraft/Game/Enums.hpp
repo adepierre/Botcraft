@@ -283,6 +283,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
         BodyAnimalArmor,
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        Saddle,
+#endif
     };
 
     enum class ToolMaterial : char
