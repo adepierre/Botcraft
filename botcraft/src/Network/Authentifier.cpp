@@ -84,22 +84,22 @@ namespace Botcraft
             player_display_name = cached["name"].get_string();
             mc_player_uuid = cached["id"].get_string();
             UpdateUUIDBytes();
-            LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
+            LOG_DEBUG("Cached Minecraft token for Microsoft account still valid.");
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            LOG_INFO("Getting player certificates...");
+            LOG_DEBUG("Getting player certificates...");
             if (!GetPlayerCertificates())
             {
                 LOG_ERROR("Unable to get player certificates");
                 return false;
             }
-            LOG_INFO("Player certificates obtained!");
+            LOG_DEBUG("Player certificates obtained!");
 #endif
             return true;
         }
 
         // This auth flow was initially inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
-        LOG_INFO("Trying to get Microsoft access token...");
+        LOG_DEBUG("Trying to get Microsoft access token...");
         const std::string msa_token = GetMSAToken(cache_key);
         if (msa_token.empty())
         {
@@ -107,31 +107,31 @@ namespace Botcraft
             return false;
         }
 
-        LOG_INFO("Trying to get XBL token...");
+        LOG_DEBUG("Trying to get XBL token...");
         const std::string xbl_token = GetXBLToken(msa_token);
         if (xbl_token.empty())
         {
             LOG_ERROR("Unable to get a XBL token");
             return false;
         }
-        LOG_INFO("XBL token obtained!");
+        LOG_DEBUG("XBL token obtained!");
 
-        LOG_INFO("Trying to get XSTS token...");
+        LOG_DEBUG("Trying to get XSTS token...");
         const auto [xsts_token, xsts_userhash] = GetXSTSToken(xbl_token);
         if (xsts_token.empty())
         {
             LOG_ERROR("Unable to get a XSTS token");
             return false;
         }
-        LOG_INFO("XSTS token obtained!");
+        LOG_DEBUG("XSTS token obtained!");
 
-        LOG_INFO("Trying to get MC token...");
+        LOG_DEBUG("Trying to get MC token...");
         if (!GetMCToken(xsts_token, xsts_userhash, cache_key))
         {
             LOG_ERROR("Unable to get a MC token");
             return false;
         }
-        LOG_INFO("MC token obtained! Almost there...");
+        LOG_DEBUG("MC token obtained! Almost there...");
 
 
         // We assume you're using an account owning minecraft so
@@ -139,28 +139,28 @@ namespace Botcraft
         // If you don't, Botcraft won't work on online mode.
         // But you can buy yourself a copy of the game:
         // https://www.minecraft.net/get-minecraft
-        LOG_INFO("Assuming the account owns Minecraft...");
+        LOG_DEBUG("Assuming the account owns Minecraft...");
 
-        LOG_INFO("Trying to get MC profile...");
+        LOG_DEBUG("Trying to get MC profile...");
         if (!GetMCProfile(cache_key))
         {
             LOG_ERROR("Unable to get a MC profile");
             return false;
         }
         UpdateUUIDBytes();
-        LOG_INFO("MC profile obtained!");
+        LOG_DEBUG("MC profile obtained!");
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        LOG_INFO("Getting player certificates...");
+        LOG_DEBUG("Getting player certificates...");
         if (!GetPlayerCertificates())
         {
             LOG_ERROR("Unable to get player certificates");
             return false;
         }
-        LOG_INFO("Player certificates obtained!");
+        LOG_DEBUG("Player certificates obtained!");
 #endif
 
-        LOG_INFO("Authentication completed!");
+        LOG_DEBUG("Authentication completed!");
 
         return true;
 #endif
@@ -173,26 +173,26 @@ namespace Botcraft
 #else
         mc_access_token = mc_token;
 
-        LOG_INFO("Trying to get MC profile...");
+        LOG_DEBUG("Trying to get MC profile...");
         if (!GetMCProfile(std::nullopt))
         {
             LOG_ERROR("Unable to get a MC profile");
             return false;
         }
         UpdateUUIDBytes();
-        LOG_INFO("MC profile obtained!");
+        LOG_DEBUG("MC profile obtained!");
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        LOG_INFO("Getting player certificates...");
+        LOG_DEBUG("Getting player certificates...");
         if (!GetPlayerCertificates())
         {
             LOG_ERROR("Unable to get player certificates");
             return false;
         }
-        LOG_INFO("Player certificates obtained!");
+        LOG_DEBUG("Player certificates obtained!");
 #endif
 
-        LOG_INFO("Authentication completed!");
+        LOG_DEBUG("Authentication completed!");
 
         return true;
 #endif
@@ -521,13 +521,13 @@ namespace Botcraft
             LOG_ERROR("Error trying to get cached Microsoft credentials");
             cached.get_object().erase("msa");
             save_cache();
-            LOG_INFO("Starting authentication process...");
+            LOG_DEBUG("Starting authentication process...");
             return MSAAuthDeviceFlow(cache_key);
         }
 
         if (cached["msa"]["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
         {
-            LOG_INFO("Refreshing Microsoft token...");
+            LOG_DEBUG("Refreshing Microsoft token...");
             const std::string refresh_data =
                 "client_id=" + botcraft_app_id +
                 "&refresh_token=" + cached["msa"]["refresh_token"].get_string() +
@@ -591,7 +591,7 @@ namespace Botcraft
             return response["access_token"].get_string();
         }
 
-        LOG_INFO("Cached Microsoft token still valid");
+        LOG_DEBUG("Cached Microsoft token still valid");
 
         return cached["msa"]["access_token"].get_string();
     }
@@ -719,7 +719,7 @@ namespace Botcraft
                     WriteCacheFile(profiles);
                 }
 
-                LOG_INFO("Newly obtained Microsoft token stored in cache");
+                LOG_DEBUG("Newly obtained Microsoft token stored in cache");
 
                 return status_response["access_token"].get_string();
             }
@@ -938,7 +938,7 @@ namespace Botcraft
         // Certificates are not cached cause they're sometimes made invalid before the expire date (not sure why or when)
         // So instead we get new ones for each connection (vanilla like behaviour)
 
-        LOG_INFO("Starting player certificates acquisition process...");
+        LOG_DEBUG("Starting player certificates acquisition process...");
 
         const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/player/certificates",
             "application/json", "application/json", "Bearer " + mc_access_token, "");

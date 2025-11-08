@@ -27,7 +27,7 @@ namespace Botcraft
 
         asio::ip::tcp::resolver resolver(io_context);
         asio::ip::tcp::resolver::results_type results = resolver.resolve(ip, std::to_string(port));
-        LOG_INFO("Trying to connect to " << ip << ":" << port);
+        LOG_DEBUG("Trying to connect to " << ip << ":" << port);
         asio::async_connect(socket, results,
             std::bind(&TCP_Com::handle_connect, this,
             std::placeholders::_1));
@@ -98,7 +98,7 @@ namespace Botcraft
     {
         if (!error)
         {
-            LOG_INFO("Connection to server established.");
+            LOG_DEBUG("Connection to server established.");
             initialized = true;
             socket.async_read_some(asio::buffer(read_packet.data(), read_packet.size()),
                 std::bind(&TCP_Com::handle_read, this,
@@ -251,7 +251,7 @@ namespace Botcraft
         }
 
         // If port is unknown we first try a SRV DNS lookup
-        LOG_INFO("Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint");
+        LOG_DEBUG("Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint");
         asio::ip::udp::socket udp_socket(io_context);
 
         // Create the query
@@ -311,10 +311,10 @@ namespace Botcraft
             }
             port = data.GetPort();
 
-            LOG_INFO("SRV DNS lookup successful!");
+            LOG_DEBUG("SRV DNS lookup successful!");
             return;
         }
-        LOG_WARNING("SRV DNS lookup failed to find an address");
+        LOG_DEBUG("SRV DNS lookup failed to find an address");
 
         // If we are here either the port was given or the SRV failed
         // In both cases we need to assume the given address is the correct one

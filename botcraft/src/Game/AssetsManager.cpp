@@ -33,27 +33,27 @@ namespace Botcraft
             LOG_FATAL("Minecraft assets folder expected at " << std::filesystem::absolute(expected_mc_path) << " but not found");
             throw std::runtime_error("Minecraft assets not found");
         }
-        LOG_INFO("Loading blocks from file...");
+        LOG_DEBUG("Loading blocks from file...");
         LoadBlocksFile();
-        LOG_INFO("Done!");
-        LOG_INFO("Loading biomes from file...");
+        LOG_DEBUG("Done!");
+        LOG_DEBUG("Loading biomes from file...");
         LoadBiomesFile();
-        LOG_INFO("Done!");
-        LOG_INFO("Loading items from file...");
+        LOG_DEBUG("Done!");
+        LOG_DEBUG("Loading items from file...");
         LoadItemsFile();
-        LOG_INFO("Done!");
+        LOG_DEBUG("Done!");
 #if USE_GUI
-        LOG_INFO("Loading textures...");
+        LOG_DEBUG("Loading textures...");
         atlas = std::make_unique<Renderer::Atlas>();
         LoadTextures();
-        LOG_INFO("Done!");
-        LOG_INFO("Updating models with Atlas data...");
+        LOG_DEBUG("Done!");
+        LOG_DEBUG("Updating models with Atlas data...");
         UpdateModelsWithAtlasData();
-        LOG_INFO("Done!");
+        LOG_DEBUG("Done!");
 #endif
-        LOG_INFO("Clearing cache from memory...");
+        LOG_DEBUG("Clearing cache from memory...");
         ClearCaches();
-        LOG_INFO("Done!");
+        LOG_DEBUG("Done!");
     }
 
 #if PROTOCOL_VERSION < 347 /* < 1.13 */
