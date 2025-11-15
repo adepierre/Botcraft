@@ -40,6 +40,8 @@ namespace Botcraft
         bool GetAutoRespawn() const;
         void SetAutoRespawn(const bool b);
 
+        void SetHotbarSelection(const short index);
+
         // Set the right transaction id, add it to the inventory manager,
         // update the next transaction id and send it to the server
         // return the id of the transaction
