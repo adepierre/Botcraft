@@ -647,8 +647,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void InventoryManager::Handle(ClientboundSetCursorItemPacket& packet)
     {
-        // Not sure about this one, I can't figure out when it's sent by the server
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, packet.GetContents());
+        SetCursor(packet.GetContents());
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& packet)
