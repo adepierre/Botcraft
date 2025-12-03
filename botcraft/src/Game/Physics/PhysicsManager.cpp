@@ -293,28 +293,6 @@ namespace Botcraft
 
     void PhysicsManager::PhysicsTick()
     {
-        // Check for rocket boosting if currently in elytra flying mode
-        if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
-        {
-            for (const auto& e : *entity_manager->GetEntities())
-            {
-                if (e.second->GetType() != EntityType::FireworkRocketEntity)
-                {
-                    continue;
-                }
-
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget().value_or(0);
-#else
-                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget();
-#endif
-                if (attached_id == player->entity_id)
-                {
-                    player->speed += player->front_vector * 0.1 + (player->front_vector * 1.5 - player->speed) * 0.5;
-                }
-            }
-        }
-
         { // LocalPlayer::tick
             // The idea here is to follow the tick flow from LocalPlayer::tick
             // in Minecraft code
@@ -487,6 +465,30 @@ namespace Botcraft
 
             SendPosition();
         }  // LocalPlayer::tick
+
+        // Check for rocket boosting if currently in elytra flying mode
+        // Entities are ticked in order of creation so a rocket attached to a player
+        // will always be ticked *after* the player
+        if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
+        {
+            for (const auto& e : *entity_manager->GetEntities())
+            {
+                if (e.second->GetType() != EntityType::FireworkRocketEntity)
+                {
+                    continue;
+                }
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget().value_or(0);
+#else
+                const int attached_id = reinterpret_cast<const FireworkRocketEntity*>(e.second.get())->GetDataAttachedToTarget();
+#endif
+                if (attached_id == player->entity_id)
+                {
+                    player->speed += player->front_vector * 0.1 + (player->front_vector * 1.5 - player->speed) * 0.5;
+                }
+            }
+        }
 
         player->ResetInputs();
     }
