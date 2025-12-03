@@ -314,6 +314,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
                 { EquipmentSlot::BodyAnimalArmor, ProtocolCraft::Slot() },
 #endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+                { EquipmentSlot::Saddle, ProtocolCraft::Slot() },
+#endif
             };
         }
 
