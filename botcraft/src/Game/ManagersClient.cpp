@@ -97,6 +97,14 @@ namespace Botcraft
         return day_time;
     }
 
+    void ManagersClient::SetHotbarSelection(const short index)
+    {
+        inventory_manager->SetIndexHotbarSelected(index);
+        ServerboundSetCarriedItemPacket packet;
+        packet.SetSlot(index);
+        network_manager->Send(std::make_shared<ServerboundSetCarriedItemPacket>(packet));
+    }
+
     int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
     {
         InventoryTransaction inventory_transaction = inventory_manager->PrepareTransaction(transaction);
