@@ -33,7 +33,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypePotionContents.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeRarity.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp"
+#if PROTOCOL_VERSION < 774 /* < 1.21.115 */
 #include "protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp"
+#endif
 #include "protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeTool.hpp"
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
@@ -56,8 +58,9 @@
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #include "protocolCraft/Types/Components/DataComponentTypeBlocksAttacks.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeBreakSound.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeEitherRegistryVarint.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeFloat.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypePaintingVariant.hpp"
-#include "protocolCraft/Types/Components/DataComponentTypePotionDurationScale.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeProvidesTrimMaterial.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeTooltipDisplay.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeVariantEnum.hpp"
@@ -65,6 +68,14 @@
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Types/Components/DataComponentTypeTypedEntityData.hpp"
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+#include "protocolCraft/Types/Components/DataComponentTypeAttackRange.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeIdentifier.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeKineticWeapon.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypePiercingWeapon.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeSwingAnimation.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeUseEffects.hpp"
 #endif
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
@@ -91,6 +102,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
         DEFINE_NETWORK_TYPE(JukeboxSong);
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        DEFINE_NETWORK_TYPE(KineticWeaponCondition);
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         DEFINE_NETWORK_TYPE(AssetInfo);
@@ -144,7 +158,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypePotionContents);
         DEFINE_NETWORK_TYPE(DataComponentTypeRarity);
         DEFINE_NETWORK_TYPE(DataComponentTypeResolvableProfile);
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         DEFINE_NETWORK_TYPE(DataComponentTypeResourceLocation);
+#endif
         DEFINE_NETWORK_TYPE(DataComponentTypeSuspiciousStewEffects);
         DEFINE_NETWORK_TYPE(DataComponentTypeTool);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
@@ -167,8 +183,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         DEFINE_NETWORK_TYPE(DataComponentTypeBlocksAttacks);
         DEFINE_NETWORK_TYPE(DataComponentTypeBreakSound);
+        DEFINE_NETWORK_TYPE(DataComponentTypeEitherRegistryVarint);
+        DEFINE_NETWORK_TYPE(DataComponentTypeFloat);
         DEFINE_NETWORK_TYPE(DataComponentTypePaintingVariant);
-        DEFINE_NETWORK_TYPE(DataComponentTypePotionDurationScale);
         DEFINE_NETWORK_TYPE(DataComponentTypeProvidesTrimMaterial);
         DEFINE_NETWORK_TYPE(DataComponentTypeTooltipDisplay);
         DEFINE_NETWORK_TYPE(DataComponentTypeVariantEnum);
@@ -176,6 +193,14 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         DEFINE_NETWORK_TYPE(DataComponentTypeTypedEntityData);
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeAttackRange);
+        DEFINE_NETWORK_TYPE(DataComponentTypeIdentifier);
+        DEFINE_NETWORK_TYPE(DataComponentTypeKineticWeapon);
+        DEFINE_NETWORK_TYPE(DataComponentTypePiercingWeapon);
+        DEFINE_NETWORK_TYPE(DataComponentTypeSwingAnimation);
+        DEFINE_NETWORK_TYPE(DataComponentTypeUseEffects);
 #endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
@@ -186,7 +211,14 @@ namespace ProtocolCraft
                 "max_damage",
                 "damage",
                 "unbreakable",
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                "use_effects",
+#endif
                 "custom_name",
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                "minimum_attack_charge",
+                "damage_type",
+#endif
                 "item_name",
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                 "item_model",
@@ -223,6 +255,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
                 "weapon",
 #endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                "attack_range",
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                 "enchantable",
                 "equippable",
@@ -233,6 +268,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
                 "blocks_attacks",
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                "piercing_weapon",
+                "kinetic_weapon",
+                "swing_animation",
 #endif
                 "stored_enchantments",
                 "dyed_color",
@@ -296,6 +336,9 @@ namespace ProtocolCraft
                 "pig/variant",
                 "cow/variant",
                 "chicken/variant",
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                "zombie_nautilus/variant",
+#endif
                 "frog/variant",
                 "horse/variant",
                 "painting/variant",
@@ -419,7 +462,11 @@ namespace ProtocolCraft
             case DataComponentTypes::ItemModel:
             case DataComponentTypes::TooltipStyle:
 #endif
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
                 return std::make_shared<DataComponentTypeResourceLocation>();
+#else
+                return std::make_shared<DataComponentTypeIdentifier>();
+#endif
             case DataComponentTypes::SuspiciousStewEffects:
                 return std::make_shared<DataComponentTypeSuspiciousStewEffects>();
             case DataComponentTypes::Tool:
@@ -466,16 +513,17 @@ namespace ProtocolCraft
             case DataComponentTypes::Painting_Variant:
                 return std::make_shared<DataComponentTypePaintingVariant>();
             case DataComponentTypes::PotionDurationScale:
-                return std::make_shared<DataComponentTypePotionDurationScale>();
+                return std::make_shared<DataComponentTypeFloat>();
             case DataComponentTypes::ProvidesTrimMaterial:
                 return std::make_shared<DataComponentTypeProvidesTrimMaterial>();
             case DataComponentTypes::TooltipDisplay:
                 return std::make_shared<DataComponentTypeTooltipDisplay>();
             case DataComponentTypes::Weapon:
                 return std::make_shared<DataComponentTypeWeapon>();
+            case DataComponentTypes::Chicken_Variant:
+                return std::make_shared<DataComponentTypeEitherRegistryVarint>();
             case DataComponentTypes::Axolotl_Variant:
             case DataComponentTypes::Cat_Variant:
-            case DataComponentTypes::Chicken_Variant: // TODO: understand why there is an Either thing in MC code for this one?
             case DataComponentTypes::Cow_Variant:
             case DataComponentTypes::Frog_Variant:
             case DataComponentTypes::Horse_Variant:
@@ -502,6 +550,23 @@ namespace ProtocolCraft
             case DataComponentTypes::BlockEntityData:
             case DataComponentTypes::EntityData:
                 return std::make_shared<DataComponentTypeTypedEntityData>();
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            case DataComponentTypes::UseEffects:
+                return std::make_shared<DataComponentTypeUseEffects>();
+            case DataComponentTypes::MinimumAttackCharge:
+                return std::make_shared<DataComponentTypeFloat>();
+            case DataComponentTypes::AttackRange:
+                return std::make_shared<DataComponentTypeAttackRange>();
+            case DataComponentTypes::DamageType:
+            case DataComponentTypes::ZombieNautilus_Variant:
+                return std::make_shared<DataComponentTypeEitherRegistryVarint>();
+            case DataComponentTypes::PiercingWeapon:
+                return std::make_shared<DataComponentTypePiercingWeapon>();
+            case DataComponentTypes::KineticWeapon:
+                return std::make_shared<DataComponentTypeKineticWeapon>();
+            case DataComponentTypes::SwingAnimation:
+                return std::make_shared<DataComponentTypeSwingAnimation>();
 #endif
             default:
                 // Should never happen but will make the compilers happy

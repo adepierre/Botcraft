@@ -16,18 +16,18 @@ namespace ProtocolCraft
         }
 
 
-        const std::optional<T>& GetLeft() const
+        const std::optional<typename Internal::SerializedType<T>::storage_type>& GetLeft() const
         {
             return left;
         }
 
-        const std::optional<U>& GetRight() const
+        const std::optional<typename Internal::SerializedType<U>::storage_type>& GetRight() const
         {
             return right;
         }
 
 
-        auto& SetLeft(const std::optional<T>& left_)
+        auto& SetLeft(const std::optional<typename Internal::SerializedType<T>::storage_type>& left_)
         {
             left = left_;
             if (left.has_value())
@@ -37,7 +37,7 @@ namespace ProtocolCraft
             return *this;
         }
 
-        auto& SetRight(const std::optional<U>& right_)
+        auto& SetRight(const std::optional<typename Internal::SerializedType<U>::storage_type>& right_)
         {
             right = right_;
             if (right.has_value())
@@ -93,8 +93,8 @@ namespace ProtocolCraft
         }
 
     private:
-        std::optional<T> left;
-        std::optional<U> right;
+        std::optional<typename Internal::SerializedType<T>::storage_type> left;
+        std::optional<typename Internal::SerializedType<U>::storage_type> right;
 
     };
 }

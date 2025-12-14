@@ -6,9 +6,9 @@ namespace ProtocolCraft
 {
     namespace Components
     {
-        class DataComponentTypePotionDurationScale : public DataComponentType
+        class DataComponentTypeFloat : public DataComponentType
         {
-            SERIALIZED_FIELD(Scale, float);
+            SERIALIZED_FIELD(Value, float);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

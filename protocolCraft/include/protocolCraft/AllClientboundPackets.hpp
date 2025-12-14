@@ -178,7 +178,7 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundGameTestHighlightPosPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 774 /* < 1.21.11 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundHorseScreenOpenPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
@@ -203,6 +203,9 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundMapItemDataPacket.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundMerchantOffersPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundMountScreenOpenPacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundMoveEntityPacket.hpp"
@@ -593,7 +596,11 @@ namespace ProtocolCraft
         ClientboundGameTestHighlightPosPacket,
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         ClientboundHorseScreenOpenPacket,
+#else
+        ClientboundMountScreenOpenPacket,
+#endif
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         ClientboundHurtAnimationPacket,

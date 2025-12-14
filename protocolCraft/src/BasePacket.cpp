@@ -165,8 +165,11 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundTagQueryPacket);
 #endif
     DEFINE_PACKET_CLASS(ClientboundOpenSignEditorPacket);
-#if PROTOCOL_VERSION > 451 /* > 1.13.2 */
+#if PROTOCOL_VERSION > 451 /* > 1.13.2 */ && PROTOCOL_VERSION < 774 /* < 1.21.11 */
     DEFINE_PACKET_CLASS(ClientboundHorseScreenOpenPacket);
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+    DEFINE_PACKET_CLASS(ClientboundMountScreenOpenPacket);
 #endif
 #if PROTOCOL_VERSION > 450 /* > 1.13.2 */
     DEFINE_PACKET_CLASS(ClientboundOpenBookPacket);

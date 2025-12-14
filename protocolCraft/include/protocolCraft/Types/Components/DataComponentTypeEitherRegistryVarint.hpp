@@ -1,15 +1,17 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 774 /* < 1.21.11 */
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
+
+#include "protocolCraft/Types/Either.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
 {
     namespace Components
     {
-        class DataComponentTypeResourceLocation : public DataComponentType
+        class DataComponentTypeEitherRegistryVarint : public DataComponentType
         {
-            SERIALIZED_FIELD(Identifier, ProtocolCraft::Identifier);
+            SERIALIZED_FIELD(Value, Either<VarInt, Identifier>);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

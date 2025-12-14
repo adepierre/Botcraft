@@ -19,7 +19,14 @@ namespace ProtocolCraft
             MaxDamage,
             Damage,
             Unbreakable,
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            UseEffects,
+#endif
             CustomName,
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            MinimumAttackCharge,
+            DamageType,
+#endif
             ItemName,
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
             ItemModel,
@@ -55,6 +62,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
             Weapon,
 #endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            AttackRange,
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
             Enchantable,
             Equippable,
@@ -65,6 +75,11 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
             BlocksAttacks,
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            PiercingWeapon,
+            KineticWeapon,
+            SwingAnimation,
 #endif
             StoredEnchantments,
             DyedColor,
@@ -128,6 +143,9 @@ namespace ProtocolCraft
             Pig_Variant,
             Cow_Variant,
             Chicken_Variant,
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            ZombieNautilus_Variant,
+#endif
             Frog_Variant,
             Horse_Variant,
             Painting_Variant,
