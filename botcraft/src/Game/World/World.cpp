@@ -59,13 +59,13 @@ namespace Botcraft
 #endif
     }
 
-    bool World::IsInUltraWarmDimension() const
+    bool World::IsInFastLavaDimension() const
     {
         std::shared_lock<std::shared_mutex> lock(world_mutex);
 #if PROTOCOL_VERSION < 719 /* < 1.16 */
         return current_dimension == Dimension::Nether;
 #else
-        return dimension_ultrawarm.at(current_dimension);
+        return dimension_fast_lava.at(current_dimension);
 #endif
     }
 
@@ -477,10 +477,10 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
-    void World::SetDimensionUltrawarm(const std::string& dimension, const bool ultrawarm)
+    void World::SetDimensionFastLava(const std::string& dimension, const bool fast_lava)
     {
         std::scoped_lock<std::shared_mutex> lock(world_mutex);
-        dimension_ultrawarm[dimension] = ultrawarm;
+        dimension_fast_lava[dimension] = fast_lava;
     }
 #endif
 
@@ -721,13 +721,13 @@ namespace Botcraft
         for (const auto& d : packet.GetRegistryHolder()["dimension"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
-            dimension_ultrawarm[dim_name] = static_cast<bool>(d["ultrawarm"].get<char>());
+            dimension_fast_lava[dim_name] = static_cast<bool>(d["ultrawarm"].get<char>());
         }
 #elif PROTOCOL_VERSION < 764 /* < 1.20.2 */
         for (const auto& d : packet.GetRegistryHolder()["minecraft:dimension_type"]["value"].as_list_of<ProtocolCraft::NBT::TagCompound>())
         {
             const std::string& dim_name = d["name"].get<std::string>();
-            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
+            dimension_fast_lava[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
@@ -751,7 +751,7 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION > 747 /* > 1.16.1 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
-        dimension_ultrawarm[current_dimension] = static_cast<bool>(packet.GetDimensionType()["ultrawarm"].get<char>());
+        dimension_fast_lava[current_dimension] = static_cast<bool>(packet.GetDimensionType()["ultrawarm"].get<char>());
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
         dimension_height[current_dimension] = packet.GetDimensionType()["height"].get<int>();
         dimension_min_y[current_dimension] = packet.GetDimensionType()["min_y"].get<int>();
@@ -942,7 +942,7 @@ namespace Botcraft
             const std::string& dim_name = d["name"].get<std::string>();
             dimension_height[dim_name] = static_cast<unsigned int>(d["element"]["height"].get<int>());
             dimension_min_y[dim_name] = d["element"]["min_y"].get<int>();
-            dimension_ultrawarm[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
+            dimension_fast_lava[dim_name] = static_cast<bool>(d["element"]["ultrawarm"].get<char>());
         }
 #else
         if (packet.GetRegistry().GetFull() != "minecraft:dimension_type")
@@ -964,7 +964,11 @@ namespace Botcraft
                 const ProtocolCraft::NBT::Value& data = entries[i].GetData().value();
                 dimension_height[dim_name] = static_cast<unsigned int>(data["height"].get<int>());
                 dimension_min_y[dim_name] = data["min_y"].get<int>();
-                dimension_ultrawarm[dim_name] = static_cast<bool>(data["ultrawarm"].get<char>());
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
+                dimension_fast_lava[dim_name] = static_cast<bool>(data["ultrawarm"].get<char>());
+#else
+                dimension_fast_lava[dim_name] = static_cast<bool>(data["attributes"].contains("minecraft:gameplay/fast_lava") && data["attributes"]["minecraft:gameplay/fast_lava"].get<char>());
+#endif
             }
         }
 #endif

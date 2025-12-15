@@ -23,10 +23,18 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         char GetDataPlayerMainHand() const;
+#else
+        int GetDataPlayerMainHand() const;
+#endif
         char GetDataPlayerModeCustomisation() const;
 
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         void SetDataPlayerMainHand(const char data_player_main_hand);
+#else
+        void SetDataPlayerMainHand(const int data_player_main_hand);
+#endif
         void SetDataPlayerModeCustomisation(const char data_player_mode_customisation);
 
     };

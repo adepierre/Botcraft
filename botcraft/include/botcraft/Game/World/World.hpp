@@ -60,9 +60,9 @@ namespace Botcraft
         /// @return 0 for versions prior to 1.18, current dimension min_y otherwise
         int GetMinY() const;
 
-        /// @brief Check if current dimension is Ultrawarm
-        /// @return True if ultrawarm, false otherwise
-        bool IsInUltraWarmDimension() const;
+        /// @brief Check if current dimension has fast lava
+        /// @return True if fast lava, false otherwise
+        bool IsInFastLavaDimension() const;
 
         /// @brief Check if a chunk modification flag is set. Thread-safe
         /// @param x Chunk X coordinate
@@ -232,10 +232,10 @@ namespace Botcraft
         void SetDimensionMinY(const std::string& dimension, const int min_y);
 #endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
-        /// @brief Set ultrawarm bool for given dimension. Thread-safe
-        /// @param dimension Dimension to set ultrawarm for
-        /// @param ultrawarm Whether the dimension is ultrawam (no water, lava flows faster etc...)
-        void SetDimensionUltrawarm(const std::string& dimension, const bool ultrawarm);
+        /// @brief Set fast lava bool for given dimension. Thread-safe
+        /// @param dimension Dimension to set fast lava for
+        /// @param fast_lava Whether the dimension is fast_lava (lava flows and pushes player faster)
+        void SetDimensionFastLava(const std::string& dimension, const bool fast_lava);
 #endif
 
         /// @brief Perform a raycast in the voxel world and return position, normal and blockstate which are hit. Thread-safe
@@ -401,7 +401,7 @@ namespace Botcraft
         std::unordered_map<std::string, int> dimension_min_y;
 #endif
 #if PROTOCOL_VERSION > 718 /* > 1.15.2 */
-        std::unordered_map<std::string, bool> dimension_ultrawarm;
+        std::unordered_map<std::string, bool> dimension_fast_lava;
 #endif
     };
 } // Botcraft

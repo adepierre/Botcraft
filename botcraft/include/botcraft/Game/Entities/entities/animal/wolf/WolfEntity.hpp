@@ -1,4 +1,3 @@
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/TamableAnimalEntity.hpp"
@@ -9,7 +8,17 @@ namespace Botcraft
     {
     protected:
 
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         static constexpr int metadata_count = 5;
+#elif PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        static constexpr int metadata_count = 4;
+#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
+        static constexpr int metadata_count = 3;
+#elif PROTOCOL_VERSION > 498 /* > 1.14.4 */
+        static constexpr int metadata_count = 2;
+#else
+        static constexpr int metadata_count = 3;
+#endif
         static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = TamableAnimalEntity::metadata_count + TamableAnimalEntity::hierarchy_metadata_count;
 
@@ -32,17 +41,43 @@ namespace Botcraft
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
 
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
+        float GetDataHealthId() const;
+#endif
         bool GetDataInterestedId() const;
         int GetDataCollarColor() const;
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         int GetDataRemainingAngerTime() const;
+#else
+        long long int GetDataAngerEndTime() const;
+#endif
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         int GetDataVariantId() const;
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         int GetDataSoundVariantId() const;
+#endif
 
+#if PROTOCOL_VERSION < 499 /* < 1.15 */
+        void SetDataHealthId(const float data_health_id);
+#endif
         void SetDataInterestedId(const bool data_interested_id);
         void SetDataCollarColor(const int data_collar_color);
+#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         void SetDataRemainingAngerTime(const int data_remaining_anger_time);
+#else
+        void SetDataAngerEndTime(const long long int data_anger_end_time);
+#endif
+#endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         void SetDataVariantId(const int data_variant_id);
+#endif
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         void SetDataSoundVariantId(const int data_sound_variant_id);
+#endif
 
         // Attribute stuff
         double GetAttributeAttackDamageValue() const;
@@ -53,4 +88,3 @@ namespace Botcraft
 
     };
 }
-#endif

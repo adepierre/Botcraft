@@ -1,6 +1,6 @@
 #pragma once
 
-#include "botcraft/Game/Entities/entities/animal/AbstractGolemEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/golem/AbstractGolemEntity.hpp"
 
 namespace Botcraft
 {

@@ -54,11 +54,19 @@ namespace Botcraft
     }
 
 
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     char AvatarEntity::GetDataPlayerMainHand() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return std::any_cast<char>(metadata.at("data_player_main_hand"));
     }
+#else
+    int AvatarEntity::GetDataPlayerMainHand() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return std::any_cast<int>(metadata.at("data_player_main_hand"));
+    }
+#endif
 
     char AvatarEntity::GetDataPlayerModeCustomisation() const
     {
@@ -67,11 +75,19 @@ namespace Botcraft
     }
 
 
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     void AvatarEntity::SetDataPlayerMainHand(const char data_player_main_hand)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
         metadata["data_player_main_hand"] = data_player_main_hand;
     }
+#else
+    void AvatarEntity::SetDataPlayerMainHand(const int data_player_main_hand)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        metadata["data_player_main_hand"] = data_player_main_hand;
+    }
+#endif
 
     void AvatarEntity::SetDataPlayerModeCustomisation(const char data_player_mode_customisation)
     {

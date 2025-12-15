@@ -41,178 +41,181 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/BlockAttachedEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/arrow/ArrowEntity.hpp
     include/botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp
     include/botcraft/Game/Entities/entities/ambient/BatEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/BeeEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/bee/BeeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/BlazeEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/BoggedEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/BoggedEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/ParchedEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/BoatEntity.hpp
     include/botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/CatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/ChestBoatEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/feline/CatEntity.hpp
     include/botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/ChickenEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/CodEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/CowEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/HappyGhastEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/camel/CamelHuskEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/golem/CopperGolemEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/spider/CaveSpiderEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/chicken/ChickenEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/CodEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/cow/CowEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/happyghast/HappyGhastEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/nautilus/AbstractNautilusEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/nautilus/NautilusEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/nautilus/ZombieNautilusEntity.hpp
     include/botcraft/Game/Entities/entities/monster/CreeperEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/DolphinEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/DonkeyEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/DragonFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/dolphin/DolphinEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/DonkeyEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/DragonFireballEntity.hpp
     include/botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp
     include/botcraft/Game/Entities/entities/DisplayEntity.hpp
     include/botcraft/Game/Entities/entities/DisplayItemDisplayEntity.hpp
     include/botcraft/Game/Entities/entities/DisplayTextDisplayEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/DrownedEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/DrownedEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ElderGuardianEntity.hpp
     include/botcraft/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.hpp
     include/botcraft/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.hpp
     include/botcraft/Game/Entities/entities/monster/EnderManEntity.hpp
     include/botcraft/Game/Entities/entities/monster/EndermiteEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/EvokerEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/EvokerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/EvokerFangsEntity.hpp
     include/botcraft/Game/Entities/entities/ExperienceOrbEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/EyeOfEnderEntity.hpp
     include/botcraft/Game/Entities/entities/item/FallingBlockEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/FoxEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fox/FoxEntity.hpp
     include/botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp
     include/botcraft/Game/Entities/entities/monster/GhastEntity.hpp
     include/botcraft/Game/Entities/entities/monster/GiantEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp
-    include/botcraft/Game/Entities/entities/GlowSquidEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/squid/GlowSquidEntity.hpp
     include/botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp
     include/botcraft/Game/Entities/entities/monster/GuardianEntity.hpp
     include/botcraft/Game/Entities/entities/monster/hoglin/HoglinEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/HorseEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/HuskEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/IllusionerEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/HorseEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/HuskEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/IllusionerEntity.hpp
     include/botcraft/Game/Entities/entities/InteractionEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/golem/IronGolemEntity.hpp
     include/botcraft/Game/Entities/entities/item/ItemEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/LargeFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/LargeFireballEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/MannequinEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/LeashFenceKnotEntity.hpp
     include/botcraft/Game/Entities/entities/LightningBoltEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/LlamaEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp
     include/botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp
     include/botcraft/Game/Entities/entities/MarkerEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartChestEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartCommandBlockEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartFurnaceEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartHopperEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartSpawnerEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/MinecartTNTEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/MuleEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/MushroomCowEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/OcelotEntity.hpp
-    include/botcraft/Game/Entities/entities/decoration/PaintingEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/PandaEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/ParrotEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartChestEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartCommandBlockEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartFurnaceEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartHopperEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartSpawnerEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartTNTEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/MuleEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/cow/MushroomCowEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/feline/OcelotEntity.hpp
+    include/botcraft/Game/Entities/entities/decoration/painting/PaintingEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/panda/PandaEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/parrot/ParrotEntity.hpp
     include/botcraft/Game/Entities/entities/monster/PhantomEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/PigZombieEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/PigEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/PigZombieEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/pig/PigEntity.hpp
     include/botcraft/Game/Entities/entities/monster/piglin/PiglinEntity.hpp
     include/botcraft/Game/Entities/entities/monster/piglin/PiglinBruteEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/PillagerEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/PolarBearEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/PillagerEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/polarbear/PolarBearEntity.hpp
     include/botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/PufferfishEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/RabbitEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/PufferfishEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/rabbit/RabbitEntity.hpp
     include/botcraft/Game/Entities/entities/monster/RavagerEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/SalmonEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/SheepEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/SalmonEntity.hpp
     include/botcraft/Game/Entities/entities/animal/sheep/SheepEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ShulkerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ShulkerBulletEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/SkeletonEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/SkeletonHorseEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/SkeletonEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/SkeletonHorseEntity.hpp
     include/botcraft/Game/Entities/entities/monster/SlimeEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/SmallFireballEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.hpp
     include/botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/SnowballEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/SpectralArrowEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/SpiderEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/SquidEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/StrayEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/golem/SnowGolemEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/SnowballEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/arrow/SpectralArrowEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/spider/SpiderEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/squid/SquidEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/StrayEntity.hpp
     include/botcraft/Game/Entities/entities/monster/StriderEntity.hpp
     include/botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownSplashPotionEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/TraderLlamaEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/TropicalFishEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/TurtleEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEggEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEnderpearlEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownExperienceBottleEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownLingeringPotionEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownPotionEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownSplashPotionEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/arrow/ThrownTridentEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/TraderLlamaEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/TropicalFishEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/turtle/TurtleEntity.hpp
     include/botcraft/Game/Entities/entities/monster/VexEntity.hpp
-    include/botcraft/Game/Entities/entities/npc/VillagerEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp
-    include/botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp
+    include/botcraft/Game/Entities/entities/npc/villager/VillagerEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/VindicatorEntity.hpp
+    include/botcraft/Game/Entities/entities/npc/wanderingtrader/WanderingTraderEntity.hpp
     include/botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/windcharge/AbstractWindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/windcharge/BreezeWindChargeEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/windcharge/WindChargeEntity.hpp
     include/botcraft/Game/Entities/entities/monster/WitchEntity.hpp
     include/botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/WolfEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/WitherSkeletonEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/WitherSkullEntity.hpp
     include/botcraft/Game/Entities/entities/animal/wolf/WolfEntity.hpp
     include/botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/ZombieEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/ZombieHorseEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/ZombieVillagerEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/ZombifiedPiglinEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/ZombieEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/ZombieHorseEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/ZombieVillagerEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/zombie/ZombifiedPiglinEntity.hpp
     include/botcraft/Game/Entities/entities/player/PlayerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp
     include/botcraft/Game/Entities/entities/Entity.hpp
     include/botcraft/Game/Entities/entities/LivingEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/AbstractArrowEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/arrow/AbstractArrowEntity.hpp
     include/botcraft/Game/Entities/entities/animal/AnimalEntity.hpp
     include/botcraft/Game/Entities/entities/ambient/AmbientCreatureEntity.hpp
     include/botcraft/Game/Entities/entities/monster/MonsterEntity.hpp
     include/botcraft/Game/Entities/entities/TamableAnimalEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/AbstractSchoolingFishEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/WaterAnimalEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/AbstractThrownPotionEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/AbstractSchoolingFishEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/WaterAnimalEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/AbstractChestedHorseEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/AbstractHurtingProjectileEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/AbstractThrownPotionEntity.hpp
     include/botcraft/Game/Entities/entities/MobEntity.hpp
     include/botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/SpellcasterIllagerEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/SpellcasterIllagerEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/ProjectileEntity.hpp
     include/botcraft/Game/Entities/entities/FlyingMobEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/horse/AbstractHorseEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/AbstractGolemEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/equine/AbstractHorseEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/golem/AbstractGolemEntity.hpp
     include/botcraft/Game/Entities/entities/decoration/HangingEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/FireballEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/FireballEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/VehicleEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/AbstractMinecartContainerEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/AbstractBoatEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/AbstractChestBoatEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/ChestRaftEntity.hpp
-    include/botcraft/Game/Entities/entities/vehicle/RaftEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/ShoulderRidingEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/AbstractMinecartEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/minecart/AbstractMinecartContainerEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/AbstractBoatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/AbstractChestBoatEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/ChestRaftEntity.hpp
+    include/botcraft/Game/Entities/entities/vehicle/boat/RaftEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/parrot/ShoulderRidingEntity.hpp
     include/botcraft/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/AbstractIllagerEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/AbstractCowEntity.hpp
-    include/botcraft/Game/Entities/entities/animal/AbstractFishEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/illager/AbstractIllagerEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/cow/AbstractCowEntity.hpp
+    include/botcraft/Game/Entities/entities/animal/fish/AbstractFishEntity.hpp
     include/botcraft/Game/Entities/entities/raid/RaiderEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/AbstractSkeletonEntity.hpp
-    include/botcraft/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.hpp
-    include/botcraft/Game/Entities/entities/npc/AbstractVillagerEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/skeleton/AbstractSkeletonEntity.hpp
+    include/botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrowableItemProjectileEntity.hpp
+    include/botcraft/Game/Entities/entities/npc/villager/AbstractVillagerEntity.hpp
     include/botcraft/Game/Entities/entities/AgeableMobEntity.hpp
     include/botcraft/Game/Entities/entities/animal/AgeableWaterCreatureEntity.hpp
     include/botcraft/Game/Entities/entities/PathfinderMobEntity.hpp
@@ -297,174 +300,177 @@ set(botcraft_SRC
     src/Game/Entities/entities/animal/armadillo/ArmadilloEntity.cpp
     src/Game/Entities/entities/decoration/ArmorStandEntity.cpp
     src/Game/Entities/entities/decoration/BlockAttachedEntity.cpp
-    src/Game/Entities/entities/projectile/ArrowEntity.cpp
+    src/Game/Entities/entities/projectile/arrow/ArrowEntity.cpp
     src/Game/Entities/entities/animal/axolotl/AxolotlEntity.cpp
     src/Game/Entities/entities/ambient/BatEntity.cpp
-    src/Game/Entities/entities/animal/BeeEntity.cpp
+    src/Game/Entities/entities/animal/bee/BeeEntity.cpp
     src/Game/Entities/entities/monster/BlazeEntity.cpp
-    src/Game/Entities/entities/monster/BoggedEntity.cpp
-    src/Game/Entities/entities/vehicle/BoatEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/BoggedEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/ParchedEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/BoatEntity.cpp
     src/Game/Entities/entities/monster/breeze/BreezeEntity.cpp
-    src/Game/Entities/entities/vehicle/ChestBoatEntity.cpp
-    src/Game/Entities/entities/animal/CatEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/ChestBoatEntity.cpp
+    src/Game/Entities/entities/animal/feline/CatEntity.cpp
     src/Game/Entities/entities/animal/camel/CamelEntity.cpp
-    src/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.cpp
-    src/Game/Entities/entities/monster/CaveSpiderEntity.cpp
-    src/Game/Entities/entities/animal/ChickenEntity.cpp
-    src/Game/Entities/entities/animal/CodEntity.cpp
-    src/Game/Entities/entities/animal/CowEntity.cpp
-    src/Game/Entities/entities/animal/HappyGhastEntity.cpp
+    src/Game/Entities/entities/animal/camel/CamelHuskEntity.cpp
+    src/Game/Entities/entities/animal/golem/CopperGolemEntity.cpp
+    src/Game/Entities/entities/monster/spider/CaveSpiderEntity.cpp
+    src/Game/Entities/entities/animal/chicken/ChickenEntity.cpp
+    src/Game/Entities/entities/animal/fish/CodEntity.cpp
+    src/Game/Entities/entities/animal/cow/CowEntity.cpp
+    src/Game/Entities/entities/animal/happyghast/HappyGhastEntity.cpp
+    src/Game/Entities/entities/animal/nautilus/AbstractNautilusEntity.cpp
+    src/Game/Entities/entities/animal/nautilus/NautilusEntity.cpp
+    src/Game/Entities/entities/animal/nautilus/ZombieNautilusEntity.cpp
     src/Game/Entities/entities/monster/CreeperEntity.cpp
-    src/Game/Entities/entities/animal/DolphinEntity.cpp
-    src/Game/Entities/entities/animal/horse/DonkeyEntity.cpp
-    src/Game/Entities/entities/projectile/DragonFireballEntity.cpp
+    src/Game/Entities/entities/animal/dolphin/DolphinEntity.cpp
+    src/Game/Entities/entities/animal/equine/DonkeyEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/DragonFireballEntity.cpp
     src/Game/Entities/entities/DisplayBlockDisplayEntity.cpp
     src/Game/Entities/entities/DisplayEntity.cpp
     src/Game/Entities/entities/DisplayItemDisplayEntity.cpp
     src/Game/Entities/entities/DisplayTextDisplayEntity.cpp
-    src/Game/Entities/entities/monster/DrownedEntity.cpp
+    src/Game/Entities/entities/monster/zombie/DrownedEntity.cpp
     src/Game/Entities/entities/monster/ElderGuardianEntity.cpp
     src/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.cpp
     src/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.cpp
     src/Game/Entities/entities/monster/EnderManEntity.cpp
     src/Game/Entities/entities/monster/EndermiteEntity.cpp
-    src/Game/Entities/entities/monster/EvokerEntity.cpp
+    src/Game/Entities/entities/monster/illager/EvokerEntity.cpp
     src/Game/Entities/entities/projectile/EvokerFangsEntity.cpp
     src/Game/Entities/entities/ExperienceOrbEntity.cpp
     src/Game/Entities/entities/projectile/EyeOfEnderEntity.cpp
     src/Game/Entities/entities/item/FallingBlockEntity.cpp
     src/Game/Entities/entities/projectile/FireworkRocketEntity.cpp
-    src/Game/Entities/entities/animal/FoxEntity.cpp
+    src/Game/Entities/entities/animal/fox/FoxEntity.cpp
     src/Game/Entities/entities/animal/frog/FrogEntity.cpp
     src/Game/Entities/entities/monster/GhastEntity.cpp
     src/Game/Entities/entities/monster/GiantEntity.cpp
     src/Game/Entities/entities/decoration/GlowItemFrameEntity.cpp
-    src/Game/Entities/entities/GlowSquidEntity.cpp
+    src/Game/Entities/entities/animal/squid//GlowSquidEntity.cpp
     src/Game/Entities/entities/animal/goat/GoatEntity.cpp
     src/Game/Entities/entities/monster/GuardianEntity.cpp
     src/Game/Entities/entities/monster/hoglin/HoglinEntity.cpp
-    src/Game/Entities/entities/animal/horse/HorseEntity.cpp
-    src/Game/Entities/entities/monster/HuskEntity.cpp
-    src/Game/Entities/entities/monster/IllusionerEntity.cpp
+    src/Game/Entities/entities/animal/equine/HorseEntity.cpp
+    src/Game/Entities/entities/monster/zombie/HuskEntity.cpp
+    src/Game/Entities/entities/monster/illager/IllusionerEntity.cpp
     src/Game/Entities/entities/InteractionEntity.cpp
-    src/Game/Entities/entities/animal/IronGolemEntity.cpp
+    src/Game/Entities/entities/animal/golem/IronGolemEntity.cpp
     src/Game/Entities/entities/item/ItemEntity.cpp
     src/Game/Entities/entities/decoration/ItemFrameEntity.cpp
-    src/Game/Entities/entities/projectile/LargeFireballEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/LargeFireballEntity.cpp
     src/Game/Entities/entities/decoration/LeashFenceKnotEntity.cpp
     src/Game/Entities/entities/LightningBoltEntity.cpp
-    src/Game/Entities/entities/animal/horse/LlamaEntity.cpp
+    src/Game/Entities/entities/animal/equine/LlamaEntity.cpp
     src/Game/Entities/entities/projectile/LlamaSpitEntity.cpp
     src/Game/Entities/entities/monster/MagmaCubeEntity.cpp
     src/Game/Entities/entities/MarkerEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartChestEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartCommandBlockEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartFurnaceEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartHopperEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartSpawnerEntity.cpp
-    src/Game/Entities/entities/vehicle/MinecartTNTEntity.cpp
-    src/Game/Entities/entities/animal/horse/MuleEntity.cpp
-    src/Game/Entities/entities/animal/MushroomCowEntity.cpp
-    src/Game/Entities/entities/animal/OcelotEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartChestEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartCommandBlockEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartFurnaceEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartHopperEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartSpawnerEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/MinecartTNTEntity.cpp
+    src/Game/Entities/entities/animal/equine/MuleEntity.cpp
+    src/Game/Entities/entities/animal/cow/MushroomCowEntity.cpp
+    src/Game/Entities/entities/animal/feline/OcelotEntity.cpp
     src/Game/Entities/entities/decoration/MannequinEntity.cpp
-    src/Game/Entities/entities/decoration/PaintingEntity.cpp
-    src/Game/Entities/entities/animal/PandaEntity.cpp
-    src/Game/Entities/entities/animal/ParrotEntity.cpp
+    src/Game/Entities/entities/decoration/painting/PaintingEntity.cpp
+    src/Game/Entities/entities/animal/panda/PandaEntity.cpp
+    src/Game/Entities/entities/animal/parrot/ParrotEntity.cpp
     src/Game/Entities/entities/monster/PhantomEntity.cpp
-    src/Game/Entities/entities/monster/PigZombieEntity.cpp
-    src/Game/Entities/entities/animal/PigEntity.cpp
+    src/Game/Entities/entities/monster/zombie/PigZombieEntity.cpp
+    src/Game/Entities/entities/animal/pig/PigEntity.cpp
     src/Game/Entities/entities/monster/piglin/PiglinEntity.cpp
     src/Game/Entities/entities/monster/piglin/PiglinBruteEntity.cpp
-    src/Game/Entities/entities/monster/PillagerEntity.cpp
-    src/Game/Entities/entities/animal/PolarBearEntity.cpp
+    src/Game/Entities/entities/monster/illager/PillagerEntity.cpp
+    src/Game/Entities/entities/animal/polarbear/PolarBearEntity.cpp
     src/Game/Entities/entities/item/PrimedTntEntity.cpp
-    src/Game/Entities/entities/animal/PufferfishEntity.cpp
-    src/Game/Entities/entities/animal/RabbitEntity.cpp
+    src/Game/Entities/entities/animal/fish/PufferfishEntity.cpp
+    src/Game/Entities/entities/animal/rabbit/RabbitEntity.cpp
     src/Game/Entities/entities/monster/RavagerEntity.cpp
-    src/Game/Entities/entities/animal/SalmonEntity.cpp
-    src/Game/Entities/entities/animal/SheepEntity.cpp
+    src/Game/Entities/entities/animal/fish/SalmonEntity.cpp
     src/Game/Entities/entities/animal/sheep/SheepEntity.cpp
     src/Game/Entities/entities/monster/ShulkerEntity.cpp
     src/Game/Entities/entities/projectile/ShulkerBulletEntity.cpp
     src/Game/Entities/entities/monster/SilverfishEntity.cpp
-    src/Game/Entities/entities/monster/SkeletonEntity.cpp
-    src/Game/Entities/entities/animal/horse/SkeletonHorseEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/SkeletonEntity.cpp
+    src/Game/Entities/entities/animal/equine/SkeletonHorseEntity.cpp
     src/Game/Entities/entities/monster/SlimeEntity.cpp
-    src/Game/Entities/entities/projectile/SmallFireballEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.cpp
     src/Game/Entities/entities/animal/sniffer/SnifferEntity.cpp
-    src/Game/Entities/entities/animal/SnowGolemEntity.cpp
-    src/Game/Entities/entities/projectile/SnowballEntity.cpp
-    src/Game/Entities/entities/projectile/SpectralArrowEntity.cpp
-    src/Game/Entities/entities/monster/SpiderEntity.cpp
-    src/Game/Entities/entities/animal/SquidEntity.cpp
-    src/Game/Entities/entities/monster/StrayEntity.cpp
+    src/Game/Entities/entities/animal/golem/SnowGolemEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/SnowballEntity.cpp
+    src/Game/Entities/entities/projectile/arrow/SpectralArrowEntity.cpp
+    src/Game/Entities/entities/monster/spider/SpiderEntity.cpp
+    src/Game/Entities/entities/animal/squid/SquidEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/StrayEntity.cpp
     src/Game/Entities/entities/monster/StriderEntity.cpp
     src/Game/Entities/entities/animal/frog/TadpoleEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownEggEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownEnderpearlEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownPotionEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownSplashPotionEntity.cpp
-    src/Game/Entities/entities/projectile/ThrownTridentEntity.cpp
-    src/Game/Entities/entities/animal/horse/TraderLlamaEntity.cpp
-    src/Game/Entities/entities/animal/TropicalFishEntity.cpp
-    src/Game/Entities/entities/animal/TurtleEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEggEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEnderpearlEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownExperienceBottleEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownLingeringPotionEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownPotionEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrownSplashPotionEntity.cpp
+    src/Game/Entities/entities/projectile/arrow/ThrownTridentEntity.cpp
+    src/Game/Entities/entities/animal/equine/TraderLlamaEntity.cpp
+    src/Game/Entities/entities/animal/fish/TropicalFishEntity.cpp
+    src/Game/Entities/entities/animal/turtle/TurtleEntity.cpp
     src/Game/Entities/entities/monster/VexEntity.cpp
-    src/Game/Entities/entities/npc/VillagerEntity.cpp
-    src/Game/Entities/entities/monster/VindicatorEntity.cpp
-    src/Game/Entities/entities/npc/WanderingTraderEntity.cpp
-    src/Game/Entities/entities/projectile/windcharge/AbstractWindChargeEntity.cpp
-    src/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.cpp
-    src/Game/Entities/entities/projectile/windcharge/WindChargeEntity.cpp
+    src/Game/Entities/entities/npc/villager/VillagerEntity.cpp
+    src/Game/Entities/entities/monster/illager/VindicatorEntity.cpp
+    src/Game/Entities/entities/npc/wanderingtrader/WanderingTraderEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/windcharge/AbstractWindChargeEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/windcharge/BreezeWindChargeEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/windcharge/WindChargeEntity.cpp
     src/Game/Entities/entities/monster/warden/WardenEntity.cpp
     src/Game/Entities/entities/monster/WitchEntity.cpp
     src/Game/Entities/entities/boss/wither/WitherBossEntity.cpp
-    src/Game/Entities/entities/monster/WitherSkeletonEntity.cpp
-    src/Game/Entities/entities/projectile/WitherSkullEntity.cpp
-    src/Game/Entities/entities/animal/WolfEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/WitherSkeletonEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/WitherSkullEntity.cpp
     src/Game/Entities/entities/animal/wolf/WolfEntity.cpp
     src/Game/Entities/entities/monster/ZoglinEntity.cpp
-    src/Game/Entities/entities/monster/ZombieEntity.cpp
-    src/Game/Entities/entities/animal/horse/ZombieHorseEntity.cpp
-    src/Game/Entities/entities/monster/ZombieVillagerEntity.cpp
-    src/Game/Entities/entities/monster/ZombifiedPiglinEntity.cpp
+    src/Game/Entities/entities/monster/zombie/ZombieEntity.cpp
+    src/Game/Entities/entities/animal/equine/ZombieHorseEntity.cpp
+    src/Game/Entities/entities/monster/zombie/ZombieVillagerEntity.cpp
+    src/Game/Entities/entities/monster/zombie/ZombifiedPiglinEntity.cpp
     src/Game/Entities/entities/player/PlayerEntity.cpp
     src/Game/Entities/entities/projectile/FishingHookEntity.cpp
     src/Game/Entities/entities/Entity.cpp
     src/Game/Entities/entities/LivingEntity.cpp
-    src/Game/Entities/entities/projectile/AbstractArrowEntity.cpp
+    src/Game/Entities/entities/projectile/arrow/AbstractArrowEntity.cpp
     src/Game/Entities/entities/animal/AnimalEntity.cpp
     src/Game/Entities/entities/ambient/AmbientCreatureEntity.cpp
     src/Game/Entities/entities/monster/MonsterEntity.cpp
     src/Game/Entities/entities/TamableAnimalEntity.cpp
-    src/Game/Entities/entities/animal/AbstractSchoolingFishEntity.cpp
-    src/Game/Entities/entities/animal/WaterAnimalEntity.cpp
-    src/Game/Entities/entities/animal/horse/AbstractChestedHorseEntity.cpp
-    src/Game/Entities/entities/projectile/AbstractHurtingProjectileEntity.cpp
-    src/Game/Entities/entities/projectile/AbstractThrownPotionEntity.cpp
+    src/Game/Entities/entities/animal/fish/AbstractSchoolingFishEntity.cpp
+    src/Game/Entities/entities/animal/fish/WaterAnimalEntity.cpp
+    src/Game/Entities/entities/animal/equine/AbstractChestedHorseEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/AbstractHurtingProjectileEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/AbstractThrownPotionEntity.cpp
     src/Game/Entities/entities/MobEntity.cpp
     src/Game/Entities/entities/OminousItemSpawnerEntity.cpp
-    src/Game/Entities/entities/monster/SpellcasterIllagerEntity.cpp
+    src/Game/Entities/entities/monster/illager/SpellcasterIllagerEntity.cpp
     src/Game/Entities/entities/projectile/ProjectileEntity.cpp
     src/Game/Entities/entities/FlyingMobEntity.cpp
-    src/Game/Entities/entities/animal/horse/AbstractHorseEntity.cpp
-    src/Game/Entities/entities/animal/AbstractGolemEntity.cpp
+    src/Game/Entities/entities/animal/equine/AbstractHorseEntity.cpp
+    src/Game/Entities/entities/animal/golem/AbstractGolemEntity.cpp
     src/Game/Entities/entities/decoration/HangingEntity.cpp
-    src/Game/Entities/entities/projectile/FireballEntity.cpp
-    src/Game/Entities/entities/vehicle/AbstractMinecartEntity.cpp
-    src/Game/Entities/entities/vehicle/AbstractMinecartContainerEntity.cpp
+    src/Game/Entities/entities/projectile/hurtingprojectile/FireballEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/AbstractMinecartEntity.cpp
+    src/Game/Entities/entities/vehicle/minecart/AbstractMinecartContainerEntity.cpp
     src/Game/Entities/entities/vehicle/VehicleEntity.cpp
-    src/Game/Entities/entities/animal/ShoulderRidingEntity.cpp
+    src/Game/Entities/entities/animal/parrot/ShoulderRidingEntity.cpp
     src/Game/Entities/entities/monster/piglin/AbstractPiglinEntity.cpp
-    src/Game/Entities/entities/monster/AbstractIllagerEntity.cpp
-    src/Game/Entities/entities/animal/AbstractCowEntity.cpp
-    src/Game/Entities/entities/animal/AbstractFishEntity.cpp
+    src/Game/Entities/entities/monster/illager/AbstractIllagerEntity.cpp
+    src/Game/Entities/entities/animal/cow/AbstractCowEntity.cpp
+    src/Game/Entities/entities/animal/fish/AbstractFishEntity.cpp
     src/Game/Entities/entities/raid/RaiderEntity.cpp
-    src/Game/Entities/entities/monster/AbstractSkeletonEntity.cpp
-    src/Game/Entities/entities/projectile/ThrowableItemProjectileEntity.cpp
-    src/Game/Entities/entities/npc/AbstractVillagerEntity.cpp
+    src/Game/Entities/entities/monster/skeleton/AbstractSkeletonEntity.cpp
+    src/Game/Entities/entities/projectile/throwableitemprojectile/ThrowableItemProjectileEntity.cpp
+    src/Game/Entities/entities/npc/villager/AbstractVillagerEntity.cpp
     src/Game/Entities/entities/AgeableMobEntity.cpp
     src/Game/Entities/entities/animal/AgeableWaterCreatureEntity.cpp
     src/Game/Entities/entities/PathfinderMobEntity.cpp
@@ -472,10 +478,10 @@ set(botcraft_SRC
     src/Game/Entities/entities/projectile/ThrowableProjectileEntity.cpp
     src/Game/Entities/entities/monster/creaking/CreakingEntity.cpp
     src/Game/Entities/entities/monster/creaking/CreakingTransientEntity.cpp
-    src/Game/Entities/entities/vehicle/AbstractBoatEntity.cpp
-    src/Game/Entities/entities/vehicle/AbstractChestBoatEntity.cpp
-    src/Game/Entities/entities/vehicle/ChestRaftEntity.cpp
-    src/Game/Entities/entities/vehicle/RaftEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/AbstractBoatEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/AbstractChestBoatEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/ChestRaftEntity.cpp
+    src/Game/Entities/entities/vehicle/boat/RaftEntity.cpp
 
     src/Game/Physics/AABB.cpp
     src/Game/Physics/PhysicsManager.cpp

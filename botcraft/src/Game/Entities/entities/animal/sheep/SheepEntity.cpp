@@ -1,4 +1,3 @@
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #include "botcraft/Game/Entities/entities/animal/sheep/SheepEntity.hpp"
 
 #include <mutex>
@@ -95,4 +94,3 @@ namespace Botcraft
     }
 
 }
-#endif

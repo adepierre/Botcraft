@@ -130,6 +130,9 @@ namespace Botcraft
         Loyalty,
         Impaling,
         Riptide,
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        Lunge,
+#endif
         Channeling,
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         Multishot,
@@ -190,7 +193,10 @@ namespace Botcraft
         DropItem,
         ShootArrow,
         FinishEating = ShootArrow,
-        SwapItemHand
+        SwapItemHand,
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        Stab,
+#endif
     };
 
     enum class Direction
@@ -370,6 +376,9 @@ namespace Botcraft
         Weaving,
         Oozing,
         Infested,
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        BreathOfTheNautilus,
 #endif
     };
 

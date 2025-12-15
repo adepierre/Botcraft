@@ -621,7 +621,7 @@ namespace Botcraft
             }
             else
             {
-                push *= world->IsInUltraWarmDimension() ? 0.007 : 0.0023333333333333335;
+                push *= world->IsInFastLavaDimension() ? 0.007 : 0.0023333333333333335;
             }
             const double push_norm = std::sqrt(push.SqrNorm());
             if (std::abs(player->speed.x) < 0.003 && std::abs(player->speed.z) < 0.003 && push_norm < 0.0045000000000000005)

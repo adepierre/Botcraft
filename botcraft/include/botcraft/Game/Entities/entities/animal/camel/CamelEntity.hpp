@@ -1,7 +1,7 @@
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #pragma once
 
-#include "botcraft/Game/Entities/entities/animal/horse/AbstractHorseEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/AbstractHorseEntity.hpp"
 
 namespace Botcraft
 {

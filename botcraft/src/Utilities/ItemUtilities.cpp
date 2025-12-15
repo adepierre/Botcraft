@@ -100,6 +100,10 @@ namespace Botcraft::Utilities
             return "mending";
         case Enchantment::VanishingCurse:
             return "vanishing_curse";
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        case Enchantment::Lunge:
+            return "lunge";
+#endif
         default:
             return "";
         }

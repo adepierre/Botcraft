@@ -22,10 +22,6 @@
 #endif
 #include "botcraft/Utilities/Logger.hpp"
 
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
-#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/allay/AllayEntity.hpp"
 #endif
@@ -34,47 +30,50 @@
 #include "botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/decoration/ArmorStandEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/ArrowEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/arrow/ArrowEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/animal/axolotl/AxolotlEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include "botcraft/Game/Entities/entities/vehicle/ChestRaftEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/RaftEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/boat/ChestRaftEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/boat/RaftEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/ambient/BatEntity.hpp"
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-#include "botcraft/Game/Entities/entities/animal/BeeEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/bee/BeeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/BlazeEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/BoatEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/boat/BoatEntity.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "botcraft/Game/Entities/entities/monster/BoggedEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/skeleton/BoggedEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include "botcraft/Game/Entities/entities/projectile/windcharge/BreezeWindChargeEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/windcharge/BreezeWindChargeEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-#include "botcraft/Game/Entities/entities/vehicle/ChestBoatEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/boat/ChestBoatEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/animal/CatEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/feline/CatEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/monster/CaveSpiderEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/ChickenEntity.hpp"
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+#include "botcraft/Game/Entities/entities/animal/camel/CamelHuskEntity.hpp"
+#endif
+#include "botcraft/Game/Entities/entities/monster/spider/CaveSpiderEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/chicken/ChickenEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/CodEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/fish/CodEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
-#include "botcraft/Game/Entities/entities/animal/coppergolem/CopperGolemEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/golem/CopperGolemEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/CowEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/cow/CowEntity.hpp"
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp"
 #endif
@@ -83,12 +82,12 @@
 #endif
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/DolphinEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/dolphin/DolphinEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/horse/DonkeyEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/DragonFireballEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/DonkeyEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/DragonFireballEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/monster/DrownedEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/DrownedEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp"
@@ -101,48 +100,48 @@
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/EnderManEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/EndermiteEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/EvokerEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/illager/EvokerEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/EvokerFangsEntity.hpp"
 #include "botcraft/Game/Entities/entities/ExperienceOrbEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/EyeOfEnderEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/FallingBlockEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/animal/FoxEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/fox/FoxEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/FrogEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GhastEntity.hpp"
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
-#include "botcraft/Game/Entities/entities/animal/HappyGhastEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/happyghast/HappyGhastEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GiantEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/decoration/GlowItemFrameEntity.hpp"
-#include "botcraft/Game/Entities/entities/GlowSquidEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/squid/GlowSquidEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/GuardianEntity.hpp"
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/hoglin/HoglinEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/horse/HorseEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/HuskEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/IllusionerEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/HorseEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/HuskEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/illager/IllusionerEntity.hpp"
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/InteractionEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/IronGolemEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/golem/IronGolemEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/ItemEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/projectile/LargeFireballEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/LargeFireballEntity.hpp"
 #include "botcraft/Game/Entities/entities/decoration/LeashFenceKnotEntity.hpp"
 #include "botcraft/Game/Entities/entities/LightningBoltEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/horse/LlamaEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/LlamaEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
@@ -151,128 +150,127 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "botcraft/Game/Entities/entities/decoration/MannequinEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/vehicle/MinecartEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartChestEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartCommandBlockEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartFurnaceEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartHopperEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartSpawnerEntity.hpp"
-#include "botcraft/Game/Entities/entities/vehicle/MinecartTNTEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/horse/MuleEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/MushroomCowEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/OcelotEntity.hpp"
-#include "botcraft/Game/Entities/entities/decoration/PaintingEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartChestEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartCommandBlockEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartFurnaceEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartHopperEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartSpawnerEntity.hpp"
+#include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartTNTEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/MuleEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/cow/MushroomCowEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/feline/OcelotEntity.hpp"
+#include "botcraft/Game/Entities/entities/decoration/painting/PaintingEntity.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/animal/PandaEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/panda/PandaEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/ParrotEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/parrot/ParrotEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/monster/PhantomEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/PigEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/pig/PigEntity.hpp"
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinEntity.hpp"
 #else
-#include "botcraft/Game/Entities/entities/monster/PigZombieEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/PigZombieEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinBruteEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/monster/PillagerEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/illager/PillagerEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/PolarBearEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/polarbear/PolarBearEntity.hpp"
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include "botcraft/Game/Entities/entities/projectile/ThrownSplashPotionEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/ThrownLingeringPotionEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownSplashPotionEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownLingeringPotionEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/item/PrimedTntEntity.hpp"
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/PufferfishEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/fish/PufferfishEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/RabbitEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/rabbit/RabbitEntity.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/monster/RavagerEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/SalmonEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/fish/SalmonEntity.hpp"
 #endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include "botcraft/Game/Entities/entities/animal//sheep/SheepEntity.hpp"
-#else
-#include "botcraft/Game/Entities/entities/animal/SheepEntity.hpp"
-#endif
+#include "botcraft/Game/Entities/entities/animal/sheep/SheepEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/ShulkerEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/ShulkerBulletEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/SkeletonEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/horse/SkeletonHorseEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/skeleton/SkeletonEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/SkeletonHorseEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/SmallFireballEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.hpp"
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/animal/SnowGolemEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/SnowballEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/SpectralArrowEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/SpiderEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/SquidEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/StrayEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/golem/SnowGolemEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/SnowballEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/arrow/SpectralArrowEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/spider/SpiderEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/squid/SquidEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/skeleton/StrayEntity.hpp"
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/StriderEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/projectile/ThrownEggEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/ThrownEnderpearlEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/ThrownExperienceBottleEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/ThrownPotionEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEggEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownEnderpearlEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownExperienceBottleEntity.hpp"
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+#include "botcraft/Game/Entities/entities/projectile/throwableitemprojectile/ThrownPotionEntity.hpp"
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/projectile/ThrownTridentEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/arrow/ThrownTridentEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/animal/horse/TraderLlamaEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/TraderLlamaEntity.hpp"
 #endif
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/TropicalFishEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/fish/TropicalFishEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-#include "botcraft/Game/Entities/entities/animal/TurtleEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/turtle/TurtleEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/VexEntity.hpp"
-#include "botcraft/Game/Entities/entities/npc/VillagerEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/VindicatorEntity.hpp"
+#include "botcraft/Game/Entities/entities/npc/villager/VillagerEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/illager/VindicatorEntity.hpp"
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-#include "botcraft/Game/Entities/entities/npc/WanderingTraderEntity.hpp"
+#include "botcraft/Game/Entities/entities/npc/wanderingtrader/WanderingTraderEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 #endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
-#include "botcraft/Game/Entities/entities/projectile/windcharge/WindChargeEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/windcharge/WindChargeEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/WitchEntity.hpp"
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/WitherSkeletonEntity.hpp"
-#include "botcraft/Game/Entities/entities/projectile/WitherSkullEntity.hpp"
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "botcraft/Game/Entities/entities/monster/skeleton/WitherSkeletonEntity.hpp"
+#include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/WitherSkullEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/wolf/WolfEntity.hpp"
-#else
-#include "botcraft/Game/Entities/entities/animal/WolfEntity.hpp"
-#endif
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/ZoglinEntity.hpp"
 #endif
-#include "botcraft/Game/Entities/entities/monster/ZombieEntity.hpp"
-#include "botcraft/Game/Entities/entities/animal/horse/ZombieHorseEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/ZombieVillagerEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/ZombieEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/equine/ZombieHorseEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/ZombieVillagerEntity.hpp"
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-#include "botcraft/Game/Entities/entities/monster/ZombifiedPiglinEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/zombie/ZombifiedPiglinEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+#include "botcraft/Game/Entities/entities/animal/nautilus/NautilusEntity.hpp"
+#include "botcraft/Game/Entities/entities/animal/nautilus/ZombieNautilusEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/skeleton/ParchedEntity.hpp"
+#endif
 
 #include <mutex>
 
@@ -446,6 +444,9 @@ namespace Botcraft
                 PigVariant,
                 ChickenVariant,
 #endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                ZombieNautilusVariant,
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
                 OptionalGlobalPos,
                 PaintingVariant,
@@ -464,6 +465,9 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
                 ResolvableProfile,
 #endif
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+                HumanoidArm,
 #endif
             };
 
@@ -645,6 +649,11 @@ namespace Botcraft
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            case EntityMetadataTypes::ZombieNautilusVariant:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
             case EntityMetadataTypes::OptionalGlobalPos:
                 if (ProtocolCraft::ReadData<bool>(iter, length))
@@ -706,6 +715,11 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
             case EntityMetadataTypes::ResolvableProfile:
                 value = ProtocolCraft::ReadData<ProtocolCraft::Components::DataComponentTypeResolvableProfile>(iter, length);
+                break;
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+            case EntityMetadataTypes::HumanoidArm:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
             default:
@@ -1490,8 +1504,16 @@ namespace Botcraft
         return false;
     }
 #endif
+
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
     bool Entity::IsAvatar() const
+    {
+        return false;
+    }
+#endif
+
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+    bool Entity::IsAbstractNautilus() const
     {
         return false;
     }
@@ -1585,6 +1607,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         case EntityType::Camel:
             return std::make_shared<CamelEntity>();
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        case EntityType::CamelHusk:
+            return std::make_shared<CamelHuskEntity>();
 #endif
         case EntityType::CaveSpider:
             return std::make_shared<CaveSpiderEntity>();
@@ -1740,6 +1766,10 @@ namespace Botcraft
             return std::make_shared<MinecartTNTEntity>();
         case EntityType::Mule:
             return std::make_shared<MuleEntity>();
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        case EntityType::Nautilus:
+            return std::make_shared<NautilusEntity>();
+#endif
         case EntityType::MushroomCow:
             return std::make_shared<MushroomCowEntity>();
         case EntityType::Ocelot:
@@ -1749,6 +1779,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         case EntityType::Panda:
             return std::make_shared<PandaEntity>();
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        case EntityType::Parched:
+            return std::make_shared<ParchedEntity>();
 #endif
         case EntityType::Parrot:
             return std::make_shared<ParrotEntity>();
@@ -1899,6 +1933,10 @@ namespace Botcraft
             return std::make_shared<ZombieEntity>();
         case EntityType::ZombieHorse:
             return std::make_shared<ZombieHorseEntity>();
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
+        case EntityType::ZombieNautilus:
+            return std::make_shared<ZombieNautilusEntity>();
+#endif
         case EntityType::ZombieVillager:
             return std::make_shared<ZombieVillagerEntity>();
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
