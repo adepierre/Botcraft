@@ -112,24 +112,40 @@ class Server:
 
         # Set all custom gamerules
         print("\tSet gamerules...")
-        self._set_gamerule("announceAdvancements", "false")
-        if version > str_to_tuple_version("1.14.2"):
-            self._set_gamerule("disableRaids", "true")
-        self._set_gamerule("doDaylightCycle", "false")
-        self._set_gamerule("doFireTick", "false")
-        if version > str_to_tuple_version("1.14.4"):
-            self._set_gamerule("doInsomnia", "false")
-        self._set_gamerule("doMobSpawning", "false")
-        if version > str_to_tuple_version("1.15.1"):
-            self._set_gamerule("doPatrolSpawning", "false")
-            self._set_gamerule("doTraderSpawning", "false")
-        self._set_gamerule("doWeatherCycle", "false")
-        if version > str_to_tuple_version("1.18.2"):
-            self._set_gamerule("doWardenSpawning", "false")
-        self._set_gamerule("mobGriefing", "false")
-        self._set_gamerule("randomTickSpeed", "0")
-        self._set_gamerule("spawnRadius", "0")
-        self._set_gamerule("spectatorsGenerateChunks", "true")
+        if version > str_to_tuple_version("1.21.10"):
+            self._set_gamerule("show_advancement_messages", "false")
+            self._set_gamerule("raids", "false")
+            self._set_gamerule("advance_time", "false")
+            self._set_gamerule("fire_spread_radius_around_player", "0")
+            self._set_gamerule("spawn_phantoms", "false")
+            self._set_gamerule("spawn_mobs", "false")
+            self._set_gamerule("spawn_patrols", "false")
+            self._set_gamerule("spawn_wandering_traders", "false")
+            self._set_gamerule("spawn_wardens", "false")
+            self._set_gamerule("advance_weather", "false")
+            self._set_gamerule("mob_griefing", "false")
+            self._set_gamerule("random_tick_speed", "0")
+            self._set_gamerule("respawn_radius", "0")
+            self._set_gamerule("spectators_generate_chunks", "true")
+        else:
+            self._set_gamerule("announceAdvancements", "false")
+            if version > str_to_tuple_version("1.14.2"):
+                self._set_gamerule("disableRaids", "true")
+            self._set_gamerule("doDaylightCycle", "false")
+            self._set_gamerule("doFireTick", "false")
+            if version > str_to_tuple_version("1.14.4"):
+                self._set_gamerule("doInsomnia", "false")
+            self._set_gamerule("doMobSpawning", "false")
+            if version > str_to_tuple_version("1.15.1"):
+                self._set_gamerule("doPatrolSpawning", "false")
+                self._set_gamerule("doTraderSpawning", "false")
+            self._set_gamerule("doWeatherCycle", "false")
+            if version > str_to_tuple_version("1.18.2"):
+                self._set_gamerule("doWardenSpawning", "false")
+            self._set_gamerule("mobGriefing", "false")
+            self._set_gamerule("randomTickSpeed", "0")
+            self._set_gamerule("spawnRadius", "0")
+            self._set_gamerule("spectatorsGenerateChunks", "true")
 
         print("Server ready!")
 

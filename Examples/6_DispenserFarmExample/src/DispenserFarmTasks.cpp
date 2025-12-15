@@ -5,7 +5,7 @@
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
-#include "botcraft/Game/Entities/entities/npc/VillagerEntity.hpp"
+#include "botcraft/Game/Entities/entities/npc/villager/VillagerEntity.hpp"
 #include "botcraft/Game/Entities/entities/item/ItemEntity.hpp"
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Utilities/Logger.hpp"

@@ -340,6 +340,7 @@ void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string
 
 void MinecraftServer::InitServerGamerules()
 {
+#if PROTOCOL_VERSION < 774
     SetGamerule("announceAdvancements", "false");
 #if PROTOCOL_VERSION > 485 /* > 1.14.2 */
     SetGamerule("disableRaids", "true");
@@ -362,4 +363,20 @@ void MinecraftServer::InitServerGamerules()
     SetGamerule("randomTickSpeed", "0");
     SetGamerule("spawnRadius", "0");
     SetGamerule("spectatorsGenerateChunks", "true");
+#else
+    SetGamerule("show_advancement_messages", "false");
+    SetGamerule("raids", "false");
+    SetGamerule("advance_time", "false");
+    SetGamerule("fire_spread_radius_around_player", "0");
+    SetGamerule("spawn_phantoms", "false");
+    SetGamerule("spawn_mobs", "false");
+    SetGamerule("spawn_patrols", "false");
+    SetGamerule("spawn_wandering_traders", "false");
+    SetGamerule("spawn_wardens", "false");
+    SetGamerule("advance_weather", "false");
+    SetGamerule("mob_griefing", "false");
+    SetGamerule("random_tick_speed", "0");
+    SetGamerule("respawn_radius", "0");
+    SetGamerule("spectators_generate_chunks", "true");
+#endif
 }
