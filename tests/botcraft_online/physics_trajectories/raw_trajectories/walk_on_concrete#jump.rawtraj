@@ -1,8 +1,4 @@
-
-
 on the spot
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -24,8 +20,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 forward
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -47,8 +41,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 backward
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -70,8 +62,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 right
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -93,8 +83,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 left
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 

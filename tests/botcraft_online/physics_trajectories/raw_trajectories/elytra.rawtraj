@@ -1,72 +1,16 @@
-
-
 gliding looking straight
-
-1.12.2
 survival
 0.5;0.0;0.5;0.0;0.0
+#if ${VERSION} < 1.13
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;1;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-gliding looking straight
-1.13
-1.16.5
-survival
-0.5;0.0;0.5;0.0;0.0
+#elif ${VERSION} < 1.17
 replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
 replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;1;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-gliding looking straight
-1.17
-
-survival
-0.5;0.0;0.5;0.0;0.0
+#else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;1;0;0;0;0
 0;0;0;0;0;0;0;0;0
@@ -91,66 +35,18 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 gliding looking up
-
-1.12.2
 survival
 0.5;0.0;0.5;0.0;-45.0
+#if ${VERSION} < 1.13
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;1;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-
-gliding looking up
-1.13
-1.16.5
-survival
-0.5;0.0;0.5;0.0;-45.0
+#elif ${VERSION} < 1.17
 replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
 replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;1;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-0;0;0;0;0;0;0;0;-45.0
-
-gliding looking up
-1.17
-
-survival
-0.5;0.0;0.5;0.0;-45.0
+#else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;1;0;0;0;-45.0
 0;0;0;0;0;0;0;0;-45.0
@@ -172,66 +68,18 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;-45.0
 
 gliding looking down
-
-1.12.2
 survival
 0.5;0.0;0.5;0.0;45.0
+#if ${VERSION} < 1.13
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;1;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-
-gliding looking down
-1.13
-1.16.5
-survival
-0.5;0.0;0.5;0.0;45.0
+#elif ${VERSION} < 1.17
 replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
 replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;1;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;1;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-0;0;0;0;0;0;0;0;45.0
-
-gliding looking down
-1.17
-
-survival
-0.5;0.0;0.5;0.0;45.0
+#else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;1;0;0;0;45.0
 0;0;0;0;0;0;0;0;45.0

@@ -1,8 +1,4 @@
-
-
 forward
-
-
 survival
 2.5;0.875;2.5;0.0;0.0
 
@@ -22,8 +18,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 backward
-
-
 survival
 2.5;0.875;2.5;0.0;0.0
 
@@ -43,8 +37,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 right
-
-
 survival
 2.5;0.875;2.5;0.0;0.0
 
@@ -64,8 +56,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 left
-
-
 survival
 2.5;0.875;2.5;0.0;0.0
 
@@ -84,70 +74,23 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 0;0;0;0;0;0;0;0;0
 
+#if ${VERSION} >= 1.16
 forward soul speed III
-1.16
-1.16.5
 survival
 2.5;0.875;2.5;0.0;0.0
+#if ${VERSION} < 1.17
 replaceitem entity ${PLAYER_NAME} armor.feet netherite_boots{Enchantments:[{id:"minecraft:soul_speed",lvl:3}]} 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 replaceitem entity ${PLAYER_NAME} armor.feet air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;0;0;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-forward soul speed III
-1.17
-1.20.4
-survival
-2.5;0.875;2.5;0.0;0.0
+#elif ${VERSION} < 1.20.5
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots{Enchantments:[{id:"minecraft:soul_speed",lvl:3}]} 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;0;0;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-forward soul speed III
-1.20.5
-1.21.4
-survival
-2.5;1.0;2.5;0.0;0.0
+#elif ${VERSION} < 1.21.5
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={levels:{"minecraft:soul_speed":3}}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;0;0;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-forward soul speed III
-1.21.5
-
-survival
-2.5;1.0;2.5;0.0;0.0
+#else
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={"minecraft:soul_speed":3}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 1;0;0;0;0;1;0;0;0
@@ -159,3 +102,5 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;1;0;0;0
 0;0;0;0;0;0;0;0;0
 0;0;0;0;0;0;0;0;0
+
+#endif

@@ -1,8 +1,4 @@
-
-
 creative long press
-
-
 creative
 0.5;1.0;0.5;0.0;0.0
 
@@ -24,8 +20,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;1;0;0;0;0
 
 creative short press sparse
-
-
 creative
 0.5;1.0;0.5;0.0;0.0
 
@@ -47,8 +41,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 creative short press close
-
-
 creative
 0.5;1.0;0.5;0.0;0.0
 
@@ -70,8 +62,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 survival long press
-
-
 survival
 0.5;1.0;0.5;0.0;0.0
 
@@ -93,8 +83,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;1;0;0;0;0
 
 survival spam
-
-
 survival
 0.5;1.0;0.5;0.0;0.0
 

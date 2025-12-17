@@ -1,8 +1,4 @@
-
-
 forward
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -20,8 +16,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 backward
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -39,8 +33,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 right
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -58,8 +50,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 left
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -77,8 +67,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 forward left
-
-
 survival
 2.5;1.0;2.5;0.0;0.0
 
@@ -95,51 +83,20 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 0;0;0;0;0;0;0;0;0
 
+#if ${VERSION} >= 1.19
 forward swift sneak III
-1.19
-1.20.4
 survival
 2.5;1.0;2.5;0.0;0.0
+#if ${VERSION} < 1.20.5
 item replace entity ${PLAYER_NAME} armor.legs with netherite_leggings{Enchantments:[{id:"minecraft:swift_sneak",lvl:3}]} 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.legs with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;0;0;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-forward swift sneak III
-1.20.5
-1.21.4
-survival
-2.5;1.0;2.5;0.0;0.0
+#elif ${VERSION} < 1.21.5
 item replace entity ${PLAYER_NAME} armor.legs with netherite_leggings[enchantments={levels:{"minecraft:swift_sneak":3}}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.legs with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-forward;left;backward;right;jump;sneak;sprint;yRot;xRot
-0;0;0;0;0;0;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-1;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;1;0;0;0
-0;0;0;0;0;0;0;0;0
-0;0;0;0;0;0;0;0;0
-
-forward swift sneak III
-1.21.5
-
-survival
-2.5;1.0;2.5;0.0;0.0
+#else
 item replace entity ${PLAYER_NAME} armor.legs with netherite_leggings[enchantments={"minecraft:swift_sneak":3}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.legs with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 1;0;0;0;0;1;0;0;0
@@ -151,3 +108,5 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;1;0;0;0
 0;0;0;0;0;0;0;0;0
 0;0;0;0;0;0;0;0;0
+
+#endif

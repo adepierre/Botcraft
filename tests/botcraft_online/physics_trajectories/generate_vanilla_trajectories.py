@@ -1,17 +1,17 @@
 import argparse
-from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 import platform
-from queue import Queue
 import re
 import shutil
 import subprocess
-import time
 import threading
-from typing import Optional
+import time
 import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
+from typing import List, Optional, Tuple
 
 MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
 JAVA_RUNTIME_ALL_URL = "https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json"
@@ -22,6 +22,101 @@ MCP_URL = "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/ver
 PLAYER_NAME = "PhysicsBuddy"
 VERBOSE_SERVER = False
 INPUTS_KEYS = ["forward", "left", "backward", "right", "jump", "sneak", "sprint", "yRot", "xRot"]
+
+def str_to_tuple_version(version: str):
+    return tuple(int(s) for s in version.split("."))
+
+def readlines_version_preprocessor(filepath: str, version: Tuple[int, ...]) -> List[str]:
+    def _evaluate(expr: str) -> bool:
+        expr = expr.replace("${VERSION}", ".".join([str(i) for i in version]))
+
+        # Search for <= before < to make sure we don't miss it
+        ops = ["<=", ">=", "==", "!=", "<", ">"]
+        found_op = None
+        for op in ops:
+            if op in expr:
+                found_op = op
+                break
+
+        if not found_op:
+            raise RuntimeError("Unknown condition in expression " + expr)
+
+        left_str, right_str = expr.split(found_op, 1)
+        try:
+            lhs = str_to_tuple_version(left_str.strip())
+            rhs = str_to_tuple_version(right_str.strip())
+        except ValueError:
+            raise RuntimeError("Unknown condition in expression " + expr)
+
+        match found_op:
+            case "<=":
+                return lhs <= rhs
+            case ">=":
+                return lhs >= rhs
+            case "==":
+                return lhs == rhs
+            case "!=":
+                return lhs != rhs
+            case "<":
+                return lhs < rhs
+            case ">":
+                return lhs > rhs
+        # Should never happen
+        return False
+
+    # Store a pair of booleans, first element indicates if we
+    # are currently reading (True) or ignoring (False)
+    # Second boolean is used to track if an if/else branch has
+    # already been read (meaning we need to ignore the other one)
+    stack = [(True, True)]
+
+    output = []
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+
+            # If this is a preprocessor macro
+            if stripped.startswith("#"):
+                parts = stripped.split(maxsplit=1)
+                keyword = parts[0]
+                expression = parts[1] if len(parts) > 1 else ""
+
+                if keyword == "#if":
+                    parent_reading = stack[-1][0]
+                    if not parent_reading:
+                        stack.append((False, False))
+                    else:
+                        cond = _evaluate(expression)
+                        stack.append((cond, cond))
+                elif keyword == "#elif":
+                    _, branch_already_read = stack.pop()
+                    parent_reading = stack[-1][0]
+                    if not parent_reading:
+                        stack.append((False, False))
+                    elif branch_already_read:
+                        stack.append((False, True))
+                    else:
+                        cond = _evaluate(expression)
+                        stack.append((cond, cond))
+                elif keyword == "#else":
+                    _, branch_already_read = stack.pop()
+                    parent_reading = stack[-1][0]
+                    if not parent_reading:
+                        stack.append((False, False))
+                    elif branch_already_read:
+                        stack.append((False, True))
+                    else:
+                        stack.append((True, True))
+                elif keyword == "#endif":
+                    if len(stack) > 1:
+                        stack.pop()
+                # Preprocessor lines are not part of the output
+                continue
+
+            # Write line if not ignored
+            if stack[-1][0]:
+                output.append(line)
+    return output
 
 def download_file(url: str, destination_folder: str, validate_size: bool = False) -> str:
     os.makedirs(destination_folder, exist_ok=True)
@@ -41,9 +136,6 @@ def download_file(url: str, destination_folder: str, validate_size: bool = False
         f.write(data)
 
     return destination
-
-def str_to_tuple_version(version: str):
-    return tuple(int(s) for s in version.split("."))
 
 class Server:
     def __init__(self, base_folder: str, manifest: dict, dat_path: str, structures_folder: str, java_exe: str):
@@ -441,7 +533,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
     print("Client started!")
     return client
 
-def collect_trajectories(server: Server, in_folder: str, out_folder: str, client_folder: str, version: tuple[int, ...], result_queue: Queue) -> None:
+def collect_trajectories(server: Server, in_folder: str, out_folder: str, client_folder: str, version: Tuple[int, ...], result_queue: Queue) -> None:
     try:
         print("Wait for the client to connect to the server...")
         server.wait_regex(f".*? {PLAYER_NAME} joined the game.*", 120)
@@ -450,42 +542,26 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
         for file in os.listdir(in_folder):
             print(f"\t{file}")
             path = os.path.join(in_folder, file)
-            with open(path, "r") as f:
-                lines = f.readlines()
-            test_min_version = lines[0].strip()
-            if test_min_version and version < str_to_tuple_version(test_min_version):
-                continue
-            test_max_version = lines[1].strip()
-            if test_max_version and version > str_to_tuple_version(test_max_version):
-                continue
+            lines = readlines_version_preprocessor(path, version)
             outpath = os.path.join(out_folder, file.replace(".rawtraj", ".traj"))
-            with open(outpath, "w") as f:
-                f.write(test_min_version + "\n")
-                f.write(test_max_version + "\n")
             structure_block_name = file[:-len(".rawtraj")].split("#")[0]
-            line_index = 2
+            line_index = 0
             while line_index < len(lines):
                 section_name        = lines[line_index + 0].strip()
-                section_min_version = lines[line_index + 1].strip()
-                section_max_version = lines[line_index + 2].strip()
-                gamemode            = lines[line_index + 3].strip()
-                tp_offsets          = lines[line_index + 4].strip().split(";")
-                commands_pre_run    = lines[line_index + 5].strip().split(";")
-                commands_post_run   = lines[line_index + 6].strip().split(";")
-                csv_key_header      = lines[line_index + 7].strip().split(";")
+                gamemode            = lines[line_index + 1].strip()
+                tp_offsets          = lines[line_index + 2].strip().split(";")
+                commands_pre_run    = lines[line_index + 3].strip().split(";")
+                commands_post_run   = lines[line_index + 4].strip().split(";")
+                csv_key_header      = lines[line_index + 5].strip().split(";")
                 assert len(csv_key_header) == len(INPUTS_KEYS)
                 for k in INPUTS_KEYS:
                     assert k in csv_key_header
-                keep_section = (not section_min_version or version >= str_to_tuple_version(section_min_version)) and (not section_max_version or version <= str_to_tuple_version(section_max_version))
-                line_index += 8
+                line_index += 6
                 trajectory_lines = []
                 while line_index < len(lines) and lines[line_index].strip():
-                    if keep_section:
-                        trajectory_lines.append(lines[line_index])
+                    trajectory_lines.append(lines[line_index])
                     line_index += 1
                 line_index += 1
-                if not keep_section:
-                    continue
 
                 # Collect the trajectory
                 # Wait for client to be ready
@@ -541,8 +617,6 @@ def collect_trajectories(server: Server, in_folder: str, out_folder: str, client
                 # Add section to the out trajectory file
                 with open(outpath, "a") as f:
                     f.write(section_name + "\n")
-                    f.write(section_min_version + "\n")
-                    f.write(section_max_version + "\n")
                     f.write(gamemode + "\n")
                     f.write(";".join(tp_offsets) + "\n")
                     f.write(";".join(commands_pre_run) + "\n")

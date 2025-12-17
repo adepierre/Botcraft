@@ -1,8 +1,4 @@
-
-
 concrete
-
-
 survival
 0.5;3.0;1.2;0.0;0.0
 
@@ -23,8 +19,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 wall
-
-
 survival
 0.5;3.0;3.2;0.0;0.0
 
@@ -44,8 +38,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 soul_sand
-
-
 survival
 0.5;3.0;5.2;0.0;0.0
 
@@ -65,8 +57,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 slime
-
-
 survival
 0.5;3.0;7.2;0.0;0.0
 
@@ -100,8 +90,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 cobweb
-
-
 survival
 0.5;3.0;9.2;0.0;0.0
 
@@ -137,8 +125,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 cauldron
-
-
 survival
 0.5;3.0;11.2;0.0;0.0
 
@@ -161,8 +147,6 @@ forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
 
 hopper
-
-
 survival
 0.5;3.0;13.2;0.0;0.0
 

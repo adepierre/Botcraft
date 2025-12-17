@@ -206,39 +206,21 @@ void TestPhysicsTrajectory(const std::string& test_name)
     file.close();
 
     std::string line;
-    std::string test_min_version;
-    std::string test_max_version;
-    std::getline(buffer, test_min_version);
-    std::getline(buffer, test_max_version);
-    if ((!test_min_version.empty() && StrVersionToVectorInt(game_version) < StrVersionToVectorInt(test_min_version)) ||
-        (!test_max_version.empty() && StrVersionToVectorInt(game_version) > StrVersionToVectorInt(test_max_version))
-    )
-    {
-        SKIP("skipped for version " + game_version);
-    }
-
 
     std::string section_name;
     while (std::getline(buffer, section_name))
     {
         // Read section header
-        std::string section_min_version;
-        std::string section_max_version;
         std::string gamemode_str;
         std::string tp_offsets_str;
         std::string commands_pre_run;
         std::string commands_post_run;
         std::string csv_key_header;
-        std::getline(buffer, section_min_version);
-        std::getline(buffer, section_max_version);
         std::getline(buffer, gamemode_str);
         std::getline(buffer, tp_offsets_str);
         std::getline(buffer, commands_pre_run);
         std::getline(buffer, commands_post_run);
         std::getline(buffer, csv_key_header);
-        const bool keep_section =
-            (section_min_version.empty() || StrVersionToVectorInt(game_version) >= StrVersionToVectorInt(section_min_version)) &&
-            (section_max_version.empty() || StrVersionToVectorInt(game_version) <= StrVersionToVectorInt(section_max_version));
 
         // Read all trajectory ticks
         std::vector<std::string> section_lines;
@@ -248,17 +230,7 @@ void TestPhysicsTrajectory(const std::string& test_name)
             {
                 break;
             }
-            if (keep_section)
-            {
-                section_lines.push_back(line);
-            }
-        }
-        // Go back to main loop to read next section header
-        // (should not happen if the trajectory has been
-        // generated with the same version)
-        if (!keep_section)
-        {
-            continue;
+            section_lines.push_back(line);
         }
 
         // Process the section lines
@@ -269,8 +241,6 @@ void TestPhysicsTrajectory(const std::string& test_name)
             // Only write min/max test version the first time this test actually runs
             if (current_test != test_name)
             {
-                trajectory_file << test_min_version << '\n';
-                trajectory_file << test_max_version << '\n';
                 recap_file << "\n\n#### " << test_name << "\n\n";
                 recap_file << "| Test | Result |\n";
                 recap_file << "|---|---|\n";
@@ -278,8 +248,6 @@ void TestPhysicsTrajectory(const std::string& test_name)
             }
 
             trajectory_file << section_name        << '\n';
-            trajectory_file << section_min_version << '\n';
-            trajectory_file << section_max_version << '\n';
             trajectory_file << gamemode_str        << '\n';
             trajectory_file << tp_offsets_str      << '\n';
             trajectory_file << commands_pre_run    << '\n';
