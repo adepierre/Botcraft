@@ -96,6 +96,14 @@ namespace Botcraft::Utilities
         case Enchantment::Piercing:
             return "piercing";
 #endif
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        case Enchantment::Density:
+            return "density";
+        case Enchantment::Breach:
+            return "breach";
+        case Enchantment::WindBurst:
+            return "wind_burst";
+#endif
         case Enchantment::Mending:
             return "mending";
         case Enchantment::VanishingCurse:
