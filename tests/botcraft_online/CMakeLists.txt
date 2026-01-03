@@ -19,6 +19,7 @@ set(SRC_FILES
     src/tests/inventory.cpp
     src/tests/pathfinding.cpp
     src/tests/physics.cpp
+    src/tests/protocol.cpp
     src/tests/self-tests.cpp
     src/tests/world.cpp
 )
