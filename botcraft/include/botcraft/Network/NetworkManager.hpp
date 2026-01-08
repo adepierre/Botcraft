@@ -74,9 +74,7 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundPlayerChatHeaderPacket& packet) override;
 #endif
 #endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
-#endif
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         virtual void Handle(ProtocolCraft::ClientboundFinishConfigurationPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundKeepAliveConfigurationPacket& packet) override;
@@ -87,6 +85,9 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         virtual void Handle(ProtocolCraft::ClientboundSelectKnownPacksPacket& packet) override;
+#endif
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& packet) override;
 #endif
 
     private:

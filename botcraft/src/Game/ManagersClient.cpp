@@ -238,33 +238,6 @@ namespace Botcraft
         }
     }
 
-    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& packet)
-    {
-        std::shared_ptr<ServerboundClientInformationPacket> settings_packet = std::make_shared<ServerboundClientInformationPacket>();
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        settings_packet->SetLanguage("fr_FR");
-        settings_packet->SetViewDistance(10);
-        settings_packet->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
-        settings_packet->SetChatColors(true);
-        settings_packet->SetModelCustomisation(0xFF);
-        settings_packet->SetMainHand(1); // 1 is right handed, 0 is left handed
-#else
-        ClientInformation info;
-        info.SetLanguage("fr_FR");
-        info.SetViewDistance(10);
-        info.SetChatVisibility(static_cast<int>(ChatMode::Enabled));
-        info.SetChatColors(true);
-        info.SetModelCustomisation(0xFF);
-        info.SetMainHand(1); // 1 is right handed, 0 is left handed
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-        info.SetParticleStatus(2); // 0 is "all", 1 is "decreased" and 2 is "minimal"
-#endif
-        settings_packet->SetClientInformation(info);
-#endif
-
-        network_manager->Send(settings_packet);
-    }
-
     void ManagersClient::Handle(ClientboundPlayerPositionPacket& packet)
     {
         // Override the ConnectionClient Handle as the teleport confirmation is sent by the physics manager instead

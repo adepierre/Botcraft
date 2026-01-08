@@ -432,6 +432,28 @@ namespace Botcraft
         state = ConnectionState::Configuration;
         std::shared_ptr<ServerboundLoginAcknowledgedPacket> login_ack_packet = std::make_shared<ServerboundLoginAcknowledgedPacket>();
         Send(login_ack_packet);
+
+        std::shared_ptr<ServerboundCustomPayloadConfigurationPacket> custom_payload_packet = std::make_shared<ServerboundCustomPayloadConfigurationPacket>();
+        custom_payload_packet->SetIdentifier("minecraft:brand");
+        std::vector<unsigned char> payload;
+        WriteData<std::string>("vanilla", payload);
+        custom_payload_packet->SetRawData(payload);
+        Send(custom_payload_packet);
+
+        std::shared_ptr<ServerboundClientInformationConfigurationPacket> client_info_packet = std::make_shared<ServerboundClientInformationConfigurationPacket>();
+        ClientInformation info;
+        info.SetLanguage("fr_FR");
+        info.SetViewDistance(10);
+        info.SetChatVisibility(static_cast<int>(ChatMode::Enabled));
+        info.SetChatColors(true);
+        info.SetModelCustomisation(0xFF);
+        info.SetMainHand(1); // 1 is right handed, 0 is left handed
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        info.SetParticleStatus(2); // 0 is "all", 1 is "decreased" and 2 is "minimal"
+#endif
+        client_info_packet->SetClientInformation(info);
+
+        Send(client_info_packet);
 #endif
     }
 
@@ -582,9 +604,20 @@ namespace Botcraft
 #endif
 #endif
 
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
     void NetworkManager::Handle(ClientboundLoginPacket& packet)
     {
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+        {
+            // In 1.20.2+ it is sent during configuration instead
+            std::shared_ptr<ServerboundCustomPayloadPacket> custom_payload_packet = std::make_shared<ServerboundCustomPayloadPacket>();
+            custom_payload_packet->SetIdentifier("minecraft:brand");
+            std::vector<unsigned char> payload;
+            WriteData<std::string>("vanilla", payload);
+            custom_payload_packet->SetRawData(payload);
+            Send(custom_payload_packet);
+        }
+#endif
+#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         if (authentifier)
         {
             std::shared_ptr<ServerboundChatSessionUpdatePacket> chat_session_packet = std::make_shared<ServerboundChatSessionUpdatePacket>();
@@ -608,8 +641,8 @@ namespace Botcraft
             chat_session_packet->SetChatSession(chat_session_data);
             Send(chat_session_packet);
         }
-    }
 #endif
+    }
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
     void NetworkManager::Handle(ClientboundFinishConfigurationPacket& packet)
@@ -664,7 +697,22 @@ namespace Botcraft
         select_known_packs->SetKnownPacks({});
 
         Send(select_known_packs);
+    }
+#endif
 
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+    // In 1.20.2+ it is sent during configuration instead
+    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& packet)
+    {
+        std::shared_ptr<ServerboundClientInformationPacket> settings_packet = std::make_shared<ServerboundClientInformationPacket>();
+        settings_packet->SetLanguage("fr_FR");
+        settings_packet->SetViewDistance(10);
+        settings_packet->SetChatVisibility(static_cast<int>(ChatMode::Enabled));
+        settings_packet->SetChatColors(true);
+        settings_packet->SetModelCustomisation(0xFF);
+        settings_packet->SetMainHand(1); // 1 is right handed, 0 is left handed
+
+        network_manager->Send(settings_packet);
     }
 #endif
 }

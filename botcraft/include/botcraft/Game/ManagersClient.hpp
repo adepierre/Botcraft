@@ -71,7 +71,6 @@ namespace Botcraft
         virtual void Handle(ProtocolCraft::ClientboundChangeDifficultyPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundSetHealthPacket& packet) override;
-        virtual void Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundRespawnPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundSetTimePacket& packet) override;
