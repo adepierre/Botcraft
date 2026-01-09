@@ -1,10 +1,11 @@
 #include <functional>
 #include <optional>
 
+#include "botcraft/Game/Enums.hpp"
+#include "botcraft/Network/AESEncrypter.hpp"
+#include "botcraft/Network/Authentifier.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Network/TCP_Com.hpp"
-#include "botcraft/Network/Authentifier.hpp"
-#include "botcraft/Network/AESEncrypter.hpp"
 #if USE_COMPRESSION
 #include "botcraft/Network/Compression.hpp"
 #endif
