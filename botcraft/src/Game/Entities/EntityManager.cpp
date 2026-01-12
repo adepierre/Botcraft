@@ -168,6 +168,32 @@ namespace Botcraft
         entities[packet.GetEntityId()] = entity;
     }
 
+    void EntityManager::Handle(ProtocolCraft::ClientboundExplodePacket& packet)
+    {
+
+        std::shared_ptr<Entity> entity = local_player;
+
+        if (entity == nullptr)
+        {
+            LOG_WARNING("Trying to apply knockback without a valid player");
+        }
+        else
+        {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+            entity->SetSpeed(entity->GetSpeed() + Vector3<double>(
+                static_cast<double>(packet.GetKnockbackX()),
+                static_cast<double>(packet.GetKnockbackY()),
+                static_cast<double>(packet.GetKnockbackZ())
+            );
+#else
+            if (packet.GetPlayerKnockback().has_value())
+            {
+                entity->SetSpeed(entity->GetSpeed() + packet.GetPlayerKnockback().value());
+            }
+#endif
+        }
+    }
+
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddMobPacket& packet)
     {

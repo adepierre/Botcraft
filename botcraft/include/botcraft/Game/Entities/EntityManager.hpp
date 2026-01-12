@@ -33,6 +33,7 @@ namespace Botcraft
     protected:
         virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundAddEntityPacket& packet) override;
+        virtual void Handle(ProtocolCraft::ClientboundExplodePacket& packet) override;
 #if PROTOCOL_VERSION < 759 /* < 1.19 */
         virtual void Handle(ProtocolCraft::ClientboundAddMobPacket& packet) override;
 #endif
