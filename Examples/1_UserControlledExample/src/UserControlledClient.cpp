@@ -276,6 +276,11 @@ void UserControlledClient::CreateTestWorld()
 void UserControlledClient::MouseCallback(const double& xoffset, const double& yoffset)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+    if (local_player == nullptr)
+    {
+        return;
+    }
+
     float pitch = static_cast<float>(local_player->GetPitch() - yoffset * mouse_sensitivity);
 
     if (pitch > 89.0f)
@@ -302,6 +307,10 @@ void UserControlledClient::MouseCallback(const double& xoffset, const double& yo
 void UserControlledClient::KeyBoardCallback(const std::array<bool, static_cast<int>(Renderer::KEY_CODE::NUMBER_OF_KEYS)>& is_key_pressed, const double& delta_time)
 {
     std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+    if (local_player == nullptr)
+    {
+        return;
+    }
 
     if (is_key_pressed[static_cast<int>(Renderer::KEY_CODE::ESC)])
     {
