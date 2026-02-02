@@ -336,13 +336,16 @@ namespace Botcraft
                 glfwSwapBuffers(window);
                 glfwPollEvents();
 
-                if (take_screenshot)
                 {
-                    std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
-                    glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+                    std::scoped_lock<std::mutex> lock(screenshot_mutex);
+                    if (take_screenshot)
+                    {
+                        std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
+                        glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-                    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
-                    take_screenshot = false;
+                        WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+                        take_screenshot = false;
+                    }
                 }
 
                 real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
@@ -384,6 +387,7 @@ namespace Botcraft
 
         void RenderingManager::Screenshot(const std::string& path)
         {
+            std::scoped_lock<std::mutex> lock(screenshot_mutex);
             screenshot_path = path;
             take_screenshot = true;
         }
@@ -589,6 +593,7 @@ namespace Botcraft
 
             if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
             {
+                std::scoped_lock<std::mutex> lock(screenshot_mutex);
                 screenshot_path = "screenshot.png";
                 take_screenshot = true;
             }

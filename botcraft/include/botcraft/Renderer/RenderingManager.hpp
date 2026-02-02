@@ -182,6 +182,7 @@ namespace Botcraft
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;
 
+            std::mutex screenshot_mutex;
             std::string screenshot_path;
             bool take_screenshot;
 
