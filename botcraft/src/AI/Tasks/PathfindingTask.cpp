@@ -89,7 +89,12 @@ namespace Botcraft
         }
     };
 
-    std::vector<std::pair<Position, float>> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump)
+    std::vector<std::pair<Position, float>> FindPath(
+        const std::shared_ptr<World>& world,
+        const Position& start, const Position& end,
+        const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz,
+        const bool allow_jump, const bool take_damage, const float step_height
+    )
     {
         struct PathNode
         {
@@ -120,10 +125,8 @@ namespace Botcraft
         std::unordered_map<std::pair<Position, float>, std::pair<Position, float>, PosFloatPairHash> came_from;
         std::unordered_map<std::pair<Position, float>, float, PosFloatPairHash> cost;
 
-        const bool takes_damage = !client.GetLocalPlayer()->GetInvulnerable();
-        std::shared_ptr<World> world = client.GetWorld();
         const Blockstate* block = world->GetBlock(start);
-        nodes_to_explore.emplace(PathNode({ start, PathfindingBlockstate(block, start, takes_damage).GetHeight() }, 0.0f));
+        nodes_to_explore.emplace(PathNode({ start, PathfindingBlockstate(block, start, take_damage).GetHeight() }, 0.0f));
         came_from[nodes_to_explore.top().pos] = nodes_to_explore.top().pos;
         cost[nodes_to_explore.top().pos] = 0.0f;
 
@@ -137,11 +140,6 @@ namespace Botcraft
         bool end_is_inside_solid = false;
         block = world->GetBlock(end);
         end_is_inside_solid = block != nullptr && block->IsSolid();
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        const float step_height = static_cast<float>(client.GetLocalPlayer()->GetAttributeStepHeightValue());
-#else
-        const float step_height = 0.6f;
-#endif
 
         while (!nodes_to_explore.empty())
         {
@@ -175,14 +173,14 @@ namespace Botcraft
             // 5
             Position pos = current_node.pos.first + Position(0, 2, 0);
             block = world->GetBlock(pos);
-            vertical_surroundings[0] = PathfindingBlockstate(block, pos, takes_damage);
+            vertical_surroundings[0] = PathfindingBlockstate(block, pos, take_damage);
             pos = current_node.pos.first + Position(0, 1, 0);
             block = world->GetBlock(pos);
-            vertical_surroundings[1] = PathfindingBlockstate(block, pos, takes_damage);
+            vertical_surroundings[1] = PathfindingBlockstate(block, pos, take_damage);
             // Current feet block
             pos = current_node.pos.first;
             block = world->GetBlock(pos);
-            vertical_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
+            vertical_surroundings[2] = PathfindingBlockstate(block, pos, take_damage);
             const bool can_jump =
                 vertical_surroundings[2].GetBlockstate() != nullptr &&
                 vertical_surroundings[2].GetBlockstate()->CanJumpWhenFeetInside();
@@ -195,17 +193,17 @@ namespace Botcraft
                 // so we can skip a few checks
                 pos = current_node.pos.first + Position(0, -1, 0);
                 block = world->GetBlock(pos);
-                vertical_surroundings[3] = PathfindingBlockstate(block, pos, takes_damage);
+                vertical_surroundings[3] = PathfindingBlockstate(block, pos, take_damage);
 
                 // If we can move down, we need 4 and 5
                 if (!vertical_surroundings[3].IsSolid() && !vertical_surroundings[3].IsHazardous())
                 {
                     pos = current_node.pos.first + Position(0, -2, 0);
                     block = world->GetBlock(pos);
-                    vertical_surroundings[4] = PathfindingBlockstate(block, pos, takes_damage);
+                    vertical_surroundings[4] = PathfindingBlockstate(block, pos, take_damage);
                     pos = current_node.pos.first + Position(0, -3, 0);
                     block = world->GetBlock(pos);
-                    vertical_surroundings[5] = PathfindingBlockstate(block, pos, takes_damage);
+                    vertical_surroundings[5] = PathfindingBlockstate(block, pos, take_damage);
                 }
             }
 
@@ -395,7 +393,7 @@ namespace Botcraft
                         break;
                     }
 
-                    const PathfindingBlockstate landing_block(block, pos, takes_damage);
+                    const PathfindingBlockstate landing_block(block, pos, take_damage);
                     if (landing_block.IsClimbable())
                     {
                         const float new_cost = cost[current_node.pos] + std::abs(y);
@@ -444,10 +442,10 @@ namespace Botcraft
                 // so we can skip a lot of checks
                 pos = next_location + Position(0, 2, 0);
                 block = world->GetBlock(pos);
-                horizontal_surroundings[0] = PathfindingBlockstate(block, pos, takes_damage);
+                horizontal_surroundings[0] = PathfindingBlockstate(block, pos, take_damage);
                 pos = next_location + Position(0, 1, 0);
                 block = world->GetBlock(pos);
-                horizontal_surroundings[1] = PathfindingBlockstate(block, pos, takes_damage);
+                horizontal_surroundings[1] = PathfindingBlockstate(block, pos, take_damage);
                 const bool horizontal_movement =
                     (!horizontal_surroundings[1].IsSolid() || // 1 is not solid
                         (horizontal_surroundings[1].GetHeight() - current_node.pos.second < 1.25f && // or 1 is solid and small
@@ -459,16 +457,16 @@ namespace Botcraft
                 {
                     pos = next_location;
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[2] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[2] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_location + Position(0, -1, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[3] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[3] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_location + Position(0, -2, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[4] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[4] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_location + Position(0, -3, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[5] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[5] = PathfindingBlockstate(block, pos, take_damage);
                 }
 
                 // We can't make large jumps if our feet are in an incompatible block
@@ -477,22 +475,22 @@ namespace Botcraft
                 {
                     pos = next_next_location + Position(0, 2, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[6] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[6] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_next_location + Position(0, 1, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[7] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[7] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_next_location;
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[8] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[8] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_next_location + Position(0, -1, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[9] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[9] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_next_location + Position(0, -2, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[10] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[10] = PathfindingBlockstate(block, pos, take_damage);
                     pos = next_next_location + Position(0, -3, 0);
                     block = world->GetBlock(pos);
-                    horizontal_surroundings[11] = PathfindingBlockstate(block, pos, takes_damage);
+                    horizontal_surroundings[11] = PathfindingBlockstate(block, pos, take_damage);
                 }
 
                 // Now that we know the surroundings, we can check all
@@ -711,7 +709,7 @@ namespace Botcraft
                             break;
                         }
 
-                        const PathfindingBlockstate landing_block(block, pos, takes_damage);
+                        const PathfindingBlockstate landing_block(block, pos, take_damage);
                         if (landing_block.IsClimbable())
                         {
                             const float new_cost = cost[current_node.pos] + std::abs(y) + 1.5f;
@@ -1347,6 +1345,11 @@ namespace Botcraft
         }
 
         std::shared_ptr<World> world = client.GetWorld();
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+        const float step_height = static_cast<float>(local_player->GetAttributeStepHeightValue());
+#else
+        const float step_height = 0.6f;
+#endif
         Position current_position;
         do
         {
@@ -1381,12 +1384,17 @@ namespace Botcraft
                 LOG_INFO('[' << client.GetNetworkManager()->GetMyName() << "] Current goal position " << goal_block << " is either air or not loaded, trying to get closer to load the chunk");
                 Vector3<double> goal_direction(goal_block.x - current_position.x, goal_block.y - current_position.y, goal_block.z - current_position.z);
                 goal_direction.Normalize();
-                path = FindPath(client, current_position,
+                path = FindPath(
+                    world,
+                    current_position,
                     current_position + Position(
                         static_cast<int>(goal_direction.x * 32.0),
                         static_cast<int>(goal_direction.y * 32.0),
                         static_cast<int>(goal_direction.z * 32.0)
-                    ), dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump);
+                    ),
+                    dist_tolerance, min_end_dist, min_end_dist_xz,
+                    allow_jump, !local_player->GetInvulnerable(), step_height
+                );
             }
             else
             {
@@ -1395,7 +1403,12 @@ namespace Botcraft
                     AdjustPosSpeed(client, goal);
                     return Status::Success;
                 }
-                path = FindPath(client, current_position, goal_block, dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump);
+                path = FindPath(
+                    world,
+                    current_position, goal_block,
+                    dist_tolerance, min_end_dist, min_end_dist_xz,
+                    allow_jump, !local_player->GetInvulnerable(), step_height
+                );
             }
 
             if (path.size() == 0 || path.back().first == current_position)

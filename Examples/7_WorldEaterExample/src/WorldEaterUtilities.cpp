@@ -155,6 +155,7 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
         components_index[b] = -1;
     }
 
+    std::shared_ptr<World> world = client.GetWorld();
     // For all block elements
     for (const auto& p : positions)
     {
@@ -246,8 +247,8 @@ std::vector<std::unordered_set<Position>> GroupBlocksInComponents(const Position
         {
             const Position pathfinding_start = *components[i].begin() + Position(0, 1, 0);
             const Position pathfinding_end = *current_component.begin() + Position(0, 1, 0);
-            const std::vector<std::pair<Position, float>> path = FindPath(client, pathfinding_start, pathfinding_end, 0, 0, false, false);
-            const std::vector<std::pair<Position, float>> reversed_path = FindPath(client, pathfinding_end, pathfinding_start, 0, 0, false, false);
+            const std::vector<std::pair<Position, float>> path = FindPath(world, pathfinding_start, pathfinding_end, 0, 0, 0, false, true);
+            const std::vector<std::pair<Position, float>> reversed_path = FindPath(world, pathfinding_end, pathfinding_start, 0, 0, 0, false, true);
             // If we can pathfind from start to end (both ways to prevent cliff falls that would only allow one-way travel)
             if (path.back().first == pathfinding_end && reversed_path.back().first == pathfinding_start)
             {

@@ -3,20 +3,30 @@
 #include "botcraft/AI/Status.hpp"
 #include "botcraft/Game/Vector3.hpp"
 
+#include <memory>
+
 namespace Botcraft
 {
     class BehaviourClient;
+    class World;
 
     /// @brief Not actually a task. Helper function to compute path between start and end. Does not perfom any movement.
-    /// @param client Client used to do the pathfinding
+    /// @param world World to do the pathfinding in
     /// @param start Start position
     /// @param end End position
     /// @param dist_tolerance Stop the search earlier if you get closer than dist_tolerance from the end position
     /// @param min_end_dist Desired minimal checkboard distance between the final position and goal (useful if you want to place a block, you don't want to be at the exact spot, but close to it).
     /// @param min_end_dist_xz Same as min_end_dist but only considering the XZ plane (allows to ask to stand next to a block, but above for example)
     /// @param allow_jump If true, allow to jump above 1-wide gaps
+    /// @param take_damage If true, bot will avoid blocks that can cause damages like lava or magma blocks
+    /// @param step_height Height a bot can go over without jumping (default: 0.6)
     /// @return A vector of <feet block position, Y position> to go through to reach end +/- min_end_dist. If not possible, will return a path to get as close as possible
-    std::vector<std::pair<Position, float>> FindPath(const BehaviourClient& client, const Position& start, const Position& end, const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz, const bool allow_jump);
+    std::vector<std::pair<Position, float>> FindPath(
+        const std::shared_ptr<World>& world,
+        const Position& start, const Position& end,
+        const int dist_tolerance, const int min_end_dist, const int min_end_dist_xz,
+        const bool allow_jump, const bool take_damage, const float step_height = 0.6f
+    );
 
     /// @brief Find a path to a block position and navigate to it.
     /// @param client The client performing the action

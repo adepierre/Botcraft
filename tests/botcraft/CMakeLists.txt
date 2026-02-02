@@ -6,6 +6,7 @@ set(SRC_FILES
     src/blackboard.cpp
     src/blockstate.cpp
     src/items.cpp
+    src/pathfinding.cpp
     src/world.cpp
 
     src/init.cpp
