@@ -389,13 +389,15 @@ namespace Botcraft
         {
             screenshot_path = path;
 	    screenshot_callback.reset();
+	    screenshot_arg = nullptr;
             take_screenshot = true;
         }
 
-        void RenderingManager::Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *args)> callback)
+        void RenderingManager::Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *args)> callback, void *arg)
         {
             screenshot_path.clear();
 	    screenshot_callback = callback;
+	    screenshot_arg = arg;
             take_screenshot = true;
         }
 

@@ -74,7 +74,7 @@ namespace Botcraft
 
             // Take a screenshot of the current frame and save it to path
             void Screenshot(const std::string& path);
-	    void Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *arg)> callback);
+	    void Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *arg)> callback, void *arg);
 
             void SetCurrentBehaviourTree(const BaseNode* root) const;
             void ResetBehaviourState() const;
