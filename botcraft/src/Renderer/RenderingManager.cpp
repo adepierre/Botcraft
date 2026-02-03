@@ -341,7 +341,10 @@ namespace Botcraft
                     std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
                     glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-                    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+		    if (screenshot_path.empty() == false)
+			    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+		    else
+			    screenshot_callback.value()(current_window_height, current_window_width, pixels);
                     take_screenshot = false;
                 }
 
@@ -385,6 +388,14 @@ namespace Botcraft
         void RenderingManager::Screenshot(const std::string& path)
         {
             screenshot_path = path;
+	    screenshot_callback.reset();
+            take_screenshot = true;
+        }
+
+        void RenderingManager::Screenshot(std::function<void(const int, const int, std::vector<unsigned char> &)> callback)
+        {
+            screenshot_path.clear();
+	    screenshot_callback = callback;
             take_screenshot = true;
         }
 
