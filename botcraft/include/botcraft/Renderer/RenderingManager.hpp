@@ -159,7 +159,7 @@ namespace Botcraft
 
             std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed;
 
-	    std::atomic_bool paused { false };
+	    std::atomic_bool paused { true };  // default paused
 
             bool inventory_open;
             bool behaviour_open;

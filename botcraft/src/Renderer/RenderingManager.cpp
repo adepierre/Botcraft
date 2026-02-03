@@ -214,47 +214,50 @@ namespace Botcraft
                     glClearColor(current_color[0], current_color[1], current_color[2], 1.0f);
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                    //Change view matrix
-                    world_renderer->UpdateViewMatrix();
+		    if (!paused)
+		    {
+			    //Change view matrix
+			    world_renderer->UpdateViewMatrix();
 
-                    if (has_proj_changed)
-                    {
-                        glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / static_cast<float>(current_window_height), 0.1f, 200.0f);
-                        my_shader->SetMat4("projection", projection);
-                        world_renderer->SetCameraProjection(projection);
-                        has_proj_changed = false;
-                    }
+			    if (has_proj_changed)
+			    {
+				    glm::mat4 projection = glm::perspective(glm::radians(45.0f), current_window_width / static_cast<float>(current_window_height), 0.1f, 200.0f);
+				    my_shader->SetMat4("projection", projection);
+				    world_renderer->SetCameraProjection(projection);
+				    has_proj_changed = false;
+			    }
 
-                    world_renderer->UpdateFaces();
+			    world_renderer->UpdateFaces();
 
-                    my_shader->Use();
+			    my_shader->Use();
 
-                    //Draw all faces
-                    world_renderer->UseAtlasTextureGL();
+			    //Draw all faces
+			    world_renderer->UseAtlasTextureGL();
 
 #ifdef USE_IMGUI
-                    int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
-                    world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
-                    {
-                        ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
-                        ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
-                        ImGui::Begin("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
-                        ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
-                        ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
-                        ImGui::Text("Loaded sections: %i", num_chunks);
-                        ImGui::Text("Rendered sections: %i", num_rendered_chunks);
-                        ImGui::Text("Num entities: %i", num_entities);
-                        ImGui::Text("Rendered entities: %i", num_rendered_entities);
-                        ImGui::Text("Loaded faces: %i", num_faces);
-                        ImGui::Text("Rendered faces: %i", num_rendered_faces);
-                        ImGui::End();
-                    }
+			    int num_chunks, num_rendered_chunks, num_entities, num_rendered_entities, num_faces, num_rendered_faces;
+			    world_renderer->RenderFaces(&num_chunks, &num_rendered_chunks, &num_entities, &num_rendered_entities, &num_faces, &num_rendered_faces);
+			    {
+				    ImGui::SetNextWindowPos(ImVec2(static_cast<float>(current_window_width), 0.0f), 0, ImVec2(1.0f, 0.0f));
+				    ImGui::SetNextWindowSize(ImVec2(180.0f, 170.0f));
+				    ImGui::Begin("Rendering", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse);
+				    ImGui::Text("Lim. FPS: %.1f (%.2fms)", 1.0 / deltaTime, deltaTime * 1000.0);
+				    ImGui::Text("Real FPS: %.1f (%.2fms)", 1.0 / real_fps, real_fps * 1000.0);
+				    ImGui::Text("Loaded sections: %i", num_chunks);
+				    ImGui::Text("Rendered sections: %i", num_rendered_chunks);
+				    ImGui::Text("Num entities: %i", num_entities);
+				    ImGui::Text("Rendered entities: %i", num_rendered_entities);
+				    ImGui::Text("Loaded faces: %i", num_faces);
+				    ImGui::Text("Rendered faces: %i", num_rendered_faces);
+				    ImGui::End();
+			    }
 #else
-                    world_renderer->RenderFaces();
+			    world_renderer->RenderFaces();
 #endif
 
-                    glBindVertexArray(0);
-                    glBindTexture(GL_TEXTURE_2D, 0);
+			    glBindVertexArray(0);
+			    glBindTexture(GL_TEXTURE_2D, 0);
+		    }
 
 #ifdef USE_IMGUI
                     // Draw the behaviour if it's open
