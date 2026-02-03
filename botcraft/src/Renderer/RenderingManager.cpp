@@ -344,7 +344,7 @@ namespace Botcraft
 		    if (screenshot_path.empty() == false)
 			    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
 		    else
-			    screenshot_callback.value()(current_window_height, current_window_width, pixels);
+			    screenshot_callback.value()(current_window_width, current_window_height, pixels);
                     take_screenshot = false;
                 }
 
