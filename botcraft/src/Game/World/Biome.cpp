@@ -134,7 +134,7 @@ namespace Botcraft
         triangle_coordinates[1] = local_temperature - local_rainfall;
         triangle_coordinates[2] = 1.0f - local_temperature;
 
-        std::array<float, 3> color;
+        std::array<float, 3> color { };
         for (int i = 0; i < 3; ++i)
         {
             for (int j = 0; j < 3; ++j)
