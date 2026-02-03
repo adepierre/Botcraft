@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <unordered_set>
 #include <mutex>
 #include <functional>
@@ -62,6 +63,9 @@ namespace Botcraft
 
             // Set a flag to terminate the rendering loop after the current frame
             void Close();
+
+	    void Pause() { paused = true; }
+	    void Unpause() { paused = false; }
 
             // Set mouse and keyboard callbacks to handle user inputs
             void SetMouseCallback(std::function<void(double, double)> callback);
@@ -154,6 +158,8 @@ namespace Botcraft
             std::shared_ptr<LocalPlayer> local_player;
 
             std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed;
+
+	    std::atomic_bool paused { false };
 
             bool inventory_open;
             bool behaviour_open;

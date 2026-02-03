@@ -326,27 +326,33 @@ namespace Botcraft
                     }
 
 
-                    ImGui::Render();
+		    if (!paused)
+		    {
+			    ImGui::Render();
 
-                    // Render ImGui
-                    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			    // Render ImGui
+			    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		    }
 #endif
                 }
 
-                glfwSwapBuffers(window);
-                glfwPollEvents();
+		if (!paused)
+		{
+			glfwSwapBuffers(window);
+			glfwPollEvents();
 
-                {
-                    std::scoped_lock<std::mutex> lock(screenshot_mutex);
-                    if (take_screenshot)
-                    {
-                        std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
-                        glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+			{
+			    std::scoped_lock<std::mutex> lock(screenshot_mutex);
+			    if (take_screenshot)
+			    {
+				std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
+				glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-                        WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
-                        take_screenshot = false;
-                    }
-                }
+				WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+				take_screenshot = false;
+			    }
+			}
+		}
 
                 real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
 
