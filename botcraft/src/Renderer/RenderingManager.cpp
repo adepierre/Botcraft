@@ -344,7 +344,7 @@ namespace Botcraft
 		    if (screenshot_path.empty() == false)
 			    WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
 		    else
-			    screenshot_callback.value()(current_window_width, current_window_height, pixels);
+			    screenshot_callback.value()(current_window_width, current_window_height, pixels, screenshot_arg);
                     take_screenshot = false;
                 }
 
@@ -392,7 +392,7 @@ namespace Botcraft
             take_screenshot = true;
         }
 
-        void RenderingManager::Screenshot(std::function<void(const int, const int, std::vector<unsigned char> &)> callback)
+        void RenderingManager::Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *args)> callback)
         {
             screenshot_path.clear();
 	    screenshot_callback = callback;

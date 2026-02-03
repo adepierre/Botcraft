@@ -74,7 +74,7 @@ namespace Botcraft
 
             // Take a screenshot of the current frame and save it to path
             void Screenshot(const std::string& path);
-	    void Screenshot(std::function<void(const int, const int, std::vector<unsigned char> &)> callback);
+	    void Screenshot(std::function<void(const int, const int, const std::vector<unsigned char> &, void *arg)> callback);
 
             void SetCurrentBehaviourTree(const BaseNode* root) const;
             void ResetBehaviourState() const;
@@ -183,9 +183,10 @@ namespace Botcraft
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;
 
-            std::string screenshot_path;
-	    std::optional<std::function<void(const int, const int, std::vector<unsigned char> &)>> screenshot_callback;
-            bool take_screenshot;
+	    std::string screenshot_path;
+	    std::optional<std::function<void(const int, const int, const std::vector<unsigned char> &, void *arg)>> screenshot_callback;
+	    void *screenshot_arg { nullptr };
+	    bool take_screenshot;
 
             bool running;
 
