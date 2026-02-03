@@ -1,3 +1,5 @@
+#include <optional>
+
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
@@ -20,7 +22,8 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    ManagersClient::ManagersClient(const bool use_renderer_)
+    ManagersClient::ManagersClient(const bool use_renderer_, std::optional<std::pair<int, int>> resolution) :
+	    resolution(resolution)
     {
         difficulty = Difficulty::None;
         is_hardcore = false;
@@ -193,7 +196,14 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
+            if (resolution.has_value())
+	    {
+                rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, resolution.value().first, resolution.value().second, CHUNK_WIDTH, false);
+            }
+	    else
+	    {
+                rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
+            }
             network_manager->AddHandler(rendering_manager.get());
         }
         physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);

@@ -143,3 +143,6 @@ endif()
 if (BOTCRAFT_BUILD_DOC)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/doxygen.cmake")
 endif(BOTCRAFT_BUILD_DOC)
+
+target_link_libraries(2_ChatCommandExample -fsanitize=address,undefined)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")

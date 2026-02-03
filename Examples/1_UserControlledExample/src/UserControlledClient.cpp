@@ -21,7 +21,8 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : ManagersClient(use_renderer_)
+UserControlledClient::UserControlledClient(bool online, bool use_renderer_, std::pair<int, int> resolution) :
+	ManagersClient(use_renderer_, { resolution })
 {
 #if USE_GUI
     mouse_sensitivity = 0.1f;

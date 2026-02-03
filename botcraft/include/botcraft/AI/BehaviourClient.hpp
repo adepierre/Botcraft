@@ -12,7 +12,7 @@ namespace Botcraft
     class BehaviourClient : public ManagersClient, private BlackboardObserver
     {
     public:
-        BehaviourClient(const bool use_renderer_);
+        BehaviourClient(const bool use_renderer_, std::optional<std::pair<int, int>> resolution);
         virtual ~BehaviourClient();
 
         virtual void Yield() = 0;

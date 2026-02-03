@@ -7,6 +7,7 @@
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
+#include "botcraft/Renderer/RenderingManager.hpp"
 
 #include "botcraft/AI/BehaviourTree.hpp"
 #include "botcraft/AI/Tasks/AllTasks.hpp"
@@ -16,7 +17,8 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehaviourClient<ChatCommandClient>(use_renderer_)
+ChatCommandClient::ChatCommandClient(const bool use_renderer_, std::pair<int, int> resolution) :
+	TemplatedBehaviourClient<ChatCommandClient>(use_renderer_, { resolution })
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";
@@ -25,8 +27,6 @@ ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehavi
     std::cout << "        name stop\n";
     std::cout << "    Check perimeter for spawnable blocks and save spawnable positions to file:\n";
     std::cout << "        name check_perimeter [x y z (default = player position)] radius (default = 128) [check_lighting (default = true)]\n";
-    std::cout << "    Disconnect:\n";
-    std::cout << "        name die\n";
     std::cout << "    Place a block:\n";
     std::cout << "        name place_block minecraft:item x y z\n";
     std::cout << "    Break a block:\n";
@@ -44,6 +44,8 @@ ChatCommandClient::~ChatCommandClient()
 void ChatCommandClient::Handle(ClientboundChatPacket& msg)
 {
     ManagersClient::Handle(msg);
+
+    printf("[%s] Chat packet: %s\n", network_manager->GetMyName().c_str(), msg.GetMessage().GetText().c_str());
 
     // Split the message
     std::istringstream ss{ msg.GetMessage().GetText() };
@@ -86,6 +88,8 @@ void ChatCommandClient::Handle(ClientboundSystemChatPacket& msg)
 
 void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_msg)
 {
+	    printf("Making screenshot\n");
+	    rendering_manager->Screenshot("test.png");
     if (splitted_msg.size() < 2 || splitted_msg[0] != network_manager->GetMyName())
     {
         return;
@@ -140,6 +144,11 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
 
         SetBehaviourTree(tree);
     }
+    else if (splitted_msg[1] == "screenshot")
+    {
+	    printf("Making screenshot\n");
+	    rendering_manager->Screenshot("test.png");
+    }
     else if (splitted_msg[1] == "stop")
     {
         // Stop any running behaviour
@@ -176,10 +185,6 @@ void ChatCommandClient::ProcessChatMsg(const std::vector<std::string>& splitted_
             check_lighting = std::stoi(splitted_msg[6]);
         }
         CheckPerimeter(pos, radius, check_lighting);
-    }
-    else if (splitted_msg[1] == "die")
-    {
-        should_be_closed = true;
     }
     else if (splitted_msg[1] == "place_block")
     {
