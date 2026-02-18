@@ -50,7 +50,14 @@ namespace Botcraft
         class RenderingManager : public ProtocolCraft::Handler
         {
         public:
-            // Constructor
+            static std::shared_ptr<RenderingManager> CreateRenderingManagerIfPossible(
+                std::shared_ptr<World> world_,
+                std::shared_ptr<InventoryManager> inventory_manager_,
+                std::shared_ptr<EntityManager> entity_manager_
+            );
+
+        private:
+            // Private constructor, use the static function above to get the instance instead
             // Window can be resized at runtime
             // Chunks in renderer are independant of chunks in the corresponding world.
             // Set headless_ to true to run without opening a window (rendering is still done)
@@ -58,6 +65,11 @@ namespace Botcraft
                 std::shared_ptr<EntityManager> entity_manager_,
                 const unsigned int& window_width, const unsigned int& window_height,
                 const unsigned int section_height_ = 16, const bool headless = false);
+
+            static std::weak_ptr<RenderingManager> current_instance;
+            static std::mutex instance_mutex;
+
+        public:
             ~RenderingManager();
 
             // Set a flag to terminate the rendering loop after the current frame

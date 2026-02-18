@@ -43,6 +43,29 @@ namespace Botcraft
 {
     namespace Renderer
     {
+        std::weak_ptr<RenderingManager> RenderingManager::current_instance;
+        std::mutex RenderingManager::instance_mutex;
+
+        std::shared_ptr<RenderingManager> RenderingManager::CreateRenderingManagerIfPossible(
+            std::shared_ptr<World> world_,
+            std::shared_ptr<InventoryManager> inventory_manager_,
+            std::shared_ptr<EntityManager> entity_manager_
+        )
+        {
+            std::lock_guard<std::mutex> lock(instance_mutex);
+
+            std::shared_ptr<RenderingManager> instance = current_instance.lock();
+
+            if (instance == nullptr)
+            {
+                instance.reset(new RenderingManager(world_, inventory_manager_, entity_manager_, 800, 600, 16, false));
+                current_instance = instance;
+
+                return instance;
+            }
+            return nullptr;
+        }
+
         RenderingManager::RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
             std::shared_ptr<EntityManager> entity_manager_,
             const unsigned int& window_width, const unsigned int& window_height,

@@ -41,11 +41,25 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
 #ifdef USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
-            mouse_sensitivity = 0.1f;
+            rendering_manager = Renderer::RenderingManager::CreateRenderingManagerIfPossible(world, inventory_manager, entity_manager);
+            if (rendering_manager == nullptr)
+            {
+                use_renderer = false;
+                static bool first_time = true;
+                if (first_time)
+                {
+                    first_time = false;
+                    LOG_WARNING("Having multiple clients with renderer enabled is not supported. Make sure to destroy the rendered client before creating another one");
+                }
+                use_renderer = false;
+            }
+            else
+            {
+                mouse_sensitivity = 0.1f;
 
-            rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
-            rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+                rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
+                rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
+            }
         }
         physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
 #else

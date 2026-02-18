@@ -193,8 +193,22 @@ namespace Botcraft
 #if USE_GUI
         if (use_renderer)
         {
-            rendering_manager = std::make_shared<Renderer::RenderingManager>(world, inventory_manager, entity_manager, 800, 600, CHUNK_WIDTH, false);
-            network_manager->AddHandler(rendering_manager.get());
+            rendering_manager = Renderer::RenderingManager::CreateRenderingManagerIfPossible(world, inventory_manager, entity_manager);
+            if (rendering_manager == nullptr)
+            {
+                use_renderer = false;
+                static bool first_time = true;
+                if (first_time)
+                {
+                    first_time = false;
+                    LOG_WARNING("Having multiple clients with renderer enabled is not supported. Make sure to destroy the rendered client before creating another one");
+                }
+                use_renderer = false;
+            }
+            else
+            {
+                network_manager->AddHandler(rendering_manager.get());
+            }
         }
         physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
 #else
