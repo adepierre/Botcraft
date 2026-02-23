@@ -30,7 +30,7 @@ namespace Botcraft
     class ManagersClient : public ConnectionClient
     {
     public:
-        ManagersClient(const bool use_renderer_);
+        ManagersClient(const bool use_renderer_, const std::optional<std::pair<int, int>> resolution);
         virtual ~ManagersClient();
 
         virtual void Disconnect() override;
@@ -91,6 +91,7 @@ namespace Botcraft
         // from the bot. Only one renderer can be active
         // at the same time
         bool use_renderer;
+	const std::optional<std::pair<int, int>> resolution;
         std::shared_ptr<Renderer::RenderingManager> rendering_manager;
 #endif
 

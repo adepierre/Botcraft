@@ -37,8 +37,8 @@ namespace Botcraft
         };
 
     public:
-        TemplatedBehaviourClient(const bool use_renderer_) :
-            BehaviourClient(use_renderer_)
+        TemplatedBehaviourClient(const bool use_renderer_, std::optional<std::pair<int, int>> resolution) :
+            BehaviourClient(use_renderer_, resolution)
         {
             swap_tree = false;
         }

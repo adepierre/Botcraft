@@ -23,6 +23,8 @@ struct Args
     bool connect = true;
     std::string address = "127.0.0.1:25565";
     std::string login = "BCUserControl";
+    int width = 800;
+    int height = 600;
 
     int return_code = 0;
 };
@@ -59,7 +61,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        UserControlledClient client(args.connect, true);
+        UserControlledClient client(args.connect, true, { args.width, args.height });
 
         if (args.connect)
         {
@@ -139,6 +141,27 @@ Args ParseCommandLine(int argc, char* argv[])
             else
             {
                 LOG_FATAL("--login requires an argument");
+                args.return_code = 1;
+                return args;
+            }
+        }
+        else if (arg == "--resolution")
+        {
+            if (i + 1 < argc)
+            {
+		args.width = atoi(argv[++i]);
+		char *komma = strchr(argv[i], ',');
+		if (komma == nullptr)
+		{
+                    LOG_FATAL("--resolution requires width,height parameter");
+                    args.return_code = 1;
+                    return args;
+		}
+		args.height = atoi(komma + 1);
+            }
+            else
+            {
+                LOG_FATAL("--resolution requires an argument");
                 args.return_code = 1;
                 return args;
             }
