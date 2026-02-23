@@ -184,7 +184,7 @@ namespace Botcraft
                 static_cast<double>(packet.GetKnockbackX()),
                 static_cast<double>(packet.GetKnockbackY()),
                 static_cast<double>(packet.GetKnockbackZ())
-            );
+            ));
 #else
             if (packet.GetPlayerKnockback().has_value())
             {

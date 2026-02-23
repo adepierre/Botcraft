@@ -64,8 +64,8 @@ namespace Botcraft
             // Frustum planes
             std::array<glm::vec4, 6> frustum;
 
-            bool has_changed_position;
-            bool has_changed_orientation;
+            bool has_changed_position    { false };
+            bool has_changed_orientation { false };
         };
     } // Renderer
 } // Botcraft
