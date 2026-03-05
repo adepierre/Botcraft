@@ -18,6 +18,7 @@
 #include "botcraft/Renderer/Camera.hpp"
 #include "botcraft/Renderer/Chunk.hpp"
 #include "botcraft/Renderer/ImageSaver.hpp"
+#include "botcraft/Renderer/Settings.hpp"
 #include "botcraft/Renderer/Shader.hpp"
 #include "botcraft/Renderer/TransparentChunk.hpp"
 #include "botcraft/Renderer/WorldRenderer.hpp"
@@ -58,7 +59,7 @@ namespace Botcraft
 
             if (instance == nullptr)
             {
-                instance.reset(new RenderingManager(world_, inventory_manager_, entity_manager_, 800, 600, 16, false));
+                instance.reset(new RenderingManager(world_, inventory_manager_, entity_manager_, 16));
                 current_instance = instance;
 
                 return instance;
@@ -66,15 +67,18 @@ namespace Botcraft
             return nullptr;
         }
 
-        RenderingManager::RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
+        RenderingManager::RenderingManager(
+            std::shared_ptr<World> world_,
+            std::shared_ptr<InventoryManager> inventory_manager_,
             std::shared_ptr<EntityManager> entity_manager_,
-            const unsigned int& window_width, const unsigned int& window_height,
-            const unsigned int section_height_, const bool headless)
+            const unsigned int section_height_
+        )
         {
             world = world_;
             inventory_manager = inventory_manager_;
             entity_manager = entity_manager_;
             local_player = nullptr;
+            window = nullptr;
 
             for (int i = 0; i < is_key_pressed.size(); ++i)
             {
@@ -85,28 +89,28 @@ namespace Botcraft
             behaviour_open = false;
             behaviour_renderer = std::make_unique<BehaviourRenderer>();
 
-            mouse_last_x = window_width / 2.0f;
-            mouse_last_y = window_height / 2.0f;
-            first_mouse = true;
-
             deltaTime = 0.0f;
             lastFrameTime = 0.0f;
 
-            current_window_width = window_width;
-            current_window_height = window_height;
+            current_window_width = Settings::width;
+            current_window_height = Settings::height;
+            current_window_headless = Settings::headless;
+            current_vsync = Settings::vsync;
             has_proj_changed = true;
+
+            mouse_last_x = current_window_width / 2.0f;
+            mouse_last_y = current_window_height / 2.0f;
+            first_mouse = true;
 
             MouseCallback = [](double, double) {};
             KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double) {};
 
             world_renderer = std::make_unique<WorldRenderer>(section_height_);
 
-            take_screenshot = false;
-
             day_time = 0.0f;
 
             running = true;
-            rendering_thread = std::thread(&RenderingManager::Run, this, headless);
+            rendering_thread = std::thread(&RenderingManager::Run, this);
             thread_updating_renderable = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
         }
 
@@ -129,10 +133,10 @@ namespace Botcraft
             }
         }
 
-        void RenderingManager::Run(const bool headless)
+        void RenderingManager::Run()
         {
             Logger::GetInstance().RegisterThread("RenderingLoop");
-            if (!Init(headless))
+            if (!Init())
             {
                 LOG_ERROR("Can't init rendering manager");
                 return;
@@ -143,16 +147,41 @@ namespace Botcraft
 
             while (!glfwWindowShouldClose(window))
             {
-                double currentFrame = glfwGetTime();
-                auto start = std::chrono::steady_clock::now();
-
-                //Max 60 FPS
-                auto end = start + std::chrono::microseconds(1000000 / 60);
+                const double currentFrame = glfwGetTime();
+                const std::chrono::steady_clock::time_point frame_start = std::chrono::steady_clock::now();
 
                 deltaTime = currentFrame - lastFrameTime;
                 lastFrameTime = currentFrame;
 
                 InternalProcessInput(window);
+
+                if (Settings::width.load(std::memory_order_relaxed) != current_window_width ||
+                    Settings::height.load(std::memory_order_relaxed) != current_window_height
+                )
+                {
+                    current_window_width = Settings::width.load(std::memory_order_relaxed);
+                    current_window_height = Settings::height.load(std::memory_order_relaxed);
+                    glfwSetWindowSize(window, current_window_width, current_window_height);
+                }
+
+                if (Settings::headless.load(std::memory_order_relaxed) != current_window_headless)
+                {
+                    current_window_headless = Settings::headless.load(std::memory_order_relaxed);
+                    if (!current_window_headless)
+                    {
+                        glfwShowWindow(window);
+                    }
+                    else
+                    {
+                        glfwHideWindow(window);
+                    }
+                }
+
+                if (Settings::vsync.load(std::memory_order_relaxed) != current_vsync)
+                {
+                    current_vsync = Settings::vsync.load(std::memory_order_relaxed);
+                    glfwSwapInterval(current_vsync ? 1 : 0);
+                }
 
                 if (current_window_height > 0 && current_window_width > 0)
                 {
@@ -360,21 +389,59 @@ namespace Botcraft
                 glfwPollEvents();
 
                 {
-                    std::scoped_lock<std::mutex> lock(screenshot_mutex);
-                    if (take_screenshot)
+                    std::scoped_lock<std::mutex> lock(Settings::screenshot_mutex);
+                    if (!Settings::screenhsot_path.empty() || Settings::screenshot_callback)
                     {
                         std::vector<unsigned char> pixels(current_window_height * current_window_width * 3);
                         glReadPixels(0, 0, current_window_width, current_window_height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-                        WriteImage(screenshot_path, current_window_height, current_window_width, 3, pixels.data(), true);
-                        take_screenshot = false;
+                        if (!Settings::screenhsot_path.empty())
+                        {
+                            WriteImage(Settings::screenhsot_path, current_window_height, current_window_width, 3, pixels.data(), true);
+                            Settings::screenhsot_path = "";
+                        }
+                        if (Settings::screenshot_callback)
+                        {
+                            Settings::screenshot_callback(pixels, current_window_height, current_window_width);
+                            Settings::screenshot_callback = nullptr;
+                        }
                     }
                 }
 
-                real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start).count() / 1e6);
+                real_fps = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - frame_start).count() / 1e6);
 
-                //Wait to have 60 FPS
-                Utilities::SleepUntil(end);
+                while (true)
+                {
+                    const double current_target_fps = Settings::target_fps.load(std::memory_order_relaxed);
+
+                    if (current_target_fps <= 0.0)
+                    {
+                        Utilities::SleepFor(std::chrono::milliseconds(10));
+                        continue;
+                    }
+
+                    const std::chrono::duration<double> frame_duration(1.0 / current_target_fps);
+                    const std::chrono::steady_clock::time_point frame_end = frame_start + std::chrono::duration_cast<std::chrono::steady_clock::duration>(frame_duration);
+
+                    const std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+                    if (now >= frame_end)
+                    {
+                        break;
+                    }
+
+                    const std::chrono::nanoseconds wait_time = frame_end - now;
+
+                    // Wait for the end of the frame in small chunks (in case we move from 0.001 FPS to 60, we don't want to wait 1000 seconds before updating the framerate)
+                    if (wait_time > std::chrono::milliseconds(10))
+                    {
+                        Utilities::SleepFor(std::chrono::milliseconds(10));
+                    }
+                    else
+                    {
+                        Utilities::SleepFor(wait_time);
+                    }
+                }
             }
 
             world_renderer.reset();
@@ -406,13 +473,6 @@ namespace Botcraft
         void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback)
         {
             KeyboardCallback = callback;
-        }
-
-        void RenderingManager::Screenshot(const std::string& path)
-        {
-            std::scoped_lock<std::mutex> lock(screenshot_mutex);
-            screenshot_path = path;
-            take_screenshot = true;
         }
 
         void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root) const
@@ -460,7 +520,7 @@ namespace Botcraft
             behaviour_renderer->RemoveBlackboardValue(key);
         }
 
-        bool RenderingManager::Init(const bool headless)
+        bool RenderingManager::Init()
         {
             glfwInit();
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -470,10 +530,8 @@ namespace Botcraft
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-            if (headless)
-            {
-                glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-            }
+            glfwWindowHint(GLFW_VISIBLE, current_window_headless ? GLFW_FALSE : GLFW_TRUE);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
             window = glfwCreateWindow(current_window_width, current_window_height, "RenderingManager", NULL, NULL);
             if (window == NULL)
@@ -489,6 +547,8 @@ namespace Botcraft
             glfwSetCursorPosCallback(window, &RenderingManager::InternalMouseCallback);
 
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+            glfwSwapInterval(current_vsync ? 1 : 0);
 
             // glad: load all OpenGL function pointers
             // ---------------------------------------
@@ -540,6 +600,8 @@ namespace Botcraft
             this_object->current_window_height = height;
             glViewport(0, 0, width, height);
             this_object->has_proj_changed = true;
+            Settings::height = height;
+            Settings::width = width;
         }
 
         void RenderingManager::InternalMouseCallback(GLFWwindow *window, double xpos, double ypos)
@@ -616,9 +678,8 @@ namespace Botcraft
 
             if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
             {
-                std::scoped_lock<std::mutex> lock(screenshot_mutex);
-                screenshot_path = "screenshot.png";
-                take_screenshot = true;
+                std::scoped_lock<std::mutex> lock(Settings::screenshot_mutex);
+                Settings::screenhsot_path = "screenshot.png";
             }
 
             KeyboardCallback(is_key_pressed, deltaTime);

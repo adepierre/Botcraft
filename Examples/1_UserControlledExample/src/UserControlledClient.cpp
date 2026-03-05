@@ -13,6 +13,7 @@
 #include "protocolCraft/enums.hpp"
 
 #if USE_GUI
+#include "botcraft/Renderer/Settings.hpp"
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
@@ -21,7 +22,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : ManagersClient(use_renderer_)
+UserControlledClient::UserControlledClient(bool online) : ManagersClient()
 {
 #if USE_GUI
     mouse_sensitivity = 0.1f;
@@ -39,19 +40,17 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
         should_be_closed = false;
 
 #ifdef USE_GUI
-        if (use_renderer)
+        if (Renderer::Settings::IsEnabled())
         {
             rendering_manager = Renderer::RenderingManager::CreateRenderingManagerIfPossible(world, inventory_manager, entity_manager);
             if (rendering_manager == nullptr)
             {
-                use_renderer = false;
                 static bool first_time = true;
                 if (first_time)
                 {
                     first_time = false;
                     LOG_WARNING("Having multiple clients with renderer enabled is not supported. Make sure to destroy the rendered client before creating another one");
                 }
-                use_renderer = false;
             }
             else
             {
@@ -106,7 +105,7 @@ void UserControlledClient::CreateTestWorld()
     entity->SetYaw(45.0f);
     entity_manager->AddEntity(entity);
 #ifdef USE_GUI
-    if (use_renderer)
+    if (rendering_manager != nullptr)
     {
         rendering_manager->AddEntityToUpdate(entity->GetEntityID());
     }
@@ -199,7 +198,7 @@ void UserControlledClient::CreateTestWorld()
 #endif
 
 #ifdef USE_GUI
-    if (use_renderer)
+    if (rendering_manager != nullptr)
     {
         for (int i = 0; i < static_cast<int>(floor(x / CHUNK_WIDTH)) + 1; ++i)
         {
@@ -278,7 +277,7 @@ void UserControlledClient::CreateTestWorld()
         }
     }
 #ifdef USE_GUI
-    if (use_renderer)
+    if (rendering_manager != nullptr)
     {
         for (int i = 0; i < (num_biomes * biome_spacing) / 16 + 1; ++i)
         {
@@ -381,7 +380,7 @@ void UserControlledClient::Handle(ClientboundLoginFinishedPacket & msg)
     ManagersClient::Handle(msg);
 
 #if USE_GUI
-    if (use_renderer)
+    if (rendering_manager != nullptr)
     {
         rendering_manager->SetMouseCallback(std::bind(&UserControlledClient::MouseCallback, this, std::placeholders::_1, std::placeholders::_2));
         rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));

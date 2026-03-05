@@ -5,8 +5,7 @@
 
 namespace Botcraft
 {
-    BehaviourClient::BehaviourClient(const bool use_renderer_) :
-        ManagersClient(use_renderer_)
+    BehaviourClient::BehaviourClient() : ManagersClient()
     {
         blackboard.Subscribe(this);
     }

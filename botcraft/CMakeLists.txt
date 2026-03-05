@@ -234,6 +234,8 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Network/NetworkManager.hpp
     include/botcraft/Network/LastSeenMessagesTracker.hpp
 
+    include/botcraft/Renderer/Settings.hpp
+
     include/botcraft/Utilities/DemanglingUtilities.hpp
     include/botcraft/Utilities/EnumUtilities.hpp
     include/botcraft/Utilities/Logger.hpp
@@ -492,6 +494,8 @@ set(botcraft_SRC
     src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
+
+    src/Renderer/Settings.cpp
 
     src/Utilities/DemanglingUtilities.cpp
     src/Utilities/Logger.cpp

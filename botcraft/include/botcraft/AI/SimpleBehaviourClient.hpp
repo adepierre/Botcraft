@@ -10,7 +10,7 @@ namespace Botcraft
     class SimpleBehaviourClient : public TemplatedBehaviourClient<SimpleBehaviourClient>
     {
     public:
-        SimpleBehaviourClient(const bool use_renderer_);
+        SimpleBehaviourClient();
 
         virtual ~SimpleBehaviourClient();
     };

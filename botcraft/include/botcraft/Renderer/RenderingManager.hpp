@@ -1,13 +1,14 @@
 #pragma once
 
-#include <unordered_set>
-#include <mutex>
-#include <functional>
-#include <array>
-#include <memory>
-#include <thread>
-#include <condition_variable>
 #include <any>
+#include <array>
+#include <atomic>
+#include <condition_variable>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <unordered_set>
 
 #include "botcraft/Game/Vector3.hpp"
 
@@ -63,8 +64,8 @@ namespace Botcraft
             // Set headless_ to true to run without opening a window (rendering is still done)
             RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
                 std::shared_ptr<EntityManager> entity_manager_,
-                const unsigned int& window_width, const unsigned int& window_height,
-                const unsigned int section_height_ = 16, const bool headless = false);
+                const unsigned int section_height_ = 16
+            );
 
             static std::weak_ptr<RenderingManager> current_instance;
             static std::mutex instance_mutex;
@@ -83,9 +84,6 @@ namespace Botcraft
 
             // Set world renderer's camera position and orientation
             void SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_);
-
-            // Take a screenshot of the current frame and save it to path
-            void Screenshot(const std::string& path);
 
             void SetCurrentBehaviourTree(const BaseNode* root) const;
             void ResetBehaviourState() const;
@@ -146,10 +144,10 @@ namespace Botcraft
 
         private:
             // Initialize all the stuff
-            bool Init(const bool headless);
+            bool Init();
 
             // Main rendering loop
-            void Run(const bool headless);
+            void Run();
 
             // Callbacks called by glfw
             static void ResizeCallback(GLFWwindow* window, int width, int height);
@@ -165,7 +163,7 @@ namespace Botcraft
             std::shared_ptr<EntityManager> entity_manager;
             std::shared_ptr<LocalPlayer> local_player;
 
-            std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed;
+            std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)> is_key_pressed{};
 
             bool inventory_open;
             bool behaviour_open;
@@ -182,6 +180,8 @@ namespace Botcraft
             GLFWwindow *window;
             int current_window_width;
             int current_window_height;
+            bool current_window_headless;
+            bool current_vsync;
             bool has_proj_changed;
 
             // 0.5 is noon, 0 and 1 are midnight
@@ -193,10 +193,6 @@ namespace Botcraft
 
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;
-
-            std::mutex screenshot_mutex;
-            std::string screenshot_path;
-            bool take_screenshot;
 
             bool running;
 

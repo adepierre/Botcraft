@@ -13,6 +13,7 @@
 
 #include "botcraft/Network/NetworkManager.hpp"
 #if USE_GUI
+#include "botcraft/Renderer/Settings.hpp"
 #include "botcraft/Renderer/RenderingManager.hpp"
 #endif
 
@@ -20,7 +21,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    ManagersClient::ManagersClient(const bool use_renderer_)
+    ManagersClient::ManagersClient()
     {
         difficulty = Difficulty::None;
         is_hardcore = false;
@@ -34,13 +35,7 @@ namespace Botcraft
         physics_manager = nullptr;
 
 #if USE_GUI
-        use_renderer = use_renderer_;
         rendering_manager = nullptr;
-#else
-        if (use_renderer_)
-        {
-            LOG_WARNING("Your version of botcraft hasn't been compiled with GUI enabled, setting use_renderer_ to false");
-        }
 #endif
         auto_respawn = false;
 
@@ -191,19 +186,20 @@ namespace Botcraft
         network_manager->AddHandler(inventory_manager.get());
         network_manager->AddHandler(entity_manager.get());
 #if USE_GUI
-        if (use_renderer)
+        if (Renderer::Settings::IsEnabled())
         {
             rendering_manager = Renderer::RenderingManager::CreateRenderingManagerIfPossible(world, inventory_manager, entity_manager);
             if (rendering_manager == nullptr)
             {
-                use_renderer = false;
                 static bool first_time = true;
                 if (first_time)
                 {
                     first_time = false;
-                    LOG_WARNING("Having multiple clients with renderer enabled is not supported. Make sure to destroy the rendered client before creating another one");
+                    LOG_WARNING(
+                        "Having multiple clients with renderer enabled is not supported.\n" <<
+                        "Make sure to destroy the rendered client or disable Botcraft::Renderer::Options before creating another one"
+                    );
                 }
-                use_renderer = false;
             }
             else
             {

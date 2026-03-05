@@ -30,7 +30,7 @@ namespace Botcraft
     class ManagersClient : public ConnectionClient
     {
     public:
-        ManagersClient(const bool use_renderer_);
+        ManagersClient();
         virtual ~ManagersClient();
 
         virtual void Disconnect() override;
@@ -87,10 +87,6 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager;
         std::shared_ptr<PhysicsManager> physics_manager;
 #if USE_GUI
-        // If true, opens a window to display the view
-        // from the bot. Only one renderer can be active
-        // at the same time
-        bool use_renderer;
         std::shared_ptr<Renderer::RenderingManager> rendering_manager;
 #endif
 

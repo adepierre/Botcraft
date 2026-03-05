@@ -2,7 +2,7 @@
 
 namespace Botcraft
 {
-    SimpleBehaviourClient::SimpleBehaviourClient(const bool use_renderer_) : TemplatedBehaviourClient<SimpleBehaviourClient>(use_renderer_)
+    SimpleBehaviourClient::SimpleBehaviourClient() : TemplatedBehaviourClient<SimpleBehaviourClient>()
     {
 
     }
