@@ -67,14 +67,7 @@ public:
     std::unique_ptr<ClientType> GetBot(std::string& botname, int& id, Botcraft::Vector3<double>& pos, const Botcraft::GameType gamemode = Botcraft::GameType::Survival)
     {
         std::unique_ptr<ClientType> client;
-        if constexpr (std::is_same_v<ClientType, Botcraft::ConnectionClient>)
-        {
-            client = std::make_unique<ClientType>();
-        }
-        else
-        {
-            client = std::make_unique<ClientType>(false);
-        }
+        client = std::make_unique<ClientType>();
 
         botname = "botcraft_" + std::to_string(bot_index++);
         client->Connect("127.0.0.1:25565", botname);

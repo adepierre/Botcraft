@@ -9,7 +9,7 @@
 class RecipeListenerBot : public Botcraft::ManagersClient
 {
 public:
-    RecipeListenerBot(const bool use_renderer_) : Botcraft::ManagersClient(use_renderer_) {}
+    RecipeListenerBot() : Botcraft::ManagersClient() {}
     virtual ~RecipeListenerBot() {};
 
     std::atomic<bool> recipes_received;
