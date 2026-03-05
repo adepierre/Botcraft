@@ -22,7 +22,9 @@ namespace Botcraft
     {
         FaceDescriptor()
         {
+            orientation = Orientation::None;
             texture_names = { "" };
+            cullface_direction = Orientation::None;
             use_tintindexes = { false };
         }
         Renderer::FaceTransformation transformations;
