@@ -284,9 +284,12 @@ namespace Botcraft
                 // We need to update the tree with the new one
                 catch (const SwapTree&)
                 {
-                    tree = new_tree;
-                    new_tree = nullptr;
-                    swap_tree = false;
+		    {
+                        std::lock_guard<std::mutex> behaviour_guard(behaviour_mutex);
+                        tree = new_tree;
+                        new_tree = nullptr;
+                        swap_tree = false;
+		    }
                     OnTreeChanged(tree.get());
                     blackboard.Reset(new_blackboard);
                     continue;
