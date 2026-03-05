@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
                 .leaf("remove old entities from last time hit", CleanLastTimeHit)
             .end();
 
-        Botcraft::SimpleBehaviourClient client(true);
+        Botcraft::SimpleBehaviourClient client;
         client.SetAutoRespawn(true);
 
         LOG_INFO("Starting connection process");

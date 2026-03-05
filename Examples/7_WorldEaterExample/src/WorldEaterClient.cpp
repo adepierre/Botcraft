@@ -6,7 +6,7 @@
 
 using namespace Botcraft;
 
-WorldEaterClient::WorldEaterClient(const std::string& trigger_word, const bool use_renderer_) : SimpleBehaviourClient(use_renderer_)
+WorldEaterClient::WorldEaterClient(const std::string& trigger_word) : SimpleBehaviourClient()
 {
     word = trigger_word;
 }

@@ -10,7 +10,7 @@
 class ChatCommandClient : public Botcraft::TemplatedBehaviourClient<ChatCommandClient>
 {
 public:
-    ChatCommandClient(const bool use_renderer_);
+    ChatCommandClient();
     ~ChatCommandClient();
 
 protected:

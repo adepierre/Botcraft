@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
         for (int i = 0; i < args.num_bot; ++i)
         {
             names[i] = base_names[i] + (i < base_names.size() ? "" : ("_" + std::to_string(i / base_names.size())));
-            clients[i] = std::make_shared<SimpleBehaviourClient>(false);
+            clients[i] = std::make_shared<SimpleBehaviourClient>();
             clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->SetAutoRespawn(true);
             clients[i]->Connect(args.address, names[i]);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
                 {
                     clients[i]->Disconnect();
                     clients[i].reset();
-                    clients[i] = std::make_shared<SimpleBehaviourClient>(false);
+                    clients[i] = std::make_shared<SimpleBehaviourClient>();
                     clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
                     clients[i]->SetAutoRespawn(true);
                     clients[i]->Connect(args.address, names[i]);

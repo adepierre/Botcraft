@@ -3,6 +3,7 @@
 
 #include "botcraft/AI/SimpleBehaviourClient.hpp"
 #include "botcraft/AI/Tasks/AllTasks.hpp"
+#include "botcraft/Renderer/Settings.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/StdAnyUtilities.hpp"
 
@@ -68,7 +69,10 @@ int main(int argc, char* argv[])
 
         auto dispenser_farm_tree = CreateTree();
 
-        Botcraft::SimpleBehaviourClient client(true);
+        Botcraft::Renderer::Settings::Enable(true);
+        Botcraft::Renderer::Settings::SetMaxFramerate(10.0);
+        Botcraft::Renderer::Settings::SetResolution(400, 300);
+        Botcraft::SimpleBehaviourClient client;
         client.SetAutoRespawn(true);
 
         LOG_INFO("Starting connection process");

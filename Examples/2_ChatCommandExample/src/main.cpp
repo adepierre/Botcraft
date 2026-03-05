@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        ChatCommandClient client(true);
+        ChatCommandClient client;
         client.SetAutoRespawn(true);
 
         LOG_INFO("Starting connection process");

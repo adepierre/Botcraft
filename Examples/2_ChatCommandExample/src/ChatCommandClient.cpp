@@ -16,7 +16,7 @@
 using namespace Botcraft;
 using namespace ProtocolCraft;
 
-ChatCommandClient::ChatCommandClient(const bool use_renderer_) : TemplatedBehaviourClient<ChatCommandClient>(use_renderer_)
+ChatCommandClient::ChatCommandClient() : TemplatedBehaviourClient<ChatCommandClient>()
 {
     std::cout << "Known commands:\n";
     std::cout << "    Pathfinding to position:\n";

@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
             // Get a unique name for this bot
             names[i] = i < base_names.size() ? base_names[i] : (base_names[i % base_names.size()] + std::to_string(i / base_names.size()));
             // Create the bot client and connect to the server
-            clients[i] = std::make_shared<WorldEaterClient>(args.stopword, false);
+            clients[i] = std::make_shared<WorldEaterClient>(args.stopword);
             clients[i]->SetSharedWorld(shared_worlds[i % args.num_world]);
             clients[i]->SetAutoRespawn(true);
             clients[i]->Connect(args.address, names[i]);

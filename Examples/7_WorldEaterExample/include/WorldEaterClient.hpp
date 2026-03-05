@@ -10,7 +10,7 @@
 class WorldEaterClient : public Botcraft::SimpleBehaviourClient
 {
 public:
-    WorldEaterClient(const std::string& trigger_word, const bool use_renderer_);
+    WorldEaterClient(const std::string& trigger_word);
     ~WorldEaterClient();
 
 protected:
