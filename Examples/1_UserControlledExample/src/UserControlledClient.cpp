@@ -68,7 +68,11 @@ UserControlledClient::UserControlledClient(bool online, bool use_renderer_) : Ma
 
         // Launch the thread for the position
         entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));
+        entity_manager->GetLocalPlayer()->SetGameMode(GameType::Spectator);
+        entity_manager->GetLocalPlayer()->SetAbilitiesFlags(0x01 | 0x02 | 0x04);
         physics_manager->StartPhysics();
+        // Dummy login packet to init local player
+        ClientboundLoginPacket().Dispatch(physics_manager.get());
         LOG_INFO("Client created!");
 
         LOG_INFO("Creating world...");
