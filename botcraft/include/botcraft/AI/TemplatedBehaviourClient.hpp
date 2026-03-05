@@ -284,14 +284,14 @@ namespace Botcraft
                 // We need to update the tree with the new one
                 catch (const SwapTree&)
                 {
-		    {
+                    {
                         std::lock_guard<std::mutex> behaviour_guard(behaviour_mutex);
                         tree = new_tree;
                         new_tree = nullptr;
                         swap_tree = false;
-		    }
-                    OnTreeChanged(tree.get());
-                    blackboard.Reset(new_blackboard);
+                        OnTreeChanged(tree.get());
+                        blackboard.Reset(new_blackboard);
+                    }
                     continue;
                 }
                 // We need to stop the behaviour thread
