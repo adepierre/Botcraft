@@ -63,9 +63,6 @@ int main(int argc, char* argv[])
         // Enable renderer for the next client
         Botcraft::Renderer::Settings::Enable(true);
         UserControlledClient client(args.connect);
-        // Make sure we don't try to create another renderer in case we create additional clients
-        // Existing renderer will remain active until the client is destroyed
-        Botcraft::Renderer::Settings::Enable(false);
 
         if (args.connect)
         {
