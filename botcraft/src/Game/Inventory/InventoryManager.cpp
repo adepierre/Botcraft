@@ -67,6 +67,12 @@ namespace Botcraft
         return index_hotbar_selected;
     }
 
+    void InventoryManager::SetIndexHotbarSelected(const short index)
+    {
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        index_hotbar_selected = index;
+    }
+
     short InventoryManager::GetFirstOpenedWindowId() const
     {
         std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
@@ -226,12 +232,6 @@ namespace Botcraft
         pending_transactions[window_id] = std::map<short, InventoryTransaction >();
         transaction_states[window_id] = std::map<short, TransactionState>();
 #endif
-    }
-
-    void InventoryManager::SetHotbarSelected(const short index)
-    {
-        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
-        index_hotbar_selected = index;
     }
 
     Slot InventoryManager::GetCursor() const
@@ -585,7 +585,8 @@ namespace Botcraft
     void InventoryManager::Handle(ClientboundSetHeldSlotPacket& packet)
 #endif
     {
-        SetHotbarSelected(packet.GetSlot());
+        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+        index_hotbar_selected = packet.GetSlot();
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -646,8 +647,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void InventoryManager::Handle(ClientboundSetCursorItemPacket& packet)
     {
-        // Not sure about this one, I can't figure out when it's sent by the server
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, packet.GetContents());
+        SetCursor(packet.GetContents());
     }
 
     void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& packet)
