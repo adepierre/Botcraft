@@ -703,7 +703,7 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     // In 1.20.2+ it is sent during configuration instead
-    void ManagersClient::Handle(ClientboundPlayerAbilitiesPacket& packet)
+    void NetworkManager::Handle(ClientboundPlayerAbilitiesPacket& packet)
     {
         std::shared_ptr<ServerboundClientInformationPacket> settings_packet = std::make_shared<ServerboundClientInformationPacket>();
         settings_packet->SetLanguage("fr_FR");
@@ -713,7 +713,7 @@ namespace Botcraft
         settings_packet->SetModelCustomisation(0xFF);
         settings_packet->SetMainHand(1); // 1 is right handed, 0 is left handed
 
-        network_manager->Send(settings_packet);
+        Send(settings_packet);
     }
 #endif
 }
