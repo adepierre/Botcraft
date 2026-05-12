@@ -31,8 +31,8 @@ TEST_CASE("receive item")
 {
     std::unique_ptr<Botcraft::ManagersClient> bot = SetupTestBot();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 1));
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 1));
+    CHECK(GiveItem(bot, "minecraft:stick", 1));
+    CHECK(GiveItem(bot, "minecraft:stick", 1));
 
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     REQUIRE_FALSE(inventory_manager->GetHotbarSelected().IsEmptySlot());
@@ -42,8 +42,8 @@ TEST_CASE("swap slots")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 5));
-    CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", "Diamond Pickaxe", 1));
+    CHECK(GiveItem(bot, "minecraft:stick", 5));
+    CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", 1));
 
     bot->SyncAction(5000, Botcraft::SwapItemsInContainer, Botcraft::Window::PLAYER_INVENTORY_INDEX, Botcraft::Window::INVENTORY_HOTBAR_START, Botcraft::Window::INVENTORY_HOTBAR_START + 1);
 
@@ -57,7 +57,7 @@ TEST_CASE("drop items")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 5));
+    CHECK(GiveItem(bot, "minecraft:stick", 5));
 
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     const std::shared_ptr<Botcraft::EntityManager> entity_manager = bot->GetEntityManager();
@@ -124,7 +124,7 @@ TEST_CASE("put one item")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 5));
+    CHECK(GiveItem(bot, "minecraft:stick", 5));
 
     for (int i = 1; i < 5; ++i)
     {
@@ -142,8 +142,8 @@ TEST_CASE("set in hand")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 1));
-    CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", "Diamond Pickaxe", 1));
+    CHECK(GiveItem(bot, "minecraft:stick", 1));
+    CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", 1));
 
     SECTION("Name")
     {
@@ -167,7 +167,7 @@ TEST_CASE("place block")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
     const std::shared_ptr<Botcraft::World> world = bot->GetWorld();
 
-    CHECK(GiveItem(bot, "minecraft:diamond_block", "Block of Diamond", 1));
+    CHECK(GiveItem(bot, "minecraft:diamond_block", 1));
     Botcraft::Position pos;
 
     SECTION("no mid air")
@@ -195,7 +195,7 @@ TEST_CASE("eat")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
-    CHECK(GiveItem(bot, "minecraft:golden_apple", "Golden Apple", 1));
+    CHECK(GiveItem(bot, "minecraft:golden_apple", 1));
 
     bot->SyncAction(5000, Botcraft::Eat, "minecraft:golden_apple", true);
 
@@ -217,7 +217,7 @@ TEST_CASE("container")
     MinecraftServer::GetInstance().WaitLine(".*?: Modified block data of .*", 5000);
 #endif
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 5));
+    CHECK(GiveItem(bot, "minecraft:stick", 5));
 
     bot->SyncAction(5000, Botcraft::OpenContainer, chest);
     short container_id = inventory_manager->GetFirstOpenedWindowId();
@@ -308,7 +308,7 @@ TEST_CASE("trade")
             return false;
         }, 5000));
     REQUIRE(entity != nullptr);
-    REQUIRE(GiveItem(bot, "minecraft:stick", "Stick", 1));
+    REQUIRE(GiveItem(bot, "minecraft:stick", 1));
 
     bot->SyncAction(5000, Botcraft::InteractEntity, entity->GetEntityID(), Botcraft::Hand::Right, true);
     bot->SyncAction(5000, Botcraft::TradeName, "minecraft:stick", false, -1);
@@ -327,13 +327,13 @@ TEST_CASE("trade")
 }
 #endif
 
-TEST_CASE("craft")
+TEST_CASE("craft#diamond")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     const Botcraft::Position table = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
 
-    CHECK(GiveItem(bot, "minecraft:diamond_block", "Block of Diamond", 1));
+    CHECK(GiveItem(bot, "minecraft:diamond_block", 1));
 
     const std::array<std::string, 3> empty = { "", "", "" };
     const std::array<std::array<std::string, 3>, 3> decraft_recipe = {
@@ -384,7 +384,7 @@ TEST_CASE("sort inventory")
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
 
-    CHECK(GiveItem(bot, "minecraft:stick", "Stick", 5));
+    CHECK(GiveItem(bot, "minecraft:stick", 5));
 
     for (int i = 1; i < 5; ++i)
     {

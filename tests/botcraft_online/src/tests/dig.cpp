@@ -47,7 +47,7 @@ TEST_CASE("dig pickaxe")
     {
         SECTION("golden pick")
         {
-            GiveItem(bot, "golden_pickaxe", "Golden Pickaxe");
+            GiveItem(bot, "golden_pickaxe");
             TestDig(bot, chest, 3.75);
             TestDig(bot, stone, 0.2);
             TestDig(bot, iron, 2.1);
@@ -55,7 +55,7 @@ TEST_CASE("dig pickaxe")
 
         SECTION("diamond pick")
         {
-            GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
+            GiveItem(bot, "diamond_pickaxe");
             TestDig(bot, chest, 3.75);
             TestDig(bot, stone, 0.3);
             TestDig(bot, iron, 0.95);
@@ -85,7 +85,7 @@ TEST_CASE("dig pickaxe")
 
         SECTION("golden pick")
         {
-            GiveItem(bot, "golden_pickaxe", "Golden Pickaxe");
+            GiveItem(bot, "golden_pickaxe");
             TestDig(bot, chest, 2.7);
             TestDig(bot, stone, 0.15);
             TestDig(bot, iron, 1.5);
@@ -93,7 +93,7 @@ TEST_CASE("dig pickaxe")
 
         SECTION("diamond pick")
         {
-            GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
+            GiveItem(bot, "diamond_pickaxe");
             TestDig(bot, chest, 2.7);
             TestDig(bot, stone, 0.25);
             TestDig(bot, iron, 0.7);
@@ -112,7 +112,7 @@ TEST_CASE("dig underwater")
 
     SECTION("aqua affinity")
     {
-        GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
+        GiveItem(bot, "diamond_pickaxe");
         SendCommandSetItem(botname, "minecraft:diamond_helmet", Botcraft::EquipmentSlot::Helmet, Botcraft::Enchantment::AquaAffinity);
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
         // Wait for the attribute to be updated
@@ -155,7 +155,7 @@ TEST_CASE("dig underwater")
 
         SECTION("golden pick")
         {
-            GiveItem(bot, "golden_pickaxe", "Golden Pickaxe");
+            GiveItem(bot, "golden_pickaxe");
             TestDig(bot, dirt, 2.7);
             TestDig(bot, stone, 0.7);
             TestDig(bot, iron, 7.45);
@@ -163,7 +163,7 @@ TEST_CASE("dig underwater")
 
         SECTION("diamond pick")
         {
-            GiveItem(bot, "diamond_pickaxe", "Diamond Pickaxe");
+            GiveItem(bot, "diamond_pickaxe");
             TestDig(bot, dirt, 2.7);
             TestDig(bot, stone, 1.05);
             TestDig(bot, iron, 3.35);
@@ -180,7 +180,7 @@ TEST_CASE("dig shears")
 
     SECTION("shears")
     {
-        GiveItem(bot, "shears", "Shears");
+        GiveItem(bot, "shears");
         TestDig(bot, dirt, 0.75);
         TestDig(bot, leaves, 0.0);
         TestDig(bot, cobweb, 0.4);
@@ -188,7 +188,7 @@ TEST_CASE("dig shears")
 
     SECTION("sword")
     {
-        GiveItem(bot, "iron_sword", "Iron Sword");
+        GiveItem(bot, "iron_sword");
         TestDig(bot, dirt, 0.75);
         TestDig(bot, leaves, 0.2);
         TestDig(bot, cobweb, 0.4);

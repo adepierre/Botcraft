@@ -70,7 +70,7 @@ std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset
 #include <botcraft/Game/Inventory/Window.hpp>
 
 template<class ClientType = Botcraft::SimpleBehaviourClient>
-bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, const std::string& item_pretty_name, const int quantity = 1)
+bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, const int quantity = 1)
 {
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     const Botcraft::Item* item = Botcraft::AssetsManager::getInstance().GetItem(Botcraft::AssetsManager::getInstance().GetItemID(item_name));
@@ -104,11 +104,10 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
 
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
     MinecraftServer::GetInstance().SendLine("give " + botname + " " + item_name + " " + std::to_string(quantity));
-    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[" + item_pretty_name + "\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 5000);
-    return Botcraft::Utilities::WaitForCondition([&]()
-        {
-            return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(receiving_slot).IsEmptySlot();
-        }, 5000);
+    MinecraftServer::GetInstance().WaitLine(".*?: (?:Given|Gave " + std::to_string(quantity) + ") \\[.*\\](?: \\* " + std::to_string(quantity) + ")? to " + botname + ".*", 5000);
+    return Botcraft::Utilities::WaitForCondition([&]() {
+        return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(receiving_slot).IsEmptySlot();
+    }, 5000);
 }
 
 void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const std::map<Botcraft::Enchantment, int>& enchantments = {});
