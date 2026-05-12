@@ -271,6 +271,12 @@ namespace Botcraft
             return ToolMaterial::Netherite;
         }
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        else if (s == "copper")
+        {
+            return ToolMaterial::Copper;
+        }
+#endif
         return ToolMaterial::None;
     }
 
