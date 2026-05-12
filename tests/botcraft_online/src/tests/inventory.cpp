@@ -379,6 +379,53 @@ TEST_CASE("craft#diamond")
 #endif
 }
 
+TEST_CASE("craft#wooden_pickaxe")
+{
+    std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
+    const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
+    const Botcraft::Position table = TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 0, 1);
+
+    CHECK(GiveItem(bot, "minecraft:oak_planks", 3));
+    CHECK(GiveItem(bot, "minecraft:stick", 2));
+
+    const Botcraft::AssetsManager& assets_manager = Botcraft::AssetsManager::getInstance();
+
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+    const Botcraft::ItemId empty_id = { -1, 0 };
+#else
+    const Botcraft::ItemId empty_id = -1;
+#endif
+
+    std::array<std::array<Botcraft::ItemId, 3>, 3> decraft_recipe;
+    decraft_recipe[0] = { assets_manager.GetItemID("minecraft:oak_planks"), assets_manager.GetItemID("minecraft:oak_planks"), assets_manager.GetItemID("minecraft:oak_planks") };
+    decraft_recipe[1] = { empty_id, assets_manager.GetItemID("minecraft:stick"), assets_manager.GetItemID("minecraft:air") };
+    decraft_recipe[2] = { assets_manager.GetItemID("minecraft:air"), assets_manager.GetItemID("minecraft:stick"), empty_id };
+
+    bot->SyncAction(5000, Botcraft::OpenContainer, table);
+    short container_id = inventory_manager->GetFirstOpenedWindowId();
+    std::shared_ptr<Botcraft::Window> container = inventory_manager->GetWindow(container_id);
+
+    REQUIRE(container_id != -1);
+
+    bot->SyncAction(5000, Botcraft::Craft, decraft_recipe, true);
+    bot->SyncAction(5000, Botcraft::CloseContainer, -1);
+    // If <1.17 we need to wait for the server to send the
+    // updated player inventory content after closing the container
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+    REQUIRE(Botcraft::Utilities::WaitForCondition([&]() {
+        if (GetItemName(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START)) == "minecraft:wooden_pickaxe" &&
+            inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).GetItemCount() == 1)
+        {
+            return true;
+        }
+        return false;
+    }, 5000));
+#else
+    REQUIRE(GetItemName(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START)) == "minecraft:wooden_pickaxe");
+    REQUIRE(inventory_manager->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).GetItemCount() == 1);
+#endif
+}
+
 TEST_CASE("sort inventory")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
