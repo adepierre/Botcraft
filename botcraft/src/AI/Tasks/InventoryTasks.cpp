@@ -1141,6 +1141,7 @@ namespace Botcraft
     Status CraftImpl(BehaviourClient& client, const std::array<std::array<ItemId, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+        const ItemId air_id = AssetsManager::getInstance().GetItemID("minecraft:air");
 
         int min_x = 3;
         int max_x = -1;
@@ -1161,10 +1162,11 @@ namespace Botcraft
             {
                 for (int x = 0; x < 3; ++x)
                 {
+                    // Ignore undefined or air item ids
 #if PROTOCOL_VERSION < 350 /* < 1.13 */
-                    if (inputs[y][x].first != -1)
+                    if (inputs[y][x].first != -1 && inputs[y][x] != air_id)
 #else
-                    if (inputs[y][x] != -1)
+                    if (inputs[y][x] != -1 && inputs[y][x] != air_id)
 #endif
                     {
                         min_x = std::min(x, min_x);
@@ -1208,18 +1210,28 @@ namespace Botcraft
         }
 
         Slot output_slot_before;
+        // TODO: do we need to also empty the air slots? We only place items one by one so it shouldn't happen
+        // when using CraftImpl, but some users may do it manually.
         // For each input slot
         for (int y = min_y; y < max_y + 1; ++y)
         {
             for (int x = min_x; x < max_x + 1; ++x)
             {
-                // Save the output slot just before the last input is set
-                if (y == min_y && x == min_x)
+                const int destination_slot = use_inventory_craft ? (1 + x - min_x + (y - min_y) * 2) : (1 + x + 3 * y);
+
+                // Skip undefined or air item ids
+#if PROTOCOL_VERSION < 350 /* < 1.13 */
+                if (inputs[y][x].first == -1 || inputs[y][x] == air_id)
+#else
+                if (inputs[y][x] == -1 || inputs[y][x] == air_id)
+#endif
                 {
-                    output_slot_before = crafting_container->GetSlot(0);
+                    continue;
                 }
 
-                const int destination_slot = use_inventory_craft ? (1 + x - min_x + (y - min_y) * 2) : (1 + x + 3 * y);
+                // Save the output slot before adding the input
+                // so we know when the server sends the output update
+                output_slot_before = crafting_container->GetSlot(0);
 
                 int source_slot = -1;
                 int source_quantity = -1;
@@ -1337,11 +1349,7 @@ namespace Botcraft
         return Status::Success;
     }
 
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-    Status Craft(BehaviourClient& client, const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs, const bool allow_inventory_craft)
-#else
-    Status Craft(BehaviourClient& client, const std::array<std::array<int, 3>, 3>& inputs, const bool allow_inventory_craft)
-#endif
+    Status Craft(BehaviourClient& client, const std::array<std::array<ItemId, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         constexpr std::array variable_names = {
                "Craft.inputs",
@@ -1350,11 +1358,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-        blackboard.Set<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0], inputs);
-#else
-        blackboard.Set<std::array<std::array<int, 3>, 3>>(variable_names[0], inputs);
-#endif
+        blackboard.Set<std::array<std::array<ItemId, 3>, 3>>(variable_names[0], inputs);
         blackboard.Set<bool>(variable_names[1], allow_inventory_craft);
 
         return CraftImpl(client, inputs, allow_inventory_craft);
@@ -1370,11 +1374,7 @@ namespace Botcraft
         Blackboard& blackboard = client.GetBlackboard();
 
         // Mandatory
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-        const std::array<std::array<std::pair<int, unsigned char>, 3>, 3>& inputs = blackboard.Get<std::array<std::array<std::pair<int, unsigned char>, 3>, 3>>(variable_names[0]);
-#else
-        const std::array<std::array<int, 3>, 3>& inputs = blackboard.Get<std::array<std::array<int, 3>, 3>>(variable_names[0]);
-#endif
+        const std::array<std::array<ItemId, 3>, 3>& inputs = blackboard.Get<std::array<std::array<ItemId, 3>, 3>>(variable_names[0]);
 
         // Optional
         const bool allow_inventory_craft = blackboard.Get<bool>(variable_names[1], true);
@@ -1386,11 +1386,7 @@ namespace Botcraft
     Status CraftNamedImpl(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         const AssetsManager& assets_manager = AssetsManager::getInstance();
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-        std::array<std::array<std::pair<int, unsigned char>, 3>, 3> inputs_ids;
-#else
-        std::array<std::array<int, 3>, 3> inputs_ids;
-#endif
+        std::array<std::array<ItemId, 3>, 3> inputs_ids;
         for (size_t i = 0; i < 3; ++i)
         {
             for (size_t j = 0; j < 3; ++j)
@@ -1402,7 +1398,7 @@ namespace Botcraft
 #endif
             }
         }
-        return Craft(client, inputs_ids, allow_inventory_craft);
+        return CraftImpl(client, inputs_ids, allow_inventory_craft);
     }
 
     Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)

@@ -195,7 +195,7 @@ namespace Botcraft
 
     /// @brief Put item in a crafting container and click on the output, storing it in the inventory.
     /// @param client The client performing the action
-    /// @param inputs Input items IDs in a 3x3 grid, inputs[0][1] refers to first line, second column
+    /// @param inputs Input items IDs in a 3x3 grid, inputs[0][1] refers to first line, second column. Use id of minecraft:air or -1 for empty slot
     /// @param allow_inventory_craft If true, the client will use the inventory small 2x2 grid to craft if possible
     /// @return Success if item is crafted, Failure otherwise
     Status Craft(BehaviourClient& client, const std::array<std::array<ItemId, 3>, 3>& inputs, const bool allow_inventory_craft = true);
@@ -209,7 +209,7 @@ namespace Botcraft
 
     /// @brief Put item in a crafting container and click on the output, storing it in the inventory.
     /// @param client The client performing the action
-    /// @param inputs Input items names in a 3x3 grid, inputs[0][1] refers to first line, second column
+    /// @param inputs Input items names in a 3x3 grid, inputs[0][1] refers to first line, second column. Use "" or minecraft:air for empty slot
     /// @param allow_inventory_craft If true, the client will use the inventory small 2x2 grid to craft if possible
     /// @return Success if item is crafted, Failure otherwise
     Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft = true);
