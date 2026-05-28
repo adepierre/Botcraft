@@ -144,8 +144,9 @@ namespace Botcraft
         /// RunBehaviourUntilClosed when using this sync version.
         /// @param timeout_ms Max running time of the function in ms, ignored if 0
         /// @param ...args Parameters passed to create tree leaf
+        /// @return Return value of the action (success/failure)
         template<typename... Args>
-        void SyncAction(const int timeout_ms, Args&&... args)
+        Status SyncAction(const int timeout_ms, Args&&... args)
         {
             // Make sure the behaviour thread is running
             if (!behaviour_thread.joinable())
@@ -153,10 +154,19 @@ namespace Botcraft
                 StartBehaviour();
             }
 
+            Status return_value = Status::Failure;
+
             // Set the tree
             SetBehaviourTree(Builder<TDerived>()
                 .sequence()
-                    .succeeder().leaf(std::forward<Args>(args)...)
+                    .selector()
+                        .sequence()
+                            .leaf(std::forward<Args>(args)...)
+                            // We know return_value will be a valid ref at least as long as the tree exists
+                            .leaf([&return_value](TDerived&) { return_value = Status::Success; return Status::Success; })
+                        .end()
+                        .leaf([&return_value](TDerived&) { return_value = Status::Failure; return Status::Success; })
+                    .end()
                     .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
                 .end());
 
@@ -164,13 +174,14 @@ namespace Botcraft
             BehaviourStep();
 
             // Wait for the tree to be set as active one
-            if (!Utilities::WaitForCondition([&]()
-                {
+            if (!Utilities::WaitForCondition([&]() {
                     return tree != nullptr;
-                }, 500))
+                }, 500)
+            )
             {
                 LOG_WARNING("Timeout waiting for tree swapping in SyncAction");
-                return;
+                // It's not realy a failure as we couldn't swap the tree but we need to return something
+                return Status::Failure;
             }
 
             // Run until tree is ticked once and reset to nullptr
@@ -197,6 +208,8 @@ namespace Botcraft
 
                 Utilities::SleepUntil(iter_end);
             }
+
+            return return_value;
         }
 
 

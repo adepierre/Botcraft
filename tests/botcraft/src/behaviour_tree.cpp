@@ -2,6 +2,7 @@
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <botcraft/AI/BehaviourTree.hpp>
+#include <botcraft/AI/SimpleBehaviourClient.hpp>
 
 using namespace Botcraft;
 
@@ -652,4 +653,26 @@ TEST_CASE("NodeCallbacks")
     CHECK(context.num_success_tick == 6);
     CHECK(context.num_failure_tick == 3);
     CHECK(context.num_child_tick == 8);
+}
+
+TEST_CASE("SyncAction")
+{
+    class OfflineBot : public SimpleBehaviourClient
+    {
+    public:
+        OfflineBot()
+        {
+            network_manager = std::make_shared<NetworkManager>(ProtocolCraft::ConnectionState::Play);
+        }
+    };
+    OfflineBot bot;
+
+    SECTION("success")
+    {
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Botcraft::Status::Success; }) == Botcraft::Status::Success);
+    }
+    SECTION("failure")
+    {
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Botcraft::Status::Failure; }) == Botcraft::Status::Failure);
+    }
 }
