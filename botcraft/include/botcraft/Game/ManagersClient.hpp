@@ -7,6 +7,7 @@
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/ConnectionClient.hpp"
+#include "botcraft/Utilities/ScopeLockedWrapper.hpp"
 
 namespace Botcraft
 {
@@ -56,6 +57,11 @@ namespace Botcraft
         /// @return The name, or empty string if not present
         std::string GetPlayerName(const ProtocolCraft::UUID& uuid) const;
 
+        /// @brief Get the list of connected player (tab list)
+        /// @return Basically an object you can use as a std::map<ProtocolCraft::UUID, std::string>*.
+        /// **ALL TAB LIST UPDATE WILL BE BLOCKED WHILE THIS OBJECT IS ALIVE**, make sure it goes out of scope
+        /// as soon as you don't need it.
+        Utilities::ScopeLockedWrapper<const std::map<ProtocolCraft::UUID, std::string>, std::shared_mutex, std::shared_lock> GetOnlinePlayers() const;
 
         /// @brief Get the current tick
         /// @return An int representing the time of day

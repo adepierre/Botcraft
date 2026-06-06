@@ -87,6 +87,11 @@ namespace Botcraft
         }
     }
 
+    Utilities::ScopeLockedWrapper<const std::map<ProtocolCraft::UUID, std::string>, std::shared_mutex, std::shared_lock> ManagersClient::GetOnlinePlayers() const
+    {
+        return Utilities::ScopeLockedWrapper<const std::map<ProtocolCraft::UUID, std::string>, std::shared_mutex, std::shared_lock>(player_names, player_names_mutex);
+    }
+
     int ManagersClient::GetDayTime() const
     {
         return day_time;
