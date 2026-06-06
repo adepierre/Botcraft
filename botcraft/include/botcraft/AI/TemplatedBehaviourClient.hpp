@@ -154,6 +154,24 @@ namespace Botcraft
                 StartBehaviour();
             }
 
+            // Make sure there is no active tree
+            if (tree != nullptr)
+            {
+                SetBehaviourTree(nullptr);
+                BehaviourStep();
+
+                // Wait for the tree to be set as active one
+                if (!Utilities::WaitForCondition([&]() {
+                    return tree == nullptr;
+                    }, 500)
+                )
+                {
+                    LOG_WARNING("Timeout waiting for tree swapping in SyncAction");
+                    // It's not realy a failure as we couldn't swap the tree but we need to return something
+                    return Status::Failure;
+                }
+            }
+
             Status return_value = Status::Failure;
 
             // Set the tree
