@@ -238,7 +238,7 @@ namespace Botcraft
         /// timeout and will run until the tree ends.
         /// @param ...args Parameters passed to create tree leaf
         template<typename... Args>
-        void SyncAction(Args&&... args)
+        Status SyncAction(Args&&... args)
         {
             return SyncAction(0, std::forward<Args>(args)...);
         }
