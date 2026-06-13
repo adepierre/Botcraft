@@ -105,9 +105,21 @@ namespace Botcraft
 #endif
         RSA_free(rsa);
 
+        if (encryption_context != nullptr)
+        {
+            EVP_CIPHER_CTX_free(encryption_context);
+            encryption_context = nullptr;
+        }
+
         encryption_context = EVP_CIPHER_CTX_new();
         EVP_EncryptInit_ex(encryption_context, EVP_aes_128_cfb8(), nullptr, raw_shared_secret.data(), raw_shared_secret.data());
 
+        if (decryption_context != nullptr)
+        {
+            EVP_CIPHER_CTX_free(decryption_context);
+            decryption_context = nullptr;
+        }
+        
         decryption_context = EVP_CIPHER_CTX_new();
         EVP_DecryptInit_ex(decryption_context, EVP_aes_128_cfb8(), nullptr, raw_shared_secret.data(), raw_shared_secret.data());
 
