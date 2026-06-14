@@ -14,8 +14,9 @@ namespace Botcraft
     /// @param send_swing If true, will send swing packets to show other players digging in progress
     /// @param face Digging direction
     /// @param allow_pathfinding If true, the bot will try to pathfind toward the block if it's too far. If false the task will return Failure instead in this case.
+    /// @param allow_digging_through_blocks If false, the task will return Failure if the target block is not the first block hit by a raycast from the player eyes to the target block center.
     /// @return Success if the block is broken, Failure otherwise
-    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing = false, const PlayerDiggingFace face = PlayerDiggingFace::Up, const bool allow_pathfinding = true);
+    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing = false, const PlayerDiggingFace face = PlayerDiggingFace::Up, const bool allow_pathfinding = true, const bool allow_digging_through_blocks = true);
 
     /// @brief Same thing as Dig, but reads its parameters from the blackboard
     /// @param c The client performing the action

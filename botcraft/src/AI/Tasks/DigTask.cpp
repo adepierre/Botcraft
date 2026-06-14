@@ -19,7 +19,7 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding)
+    Status DigImpl(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding, const bool allow_digging_through_blocks)
     {
         std::shared_ptr<LocalPlayer> local_player = c.GetLocalPlayer();
 
@@ -189,10 +189,35 @@ namespace Botcraft
             LOG_INFO("Starting an expected " << expected_mining_time_s << " seconds long mining at " << pos << ".A little help?");
         }
 
-        // TODO check line of sight
+        const Vector3<double> target = Vector3<double>(0.5, 0.5, 0.5) + pos;
+
         // Look at block
+        local_player->LookAt(target, true);
+
+        if (!allow_digging_through_blocks)
+        {
+            const Vector3<double> delta = target - eye_pos;
+            const float max_radius = static_cast<float>(std::sqrt(delta.SqrNorm()));
+
+            if (max_radius <= std::numeric_limits<float>::epsilon())
+            {
+                return Status::Failure;
+            }
+
+            const Vector3<double> direction = delta / max_radius;
+
+            Position hit_pos;
+            Position hit_normal;
+            const Blockstate* raycast_hit = world->Raycast(eye_pos, direction, max_radius, hit_pos, hit_normal);
+
+            if (raycast_hit == nullptr || hit_pos != pos)
+            {
+                LOG_INFO("Line of sight to the block is blocked.");
+                return Status::Failure;
+            }
+        }
+
         // TODO look at model AABB center instead of full block center
-        local_player->LookAt(Vector3<double>(0.5, 0.5, 0.5) + pos, true);
 
         std::shared_ptr<NetworkManager> network_manager = c.GetNetworkManager();
         std::shared_ptr<ServerboundPlayerActionPacket> packet_digging = std::make_shared<ServerboundPlayerActionPacket>();
@@ -263,13 +288,14 @@ namespace Botcraft
         return Status::Success;
     }
 
-    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding)
+    Status Dig(BehaviourClient& c, const Position& pos, const bool send_swing, const PlayerDiggingFace face, const bool allow_pathfinding, const bool allow_digging_through_blocks)
     {
         constexpr std::array variable_names = {
             "Dig.pos",
             "Dig.send_swing",
             "Dig.face",
-            "Dig.allow_pathfinding"
+            "Dig.allow_pathfinding",
+            "Dig.allow_digging_through_blocks"
         };
 
         Blackboard& blackboard = c.GetBlackboard();
@@ -278,8 +304,9 @@ namespace Botcraft
         blackboard.Set<bool>(variable_names[1], send_swing);
         blackboard.Set<PlayerDiggingFace>(variable_names[2], face);
         blackboard.Set<bool>(variable_names[3], allow_pathfinding);
+        blackboard.Set<bool>(variable_names[4], allow_digging_through_blocks);
 
-        return DigImpl(c, pos, send_swing, face, allow_pathfinding);
+        return DigImpl(c, pos, send_swing, face, allow_pathfinding, allow_digging_through_blocks);
     }
 
     Status DigBlackboard(BehaviourClient& c)
@@ -288,7 +315,8 @@ namespace Botcraft
             "Dig.pos",
             "Dig.send_swing",
             "Dig.face",
-            "Dig.allow_pathfinding"
+            "Dig.allow_pathfinding",
+            "Dig.allow_digging_through_blocks"
         };
 
         Blackboard& blackboard = c.GetBlackboard();
@@ -300,7 +328,8 @@ namespace Botcraft
         const bool send_swing = blackboard.Get<bool>(variable_names[1], false);
         const PlayerDiggingFace face = blackboard.Get<PlayerDiggingFace>(variable_names[2], PlayerDiggingFace::Up);
         const bool allow_pathfinding = blackboard.Get<bool>(variable_names[3], true);
+        const bool allow_digging_through_blocks = blackboard.Get<bool>(variable_names[4], true);
 
-        return DigImpl(c, pos, send_swing, face, allow_pathfinding);
+        return DigImpl(c, pos, send_swing, face, allow_pathfinding, allow_digging_through_blocks);
     }
 }
