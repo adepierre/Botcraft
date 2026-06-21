@@ -74,6 +74,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
         attributes.insert({ EntityAttribute::Type::EntityInteractionRange, EntityAttribute(EntityAttribute::Type::EntityInteractionRange, 3.0) });
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        attributes.insert({ EntityAttribute::Type::Bounciness, EntityAttribute(EntityAttribute::Type::Bounciness, 0.0) });
+        attributes.insert({ EntityAttribute::Type::AirDragModifier, EntityAttribute(EntityAttribute::Type::AirDragModifier, 1.0) });
+        attributes.insert({ EntityAttribute::Type::FrictionModifier, EntityAttribute(EntityAttribute::Type::FrictionModifier, 1.0) });
+        attributes.insert({ EntityAttribute::Type::NameTagDistance, EntityAttribute(EntityAttribute::Type::NameTagDistance, 64.0) });
+        attributes.insert({ EntityAttribute::Type::BelowNameDistance, EntityAttribute(EntityAttribute::Type::BelowNameDistance, 10.0) });
+#endif
     }
 
     LivingEntity::~LivingEntity()
@@ -139,6 +146,15 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
         output["attributes"]["entity_interaction_range"] = GetAttributeEntityInteractionRangeValue();
+        output["attributes"]["entity_interaction_range"] = GetAttributeEntityInteractionRangeValue();
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        output["attributes"]["bounciness"] = GetAttributeBouncinessValue();
+        output["attributes"]["air_drag_modifier"] = GetAttributeAirDragModifierValue();
+        output["attributes"]["friction_modifier"] = GetAttributeFrictionModifierValue();
+        output["attributes"]["name_tag_distance"] = GetAttributeNameTagDistanceValue();
+        output["attributes"]["below_name_distance"] = GetAttributeBelowNameDistanceValue();
+
 #endif
 
         return output;
@@ -470,6 +486,38 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return attributes.at(EntityAttribute::Type::EntityInteractionRange).GetValue();
+    }
+#endif
+
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+    double LivingEntity::GetAttributeBouncinessValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::Bounciness).GetValue();
+    }
+
+    double LivingEntity::GetAttributeAirDragModifierValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::AirDragModifier).GetValue();
+    }
+
+    double LivingEntity::GetAttributeFrictionModifierValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::FrictionModifier).GetValue();
+    }
+
+    double LivingEntity::GetAttributeNameTagDistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::NameTagDistance).GetValue();
+    }
+
+    double LivingEntity::GetAttributeBelowNameDistanceValue() const
+    {
+        std::shared_lock<std::shared_mutex> lock(entity_mutex);
+        return attributes.at(EntityAttribute::Type::BelowNameDistance).GetValue();
     }
 #endif
 

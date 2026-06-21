@@ -143,7 +143,7 @@
 #include "botcraft/Game/Entities/entities/LightningBoltEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/equine/LlamaEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/cubemob/MagmaCubeEntity.hpp"
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/MarkerEntity.hpp"
 #endif
@@ -202,7 +202,7 @@
 #include "botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/skeleton/SkeletonEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/equine/SkeletonHorseEntity.hpp"
-#include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/cubemob/SlimeEntity.hpp"
 #include "botcraft/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.hpp"
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp"
@@ -270,6 +270,9 @@
 #include "botcraft/Game/Entities/entities/animal/nautilus/NautilusEntity.hpp"
 #include "botcraft/Game/Entities/entities/animal/nautilus/ZombieNautilusEntity.hpp"
 #include "botcraft/Game/Entities/entities/monster/skeleton/ParchedEntity.hpp"
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+#include "botcraft/Game/Entities/entities/monster/cubemob/SulfurCubeEntity.hpp"
 #endif
 
 #include <mutex>
@@ -1555,6 +1558,13 @@ namespace Botcraft
     }
 #endif
 
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+    bool Entity::IsAbstractCubeMob() const
+    {
+        return false;
+    }
+#endif
+
 
     std::shared_ptr<Entity> Entity::CreateEntity(const EntityType type)
     {
@@ -1897,6 +1907,10 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         case EntityType::Strider:
             return std::make_shared<StriderEntity>();
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        case EntityType::SulfurCube:
+            return std::make_shared<SulfurCubeEntity>();
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Tadpole:

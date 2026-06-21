@@ -21,6 +21,9 @@ namespace Botcraft
         enum class Type : int
         {
             Unknown = -1,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            AirDragModifier,
+#endif
             Armor,
             ArmorToughness,
             AttackDamage,
@@ -28,9 +31,15 @@ namespace Botcraft
             AttackKnockback,
 #endif
             AttackSpeed,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            BelowNameDistance,
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             PlayerBlockBreakSpeed,
             PlayerBlockInteractionRange,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            Bounciness,
+#endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             BurningTime,
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
@@ -43,6 +52,9 @@ namespace Botcraft
 #endif
             FlyingSpeed,
             FollowRange,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            FrictionModifier,
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
             Gravity,
             JumpStrength,
@@ -60,6 +72,9 @@ namespace Botcraft
             MovementEfficiency,
 #endif
             MovementSpeed,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            NameTagDistance,
+#endif
 #if PROTOCOL_VERSION > 766 /* > 1.20.6 */
             OxygenBonus,
 #endif

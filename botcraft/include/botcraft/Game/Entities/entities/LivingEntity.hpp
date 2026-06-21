@@ -109,6 +109,13 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
         double GetAttributeEntityInteractionRangeValue() const;
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        double GetAttributeBouncinessValue() const;
+        double GetAttributeAirDragModifierValue() const;
+        double GetAttributeFrictionModifierValue() const;
+        double GetAttributeNameTagDistanceValue() const;
+        double GetAttributeBelowNameDistanceValue() const;
+#endif
 
 #if PROTOCOL_VERSION < 767 /* < 1.21 */
         // 87f46a96-686f-4796-b035-22e16ee9e038

@@ -151,12 +151,20 @@ namespace Botcraft
 
     double BeeEntity::GetWidthImpl() const
     {
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
         return 0.7;
+#else
+        return 0.55;
+#endif
     }
 
     double BeeEntity::GetHeightImpl() const
     {
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
         return 0.6;
+#else
+        return 0.5;
+#endif
     }
 
 }

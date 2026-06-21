@@ -72,7 +72,7 @@ namespace Botcraft
     bool BoggedEntity::GetDataSheared() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_sheared"));
+        return std::any_cast<bool>(metadata.at("data_sheared"));
     }
 
 

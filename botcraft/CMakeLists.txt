@@ -105,7 +105,7 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/LightningBoltEntity.hpp
     include/botcraft/Game/Entities/entities/animal/equine/LlamaEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/LlamaSpitEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/MagmaCubeEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/cubemob/MagmaCubeEntity.hpp
     include/botcraft/Game/Entities/entities/MarkerEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartEntity.hpp
     include/botcraft/Game/Entities/entities/vehicle/minecart/MinecartChestEntity.hpp
@@ -138,7 +138,9 @@ set(botcraft_PUBLIC_HDR
     include/botcraft/Game/Entities/entities/monster/SilverfishEntity.hpp
     include/botcraft/Game/Entities/entities/monster/skeleton/SkeletonEntity.hpp
     include/botcraft/Game/Entities/entities/animal/equine/SkeletonHorseEntity.hpp
-    include/botcraft/Game/Entities/entities/monster/SlimeEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/cubemob/AbstractCubeMobEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/cubemob/SlimeEntity.hpp
+    include/botcraft/Game/Entities/entities/monster/cubemob/SulfurCubeEntity.hpp
     include/botcraft/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.hpp
     include/botcraft/Game/Entities/entities/animal/sniffer/SnifferEntity.hpp
     include/botcraft/Game/Entities/entities/animal/golem/SnowGolemEntity.hpp
@@ -365,7 +367,7 @@ set(botcraft_SRC
     src/Game/Entities/entities/LightningBoltEntity.cpp
     src/Game/Entities/entities/animal/equine/LlamaEntity.cpp
     src/Game/Entities/entities/projectile/LlamaSpitEntity.cpp
-    src/Game/Entities/entities/monster/MagmaCubeEntity.cpp
+    src/Game/Entities/entities/monster/cubemob/MagmaCubeEntity.cpp
     src/Game/Entities/entities/MarkerEntity.cpp
     src/Game/Entities/entities/vehicle/minecart/MinecartEntity.cpp
     src/Game/Entities/entities/vehicle/minecart/MinecartChestEntity.cpp
@@ -399,7 +401,9 @@ set(botcraft_SRC
     src/Game/Entities/entities/monster/SilverfishEntity.cpp
     src/Game/Entities/entities/monster/skeleton/SkeletonEntity.cpp
     src/Game/Entities/entities/animal/equine/SkeletonHorseEntity.cpp
-    src/Game/Entities/entities/monster/SlimeEntity.cpp
+    src/Game/Entities/entities/monster/cubemob/AbstractCubeMobEntity.cpp
+    src/Game/Entities/entities/monster/cubemob/SlimeEntity.cpp
+    src/Game/Entities/entities/monster/cubemob/SulfurCubeEntity.cpp
     src/Game/Entities/entities/projectile/hurtingprojectile/SmallFireballEntity.cpp
     src/Game/Entities/entities/animal/sniffer/SnifferEntity.cpp
     src/Game/Entities/entities/animal/golem/SnowGolemEntity.cpp

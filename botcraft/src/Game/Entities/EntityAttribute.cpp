@@ -307,7 +307,11 @@ namespace Botcraft
             current_value = std::clamp(current_value, 0.0, 2048.0);
             break;
         case Type::KnockbackResistance:
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
             current_value = std::clamp(current_value, 0.0, 1.0);
+#else
+            current_value = std::clamp(current_value, -2.0, 1.0);
+#endif
             break;
         case Type::MovementSpeed:
             current_value = std::clamp(current_value, 0.0, 1024.0);
@@ -420,6 +424,23 @@ namespace Botcraft
             break;
         case Type::WaypointReceiveRange:
             current_value = std::clamp(current_value, 0.0, 6.0e7);
+            break;
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        case Type::AirDragModifier:
+            current_value = std::clamp(current_value, 0.0, 2048.0);
+            break;
+        case Type::BelowNameDistance:
+            current_value = std::clamp(current_value, 0.0, 512.0);
+            break;
+        case Type::Bounciness:
+            current_value = std::clamp(current_value, 0.0, 1.0);
+            break;
+        case Type::FrictionModifier:
+            current_value = std::clamp(current_value, 0.0, 2048.0);
+            break;
+        case Type::NameTagDistance:
+            current_value = std::clamp(current_value, 0.0, 512.0);
             break;
 #endif
         default:

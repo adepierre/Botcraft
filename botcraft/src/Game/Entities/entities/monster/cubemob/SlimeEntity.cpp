@@ -1,13 +1,15 @@
-#include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/cubemob/SlimeEntity.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
 #include <mutex>
 
 namespace Botcraft
 {
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
     const std::array<std::string, SlimeEntity::metadata_count> SlimeEntity::metadata_names{ {
         "id_size",
     } };
+#endif
 
     SlimeEntity::SlimeEntity()
     {
@@ -15,8 +17,11 @@ namespace Botcraft
         // It is overwritten when size is set, but it needs to be initialized before
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 1.0) });
 
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
+
         // Initialize all metadata with default values
         SetIdSize(1);
+#endif
     }
 
     SlimeEntity::~SlimeEntity()
@@ -46,7 +51,7 @@ namespace Botcraft
         return EntityType::Slime;
     }
 
-
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
     ProtocolCraft::Json::Value SlimeEntity::Serialize() const
     {
         ProtocolCraft::Json::Value output = MobEntity::Serialize();
@@ -132,6 +137,21 @@ namespace Botcraft
             LOG_WARNING("Trying to set attribute base value for " << EntityAttribute::Type::AttackDamage << " for a slime but it doesn't have this attribute");
         }
     }
+#else
+    void SlimeEntity::SizeChanged(const int new_size)
+    {
+        AbstractCubeMobEntity::SizeChanged(new_size);
+        auto it = attributes.find(EntityAttribute::Type::AttackDamage);
+        if (it != attributes.end())
+        {
+            it->second.SetBaseValue(static_cast<double>(new_size));
+        }
+        else
+        {
+            LOG_WARNING("Trying to set attribute base value for " << EntityAttribute::Type::AttackDamage << " for a slime but it doesn't have this attribute");
+        }
+    }
+#endif
 
     double SlimeEntity::GetWidthImpl() const
     {
