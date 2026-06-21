@@ -271,6 +271,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Serverbound/ServerboundSetTestBlockPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundSignUpdatePacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundSpectateEntityPacket.hpp
+    include/protocolCraft/Packets/Game/Serverbound/ServerboundSpectatorActionPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundSwingPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundTeleportToEntityPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp
@@ -459,6 +460,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeRepairable.hpp
     include/protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp
     include/protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp
+    include/protocolCraft/Types/Components/DataComponentTypeSulfurCubeContent.hpp
     include/protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp
     include/protocolCraft/Types/Components/DataComponentTypeSwingAnimation.hpp
     include/protocolCraft/Types/Components/DataComponentTypeTool.hpp
@@ -521,6 +523,7 @@ set(protocolCraft_PUBLIC_HDR
 
     include/protocolCraft/Types/Item/HashedSlot.hpp
     include/protocolCraft/Types/Item/ItemCost.hpp
+    include/protocolCraft/Types/Item/ItemStackTemplate.hpp
     include/protocolCraft/Types/Item/MerchantOffer.hpp
     include/protocolCraft/Types/Item/Slot.hpp
 
@@ -537,6 +540,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/DustParticleOption.hpp
     include/protocolCraft/Types/Particles/EmptyParticleOption.hpp
     include/protocolCraft/Types/Particles/ExplosionParticleInfo.hpp
+    include/protocolCraft/Types/Particles/GeyserBaseParticleOptions.hpp
+    include/protocolCraft/Types/Particles/GeyserParticleOptions.hpp
     include/protocolCraft/Types/Particles/ItemParticleOption.hpp
     include/protocolCraft/Types/Particles/PowerParticleOption.hpp
     include/protocolCraft/Types/Particles/SculkChargeParticleOption.hpp

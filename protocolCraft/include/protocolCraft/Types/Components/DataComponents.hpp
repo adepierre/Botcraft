@@ -130,6 +130,9 @@ namespace ProtocolCraft
             Container,
             BlockState,
             Bees,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            SulfurCubeContent,
+#endif
             Lock,
             ContainerLoot,
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */

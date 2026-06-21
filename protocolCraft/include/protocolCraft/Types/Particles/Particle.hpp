@@ -26,6 +26,15 @@ namespace ProtocolCraft
         BlockMarker,
 #endif
         Bubble,
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        SulfurBubbles,
+        NoxiousGas,
+        NoxiousGasCloud,
+        Geyser,
+        GeyserBase,
+        GeyerPoof,
+        GeyserPlume,
+#endif
         Cloud,
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         CopperFireFlame,
@@ -217,6 +226,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         Firefly,
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        SulfurCubeGoo,
 #endif
         NUM_PARTICLE_TYPES
     };

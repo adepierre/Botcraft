@@ -580,6 +580,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     DEFINE_PACKET_CLASS(ServerboundAttackPacket);
     DEFINE_PACKET_CLASS(ServerboundSetGameRulePacket);
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
     DEFINE_PACKET_CLASS(ServerboundSpectateEntityPacket);
+#endif
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+    DEFINE_PACKET_CLASS(ServerboundSpectatorActionPacket);
 #endif
 }

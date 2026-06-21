@@ -79,6 +79,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypeSwingAnimation.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeUseEffects.hpp"
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+#include "protocolCraft/Types/Components/DataComponentTypeSulfurCubeContent.hpp"
+#endif
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
@@ -206,6 +209,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeSwingAnimation);
         DEFINE_NETWORK_TYPE(DataComponentTypeUseEffects);
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeSulfurCubeContent);
+#endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
         {
@@ -327,6 +333,9 @@ namespace ProtocolCraft
                 "container",
                 "block_state",
                 "bees",
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+                "sulfur_cube_content"
+#endif
                 "lock",
                 "container_loot",
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
@@ -610,6 +619,10 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeVariantEnum>();
             case DataComponentTypes::AdditionalTradeCost:
                 return std::make_shared<DataComponentTypeInteger>();
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            case DataComponentTypes::SulfurCubeContent:
+                return std::make_shared<DataComponentTypeSulfurCubeContent>();
 #endif
             default:
                 // Should never happen but will make the compilers happy

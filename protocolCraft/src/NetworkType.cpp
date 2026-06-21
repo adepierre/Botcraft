@@ -109,10 +109,13 @@
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #include "protocolCraft/Types/Item/HashedSlot.hpp"
 #endif
-#include "protocolCraft/Types/Item/Slot.hpp"
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Types/Item/ItemCost.hpp"
 #endif
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+#include "protocolCraft/Types/Item/ItemStackTemplate.hpp"
+#endif
+#include "protocolCraft/Types/Item/Slot.hpp"
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
 #include "protocolCraft/Types/Item/MerchantOffer.hpp"
 #endif
@@ -252,10 +255,13 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(HashedSlot);
     DEFINE_NETWORK_TYPE(HashedSlotActualItem);
 #endif
-    DEFINE_NETWORK_TYPE(Slot);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     DEFINE_NETWORK_TYPE(ItemCost);
 #endif
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+    DEFINE_NETWORK_TYPE(ItemStackTemplate);
+#endif
+    DEFINE_NETWORK_TYPE(Slot);
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_NETWORK_TYPE(MerchantOffer);
 #endif

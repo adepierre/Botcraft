@@ -198,8 +198,11 @@
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSetTestBlockPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSignUpdatePacket.hpp"
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */ && PROTOCOL_VERSION < 776 /* < 26.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSpectateEntityPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundSpectatorActionPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSwingPacket.hpp"
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundTeleportToEntityPacket.hpp"
@@ -423,8 +426,11 @@ namespace ProtocolCraft
         ServerboundSetTestBlockPacket,
 #endif
         ServerboundSignUpdatePacket,
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */ && PROTOCOL_VERSION < 776 /* < 26.2 */
         ServerboundSpectateEntityPacket,
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        ServerboundSpectatorActionPacket,
 #endif
         ServerboundSwingPacket,
         ServerboundTeleportToEntityPacket,

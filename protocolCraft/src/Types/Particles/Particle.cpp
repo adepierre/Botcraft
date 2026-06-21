@@ -30,6 +30,10 @@
 #include "protocolCraft/Types/Particles/PowerParticleOption.hpp"
 #include "protocolCraft/Types/Particles/SpellParticleOption.hpp"
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+#include "protocolCraft/Types/Particles/GeyserBaseParticleOptions.hpp"
+#include "protocolCraft/Types/Particles/GeyserParticleOptions.hpp"
+#endif
 
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Types/Particles/ExplosionParticleInfo.hpp" // Not a particle info type, used in ClientboundExplodePacket
@@ -71,6 +75,10 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(PowerParticleOption);
     DEFINE_NETWORK_TYPE(SpellParticleOption);
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+    DEFINE_NETWORK_TYPE(GeyserBaseParticleOptions);
+    DEFINE_NETWORK_TYPE(GeyserParticleOptions);
+#endif
 
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
     DEFINE_NETWORK_TYPE(ExplosionParticleInfo); // Not a particle info type, used in ClientboundExplodePacket
@@ -105,6 +113,15 @@ namespace ProtocolCraft
             "block_marker",
 #endif
             "bubble",
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            "sulfur_bubbles",
+            "noxious_gas",
+            "noxious_gas_cloud",
+            "geyser",
+            "geyser_base",
+            "geyser_poof",
+            "geyser_plume",
+#endif
             "cloud",
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
             "copper_fire_flame",
@@ -297,6 +314,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
             "firefly",
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+            "sulfur_cube_goo",
+#endif
         };
 #else
         static constexpr std::array<std::string_view, static_cast<size_t>(ParticleType::NUM_PARTICLE_TYPES)> names = {
@@ -427,6 +447,16 @@ namespace ProtocolCraft
         case ParticleType::Effect:
         case ParticleType::InstantEffect:
             Option = std::make_shared<SpellParticleOption>();
+            break;
+#endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        case ParticleType::GeyserBase:
+        case ParticleType::GeyerPoof:
+            Option = std::make_shared<GeyserBaseParticleOptions>();
+            break;
+        case ParticleType::Geyser:
+        case ParticleType::GeyserPlume:
+            Option = std::make_shared<GeyserParticleOptions>();
             break;
 #endif
 #else //1.12.2

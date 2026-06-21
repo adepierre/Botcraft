@@ -12,6 +12,9 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Login Finished";
 
         SERIALIZED_FIELD(GameProfile, ProtocolCraft::GameProfile);
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        SERIALIZED_FIELD(SessionId, UUID);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

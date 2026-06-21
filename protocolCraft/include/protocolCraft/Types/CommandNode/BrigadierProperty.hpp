@@ -30,7 +30,11 @@ namespace ProtocolCraft
         BlockPredicate,
         ItemStack,
         ItemPredicate,
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
         Color,
+#else
+        TeamColor,
+#endif
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
         HexColor,
 #endif

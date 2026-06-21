@@ -138,6 +138,18 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(ShowDeathScreen, bool);
         SERIALIZED_FIELD(DoLimitedCrafting, bool);
         SERIALIZED_FIELD(CommonPlayerSpawnInfo, ProtocolCraft::CommonPlayerSpawnInfo);
+#elif PROTOCOL_VERSION < 776 /* < 26.2 */
+        SERIALIZED_FIELD(PlayerId, int);
+        SERIALIZED_FIELD(Hardcore, bool);
+        SERIALIZED_FIELD(Levels, std::vector<Identifier>);
+        SERIALIZED_FIELD(MaxPlayers, VarInt);
+        SERIALIZED_FIELD(ChunkRadius, VarInt);
+        SERIALIZED_FIELD(SimulationDistance, VarInt);
+        SERIALIZED_FIELD(ReducedDebugInfo, bool);
+        SERIALIZED_FIELD(ShowDeathScreen, bool);
+        SERIALIZED_FIELD(DoLimitedCrafting, bool);
+        SERIALIZED_FIELD(CommonPlayerSpawnInfo, ProtocolCraft::CommonPlayerSpawnInfo);
+        SERIALIZED_FIELD(EnforceSecureChat, bool);
 #else
         SERIALIZED_FIELD(PlayerId, int);
         SERIALIZED_FIELD(Hardcore, bool);
@@ -149,6 +161,7 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(ShowDeathScreen, bool);
         SERIALIZED_FIELD(DoLimitedCrafting, bool);
         SERIALIZED_FIELD(CommonPlayerSpawnInfo, ProtocolCraft::CommonPlayerSpawnInfo);
+        SERIALIZED_FIELD(OnlineMode, bool);
         SERIALIZED_FIELD(EnforceSecureChat, bool);
 #endif
 
