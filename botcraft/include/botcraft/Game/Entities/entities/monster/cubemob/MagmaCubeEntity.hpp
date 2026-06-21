@@ -1,7 +1,7 @@
 #pragma once
 
 #if PROTOCOL_VERSION < 776 /* < 26.2 */
-#include "botcraft/Game/Entities/entities/monster/SlimeEntity.hpp"
+#include "botcraft/Game/Entities/entities/monster/cubemob/SlimeEntity.hpp"
 #else
 #include "botcraft/Game/Entities/entities/monster/cubemob/AbstractCubeMobEntity.hpp"
 #endif

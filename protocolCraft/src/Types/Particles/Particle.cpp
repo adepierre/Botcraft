@@ -75,7 +75,7 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(PowerParticleOption);
     DEFINE_NETWORK_TYPE(SpellParticleOption);
 #endif
-#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
     DEFINE_NETWORK_TYPE(GeyserBaseParticleOptions);
     DEFINE_NETWORK_TYPE(GeyserParticleOptions);
 #endif
