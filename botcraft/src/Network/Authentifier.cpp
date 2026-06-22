@@ -1072,13 +1072,24 @@ namespace Botcraft
         asio::read_until(socket, response, "\r\n\r\n");
 
         // Process the response headers.
-        std::string header;
         long long int data_length = -1;
+        bool chunked = false;
+        std::string header;
         while (std::getline(response_stream, header) && header != "\r")
         {
+            // Remove trailing \r
+            if (!header.empty() && header.back() == '\r')
+            {
+                header.pop_back();
+            }
+
             if (header.find("Content-Length: ") == 0)
             {
                 data_length = std::stoll(header.substr(16));
+            }
+            else if (header.find("Transfer-Encoding:") == 0 && header.find("chunked") != std::string::npos)
+            {
+                chunked = true;
             }
         }
 
@@ -1095,16 +1106,68 @@ namespace Botcraft
         {
             output_stringstream << &response;
         }
-        const std::string raw_response = output_stringstream.str();
+        const std::string raw_body = output_stringstream.str();
 
-        if (error != asio::error::eof && raw_response.size() != data_length)
+        if (error != asio::error::eof && (data_length < 0 || raw_body.size() != static_cast<size_t>(data_length)))
         {
             LOG_ERROR("Error trying to read web request response, Error:\n " << error);
             web_response.response = {};
+            return web_response;
+        }
+
+        if (chunked)
+        {
+            std::string decoded_body;
+            bool decode_ok = false;
+            size_t pos = 0;
+
+            while (pos < raw_body.size())
+            {
+                const size_t line_end = raw_body.find("\r\n", pos);
+                if (line_end == std::string::npos)
+                {
+                    // This means the response is probably malformed
+                    break;
+                }
+
+                std::string size_line = raw_body.substr(pos, line_end - pos);
+                const size_t semicolon = size_line.find(";");
+                if (semicolon != std::string::npos)
+                {
+                    size_line.resize(semicolon);
+                }
+
+                const size_t chunk_size = std::stoull(size_line, nullptr, 16);
+
+                pos = line_end + 2;
+                if (chunk_size == 0)
+                {
+                    decode_ok = true;
+                    break;
+                }
+
+                if (pos + chunk_size > raw_body.size())
+                {
+                    break;
+                }
+
+                decoded_body.append(raw_body, pos, chunk_size);
+                // Skip chunk data + "\r\n"
+                pos += chunk_size + 2;
+            }
+
+            if (!decode_ok)
+            {
+                LOG_ERROR("Malformed chunked web request response");
+                web_response.response = {};
+                return web_response;
+            }
+
+            web_response.response = Json::Parse(decoded_body);
         }
         else
         {
-            web_response.response = Json::Parse(raw_response);
+            web_response.response = Json::Parse(raw_body);
         }
 
         return web_response;
