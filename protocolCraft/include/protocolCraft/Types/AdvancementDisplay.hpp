@@ -2,7 +2,11 @@
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
 #include "protocolCraft/Types/Item/Slot.hpp"
+#else
+#include "protocolCraft/Types/Item/ItemStackTemplate.hpp"
+#endif
 #include "protocolCraft/Types/Identifier.hpp"
 
 namespace ProtocolCraft
@@ -13,7 +17,11 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(Title, Chat);
         SERIALIZED_FIELD(Description, Chat);
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
         SERIALIZED_FIELD(Icon, Slot);
+#else
+        SERIALIZED_FIELD(Icon, ItemStackTemplate);
+#endif
         SERIALIZED_FIELD(FrameType, VarInt);
         SERIALIZED_FIELD(Flags, int);
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(BackgroundTexture, Internal::Conditioned<Identifier, &AdvancementDisplay::HasBackgroundTexture>);
