@@ -115,6 +115,7 @@ namespace Botcraft
         std::thread thread_physics; // Thread running to compute position and send it to the server every tick
 
         const Item* elytra_item;
+        const Item* leather_boots_item;
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         std::atomic<double> ms_per_tick = 50.0;
