@@ -1286,8 +1286,8 @@ namespace Botcraft
         // Move with elytra
         else if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
         {
-            // sqrt(front_vector.x� + front_vector.z�) to follow vanilla code
-            // it's equal to cos(pitch) (as -90�<=pitch<=90�, cos(pitch) >= 0.0)
+            // sqrt(front_vector.x^2 + front_vector.z^2) to follow vanilla code
+            // it's equal to cos(pitch) (as -90°<=pitch<=90°, cos(pitch) >= 0.0)
             const double cos_pitch_from_length = std::sqrt(player->front_vector.x * player->front_vector.x + player->front_vector.z * player->front_vector.z);
             const double cos_pitch = std::cos(static_cast<double>(player->pitch * 0.017453292f /* PI/180 */));
             const double cos_pitch_sqr = cos_pitch * cos_pitch;
