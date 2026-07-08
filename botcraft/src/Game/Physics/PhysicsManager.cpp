@@ -1171,9 +1171,30 @@ namespace Botcraft
             static_cast<int>(std::floor(player->position.z))
         ));
 
-        // TODO: if trapdoor AND below block is a ladder with the same facing property
-        // as the trapdoor then the trapdoor is a climbable block too
-        return feet_block != nullptr && feet_block->IsClimbable();
+        if (feet_block != nullptr && feet_block->IsClimbable())
+            return true;
+
+        if (feet_block != nullptr && feet_block->GetName().find("trapdoor") != std::string::npos)
+        {
+            if (feet_block->GetVariableValue("open") == "true")
+            {
+                const Blockstate* below_block = world->GetBlock(Position(
+                    static_cast<int>(std::floor(player->position.x)),
+                    static_cast<int>(std::floor(player->position.y)) - 1,
+                    static_cast<int>(std::floor(player->position.z))
+                ));
+
+                if (below_block != nullptr && below_block != nullptr && below_block->GetName().find("ladder") != std::string::npos)
+                {
+                    if (feet_block->GetVariableValue("facing") == below_block->GetVariableValue("facing"))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     void PhysicsManager::MovePlayer() const
@@ -1280,8 +1301,8 @@ namespace Botcraft
         // Move with elytra
         else if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
         {
-            // sqrt(front_vector.x² + front_vector.z²) to follow vanilla code
-            // it's equal to cos(pitch) (as -90°<=pitch<=90°, cos(pitch) >= 0.0)
+            // sqrt(front_vector.xï¿½ + front_vector.zï¿½) to follow vanilla code
+            // it's equal to cos(pitch) (as -90ï¿½<=pitch<=90ï¿½, cos(pitch) >= 0.0)
             const double cos_pitch_from_length = std::sqrt(player->front_vector.x * player->front_vector.x + player->front_vector.z * player->front_vector.z);
             const double cos_pitch = std::cos(static_cast<double>(player->pitch * 0.017453292f /* PI/180 */));
             const double cos_pitch_sqr = cos_pitch * cos_pitch;
