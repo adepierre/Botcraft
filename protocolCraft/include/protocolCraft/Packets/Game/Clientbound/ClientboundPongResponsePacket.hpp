@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Pong Response";
 
-        SERIALIZED_FIELD(Id_, int);
+        SERIALIZED_FIELD(Id_, long long int);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
