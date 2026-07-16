@@ -47,6 +47,12 @@ namespace Botcraft
         {
             throw std::runtime_error("Unknown item minecraft:elytra");
         }
+
+        leather_boots_item = AssetsManager::getInstance().GetItem("minecraft:leather_boots");
+        if (leather_boots_item == nullptr)
+        {
+            throw std::runtime_error("Unknown item minecraft:leather_boots");
+        }
     }
 
     PhysicsManager::~PhysicsManager()
@@ -1280,8 +1286,8 @@ namespace Botcraft
         // Move with elytra
         else if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying))
         {
-            // sqrt(front_vector.x² + front_vector.z²) to follow vanilla code
-            // it's equal to cos(pitch) (as -90°<=pitch<=90°, cos(pitch) >= 0.0)
+            // sqrt(front_vector.x^2 + front_vector.z^2) to follow vanilla code
+            // it's equal to cos(pitch) (as -90Â°<=pitch<=90Â°, cos(pitch) >= 0.0)
             const double cos_pitch_from_length = std::sqrt(player->front_vector.x * player->front_vector.x + player->front_vector.z * player->front_vector.z);
             const double cos_pitch = std::cos(static_cast<double>(player->pitch * 0.017453292f /* PI/180 */));
             const double cos_pitch_sqr = cos_pitch * cos_pitch;
@@ -1353,11 +1359,30 @@ namespace Botcraft
             ApplyMovement();
             // If colliding and in climbable, go up
             if ((player->horizontal_collision || player->inputs.jump) &&
-                (player->on_climbable) // TODO: or in powder snow with leather boots
+                (player->on_climbable)
             )
             {
                 player->speed.y = 0.2;
             }
+
+#if PROTOCOL_VERSION > 754 /* > 1.17+ */
+            // If in powder snow with leather boots go up
+
+            const Blockstate* feet_block = world->GetBlock(Position(
+                    static_cast<int>(std::floor(player->position.x)),
+                    static_cast<int>(std::floor(player->position.y)),
+                    static_cast<int>(std::floor(player->position.z))
+                ));
+
+            if (feet_block != nullptr && feet_block->IsPowderSnow()) {
+                const auto feet_slot = inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_FEET_ARMOR);
+
+                if ((player->horizontal_collision || player->inputs.jump) && feet_slot.GetItemId() == leather_boots_item->GetId())
+                {
+                    player->speed.y = 0.2;
+                }
+            }
+#endif
 
             unsigned char levitation = 0;
             for (const auto& effect : player->effects)
