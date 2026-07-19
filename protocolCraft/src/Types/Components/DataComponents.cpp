@@ -694,6 +694,14 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        DataComponentPatch::DataComponentPatch(const LengthPrefixedDataComponentPatch& p)
+        {
+            map = p.GetMap();
+        }
+#endif
+
+
         DataComponentPatch::~DataComponentPatch()
         {
 
@@ -826,6 +834,100 @@ namespace ProtocolCraft
 
         DEFINE_NETWORK_TYPE(HashedDataComponentPatch);
 #endif
-    }
+        LengthPrefixedDataComponentPatch::LengthPrefixedDataComponentPatch(const DataComponentPatch& p)
+        {
+            map = p.GetMap();
+        }
+
+        const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& LengthPrefixedDataComponentPatch::GetMap() const
+        {
+            return map;
+        }
+
+        LengthPrefixedDataComponentPatch& LengthPrefixedDataComponentPatch::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
+        {
+            map = map_;
+            return *this;
+        }
+
+        void LengthPrefixedDataComponentPatch::ReadImpl(ReadIterator& iter, size_t& length)
+        {
+            const int num_data = ReadData<VarInt>(iter, length);
+            const int num_void = ReadData<VarInt>(iter, length);
+
+            map.clear();
+
+            for (int i = 0; i < num_data; ++i)
+            {
+                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
+                const int data_size = ReadData<VarInt>(iter, length);
+                std::shared_ptr<DataComponentType> data = CreateComponentType(type);
+
+                if (data != nullptr)
+                {
+                    data->Read(iter, length);
+                }
+                map.insert({ type, data });
+            }
+
+            for (int i = 0; i < num_void; ++i)
+            {
+                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
+                map.insert({ type, nullptr });
+            }
+        }
+
+        void LengthPrefixedDataComponentPatch::WriteImpl(WriteContainer& container) const
+        {
+            int num_data = 0;
+            for (const auto& p : map)
+            {
+                num_data += p.second != nullptr;
+            }
+            const int num_void = static_cast<int>(map.size()) - num_data;
+
+            WriteData<VarInt>(num_data, container);
+            WriteData<VarInt>(num_void, container);
+
+            for (const auto& p : map)
+            {
+                if (p.second == nullptr)
+                {
+                    continue;
+                }
+                WriteData<DataComponentTypes, VarInt>(p.first, container);
+                WriteContainer temp;
+                // Serialize to an intermediate vector to get the size
+                p.second->Write(temp);
+                WriteData<VarInt>(static_cast<int>(temp.size()), container);
+                WriteByteArray(temp, container);
+            }
+
+            for (const auto& p : map)
+            {
+                if (p.second != nullptr)
+                {
+                    continue;
+                }
+                WriteData<DataComponentTypes, VarInt>(p.first, container);
+            }
+        }
+
+        Json::Value LengthPrefixedDataComponentPatch::SerializeImpl() const
+        {
+            Json::Value output;
+
+            output["map"] = Json::Array();
+            for (const auto& p : map)
+            {
+                output["map"].push_back({
+                    { "name", DataComponentTypesToString(p.first) },
+                    { "data", p.second == nullptr ? nullptr : p.second->Serialize() }
+                });
+            }
+
+            return output;
+        }
+}
 }
 #endif

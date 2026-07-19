@@ -262,6 +262,9 @@ namespace ProtocolCraft
     DEFINE_NETWORK_TYPE(ItemStackTemplate);
 #endif
     DEFINE_NETWORK_TYPE(Slot);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    DEFINE_NETWORK_TYPE(UntrustedItemStack);
+#endif
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_NETWORK_TYPE(MerchantOffer);
 #endif

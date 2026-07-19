@@ -9,6 +9,10 @@
 
 namespace ProtocolCraft
 {
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    class UntrustedItemStack;
+#endif
+
     class Slot : public NetworkType
     {
         // We don't store conditioned values as optional in Slot cause we already have a IsEmptySlot function to check for data presence
@@ -59,6 +63,10 @@ namespace ProtocolCraft
 #endif
             ItemCount = 0;
         }
+
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        Slot(const UntrustedItemStack& s);
+#endif
 
         virtual ~Slot() override
         {
@@ -131,4 +139,35 @@ namespace ProtocolCraft
         }
 #endif
     };
+
+
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+    class UntrustedItemStack : public NetworkType
+    {
+    public:
+        UntrustedItemStack() = default;
+
+        UntrustedItemStack(const Slot& s)
+        {
+            ItemCount = s.GetItemCount();
+            ItemId = s.GetItemId();
+            Components = s.GetComponents();
+        }
+
+        DEFINE_CONDITION(HasContent, GetItemCount() > 0);
+        SERIALIZED_FIELD(ItemCount, VarInt);
+        SERIALIZED_FIELD(ItemId, Internal::Conditioned<VarInt, &UntrustedItemStack::HasContent, false>);
+        SERIALIZED_FIELD(Components, Internal::Conditioned<Components::LengthPrefixedDataComponentPatch, &UntrustedItemStack::HasContent, false>);
+
+        DECLARE_READ_WRITE_SERIALIZE;
+    };
+
+    inline Slot::Slot(const UntrustedItemStack& s)
+    {
+        ItemCount = s.GetItemCount();
+        ItemId = s.GetItemId();
+        Components = s.GetComponents();
+    }
+#endif
+
 } // ProtocolCraft
