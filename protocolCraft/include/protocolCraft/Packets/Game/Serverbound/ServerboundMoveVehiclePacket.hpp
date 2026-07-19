@@ -22,6 +22,9 @@ namespace ProtocolCraft
 #endif
         SERIALIZED_FIELD(YRot, float);
         SERIALIZED_FIELD(XRot, float);
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        SERIALIZED_FIELD(OnGround, bool);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
