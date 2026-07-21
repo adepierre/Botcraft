@@ -146,6 +146,10 @@ namespace Botcraft
         double GetAttributeWaterMovementEfficiencyValueImpl() const;
         double GetAttributeMovementEfficiencyValueImpl() const;
 #endif
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+        double GetAttributeAirDragModifierValueImpl() const;
+        double GetAttributeBouncinessValueImpl() const;
+#endif
 
     protected:
         std::map<EntityAttribute::Type, EntityAttribute> attributes;

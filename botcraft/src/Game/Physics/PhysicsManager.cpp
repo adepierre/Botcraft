@@ -1506,6 +1506,7 @@ namespace Botcraft
         }
 
         // Update speeds
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
         if (collision_x)
         {
             player->speed.x = 0.0;
@@ -1542,6 +1543,70 @@ namespace Botcraft
                 player->speed.y = new_speed;
             }
         }
+#else
+        if (collision_x || collision_y || collision_z)
+        {
+            // Entity::restituteMovementAfterCollisions
+            double restitution = player->inputs.sneak ? 0.0 : player->GetAttributeBouncinessValueImpl();
+            if (collision_x)
+            {
+                player->speed.x = -player->speed.x * restitution;
+            }
+            if (collision_z)
+            {
+                player->speed.z = -player->speed.z * restitution;
+            }
+            if (collision_y)
+            {
+                bool has_slow_falling = false;
+                for (const auto& effect : player->effects)
+                {
+                    if (effect.type == EntityEffectType::SlowFalling && effect.end > std::chrono::steady_clock::now())
+                    {
+                        has_slow_falling = true;
+                        break;
+                    }
+                }
+                const double effective_gravity = has_slow_falling ? std::min(0.01, player->GetAttributeGravityValueImpl()) : player->GetAttributeGravityValueImpl();
+                if (player->speed.y < 0.0)
+                {
+                    if (-player->speed.y < effective_gravity || player->inputs.sneak)
+                    {
+                        restitution = 0.0;
+                    }
+                    else
+                    {
+                        const Blockstate* block_below = world->GetBlock(Position(
+                            static_cast<int>(std::floor(player->position.x)),
+                            static_cast<int>(std::floor(player->position.y - 0.2)),
+                            static_cast<int>(std::floor(player->position.z))
+                        ));
+                        if (block_below != nullptr)
+                        {
+                            if (block_below->IsSlime())
+                            {
+                                restitution = std::max(restitution, 1.0);
+                            }
+                            else if (block_below->IsBed())
+                            {
+                                restitution = std::max(restitution, 0.75);
+                            }
+                        }
+                    }
+                }
+
+                double effective_drag = 1.0;
+                double gravity_compensation = 0.0;
+                if (restitution > 0.0)
+                {
+                    const double portion_with_movement = movement.y / movement_before_collisions.y;
+                    gravity_compensation = portion_with_movement * effective_gravity;
+                    effective_drag = 1.0 + portion_with_movement * (std::clamp(1.0f - (1.0f - 0.98f) * static_cast<float>(player->GetAttributeAirDragModifierValueImpl()), 0.0f, 1.0f) - 1.0);
+                }
+                player->speed.y = (gravity_compensation - player->speed.y) * effective_drag * restitution;
+            }
+        }
+#endif
 
         CheckInsideBlocks();
 

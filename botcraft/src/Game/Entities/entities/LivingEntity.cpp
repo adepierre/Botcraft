@@ -493,13 +493,13 @@ namespace Botcraft
     double LivingEntity::GetAttributeBouncinessValue() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return attributes.at(EntityAttribute::Type::Bounciness).GetValue();
+        return GetAttributeBouncinessValueImpl();
     }
 
     double LivingEntity::GetAttributeAirDragModifierValue() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return attributes.at(EntityAttribute::Type::AirDragModifier).GetValue();
+        return GetAttributeAirDragModifierValueImpl();
     }
 
     double LivingEntity::GetAttributeFrictionModifierValue() const
@@ -580,6 +580,18 @@ namespace Botcraft
     double LivingEntity::GetAttributeMovementEfficiencyValueImpl() const
     {
         return attributes.at(EntityAttribute::Type::MovementEfficiency).GetValue();
+    }
+#endif
+
+#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
+    double LivingEntity::GetAttributeAirDragModifierValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::AirDragModifier).GetValue();
+    }
+
+    double LivingEntity::GetAttributeBouncinessValueImpl() const
+    {
+        return attributes.at(EntityAttribute::Type::Bounciness).GetValue();
     }
 #endif
 
