@@ -461,6 +461,10 @@ namespace ProtocolCraft
         ClientboundClearDialogConfigurationPacket,
         ClientboundShowDialogConfigurationPacket
 #endif
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
+        ,
+        ClientboundCodeOfConductPacket
+#endif
     >;
 #endif
 
@@ -480,10 +484,6 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ,
         ClientboundCookieRequestLoginPacket
-#endif
-#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
-        ,
-        ClientboundCodeOfConductPacket
 #endif
     >;
 
