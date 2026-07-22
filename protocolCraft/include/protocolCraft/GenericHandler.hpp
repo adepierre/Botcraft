@@ -18,7 +18,7 @@ namespace ProtocolCraft
         typename T11, typename T12, typename T13, typename T14, typename T15,
         typename T16, typename T17, typename T18, typename T19, typename T20,
         typename... TRest>
-    class GenericHandler<TCommon, std::tuple<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T11, T13, T14, T15, T16, T17, T18, T19, T20, TRest...> > : public GenericHandler<TCommon, std::tuple<TRest...> >
+    class GenericHandler<TCommon, std::tuple<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, TRest...> > : public GenericHandler<TCommon, std::tuple<TRest...> >
     {
         using Base = GenericHandler<TCommon, std::tuple<TRest...> >;
     public:
