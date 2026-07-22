@@ -101,7 +101,7 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(ExplosionSound, Holder<SoundEvent>);
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
-        SERIALIZED_FIELD(BlockParticles, std::vector<std::pair<VarInt, ExplosionParticleInfo>>);
+        SERIALIZED_FIELD(BlockParticles, std::vector<std::pair<ExplosionParticleInfo, VarInt>>);
 #endif
 
         DECLARE_READ_WRITE_SERIALIZE;
