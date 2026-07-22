@@ -40,6 +40,45 @@ namespace ProtocolCraft
         }
 
 
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        UntrustedValue::UntrustedValue()
+        {
+
+        }
+
+        UntrustedValue::UntrustedValue(const Value& named) : Tag(named)
+        {
+
+        }
+
+        UntrustedValue::UntrustedValue(Value&& named) : Tag(std::move(named))
+        {
+
+        }
+
+        UntrustedValue::~UntrustedValue()
+        {
+
+        }
+
+        void UntrustedValue::ReadImpl(ReadIterator& iter, size_t& length)
+        {
+            // Untrusted == size prefixed
+            const int size = ReadData<VarInt>(iter, length);
+            Tag::ReadUnnamedImpl(iter, length);
+        }
+
+        void UntrustedValue::WriteImpl(WriteContainer& container) const
+        {
+            // Untrusted == size prefixed
+            std::vector<unsigned char> temp_container;
+            Tag::WriteUnnamedImpl(temp_container);
+            WriteData<VarInt>(static_cast<int>(temp_container.size()), container);
+            WriteByteArray(temp_container, container);
+        }
+#endif
+
+
         Value::Value()
         {
 
@@ -54,6 +93,18 @@ namespace ProtocolCraft
         {
 
         }
+
+#if PROTOCOL_VERSION > 770 /* > 1.21.5 */
+        Value::Value(const UntrustedValue& untrusted) : Tag(untrusted)
+        {
+
+        }
+
+        Value::Value(UntrustedValue&& untrusted) : Tag(std::move(untrusted))
+        {
+
+        }
+#endif
 
         Value::~Value()
         {
@@ -105,5 +156,5 @@ namespace ProtocolCraft
                 throw std::runtime_error("Error reading NBT value, not starting with compound");
             }
         }
-    }
+}
 }
