@@ -23,6 +23,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(IsFlat, bool);
         SERIALIZED_FIELD(LastDeathLocation, std::optional<GlobalPos>);
         SERIALIZED_FIELD(PortalCooldown, VarInt);
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SERIALIZED_FIELD(SeaLevel, VarInt);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
