@@ -97,6 +97,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(BlockPredicate);
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         DEFINE_NETWORK_TYPE(DamageReduction);
+        DEFINE_NETWORK_TYPE(DataComponentMatchers);
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         DEFINE_NETWORK_TYPE(Instrument);
@@ -119,6 +120,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(MobEffectInstanceDetails);
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         DEFINE_NETWORK_TYPE(PaintingVariant);
+        DEFINE_NETWORK_TYPE(PartialDataComponentPredicate);
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         DEFINE_NETWORK_TYPE(PartialResolvableProfile);

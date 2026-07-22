@@ -4,6 +4,9 @@
 #include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/HolderSet.hpp"
 #include "protocolCraft/Types/Components/Subtypes/StatePropertiesPredicate.hpp"
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#include "protocolCraft/Types/Components/Subtypes/DataComponentMatchers.hpp"
+#endif
 
 #include <optional>
 
@@ -16,6 +19,9 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(Blocks, std::optional<HolderSet>);
             SERIALIZED_FIELD(Properties, std::optional<StatePropertiesPredicate>);
             SERIALIZED_FIELD(Nbt, std::optional<NBT::UnnamedValue>);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            SERIALIZED_FIELD(Components, DataComponentMatchers);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };
