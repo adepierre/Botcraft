@@ -566,6 +566,7 @@ namespace ProtocolCraft
             case DataComponentTypes::Axolotl_Variant:
             case DataComponentTypes::Cat_Variant:
             case DataComponentTypes::Cow_Variant:
+            case DataComponentTypes::Fox_Variant:
             case DataComponentTypes::Frog_Variant:
             case DataComponentTypes::Horse_Variant:
             case DataComponentTypes::Llama_Variant:
