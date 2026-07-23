@@ -11,6 +11,9 @@ namespace ProtocolCraft
     {
         SERIALIZED_FIELD(Target, std::array<double, 3>);
         SERIALIZED_FIELD(Color, int);
+#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
+        SERIALIZED_FIELD(Duration, VarInt);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
