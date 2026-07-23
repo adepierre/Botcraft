@@ -126,7 +126,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(PartialResolvableProfile);
         DEFINE_NETWORK_TYPE(PlayerSkinPatch);
 #endif
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         DEFINE_NETWORK_TYPE(PossibleEffect);
+#endif
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
         DEFINE_NETWORK_TYPE(ToolRule);

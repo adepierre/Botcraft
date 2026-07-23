@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #pragma once
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/Components/Subtypes/MobEffectInstance.hpp"
