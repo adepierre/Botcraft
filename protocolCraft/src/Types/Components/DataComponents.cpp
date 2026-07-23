@@ -434,9 +434,6 @@ namespace ProtocolCraft
             case DataComponentTypes::Recipes:
             case DataComponentTypes::Lock:
             case DataComponentTypes::ContainerLoot:
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-            case DataComponentTypes::Glider:
-#endif
                 // Component with no network serializer specified fallback to NBT
                 return std::make_shared<DataComponentTypeDefault>();
             case DataComponentTypes::BaseColor:
@@ -522,6 +519,9 @@ namespace ProtocolCraft
             case DataComponentTypes::CreativeSlotLock:
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
             case DataComponentTypes::FireResistant:
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            case DataComponentTypes::Glider:
 #endif
                 return std::make_shared<DataComponentTypeUnit>();
             case DataComponentTypes::WritableBookContent:
