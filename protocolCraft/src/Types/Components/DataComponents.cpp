@@ -338,7 +338,7 @@ namespace ProtocolCraft
                 "block_state",
                 "bees",
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
-                "sulfur_cube_content"
+                "sulfur_cube_content",
 #endif
                 "lock",
                 "container_loot",
