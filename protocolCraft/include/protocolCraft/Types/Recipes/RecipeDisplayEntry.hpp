@@ -6,6 +6,7 @@
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 
 #include <optional>
+#include <vector>
 
 namespace ProtocolCraft
 {
@@ -13,7 +14,7 @@ namespace ProtocolCraft
     {
         SERIALIZED_FIELD(Id, VarInt);
         SERIALIZED_FIELD(Display, RecipeDisplay);
-        SERIALIZED_FIELD(Group, VarInt);
+        SERIALIZED_FIELD(Group, VarInt); // technically an optional varint but encoded as i == 0 -> empty, i > 0 -> i - 1
         SERIALIZED_FIELD(Category, VarInt);
         SERIALIZED_FIELD(CraftingRequirements, std::optional<std::vector<Ingredient>>);
 
