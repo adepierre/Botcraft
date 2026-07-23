@@ -1,8 +1,11 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Types/Recipes/RecipeDisplay.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -22,7 +25,7 @@ namespace ProtocolCraft
 #elif PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(Recipe, Identifier);
 #else
-        SERIALIZED_FIELD(RecipeDisplay, VarInt);
+        SERIALIZED_FIELD(RecipeDisplay, ProtocolCraft::RecipeDisplay);
 #endif
 
         DECLARE_READ_WRITE_SERIALIZE;
