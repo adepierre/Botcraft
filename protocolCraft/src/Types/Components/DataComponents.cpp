@@ -492,6 +492,7 @@ namespace ProtocolCraft
             case DataComponentTypes::Profile:
                 return std::make_shared<DataComponentTypeResolvableProfile>();
             case DataComponentTypes::NoteBlockSound:
+                return std::make_shared<DataComponentTypeIdentifier>();
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
             case DataComponentTypes::DamageResistant:
                 return std::make_shared<DataComponentTypeDamageResistant>();
