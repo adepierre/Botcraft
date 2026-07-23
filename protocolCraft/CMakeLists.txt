@@ -477,6 +477,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Components/DataComponentTypeWrittenBookContent.hpp
 
     include/protocolCraft/Types/Components/Subtypes/AttributeModifier.hpp
+    include/protocolCraft/Types/Components/Subtypes/BannerPattern.hpp
     include/protocolCraft/Types/Components/Subtypes/BannerPatternLayer.hpp
     include/protocolCraft/Types/Components/Subtypes/BeehiveBlockEntityOccupant.hpp
     include/protocolCraft/Types/Components/Subtypes/BlockPredicate.hpp

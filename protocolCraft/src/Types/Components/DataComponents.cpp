@@ -92,6 +92,7 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(ExactMatcher);
         DEFINE_NETWORK_TYPE(RangedMatcher);
         DEFINE_NETWORK_TYPE(AttributeModifier);
+        DEFINE_NETWORK_TYPE(BannerPattern);
         DEFINE_NETWORK_TYPE(BannerPatternLayer);
         DEFINE_NETWORK_TYPE(BeehiveBlockEntityOccupant);
         DEFINE_NETWORK_TYPE(BlockPredicate);
