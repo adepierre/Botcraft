@@ -801,6 +801,10 @@ namespace Botcraft
                 else if (!IsSwimmingAndNotFlying())
                 {
                     player->flying = !player->flying;
+                    if (player->flying && player->on_ground)
+                    {
+                        JumpFromGround();
+                    }
                     fly_changed = true;
                     OnUpdateAbilities();
                     player->fly_jump_trigger_time = 0;
@@ -853,61 +857,9 @@ namespace Botcraft
             {
                 player->speed.y += 0.03999999910593033;
             }
-            // Jump from ground
             else if (player->on_ground && player->jump_delay == 0)
             {
-                // Get jump boost
-                float jump_boost = 0.0f;
-                for (const auto& effect : player->effects)
-                {
-                    if (effect.type == EntityEffectType::JumpBoost && effect.end > std::chrono::steady_clock::now())
-                    {
-                        jump_boost = 0.1f * (effect.amplifier + 1); // amplifier is 0 for "Effect I"
-                        break;
-                    }
-                }
-
-                // Get block underneath
-                float block_jump_factor = 1.0f;
-                const Blockstate* feet_block = world->GetBlock(Position(
-                    static_cast<int>(std::floor(player->position.x)),
-                    static_cast<int>(std::floor(player->position.y)),
-                    static_cast<int>(std::floor(player->position.z))
-                ));
-                if (feet_block == nullptr || !feet_block->IsHoney())
-                {
-                    const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
-                    if (below_block != nullptr && below_block->IsHoney())
-                    {
-                        block_jump_factor = 0.4f;
-                    }
-                }
-                else
-                {
-                    block_jump_factor = 0.4f;
-                }
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-                player->speed.y = 0.42f * block_jump_factor + jump_boost;
-                if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
-                {
-                    const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
-                    player->speed.x -= std::sin(yaw_rad) * 0.2f;
-                    player->speed.z += std::cos(yaw_rad) * 0.2f;
-                }
-#else
-                const float jump_power = static_cast<float>(player->GetAttributeJumpStrengthValueImpl()) * block_jump_factor + jump_boost;
-                if (jump_power > 1e-5f)
-                {
-                    player->speed.y = jump_power;
-                    if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
-                    {
-                        const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
-                        player->speed.x -= static_cast<double>(std::sin(yaw_rad)) * 0.2;
-                        player->speed.z += static_cast<double>(std::cos(yaw_rad)) * 0.2;
-                    }
-                }
-#endif
+                JumpFromGround();
                 player->jump_delay = 10;
             }
         }
@@ -915,6 +867,62 @@ namespace Botcraft
         {
             player->jump_delay = 0;
         }
+    }
+
+    void PhysicsManager::JumpFromGround() const
+    { // LivingEntity::JumpFromGround()
+        // Get jump boost
+        float jump_boost = 0.0f;
+        for (const auto& effect : player->effects)
+        {
+            if (effect.type == EntityEffectType::JumpBoost && effect.end > std::chrono::steady_clock::now())
+            {
+                jump_boost = 0.1f * (effect.amplifier + 1); // amplifier is 0 for "Effect I"
+                break;
+            }
+        }
+
+        // Get block underneath
+        float block_jump_factor = 1.0f;
+        const Blockstate* feet_block = world->GetBlock(Position(
+            static_cast<int>(std::floor(player->position.x)),
+            static_cast<int>(std::floor(player->position.y)),
+            static_cast<int>(std::floor(player->position.z))
+        ));
+        if (feet_block == nullptr || !feet_block->IsHoney())
+        {
+            const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
+            if (below_block != nullptr && below_block->IsHoney())
+            {
+                block_jump_factor = 0.4f;
+            }
+        }
+        else
+        {
+            block_jump_factor = 0.4f;
+        }
+
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        player->speed.y = 0.42f * block_jump_factor + jump_boost;
+        if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
+        {
+            const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
+            player->speed.x -= std::sin(yaw_rad) * 0.2f;
+            player->speed.z += std::cos(yaw_rad) * 0.2f;
+        }
+#else
+        const float jump_power = static_cast<float>(player->GetAttributeJumpStrengthValueImpl()) * block_jump_factor + jump_boost;
+        if (jump_power > 1e-5f)
+        {
+            player->speed.y = jump_power;
+            if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
+            {
+                const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
+                player->speed.x -= static_cast<double>(std::sin(yaw_rad)) * 0.2;
+                player->speed.z += static_cast<double>(std::cos(yaw_rad)) * 0.2;
+            }
+        }
+#endif
     }
 
     void PhysicsManager::ApplyInputs(const float strength) const
