@@ -2217,9 +2217,12 @@ namespace Botcraft
 
     AABB Entity::GetColliderImpl() const
     {
-        const double half_width = GetWidthImpl() / 2.0;
-        const double half_height = GetHeightImpl() / 2.0;
-        return AABB(Vector3<double>(position.x, position.y + half_height, position.z), Vector3<double>(half_width, half_height, half_width));
+        const float half_width = static_cast<float>(GetWidthImpl()) / 2.0f;
+        const float half_height = static_cast<float>(GetHeightImpl()) / 2.0f;
+        return AABB(
+            Vector3<double>(position.x, position.y + half_height, position.z),
+            Vector3<double>(static_cast<double>(half_width), static_cast<double>(half_height), static_cast<double>(half_width))
+        );
     }
 
     double Entity::GetWidthImpl() const
