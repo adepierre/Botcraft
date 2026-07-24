@@ -360,6 +360,8 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Chat/ChatMessageContent.hpp
     include/protocolCraft/Types/Chat/ChatSender.hpp
     include/protocolCraft/Types/Chat/ChatTypeBoundNetwork.hpp
+    include/protocolCraft/Types/Chat/ChatTypeDecoration.hpp
+    include/protocolCraft/Types/Chat/DirectChatType.hpp
     include/protocolCraft/Types/Chat/FilterMask.hpp
     include/protocolCraft/Types/Chat/LastSeenMessagesEntry.hpp
     include/protocolCraft/Types/Chat/LastSeenMessagesUpdate.hpp
