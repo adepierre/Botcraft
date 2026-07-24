@@ -1742,7 +1742,7 @@ namespace Botcraft
         if (player->supporting_block_pos.has_value())
         {
             Position output = player->supporting_block_pos.value();
-            output.y = static_cast<int>(std::floor(player->position.y) - 0.500001);
+            output.y = static_cast<int>(std::floor(player->position.y - 0.500001));
             return output;
         }
 
