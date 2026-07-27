@@ -374,10 +374,17 @@ namespace Botcraft
                             player->speed.y = 0.0;
                         }
 
-                        InputsToJump();
-
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
                         player->inputs.forward_axis *= 0.98f;
                         player->inputs.left_axis *= 0.98f;
+#endif
+
+                        InputsToJump();
+
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+                        player->inputs.forward_axis *= 0.98f;
+                        player->inputs.left_axis *= 0.98f;
+#endif
 
                         // Compensate water downward speed depending on looking direction (?)
                         if (IsSwimmingAndNotFlying())
