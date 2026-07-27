@@ -1,4 +1,5 @@
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
+#include "botcraft/Utilities/MathsUtilities.hpp"
 
 #include <limits>
 #include <mutex>
@@ -375,8 +376,8 @@ namespace Botcraft
     {
         const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
         const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
-        const float cos_pitch = std::cos(rad_pitch);
-        front_vector = Vector3<double>(-std::sin(rad_yaw) * cos_pitch, -std::sin(rad_pitch), std::cos(rad_yaw) * cos_pitch);
+        const float cos_pitch = CosLUT(rad_pitch);
+        front_vector = Vector3<double>(-SinLUT(rad_yaw) * cos_pitch, -SinLUT(rad_pitch), CosLUT(rad_yaw) * cos_pitch);
 
         // Vector is already normalized as front_vector² = (cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch) + sin²(rad_pitch) = 1
         // front_vector.Normalize();

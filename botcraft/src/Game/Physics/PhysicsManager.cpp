@@ -1,8 +1,9 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #include "botcraft/Game/Physics/PhysicsManager.hpp"
-#include "botcraft/Utilities/Logger.hpp"
-#include "botcraft/Utilities/SleepUtilities.hpp"
 #include "botcraft/Utilities/ItemUtilities.hpp"
+#include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Utilities/MathsUtilities.hpp"
+#include "botcraft/Utilities/SleepUtilities.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
 #include "botcraft/Game/Entities/entities/projectile/FireworkRocketEntity.hpp"
@@ -922,8 +923,8 @@ namespace Botcraft
         if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
         {
             const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
-            player->speed.x -= std::sin(yaw_rad) * 0.2f;
-            player->speed.z += std::cos(yaw_rad) * 0.2f;
+            player->speed.x -= SinLUT(yaw_rad) * 0.2f;
+            player->speed.z += CosLUT(yaw_rad) * 0.2f;
         }
 #else
         const float jump_power = static_cast<float>(player->GetAttributeJumpStrengthValueImpl()) * block_jump_factor + jump_boost;
@@ -933,8 +934,8 @@ namespace Botcraft
             if (player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting))
             {
                 const float yaw_rad = player->yaw * 0.017453292f /* PI/180 */;
-                player->speed.x -= static_cast<double>(std::sin(yaw_rad)) * 0.2;
-                player->speed.z += static_cast<double>(std::cos(yaw_rad)) * 0.2;
+                player->speed.x -= static_cast<double>(SinLUT(yaw_rad)) * 0.2;
+                player->speed.z += static_cast<double>(CosLUT(yaw_rad)) * 0.2;
             }
         }
 #endif
@@ -953,8 +954,8 @@ namespace Botcraft
             input_vector.Normalize();
         }
         input_vector *= strength;
-        const double sin_yaw = std::sin(player->yaw * 0.017453292f /* PI/180 */);
-        const double cos_yaw = std::cos(player->yaw * 0.017453292f /* PI/180 */);
+        const double sin_yaw = SinLUT(player->yaw * 0.017453292f /* PI/180 */);
+        const double cos_yaw = CosLUT(player->yaw * 0.017453292f /* PI/180 */);
 
         player->speed.x += input_vector.x * cos_yaw - input_vector.z * sin_yaw;
         player->speed.y += input_vector.y;

@@ -260,6 +260,7 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/DNS/DNSResourceRecord.hpp
     private_include/botcraft/Network/DNS/DNSSrvData.hpp
 
+    private_include/botcraft/Utilities/MathsUtilities.hpp
     private_include/botcraft/Utilities/StringUtilities.hpp
 
     private_include/botcraft/Game/World/Section.hpp
@@ -502,8 +503,9 @@ set(botcraft_SRC
     src/Renderer/Settings.cpp
 
     src/Utilities/DemanglingUtilities.cpp
-    src/Utilities/Logger.cpp
     src/Utilities/ItemUtilities.cpp
+    src/Utilities/Logger.cpp
+    src/Utilities/MathsUtilities.cpp
     src/Utilities/SleepUtilities.cpp
     src/Utilities/StdAnyUtilities.cpp
     src/Utilities/StringUtilities.cpp
