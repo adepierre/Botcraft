@@ -353,17 +353,25 @@ namespace Botcraft
                         // Decrease jump delay if > 0
                         player->jump_delay = std::max(0, player->jump_delay - 1);
 
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
                         if (std::abs(player->speed.x) < 0.003)
                         {
                             player->speed.x = 0.0;
                         }
-                        if (std::abs(player->speed.y) < 0.003)
-                        {
-                            player->speed.y = 0.0;
-                        }
                         if (std::abs(player->speed.z) < 0.003)
                         {
                             player->speed.z = 0.0;
+                        }
+#else
+                        if (player->speed.x * player->speed.x + player->speed.z * player->speed.z < 9.0e-6)
+                        {
+                            player->speed.x = 0.0;
+                            player->speed.z = 0.0;
+                        }
+#endif
+                        if (std::abs(player->speed.y) < 0.003)
+                        {
+                            player->speed.y = 0.0;
                         }
 
                         InputsToJump();
