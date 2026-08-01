@@ -1335,12 +1335,6 @@ namespace Botcraft
             }
             player->speed *= Vector3<double>(0.9900000095367432, 0.9800000190734863, 0.9900000095367432);
             ApplyMovement();
-            // Not sure this is required as the server should send an update
-            // anyway in case it should be set to false
-            if (player->on_ground)
-            {
-                player->SetDataSharedFlagsIdImpl(EntitySharedFlagsId::FallFlying, false);
-            }
         }
         // Move generic case
         else
