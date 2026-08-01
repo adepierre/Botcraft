@@ -470,7 +470,7 @@ jobs:
       - name: Run physics tests
         if: ${{ steps.get_trajectories.outcome == 'success' }}
         working-directory: ${{ runner.workspace }}/build/output/bin
-        # TODO: what if there is a suffix like _d or _rd ? Would be better to find a way to forward the command line argument from ctest, something like ctest -R "botcraft_online_tests" -- [.physics]
+        # TODO: what if there is a suffix like _d or _rd ? Would be better to find a way to forward the command line argument from ctest, something like ctest -R "botcraft_online_tests" -- [.physics] --> Possible in cmake 4.4+
         run: ./botcraft_online_tests [.physics]
 
       - name: Clone wiki
@@ -483,19 +483,21 @@ jobs:
         if: ${{ steps.get_trajectories.outcome == 'success' }}
         shell: bash
         run: |
-          mkdir splitted
-          cd splitted
-          # Split the physics comparison page by version with the global header kept in updated.md
-          awk 'NR==1 {f="../updated.md"} /^## /{if (f) close(f); f=$2} {if (!/^## /) print > f}' ../wiki/Physics-comparison-with-vanilla.md
-          cd ..
+          mkdir -p wiki/physics_versions
           # Add header for the new physics report
-          echo -e "Last run on $(date '+%d-%m-%Y %H:%M'), commit [$(git rev-parse HEAD)](https://github.com/${{ github.repository }}/tree/$(git rev-parse HEAD))\n\n" > splitted/$(cat ${{ runner.workspace }}/build/version.txt)
+          echo -e "Last run on $(date '+%d-%m-%Y %H:%M'), commit [$(git rev-parse HEAD)](https://github.com/${{ github.repository }}/tree/$(git rev-parse HEAD))\n\n" > wiki/physics_versions/$(cat ${{ runner.workspace }}/build/version.txt).md
           # Copy the new report generated for the current version
-          cat ${{ runner.workspace }}/build/output/bin/test_server_files/runtime/physics_trajectories/$(cat ${{ runner.workspace }}/build/version.txt).md >> splitted/$(cat ${{ runner.workspace }}/build/version.txt)
-          # Concat each version report in the new file
-          for f in $(ls -1 splitted | sort -r -V); do echo "## $f" >> updated.md; cat "splitted/$f" >> updated.md; echo >> updated.md; done ;
+          cat ${{ runner.workspace }}/build/output/bin/test_server_files/runtime/physics_trajectories/$(cat ${{ runner.workspace }}/build/version.txt).md >> wiki/physics_versions/$(cat ${{ runner.workspace }}/build/version.txt).md
+          # Extract the header for the main page
+          awk '1;/<!--- END OF HEADER --->/{exit}' wiki/Physics-comparison-with-vanilla.md > updated.md
+          # Rebuild the list of all version reports, most recent first
+          for f in $(ls -1 wiki/physics_versions | sed 's/\.md$//' | sort -r -V); do echo "- [$f]($f)" >> updated.md; done
           # Replace the report with the updated one
           mv -f updated.md wiki/Physics-comparison-with-vanilla.md
+          # Update the version list in the sidebar
+          list=$(for f in $(ls -1 wiki/physics_versions | sed 's/\.md$//' | sort -r -V); do echo "    - [$f]($f)"; done)
+          awk -v list="$list" '/<summary><a href="Physics-comparison-with-vanilla">/{print; print list; skip=1; next} /<\/details>/{skip=0} skip{next} {print}' wiki/_Sidebar.md > sidebar_updated.md
+          mv -f sidebar_updated.md wiki/_Sidebar.md
 
       - name: Commit the wiki changes
         if: ${{ steps.get_trajectories.outcome == 'success' }}
@@ -505,5 +507,7 @@ jobs:
           git config --local user.name 'github-actions[bot]'
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add Physics-comparison-with-vanilla.md
+          git add _Sidebar.md
+          git add physics_versions
           git commit -m "Update physics report for version $(cat ${{ runner.workspace }}/build/version.txt)"
           git push
