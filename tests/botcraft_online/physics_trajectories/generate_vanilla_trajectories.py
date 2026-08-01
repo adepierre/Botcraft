@@ -472,11 +472,12 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
         f.write("graphicsMode:0\n")
         if version >= str_to_tuple_version("1.16.4"):
             f.write("joinedFirstServer:true\n")
-        f.write("maxFps:10\n") # FPS don't impact tick, lower it as much as possible
+        f.write("maxFps:60\n") # FPS don't impact tick speed, BUT server packets are only processed at the end of each frame so we can't lower it too much
         f.write("mipmapLevels:0\n")
         f.write("narrator:0\n")
-        f.write("overrideHeight:90\n")
-        f.write("overrideWidth:160\n")
+        # Super small window to reduce load and make sure we get enough fps
+        f.write("overrideHeight:45\n")
+        f.write("overrideWidth:80\n")
         f.write("particles:2\n")
         f.write("renderClouds:false\n")
         f.write("toggleCrouch:false\n")
