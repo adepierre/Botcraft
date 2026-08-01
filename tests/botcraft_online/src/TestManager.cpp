@@ -602,8 +602,10 @@ void TestManager::testRunStarting(Catch::TestRunInfo const& test_run_info)
         std::filesystem::remove_all(botcraft_trajectories);
     }
     std::filesystem::create_directories(botcraft_trajectories);
-    std::ofstream recap_file(physics_recap_path, std::ios::out);
-    recap_file << "<details>\n<summary>Test results</summary>\n";
+    if (std::filesystem::exists(physics_recap_path))
+    {
+        std::filesystem::remove(physics_recap_path);
+    }
     // Retrieve header size
     header_size = GetStructureSize("_header_running");
     chunk_loader = GetBot(chunk_loader_name, Botcraft::GameType::Spectator);
@@ -766,8 +768,6 @@ void TestManager::testRunEnded(Catch::TestRunStats const& test_run_info)
     {
         chunk_loader->Disconnect();
     }
-    std::ofstream recap_file(physics_recap_path, std::ios::app);
-    recap_file << "\n</details>\n";
 }
 
 
