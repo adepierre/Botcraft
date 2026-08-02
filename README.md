@@ -149,6 +149,7 @@ There are several cmake options you can modify:
 - BOTCRAFT_USE_IMGUI [ON/OFF] If ON, additional information will be displayed on the GUI (need BOTCRAFT_USE_OPENGL_GUI to be ON)
 - BOTCRAFT_WINDOWS_BETTER_SLEEP [ON/OFF] If ON, thread sleep durations will be more accurate (only for Windows 10/11, no effect on other OS)
 - BOTCRAFT_USE_PRECOMPILED_HEADERS [ON/OFF] If ON, will use precompiled headers to speed up compilation process (ignored on GCC as precompiled headers slow down the build process)
+- BOTCRAFT_USE_UNITY_BUILD [ON/OFF] If ON, will use cmake unity build to merge entity files in a single TU to speed up compilation
 - BOTCRAFT_BUILD_DOC [ON/OFF] If ON, a target to generate the documentation will be added
 
 ## Examples
