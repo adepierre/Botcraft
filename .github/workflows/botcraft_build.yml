@@ -496,7 +496,7 @@ jobs:
           mv -f updated.md wiki/Physics-comparison-with-vanilla.md
           # Update the version list in the sidebar
           list=$(for f in $(ls -1 wiki/physics_versions | sed 's/\.md$//' | sort -r -V); do echo "    - [$f]($f)"; done)
-          awk -v list="$list" '/<summary><a href="Physics-comparison-with-vanilla">/{print; print list; skip=1; next} /<\/details>/{skip=0} skip{next} {print}' wiki/_Sidebar.md > sidebar_updated.md
+          awk -v list="$list" '/<summary><a href="Physics-comparison-with-vanilla">/{print; print ""; print list; print ""; skip=1; next} /<\/details>/{skip=0} skip{next} {print}' wiki/_Sidebar.md > sidebar_updated.md
           mv -f sidebar_updated.md wiki/_Sidebar.md
 
       - name: Commit the wiki changes
