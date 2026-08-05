@@ -92,10 +92,15 @@ namespace ProtocolCraft
         }
 
         // Add extra
-        if (raw.contains("extra") && raw["extra"].is_list_of<NBT::TagCompound>())
+        if (raw.contains("extra") && raw["extra"].is_list_of<NBT::TagString>())
+        {
+            for (const auto& s : raw["extra"].as_list_of<NBT::TagString>())
+                output += s;
+        }
+        else if (raw.contains("extra") && raw["extra"].is_list_of<NBT::TagCompound>())
         {
             for (const auto& t : raw["extra"].as_list_of<NBT::TagCompound>())
-            output += ParseChat(t);
+                output += ParseChat(t);
         }
 
         return output;
