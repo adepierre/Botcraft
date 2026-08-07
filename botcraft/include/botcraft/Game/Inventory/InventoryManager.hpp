@@ -45,10 +45,14 @@ namespace Botcraft
         short GetFirstOpenedWindowId() const;
         std::shared_ptr<Window> GetPlayerInventory() const;
         short GetIndexHotbarSelected() const;
+        /// @brief Does not send a packet, just updates inventory state.
+        /// To send the packet, use ManagersClient::SetHotbarSelection(index).
+        void SetIndexHotbarSelected(const short index);
         ProtocolCraft::Slot GetHotbarSelected() const;
         ProtocolCraft::Slot GetOffHand() const;
         ProtocolCraft::Slot GetCursor() const;
         void EraseInventory(const short window_id);
+
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         TransactionState GetTransactionState(const short window_id, const int transaction_id) const;
         void AddPendingTransaction(const InventoryTransaction& transaction);
@@ -67,7 +71,6 @@ namespace Botcraft
 #endif
 
     private:
-        void SetHotbarSelected(const short index);
         void SetCursor(const ProtocolCraft::Slot& c);
 
         void AddInventory(const short window_id, const InventoryType window_type);
