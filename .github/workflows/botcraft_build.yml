@@ -80,6 +80,7 @@ jobs:
           --dat tests/botcraft_online/runtime/level.dat
           --patcher tests/botcraft_online/physics_trajectories/ClientPatcher.java
           --java $JAVA_HOME/bin/java
+          --no-render
         env:
           PYTHONUNBUFFERED: 1
           XVFBCMD: ${{ runner.os == 'Linux' && 'xvfb-run' || '' }}
