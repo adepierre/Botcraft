@@ -5,8 +5,8 @@ survival
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
 #elif ${VERSION} < 1.17
-replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 #else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
@@ -41,8 +41,8 @@ survival
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
 #elif ${VERSION} < 1.17
-replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 #else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
@@ -74,8 +74,8 @@ survival
 replaceitem entity ${PLAYER_NAME} slot.armor.chest minecraft:elytra 1 0;.*Replaced slot .*
 replaceitem entity ${PLAYER_NAME} slot.armor.chest air 1 0;.*Replaced slot .*
 #elif ${VERSION} < 1.17
-replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
-replaceitem entity ${PLAYER_NAME} armor.chest air 1 0;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+replaceitem entity ${PLAYER_NAME} armor.chest air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 #else
 item replace entity ${PLAYER_NAME} armor.chest with minecraft:elytra 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.chest with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*

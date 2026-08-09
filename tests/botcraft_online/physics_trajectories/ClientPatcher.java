@@ -43,7 +43,6 @@ public class ClientPatcher {
     private static final String fOnGround      = "onGround";
     private static final String fYRot          = "yRot";
     private static final String fXRot          = "xRot";
-    private static final String fNoRender      = "noRender";
     private static final String mTick          = "tick";
     private static final String mPosition      = "position";
 
@@ -192,8 +191,8 @@ public class ClientPatcher {
                             fKeyBackward, isMojangMapping ? "keyDown"   : "field_74368_y",
                             fKeyRight,    isMojangMapping ? "keyRight"  : "field_74366_z",
                             fKeyJump,     isMojangMapping ? "keyJump"   : "field_74314_A",
-                            fKeySneak,    isMojangMapping ? "keyShift"  : "field_74311_E",
-                            fKeySprint,   isMojangMapping ? "keySprint" : "field_151444_V"
+                            fKeySprint,   isMojangMapping ? "keySprint" : "field_151444_V",
+                            fKeySneak,    isMojangMapping ? (version.equals("1.14.4") ? "keySneak" : "keyShift") : "field_74311_E" // In 1.14.4 mojang mappings, keyShift was called keySneak
                     )),
                     new HashMap<>()
             )
