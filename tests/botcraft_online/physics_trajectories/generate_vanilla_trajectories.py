@@ -277,7 +277,7 @@ class Server:
             else:
                 time.sleep(0.001)
 
-def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) -> subprocess.Popen:
+def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str, no_render: bool) -> subprocess.Popen:
     print("Setup client...")
     print("\tDownload jar...")
     version = str_to_tuple_version(manifest["id"])
@@ -304,6 +304,7 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
         "patched_" + filename,
         os.path.relpath(mapping_file, folder) if mapping_file else "",
         manifest["id"],
+        "true" if no_render else "false",
     ], cwd=folder, check=True)
     patched_jar = os.path.join(folder, "patched_" + filename)
 
@@ -475,9 +476,9 @@ def setup_client(base_folder: str, manifest: dict, patcher: str, java_exe: str) 
         f.write("maxFps:60\n") # FPS don't impact tick speed, BUT server packets are only processed at the end of each frame so we can't lower it too much
         f.write("mipmapLevels:0\n")
         f.write("narrator:0\n")
-        # Super small window to reduce load and make sure we get enough fps
-        f.write("overrideHeight:45\n")
-        f.write("overrideWidth:80\n")
+        # Super small window if no_render to reduce load and make sure we get enough fps
+        f.write(f"overrideHeight:{5 if no_render else 100}\n")
+        f.write(f"overrideWidth:{10 if no_render else 200}\n")
         f.write("particles:2\n")
         f.write("renderClouds:false\n")
         f.write("toggleCrouch:false\n")
@@ -707,7 +708,7 @@ def main(args):
 
     # Start client
     try:
-        client = setup_client(client_folder, version_manifest, args.patcher, args.java)
+        client = setup_client(client_folder, version_manifest, args.patcher, args.java, args.no_render)
     except Exception as e:
         server.close()
         raise e
@@ -744,6 +745,7 @@ if __name__ == "__main__":
     parser.add_argument("--dat", help="Path to a level.dat file to use for the server", default="")
     parser.add_argument("--patcher", help="Path to the java patcher file to apply before launching the client", default="ClientPatcher.java")
     parser.add_argument("--java", help="java executable called to patch the client and run the server (client will always use default Minecraft launcher JRE)", default="java")
+    parser.add_argument("--no-render", action="store_true", help="Disable client rendering")
 
     args = parser.parse_args()
     main(args)

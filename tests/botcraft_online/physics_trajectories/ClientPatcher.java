@@ -24,9 +24,9 @@ public class ClientPatcher {
     private static final String cEntity        = "Entity";
     private static final String cVec3          = "Vec3";
     private static final String cMinecraft     = "Minecraft";
+    private static final String cGameRenderer  = "GameRenderer";
     private static final String cOptions       = "Options";
     private static final String cKeyMapping    = "KeyMapping";
-    private static final String cConnectScreen = "ConnectScreen";
     private static final String fMinecraft     = "minecraft";
     private static final String fX             = "x";
     private static final String fY             = "y";
@@ -45,6 +45,8 @@ public class ClientPatcher {
     private static final String fXRot          = "xRot";
     private static final String mTick          = "tick";
     private static final String mPosition      = "position";
+    private static final String mRender        = "render";
+    private static final String mRenderFrame   = "renderFrame";
 
     public static void main(String[] args) throws IOException {
         // Get the arguments
@@ -52,6 +54,7 @@ public class ClientPatcher {
         String out_path = args[1];
         String mappings = args[2];
         String version = args[3];
+        boolean noRender = args.length > 4 && Boolean.parseBoolean(args[4]);
 
         initializeClasses(version);
         obfuscateClasses(mappings, version.compareTo("1.14.4") >= 0 /* version >= 1.14.4); */);
@@ -108,10 +111,20 @@ public class ClientPatcher {
                     jout.write(modifiedBytes);
                     jout.closeEntry();
                 }
-                // Modify ConnectScreen class to add a sleep before every constructor
-                else if (entry.getName().equals(classes.get(cConnectScreen).name + ".class")) {
+                // Modify Minecraft class to add an instant return statement for renderFrame method
+                else if (noRender && entry.getName().equals(classes.get(cMinecraft).name + ".class")) {
                     byte[] classBytes = readClassBytes(jin);
-                    byte[] modifiedBytes = modifyConnectScreenClass(classBytes);
+                    byte[] modifiedBytes = modifyMinecraftClass(classBytes);
+
+                    JarEntry newEntry = new JarEntry(entry.getName());
+                    jout.putNextEntry(newEntry);
+                    jout.write(modifiedBytes);
+                    jout.closeEntry();
+                }
+                // Modify GameRenderer class to add an instant return statement for render method (renderFrame only exists in 26.1+)
+                else if (noRender && entry.getName().equals(classes.get(cGameRenderer).name + ".class")) {
+                    byte[] classBytes = readClassBytes(jin);
+                    byte[] modifiedBytes = modifyGameRendererClass(classBytes);
 
                     JarEntry newEntry = new JarEntry(entry.getName());
                     jout.putNextEntry(newEntry);
@@ -179,7 +192,14 @@ public class ClientPatcher {
             cMinecraft, new ObfuscatedClass(
                     isMojangMapping ? "net.minecraft.client.Minecraft" : "net/minecraft/client/Minecraft",
                     new HashMap<>(Map.of(fOptions, isMojangMapping ? "options" : "field_71474_y")),
-                    new HashMap<>()
+                    new HashMap<>(Map.of(mRenderFrame, "renderFrame" /* renderFrame doesn't exist for non mojang mapping versions*/))
+            )
+        );
+        classes.put(
+            cGameRenderer, new ObfuscatedClass(
+                    isMojangMapping ? "net.minecraft.client.renderer.GameRenderer" : "net/minecraft/client/renderer/EntityRenderer",
+                    new HashMap<>(),
+                    new HashMap<>(Map.of(mRender, isMojangMapping ? "render" : "func_181560_a"))
             )
         );
         classes.put(
@@ -202,14 +222,6 @@ public class ClientPatcher {
                     isMojangMapping ? "net.minecraft.client.KeyMapping" : "net/minecraft/client/settings/KeyBinding",
                     new HashMap<>(Map.of(fIsDown, isMojangMapping ? "isDown" : "field_74513_e")),
                     new HashMap<>() // We don't need get/set methods for KeyMapping, we'll set isDown field to public instead
-            )
-        );
-        classes.put(
-            cConnectScreen, new ObfuscatedClass(
-                    isMojangMapping ? "net.minecraft.client.gui.screens.ConnectScreen" : "net/minecraft/client/multiplayer/GuiConnecting",
-                    // We don't need any field or method for ConnectScreen as we change the constructors (known name)
-                    new HashMap<>(),
-                    new HashMap<>()
             )
         );
     }
@@ -790,38 +802,46 @@ public class ClientPatcher {
     }
 
 
-    private static byte[] modifyConnectScreenClass(byte[] classBytes) {
+    private static byte[] modifyMinecraftClass(byte[] classBytes) {
         ClassReader cr = new ClassReader(classBytes);
         // COMPUTE_FRAMES to automatically compute frames and maxs thing
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
-        cr.accept(new ConnectScreenClassVisitor(cw), ClassReader.EXPAND_FRAMES);
+        cr.accept(new NoOpMethodClassVisitor(cw, classes.get(cMinecraft).methods.get(mRenderFrame)), ClassReader.EXPAND_FRAMES);
         return cw.toByteArray();
     }
 
-    private static class ConnectScreenClassVisitor extends ClassVisitor {
-        public ConnectScreenClassVisitor(ClassVisitor cv) {
-            super(Opcodes.ASM9, cv);
-        }
+    private static byte[] modifyGameRendererClass(byte[] classBytes) {
+        ClassReader cr = new ClassReader(classBytes);
+        // COMPUTE_FRAMES to automatically compute frames and maxs thing
+        ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+        cr.accept(new NoOpMethodClassVisitor(cw, classes.get(cGameRenderer).methods.get(mRender)), ClassReader.EXPAND_FRAMES);
+        return cw.toByteArray();
+    }
 
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(version, access, name, signature, superName, interfaces);
+    // No-op every void method matching the given name by replacing its body with a sleep and a direct return
+    private static class NoOpMethodClassVisitor extends ClassVisitor {
+        private final String methodName;
+
+        public NoOpMethodClassVisitor(ClassVisitor cv, String methodName) {
+            super(Opcodes.ASM9, cv);
+            this.methodName = methodName;
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
             MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
 
-            if ("<init>".equals(name)) {
-                return new ConnectScreenConstructorVisitor(Opcodes.ASM9, mv, access, name, descriptor);
+            if (this.methodName.equals(name) && descriptor.endsWith(")V")) {
+                return new NoOpReturnVisitor(Opcodes.ASM9, mv, access, name, descriptor);
             }
 
             return mv;
         }
     }
 
-    private static class ConnectScreenConstructorVisitor extends AdviceAdapter {
-        public ConnectScreenConstructorVisitor(int api, MethodVisitor mv, int access, String name, String descriptor) {
+    // Replace the whole method body with a sleep and return
+    private static class NoOpReturnVisitor extends AdviceAdapter {
+        public NoOpReturnVisitor(int api, MethodVisitor mv, int access, String name, String descriptor) {
             super(api, mv, access, name, descriptor);
         }
 
@@ -833,10 +853,8 @@ public class ClientPatcher {
             // try
             mv.visitTryCatchBlock(labelTryStart, labelTryEnd, labelCatchStart, "java/lang/InterruptedException");
             mv.visitLabel(labelTryStart);
-                // I have no idea why, but adding a sleep in this screen sometimes prevents some crashes (know required version: 1.19)
-                // TODO: find the real cause of the crashes and fix it?
-                // Thread.sleep(10000);
-                mv.visitLdcInsn(10000L);
+                // Thread.sleep(16);
+                mv.visitLdcInsn(16L);
                 mv.visitMethodInsn(INVOKESTATIC, "java/lang/Thread", "sleep", "(J)V", false);
                 mv.visitLabel(labelTryEnd);
                 Label labelCatchEnd = new Label();
@@ -849,6 +867,7 @@ public class ClientPatcher {
                 mv.visitVarInsn(ALOAD, exception);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/InterruptedException", "printStackTrace", "()V", false);
             mv.visitLabel(labelCatchEnd);
+            mv.visitInsn(RETURN);
         }
     }
 }
