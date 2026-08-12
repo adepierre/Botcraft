@@ -489,14 +489,13 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeRarity>();
             case DataComponentTypes::Profile:
                 return std::make_shared<DataComponentTypeResolvableProfile>();
-            case DataComponentTypes::NoteBlockSound:
-                return std::make_shared<DataComponentTypeIdentifier>();
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
             case DataComponentTypes::DamageResistant:
                 return std::make_shared<DataComponentTypeDamageResistant>();
             case DataComponentTypes::ItemModel:
             case DataComponentTypes::TooltipStyle:
 #endif
+            case DataComponentTypes::NoteBlockSound:
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
                 return std::make_shared<DataComponentTypeResourceLocation>();
 #else
@@ -841,6 +840,8 @@ namespace ProtocolCraft
 
         DEFINE_NETWORK_TYPE(HashedDataComponentPatch);
 #endif
+
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         LengthPrefixedDataComponentPatch::LengthPrefixedDataComponentPatch(const DataComponentPatch& p)
         {
             map = p.GetMap();
@@ -935,6 +936,7 @@ namespace ProtocolCraft
 
             return output;
         }
-}
+#endif
+    }
 }
 #endif
