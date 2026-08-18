@@ -162,6 +162,21 @@ TEST_CASE("set in hand")
     }
 }
 
+TEST_CASE("select hotbar slot")
+{
+    std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
+
+    CHECK(GiveItem(bot, "minecraft:stick", 1));
+    CHECK(GiveItem(bot, "minecraft:diamond_pickaxe", 1));
+
+    bot->SyncAction(5000, Botcraft::SelectHotbarSlot, 1);
+
+    const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
+    {
+        REQUIRE(GetItemName(inventory_manager->GetHotbarSelected()) == "minecraft:diamond_pickaxe");
+    }
+}
+
 TEST_CASE("place block")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
