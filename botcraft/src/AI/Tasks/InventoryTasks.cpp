@@ -302,9 +302,9 @@ namespace Botcraft
 
     Status SelectHotbarSlotImpl(BehaviourClient& client, const short index)
     {
-        if (!(index >= 0 && index <= 8))
+        if (index < 0 || index > 8)
         {
-            LOG_WARNING("Index out of range (0 - 8)");
+            LOG_WARNING("Index out of range (0 - 8) when trying to change selected hotbar slot");
             return Status::Failure;
         }
 
