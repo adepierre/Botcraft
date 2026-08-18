@@ -2,12 +2,13 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
 
 using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    InventoryManager::InventoryManager()
+    InventoryManager::InventoryManager(const std::shared_ptr<NetworkManager>& network_manager) : network_manager(network_manager)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = 0;
@@ -500,6 +501,21 @@ namespace Botcraft
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         ApplyTransactionImpl(transaction);
+    }
+
+    int InventoryManager::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
+    {
+        InventoryTransaction inventory_transaction = PrepareTransaction(transaction);
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        AddPendingTransaction(inventory_transaction);
+        network_manager->Send(transaction);
+        return transaction->GetUid();
+#else
+        network_manager->Send(transaction);
+        // In 1.17+ there is no server confirmation so apply it directly
+        ApplyTransaction(inventory_transaction);
+        return 1;
+#endif
     }
 
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */

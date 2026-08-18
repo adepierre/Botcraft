@@ -34,7 +34,7 @@ namespace Botcraft
 #endif
 
         // ItemStack/CarriedItem, StateId and ChangedSlots will be set in SendInventoryTransaction
-        int transaction_id = client.SendInventoryTransaction(click_window_packet);
+        int transaction_id = inventory_manager->SendInventoryTransaction(click_window_packet);
 
         // Wait for the click confirmation (versions < 1.17)
 #if PROTOCOL_VERSION < 755 /* < 1.17 */

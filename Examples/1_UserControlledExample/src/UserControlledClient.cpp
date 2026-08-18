@@ -35,7 +35,7 @@ UserControlledClient::UserControlledClient(bool online) : ManagersClient()
         entity_manager = std::make_shared<EntityManager>(network_manager);
         // Dummy login packet to init local player
         ClientboundLoginPacket().Dispatch(entity_manager.get());
-        inventory_manager = std::make_shared<InventoryManager>();
+        inventory_manager = std::make_shared<InventoryManager>(network_manager);
 
         should_be_closed = false;
 
