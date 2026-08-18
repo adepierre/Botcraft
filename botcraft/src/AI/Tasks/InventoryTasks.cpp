@@ -103,7 +103,6 @@ namespace Botcraft
         return ClickSlotInContainerImpl(client, container_id, slot_id, click_type, button_num);
     }
 
-
     Status SwapItemsInContainerImpl(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
     {
         // If both slots are equal, clicking three times will transfer the content to the cursor instead of being a no-op
@@ -298,6 +297,48 @@ namespace Botcraft
         const short destination_slot = blackboard.Get<short>(variable_names[2]);
 
         return PutOneItemInContainerSlotImpl(client, container_id, source_slot, destination_slot);
+    }
+
+
+    Status SelectHotbarSlotImpl(BehaviourClient& client, const short index)
+    {
+        if (!(index >= 0 && index <= 8))
+        {
+            LOG_WARNING("Index out of range (0 - 8)");
+            return Status::Failure;
+        }
+
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+        inventory_manager->SetIndexHotbarSelected(index);
+
+        return Status::Success;
+    }
+
+    Status SelectHotbarSlot(BehaviourClient& client, const short index)
+    {
+        constexpr std::array variable_names = {
+               "SelectHotbarSlot.index"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], index);
+
+        return SelectHotbarSlotImpl(client, index);
+    }
+
+    Status SelectHotbarSlotBlackboard(BehaviourClient& client)
+    {
+        constexpr std::array variable_names = {
+               "SelectHotbarSlot.index"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const short index = blackboard.Get<short>(variable_names[0]);
+
+        return SelectHotbarSlotImpl(client, index);
     }
 
 

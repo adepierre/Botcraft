@@ -24,7 +24,6 @@ namespace Botcraft
     /// @return Success if the slots is clicked (for versions < 1.17 and the server confirms it), Failure otherwise
     Status ClickSlotInContainerBlackboard(BehaviourClient& client);
 
-
     /// @brief Swap two slots in a given container
     /// @param client The client performing the action
     /// @param container_id Container ID
@@ -65,6 +64,18 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @return Success if the item is correctly set, Failure otherwise
     Status PutOneItemInContainerSlotBlackboard(BehaviourClient& client);
+
+
+    /// @brief Sets the current selected hotbar slot
+    /// @param client The client performing the action
+    /// @param index The hotbar slot index to select (Range: 0-7)
+    /// @return Success if the index is in range and the hotbar slot was selected, Failure otherwise
+    Status SelectHotbarSlot(BehaviourClient& client, const short index);
+
+    /// @brief Same thing as SelectHotbarSlot, but reads its parameters from the blackboard
+    /// @param client The client performing the action
+    /// @return Success if the two slots have been correctly swapped, Failure otherwise
+    Status SelectHotbarSlotBlackboard(BehaviourClient& client);
 
 
     /// @brief Try to set a given item in the given hand
