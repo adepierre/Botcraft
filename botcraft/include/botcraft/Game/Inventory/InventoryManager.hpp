@@ -43,6 +43,7 @@ namespace Botcraft
     public:
         InventoryManager(const std::shared_ptr<NetworkManager>& network_manager);
 
+        void SetIndexHotbarSelected(const short index);
         std::shared_ptr<Window> GetWindow(const short window_id) const;
         short GetFirstOpenedWindowId() const;
         std::shared_ptr<Window> GetPlayerInventory() const;
@@ -67,7 +68,7 @@ namespace Botcraft
 #endif
 
     private:
-        void SetHotbarSelected(const short index);
+        void SetIndexHotbarSelectedLocal(const short index);
         void SetCursor(const ProtocolCraft::Slot& c);
 
         void AddInventory(const short window_id, const InventoryType window_type);

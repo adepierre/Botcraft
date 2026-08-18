@@ -19,6 +19,14 @@ namespace Botcraft
 #endif
     }
 
+    void InventoryManager::SetIndexHotbarSelected(const short index)
+    {
+        SetIndexHotbarSelectedLocal(index);
+
+        ServerboundSetCarriedItemPacket packet;
+        packet.SetSlot(index);
+        network_manager->Send(std::make_shared<ServerboundSetCarriedItemPacket>(packet));
+    }
 
     void InventoryManager::SetSlot(const short window_id, const short index, const Slot& slot)
     {
@@ -229,7 +237,7 @@ namespace Botcraft
 #endif
     }
 
-    void InventoryManager::SetHotbarSelected(const short index)
+    void InventoryManager::SetIndexHotbarSelectedLocal(const short index)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = index;
@@ -625,7 +633,7 @@ namespace Botcraft
     void InventoryManager::Handle(ClientboundSetHeldSlotPacket& packet)
 #endif
     {
-        SetHotbarSelected(packet.GetSlot());
+        SetIndexHotbarSelectedLocal(packet.GetSlot());
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
