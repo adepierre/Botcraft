@@ -14,6 +14,8 @@
 
 namespace Botcraft
 {
+    class NetworkManager;
+
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     enum class TransactionState
     {
@@ -39,8 +41,9 @@ namespace Botcraft
     class InventoryManager : public ProtocolCraft::Handler
     {
     public:
-        InventoryManager();
+        InventoryManager(const std::shared_ptr<NetworkManager>& network_manager);
 
+        void SetIndexHotbarSelected(const short index);
         std::shared_ptr<Window> GetWindow(const short window_id) const;
         short GetFirstOpenedWindowId() const;
         std::shared_ptr<Window> GetPlayerInventory() const;
@@ -49,25 +52,23 @@ namespace Botcraft
         ProtocolCraft::Slot GetOffHand() const;
         ProtocolCraft::Slot GetCursor() const;
         void EraseInventory(const short window_id);
+
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         TransactionState GetTransactionState(const short window_id, const int transaction_id) const;
-        void AddPendingTransaction(const InventoryTransaction& transaction);
 #endif
-        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the packet
-        /// @param transaction The transaction to update with the modifications
-        /// @return An InventoryTransaction with various info, depending on the version
-        InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
 
-        /// @brief Apply a given transaction to a container
-        /// @param transaction The transaction to apply
-        void ApplyTransaction(const InventoryTransaction& transaction);
+        // Set the right transaction id, add it to the inventory manager,
+        // update the next transaction id and send it to the server
+        // return the id of the transaction
+        int SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
+
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
         std::vector<ProtocolCraft::MerchantOffer> GetAvailableMerchantOffers() const;
         void IncrementMerchantOfferUse(const int index);
 #endif
 
     private:
-        void SetHotbarSelected(const short index);
+        void SetIndexHotbarSelectedLocal(const short index);
         void SetCursor(const ProtocolCraft::Slot& c);
 
         void AddInventory(const short window_id, const InventoryType window_type);
@@ -78,6 +79,18 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
         void SetStateId(const short window_id, const int state_id);
 #endif
+
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        void AddPendingTransaction(const InventoryTransaction& transaction);
+#endif
+        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the packet
+        /// @param transaction The transaction to update with the modifications
+        /// @return An InventoryTransaction with various info, depending on the version
+        InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
+
+        /// @brief Apply a given transaction to a container
+        /// @param transaction The transaction to apply
+        void ApplyTransaction(const InventoryTransaction& transaction);
 
     private:
         virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& packet) override;
@@ -120,5 +133,7 @@ namespace Botcraft
         int trading_container_id;
         std::vector<ProtocolCraft::MerchantOffer> available_trades;
 #endif
+
+        std::shared_ptr<NetworkManager> network_manager;
     };
 } // Botcraft

@@ -41,11 +41,6 @@ namespace Botcraft
         bool GetAutoRespawn() const;
         void SetAutoRespawn(const bool b);
 
-        // Set the right transaction id, add it to the inventory manager,
-        // update the next transaction id and send it to the server
-        // return the id of the transaction
-        int SendInventoryTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
-
         std::shared_ptr<World> GetWorld() const;
         std::shared_ptr<EntityManager> GetEntityManager() const;
         std::shared_ptr<LocalPlayer> GetLocalPlayer() const;

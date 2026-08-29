@@ -97,21 +97,6 @@ namespace Botcraft
         return day_time;
     }
 
-    int ManagersClient::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
-    {
-        InventoryTransaction inventory_transaction = inventory_manager->PrepareTransaction(transaction);
-#if PROTOCOL_VERSION < 755 /* < 1.17 */
-        inventory_manager->AddPendingTransaction(inventory_transaction);
-        network_manager->Send(transaction);
-        return transaction->GetUid();
-#else
-        network_manager->Send(transaction);
-        // In 1.17+ there is no server confirmation so apply it directly
-        inventory_manager->ApplyTransaction(inventory_transaction);
-        return 1;
-#endif
-    }
-
     void ManagersClient::SetSharedWorld(const std::shared_ptr<World> world_)
     {
         world = world_;
@@ -184,7 +169,7 @@ namespace Botcraft
             world = std::make_shared<World>(false);
         }
 
-        inventory_manager = std::make_shared<InventoryManager>();
+        inventory_manager = std::make_shared<InventoryManager>(network_manager);
         entity_manager = std::make_shared<EntityManager>(network_manager);
         // Subscribe them to the network manager
         network_manager->AddHandler(world.get());

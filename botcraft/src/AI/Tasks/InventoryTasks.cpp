@@ -34,7 +34,7 @@ namespace Botcraft
 #endif
 
         // ItemStack/CarriedItem, StateId and ChangedSlots will be set in SendInventoryTransaction
-        int transaction_id = client.SendInventoryTransaction(click_window_packet);
+        int transaction_id = inventory_manager->SendInventoryTransaction(click_window_packet);
 
         // Wait for the click confirmation (versions < 1.17)
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
@@ -102,7 +102,6 @@ namespace Botcraft
 
         return ClickSlotInContainerImpl(client, container_id, slot_id, click_type, button_num);
     }
-
 
     Status SwapItemsInContainerImpl(BehaviourClient& client, const short container_id, const short first_slot, const short second_slot)
     {
@@ -298,6 +297,48 @@ namespace Botcraft
         const short destination_slot = blackboard.Get<short>(variable_names[2]);
 
         return PutOneItemInContainerSlotImpl(client, container_id, source_slot, destination_slot);
+    }
+
+
+    Status SelectHotbarSlotImpl(BehaviourClient& client, const short index)
+    {
+        if (index < 0 || index > 8)
+        {
+            LOG_WARNING("Index out of range (0 - 8) when trying to change selected hotbar slot");
+            return Status::Failure;
+        }
+
+        std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
+        inventory_manager->SetIndexHotbarSelected(index);
+
+        return Status::Success;
+    }
+
+    Status SelectHotbarSlot(BehaviourClient& client, const short index)
+    {
+        constexpr std::array variable_names = {
+               "SelectHotbarSlot.index"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        blackboard.Set<short>(variable_names[0], index);
+
+        return SelectHotbarSlotImpl(client, index);
+    }
+
+    Status SelectHotbarSlotBlackboard(BehaviourClient& client)
+    {
+        constexpr std::array variable_names = {
+               "SelectHotbarSlot.index"
+        };
+
+        Blackboard& blackboard = client.GetBlackboard();
+
+        // Mandatory
+        const short index = blackboard.Get<short>(variable_names[0]);
+
+        return SelectHotbarSlotImpl(client, index);
     }
 
 

@@ -2,12 +2,13 @@
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Utilities/Logger.hpp"
+#include "botcraft/Network/NetworkManager.hpp"
 
 using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    InventoryManager::InventoryManager()
+    InventoryManager::InventoryManager(const std::shared_ptr<NetworkManager>& network_manager) : network_manager(network_manager)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = 0;
@@ -18,6 +19,14 @@ namespace Botcraft
 #endif
     }
 
+    void InventoryManager::SetIndexHotbarSelected(const short index)
+    {
+        SetIndexHotbarSelectedLocal(index);
+
+        ServerboundSetCarriedItemPacket packet;
+        packet.SetSlot(index);
+        network_manager->Send(std::make_shared<ServerboundSetCarriedItemPacket>(packet));
+    }
 
     void InventoryManager::SetSlot(const short window_id, const short index, const Slot& slot)
     {
@@ -228,7 +237,7 @@ namespace Botcraft
 #endif
     }
 
-    void InventoryManager::SetHotbarSelected(const short index)
+    void InventoryManager::SetIndexHotbarSelectedLocal(const short index)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
         index_hotbar_selected = index;
@@ -502,6 +511,21 @@ namespace Botcraft
         ApplyTransactionImpl(transaction);
     }
 
+    int InventoryManager::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
+    {
+        InventoryTransaction inventory_transaction = PrepareTransaction(transaction);
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+        AddPendingTransaction(inventory_transaction);
+        network_manager->Send(transaction);
+        return transaction->GetUid();
+#else
+        network_manager->Send(transaction);
+        // In 1.17+ there is no server confirmation so apply it directly
+        ApplyTransaction(inventory_transaction);
+        return 1;
+#endif
+    }
+
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     std::vector<MerchantOffer> InventoryManager::GetAvailableMerchantOffers() const
     {
@@ -609,7 +633,7 @@ namespace Botcraft
     void InventoryManager::Handle(ClientboundSetHeldSlotPacket& packet)
 #endif
     {
-        SetHotbarSelected(packet.GetSlot());
+        SetIndexHotbarSelectedLocal(packet.GetSlot());
     }
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
