@@ -37,9 +37,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         SERIALIZED_FIELD(AlwaysShow, bool);
 #endif
+#if PROTOCOL_VERSION < 573 /* < 1.15 */
+        SERIALIZED_FIELD(X, float);
+        SERIALIZED_FIELD(Y, float);
+        SERIALIZED_FIELD(Z, float);
+#else
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);
+#endif
         SERIALIZED_FIELD(XDist, float);
         SERIALIZED_FIELD(YDist, float);
         SERIALIZED_FIELD(ZDist, float);
