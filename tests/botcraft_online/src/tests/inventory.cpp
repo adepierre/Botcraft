@@ -138,7 +138,7 @@ TEST_CASE("put one item")
     }
 }
 
-TEST_CASE("set in hand")
+TEST_CASE("set in hand#hotbar")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
 
@@ -159,6 +159,26 @@ TEST_CASE("set in hand")
     const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
     {
         REQUIRE(GetItemName(inventory_manager->GetHotbarSelected()) == "minecraft:diamond_pickaxe");
+        REQUIRE(inventory_manager->GetIndexHotbarSelected() == 1);
+    }
+}
+
+TEST_CASE("set in hand#no hotbar")
+{
+    std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>();
+
+    CHECK(GiveItem(bot, "minecraft:stick", 1));
+    SendCommandSetItem(bot->GetNetworkManager()->GetMyName(), "minecraft:diamond_pickaxe", std::nullopt, {}, 0);
+    CHECK(Botcraft::Utilities::WaitForCondition([&]() {
+        return !bot->GetInventoryManager()->GetPlayerInventory()->GetSlot(Botcraft::Window::INVENTORY_STORAGE_START).IsEmptySlot();
+    }, 5000));
+
+    bot->SyncAction(5000, Botcraft::SetItemInHand, "minecraft:diamond_pickaxe", Botcraft::Hand::Right);
+
+    const std::shared_ptr<Botcraft::InventoryManager> inventory_manager = bot->GetInventoryManager();
+    {
+        REQUIRE(GetItemName(inventory_manager->GetHotbarSelected()) == "minecraft:diamond_pickaxe");
+        REQUIRE(inventory_manager->GetIndexHotbarSelected() == 0);
     }
 }
 

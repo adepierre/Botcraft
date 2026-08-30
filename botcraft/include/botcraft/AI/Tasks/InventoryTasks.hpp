@@ -68,7 +68,7 @@ namespace Botcraft
 
     /// @brief Sets the current selected hotbar slot
     /// @param client The client performing the action
-    /// @param index The hotbar slot index to select (Range: 0-7)
+    /// @param index The hotbar slot index to select (Range: 0-8)
     /// @return Success if the index is in range and the hotbar slot was selected, Failure otherwise
     Status SelectHotbarSlot(BehaviourClient& client, const short index);
 

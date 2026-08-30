@@ -2,7 +2,7 @@
 
 #include <botcraft/Utilities/ItemUtilities.hpp>
 
-void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const std::map<Botcraft::Enchantment, int>& enchantments)
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const std::optional<Botcraft::EquipmentSlot> slot, const std::map<Botcraft::Enchantment, int>& enchantments, const short inventory_slot)
 {
     std::string command;
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
@@ -15,26 +15,33 @@ void SendCommandSetItem(const std::string& botname, const std::string& item_name
     command = "item replace entity " + botname + " ";
 #endif
 
-    switch (slot)
+    if (slot.has_value())
     {
-    case Botcraft::EquipmentSlot::MainHand:
-        command += "weapon.mainhand";
-        break;
-    case Botcraft::EquipmentSlot::OffHand:
-        command += "weapon.offhand";
-        break;
-    case Botcraft::EquipmentSlot::Boots:
-        command += "armor.feet";
-        break;
-    case Botcraft::EquipmentSlot::Leggings:
-        command += "armor.legs";
-        break;
-    case Botcraft::EquipmentSlot::ChestPlate:
-        command += "armor.chest";
-        break;
-    case Botcraft::EquipmentSlot::Helmet:
-        command += "armor.head";
-        break;
+        switch (slot.value())
+        {
+        case Botcraft::EquipmentSlot::MainHand:
+            command += "weapon.mainhand";
+            break;
+        case Botcraft::EquipmentSlot::OffHand:
+            command += "weapon.offhand";
+            break;
+        case Botcraft::EquipmentSlot::Boots:
+            command += "armor.feet";
+            break;
+        case Botcraft::EquipmentSlot::Leggings:
+            command += "armor.legs";
+            break;
+        case Botcraft::EquipmentSlot::ChestPlate:
+            command += "armor.chest";
+            break;
+        case Botcraft::EquipmentSlot::Helmet:
+            command += "armor.head";
+            break;
+        }
+    }
+    else
+    {
+        command += "inventory." + std::to_string(inventory_slot);
     }
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
@@ -94,9 +101,9 @@ void SendCommandSetItem(const std::string& botname, const std::string& item_name
     // TODO: wait line (?)
 }
 
-void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const Botcraft::Enchantment enchantment)
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const std::optional<Botcraft::EquipmentSlot> slot, const Botcraft::Enchantment enchantment, const short inventory_slot)
 {
-    return SendCommandSetItem(botname, item_name, slot, { {enchantment, 1} });
+    return SendCommandSetItem(botname, item_name, slot, { {enchantment, 1} }, inventory_slot);
 }
 
 std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements)

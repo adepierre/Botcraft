@@ -347,16 +347,28 @@ namespace Botcraft
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
         short inventory_correct_slot_index = -1;
-        short inventory_destination_slot_index = hand == Hand::Left ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
+        short inventory_destination_slot_index = hand == Hand::Off ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
 
         // We need to check the inventory
-        // If the currently selected item is the right one, just go for it
-        const Slot current_selected = hand == Hand::Left ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
-        if (!current_selected.IsEmptySlot()
-            && current_selected.GetItemId() == item_id)
+        // If the currently selected item is the right one, nothing to do
+        const Slot current_selected = hand == Hand::Off ? inventory_manager->GetOffHand() : inventory_manager->GetHotbarSelected();
+        if (!current_selected.IsEmptySlot() && current_selected.GetItemId() == item_id)
 
         {
             return Status::Success;
+        }
+
+        // If this is for the main hand and we have a slot with the desired item in the hotbar, just change the selected index
+        if (hand == Hand::Main)
+        {
+            for (short i = Window::INVENTORY_HOTBAR_START; i < Window::INVENTORY_HOTBAR_START + 9; ++i)
+            {
+                const Slot s = inventory_manager->GetPlayerInventory()->GetSlot(i);
+                if (!s.IsEmptySlot() && s.GetItemId() == item_id)
+                {
+                    return SelectHotbarSlot(client, i - Window::INVENTORY_HOTBAR_START);
+                }
+            }
         }
 
         // Otherwise we need to find a slot with the given item

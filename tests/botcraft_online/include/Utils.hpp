@@ -3,17 +3,18 @@
 #include "TestManager.hpp"
 
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <botcraft/AI/TemplatedBehaviourClient.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
-#include <botcraft/Game/ManagersClient.hpp>
-#include <botcraft/Game/Vector3.hpp>
+#include <botcraft/AI/TemplatedBehaviourClient.hpp>
 #include <botcraft/Game/Entities/EntityManager.hpp>
 #include <botcraft/Game/Entities/LocalPlayer.hpp>
+#include <botcraft/Game/ManagersClient.hpp>
+#include <botcraft/Game/Vector3.hpp>
 
 template<class ClientType = Botcraft::ManagersClient>
 std::unique_ptr<ClientType> SetupTestBot(const Botcraft::Vector3<double>& offset = { 0,0,0 }, const Botcraft::GameType gamemode = Botcraft::GameType::Survival, const float yaw = 0.0f, const float pitch = 0.0f)
@@ -110,8 +111,8 @@ bool GiveItem(std::unique_ptr<ClientType>& bot, const std::string& item_name, co
     }, 5000);
 }
 
-void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const std::map<Botcraft::Enchantment, int>& enchantments = {});
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const std::optional<Botcraft::EquipmentSlot> slot, const std::map<Botcraft::Enchantment, int>& enchantments = {}, const short inventory_slot = -1);
 
-void SendCommandSetItem(const std::string& botname, const std::string& item_name, const Botcraft::EquipmentSlot slot, const Botcraft::Enchantment enchantment);
+void SendCommandSetItem(const std::string& botname, const std::string& item_name, const std::optional<Botcraft::EquipmentSlot> slot, const Botcraft::Enchantment enchantment, const short inventory_slot = -1);
 
 std::string ReplaceCharacters(const std::string& in, const std::vector<std::pair<char, std::string>>& replacements = { {'"', "\\\""}, {'\n', "\\n"} });
