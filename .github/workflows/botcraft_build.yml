@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install Windows deps
+      - name: Install Windows dependencies
         if: runner.os == 'Windows'
         shell: cmd
         run: |
@@ -53,7 +53,7 @@ jobs:
           7z x mesa.7z
           systemwidedeploy.cmd 1
 
-      - name: Install Linux deps
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -122,7 +122,7 @@ jobs:
           path: output
 
 
-  # Make sure dependencies are in cache
+  # Build third-party dependencies once and share them as an artifact
   pre_configure:
     runs-on: ${{ inputs.os }}
 
@@ -131,7 +131,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install Linux deps
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt update
@@ -139,17 +139,6 @@ jobs:
 
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
-
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ runner.workspace }}/build/3rdparty/catch2/install
-            ${{ runner.workspace }}/build/3rdparty/glad/install
-            ${{ runner.workspace }}/build/3rdparty/glfw/install
-            ${{ runner.workspace }}/build/3rdparty/openssl/install
-            ${{ runner.workspace }}/build/3rdparty/zlib/install
-          key: ${{ runner.os }}-deps
 
       - name: Configure cmake
         shell: bash
@@ -180,6 +169,18 @@ jobs:
           -S $GITHUB_WORKSPACE
           -B .
 
+      - name: Upload dependencies artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependencies-${{ runner.os }}
+          path: |
+            ${{ runner.workspace }}/build/3rdparty/catch2/install
+            ${{ runner.workspace }}/build/3rdparty/glad/install
+            ${{ runner.workspace }}/build/3rdparty/glfw/install
+            ${{ runner.workspace }}/build/3rdparty/openssl/install
+            ${{ runner.workspace }}/build/3rdparty/zlib/install
+          retention-days: 1
+
       - name: Upload version artifact
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v7
@@ -199,7 +200,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y xorg-dev
@@ -211,16 +212,11 @@ jobs:
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
         with:
-          path: |
-            ${{ runner.workspace }}/build/3rdparty/catch2/install
-            ${{ runner.workspace }}/build/3rdparty/glad/install
-            ${{ runner.workspace }}/build/3rdparty/glfw/install
-            ${{ runner.workspace }}/build/3rdparty/openssl/install
-            ${{ runner.workspace }}/build/3rdparty/zlib/install
-          key: Linux-deps
+          name: dependencies-${{ runner.os }}
+          path: ${{ runner.workspace }}/build/3rdparty
 
       - name: Configure cmake
         shell: bash
@@ -277,7 +273,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install Linux deps
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt update
@@ -286,16 +282,11 @@ jobs:
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
-      - name: Cache dependencies
-        uses: actions/cache@v5
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v8
         with:
-          path: |
-            ${{ runner.workspace }}/build/3rdparty/catch2/install
-            ${{ runner.workspace }}/build/3rdparty/glad/install
-            ${{ runner.workspace }}/build/3rdparty/glfw/install
-            ${{ runner.workspace }}/build/3rdparty/openssl/install
-            ${{ runner.workspace }}/build/3rdparty/zlib/install
-          key: ${{ runner.os }}-deps
+          name: dependencies-${{ runner.os }}
+          path: ${{ runner.workspace }}/build/3rdparty
 
       - name: Configure cmake
         shell: bash
@@ -360,11 +351,18 @@ jobs:
           path: ${{ runner.workspace }}/build/install/botcraft.zip
           retention-days: 1
 
-      - name: Cache build directory
-        uses: actions/cache/save@v5
+      # Pack everything in an archive to prevent artifact upload removing the executable flags on linux
+      - name: Pack test bundle
+        shell: bash
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake -E tar "cf" "test-bundle-${{ runner.os }}.tar" output version.txt CTestTestfile.cmake tests/CTestTestfile.cmake tests/botcraft/CTestTestfile.cmake tests/botcraft_online/CTestTestfile.cmake tests/protocolCraft/CTestTestfile.cmake tests/botcraft/*_include.cmake tests/botcraft/*_tests.cmake tests/protocolCraft/*_include.cmake tests/protocolCraft/*_tests.cmake
+
+      - name: Upload test bundle
+        uses: actions/upload-artifact@v7
         with:
-          path: ${{ runner.workspace }}/build
-          key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
+          path: ${{ runner.workspace }}/build/test-bundle-${{ runner.os }}.tar
+          archive: false
+          retention-days: 1
 
 
   test:
@@ -383,7 +381,7 @@ jobs:
           java-version: '25'
           java-package: jre
 
-      - name: Install Linux deps
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt update
@@ -392,11 +390,15 @@ jobs:
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
-      - name: Restore build folder
-        uses: actions/cache/restore@v5
+      - name: Download test bundle
+        uses: actions/download-artifact@v8
         with:
+          name: test-bundle-${{ runner.os }}.tar
           path: ${{ runner.workspace }}/build
-          key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
+
+      - name: Extract test bundle
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake -E tar "xf" "test-bundle-${{ runner.os }}.tar"
 
       - name: Run tests
         shell: bash
@@ -448,7 +450,7 @@ jobs:
           java-version: '25'
           java-package: jre
 
-      - name: Install Linux deps
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt update
@@ -457,11 +459,15 @@ jobs:
       - name: Create build folder
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
-      - name: Restore build folder
-        uses: actions/cache/restore@v5
+      - name: Download test bundle
+        uses: actions/download-artifact@v8
         with:
+          name: test-bundle-${{ runner.os }}.tar
           path: ${{ runner.workspace }}/build
-          key: build_cache_${{ runner.os }}_${{ inputs.version }}_${{ github.run_id }}
+
+      - name: Extract test bundle
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake -E tar "xf" "test-bundle-${{ runner.os }}.tar"
 
       - name: Download vanilla trajectories
         continue-on-error: true
