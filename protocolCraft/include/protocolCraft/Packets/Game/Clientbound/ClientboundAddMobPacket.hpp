@@ -12,7 +12,11 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(Uuid, UUID);
+#if PROTOCOL_VERSION < 315 /* < 1.11 */
+        SERIALIZED_FIELD(Type, unsigned char);
+#else
         SERIALIZED_FIELD(Type, VarInt);
+#endif
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);

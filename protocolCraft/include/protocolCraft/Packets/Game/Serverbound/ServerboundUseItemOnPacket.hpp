@@ -18,9 +18,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(Hand, VarInt);
 #endif
+#if PROTOCOL_VERSION < 315 /* < 1.11 */
+        SERIALIZED_FIELD(CursorPositionX, unsigned char);
+        SERIALIZED_FIELD(CursorPositionY, unsigned char);
+        SERIALIZED_FIELD(CursorPositionZ, unsigned char);
+#else
         SERIALIZED_FIELD(CursorPositionX, float);
         SERIALIZED_FIELD(CursorPositionY, float);
         SERIALIZED_FIELD(CursorPositionZ, float);
+#endif
 #if PROTOCOL_VERSION > 452 /* > 1.13.2 */
         SERIALIZED_FIELD(Inside, bool);
 #endif

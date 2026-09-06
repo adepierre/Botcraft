@@ -9,11 +9,13 @@ namespace ProtocolCraft
     enum class SetTitlesType
     {
         Title = 0,
-        Subtitle = 1,
-        ActionBar = 2,
-        Times = 3,
-        Clear = 4,
-        Reset = 5
+        Subtitle,
+#if PROTOCOL_VERSION > 210 /* > 1.10.2 */
+        ActionBar,
+#endif
+        Times,
+        Clear,
+        Reset
     };
 
     class ClientboundSetTitlesPacket : public BasePacket<ClientboundSetTitlesPacket>
@@ -21,7 +23,11 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Set Titles";
 
+#if PROTOCOL_VERSION > 210 /* > 1.10.2 */
         DEFINE_CONDITION(HasText, GetType() == SetTitlesType::Title || GetType() == SetTitlesType::Subtitle || GetType() == SetTitlesType::ActionBar);
+#else
+        DEFINE_CONDITION(HasText, GetType() == SetTitlesType::Title || GetType() == SetTitlesType::Subtitle);
+#endif
         DEFINE_CONDITION(HasTimes, GetType() == SetTitlesType::Times);
 
         SERIALIZED_FIELD(Type, Internal::DiffType<SetTitlesType, VarInt>);
