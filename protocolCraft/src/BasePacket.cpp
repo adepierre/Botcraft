@@ -120,7 +120,9 @@ namespace ProtocolCraft
 #endif
 
     // Play clientbound
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ClientboundUpdateAdvancementsPacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundSetEntityLinkPacket);
     DEFINE_PACKET_CLASS(ClientboundBlockEventPacket);
     DEFINE_PACKET_CLASS(ClientboundBlockDestructionPacket);
@@ -226,7 +228,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundResourcePackPacket);
 #endif
     DEFINE_PACKET_CLASS(ClientboundSetObjectivePacket);
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ClientboundSelectAdvancementsTabPacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundSetExperiencePacket);
     DEFINE_PACKET_CLASS(ClientboundContainerSetSlotPacket);
     DEFINE_PACKET_CLASS(ClientboundCooldownPacket);
@@ -267,7 +271,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 451 /* > 1.13.2 */
     DEFINE_PACKET_CLASS(ClientboundMerchantOffersPacket);
 #endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
     DEFINE_PACKET_CLASS(ClientboundRecipePacket);
 #endif
     DEFINE_PACKET_CLASS(ClientboundSetScorePacket);
@@ -441,10 +445,12 @@ namespace ProtocolCraft
 #endif
 
     // Play serverbound
-#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 338 /* < 1.12.1 */
     DEFINE_PACKET_CLASS(ServerboundRecipePlacementPacket);
 #endif
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ServerboundSeenAdvancementsPacket);
+#endif
     DEFINE_PACKET_CLASS(ServerboundSwingPacket);
     DEFINE_PACKET_CLASS(ServerboundChatPacket);
     DEFINE_PACKET_CLASS(ServerboundContainerClickPacket);
@@ -507,7 +513,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
     DEFINE_PACKET_CLASS(ServerboundRecipeBookSeenRecipePacket);
     DEFINE_PACKET_CLASS(ServerboundRecipeBookChangeSettingsPacket);
-#else
+#elif PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ServerboundRecipeBookUpdatePacket);
 #endif
     DEFINE_PACKET_CLASS(ServerboundResourcePackPacket);

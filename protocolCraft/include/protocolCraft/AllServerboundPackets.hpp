@@ -166,17 +166,19 @@
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
 #endif
-#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 751 /* < 1.16.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookUpdatePacket.hpp"
 #endif
-#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 338 /* < 1.12.1 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipePlacementPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRenameItemPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundResourcePackPacket.hpp"
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSeenAdvancementsPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSelectBundleItemPacket.hpp"
 #endif
@@ -274,7 +276,7 @@ namespace ProtocolCraft
 
     using AllServerboundPlayPackets = std::tuple<
         ServerboundAcceptTeleportationPacket,
-#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 338 /* < 1.12.1 */
         ServerboundRecipePlacementPacket,
 #endif
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
@@ -361,13 +363,13 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ServerboundLockDifficultyPacket,
 #endif
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
         ServerboundMovePlayerPacket,
 #endif
         ServerboundMovePlayerPacketPos,
         ServerboundMovePlayerPacketPosRot,
         ServerboundMovePlayerPacketRot,
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
+#if PROTOCOL_VERSION < 335 /* < 1.12 */ || (PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */)
         ServerboundMovePlayerPacket,
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
@@ -401,7 +403,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         ServerboundChatSessionUpdatePacket,
 #endif
-#if PROTOCOL_VERSION < 751 /* < 1.16.2 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 751 /* < 1.16.2 */
         ServerboundRecipeBookUpdatePacket,
 #endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
@@ -412,7 +414,9 @@ namespace ProtocolCraft
         ServerboundRenameItemPacket,
 #endif
         ServerboundResourcePackPacket,
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
         ServerboundSeenAdvancementsPacket,
+#endif
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         ServerboundSelectTradePacket,
         ServerboundSetBeaconPacket,

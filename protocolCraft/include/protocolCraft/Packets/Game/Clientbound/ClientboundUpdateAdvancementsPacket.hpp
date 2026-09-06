@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
 #pragma once
 
 #include <map>
@@ -25,3 +26,4 @@ namespace ProtocolCraft
         DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
+#endif

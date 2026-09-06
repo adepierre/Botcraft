@@ -274,7 +274,7 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipeBookRemovePacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipeBookSettingsPacket.hpp"
 #endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundRecipePacket.hpp"
 #endif
 #if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 755 /* > 1.17 */
@@ -297,7 +297,9 @@
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundRespawnPacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundRotateHeadPacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSectionBlocksUpdatePacket.hpp"
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSelectAdvancementsTabPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundServerDataPacket.hpp"
 #endif
@@ -401,7 +403,9 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundTransferPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAdvancementsPacket.hpp"
+#endif
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateAttributesPacket.hpp"
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp"
@@ -639,7 +643,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         ClientboundMerchantOffersPacket,
 #endif
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
         ClientboundMoveEntityPacket,
 #endif
         ClientboundMoveEntityPacketPos,
@@ -648,7 +652,7 @@ namespace ProtocolCraft
         ClientboundMoveMinecartPacket,
 #endif
         ClientboundMoveEntityPacketRot,
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
+#if PROTOCOL_VERSION < 335 /* < 1.12 */ || (PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */)
         ClientboundMoveEntityPacket,
 #endif
         ClientboundMoveVehiclePacket,
@@ -703,7 +707,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 477 /* < 1.14 */
         ClientboundUseBedPacket,
 #endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 768 /* < 1.21.2 */
         ClientboundRecipePacket,
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 756 /* < 1.17.1 */
@@ -726,7 +730,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
         ClientboundSectionBlocksUpdatePacket,
 #endif
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
         ClientboundSelectAdvancementsTabPacket,
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         ClientboundServerDataPacket,
 #endif
@@ -827,7 +833,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ClientboundTransferPacket,
 #endif
+#if PROTOCOL_VERSION > 316 /* > 1.11.2 */
         ClientboundUpdateAdvancementsPacket,
+#endif
         ClientboundUpdateAttributesPacket,
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         ClientboundUpdateEnabledFeaturesPacket,
