@@ -17,7 +17,15 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Login";
 
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#if PROTOCOL_VERSION < 108 /* < 1.9.1 */
+        SERIALIZED_FIELD(PlayerId, int);
+        SERIALIZED_FIELD(GameType, unsigned char);
+        SERIALIZED_FIELD(Dimension, char);
+        SERIALIZED_FIELD(Difficulty, unsigned char);
+        SERIALIZED_FIELD(MaxPlayers, unsigned char);
+        SERIALIZED_FIELD(LevelType, std::string);
+        SERIALIZED_FIELD(ReducedDebugInfo, bool);
+#elif PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(PlayerId, int);
         SERIALIZED_FIELD(GameType, unsigned char);
         SERIALIZED_FIELD(Dimension, int);
