@@ -47,7 +47,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Biomes, std::vector<VarInt>);
 #endif
         SERIALIZED_FIELD(Buffer, std::vector<unsigned char>);
+#if PROTOCOL_VERSION > 109 /* > 1.9.2 */
         SERIALIZED_FIELD(BlockEntitiesTags, std::vector<NBT::UnnamedValue>);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

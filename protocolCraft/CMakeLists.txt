@@ -197,6 +197,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateEnabledFeaturesPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateMobEffectPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateRecipesPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateSignPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUpdateTagsPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundUseBedPacket.hpp
 

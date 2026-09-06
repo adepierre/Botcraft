@@ -120,6 +120,9 @@ namespace ProtocolCraft
 #endif
 
     // Play clientbound
+#if PROTOCOL_VERSION < 110 /* < 1.9.3 */
+    DEFINE_PACKET_CLASS(ClientboundUpdateSignPacket);
+#endif
 #if PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ClientboundUpdateAdvancementsPacket);
 #endif
