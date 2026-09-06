@@ -9,6 +9,9 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Resource Pack";
 
+#if PROTOCOL_VERSION < 210 /* < 1.10 */
+        SERIALIZED_FIELD(Hash, std::string);
+#endif
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         SERIALIZED_FIELD(Uuid, UUID);
 #endif
