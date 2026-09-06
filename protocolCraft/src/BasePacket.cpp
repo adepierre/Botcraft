@@ -153,7 +153,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundContainerAckPacket);
 #endif
     DEFINE_PACKET_CLASS(ClientboundGameEventPacket);
+#if PROTOCOL_VERSION > 335 /* > 1.12 */
     DEFINE_PACKET_CLASS(ClientboundPlaceGhostRecipePacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundDisconnectPacket);
     DEFINE_PACKET_CLASS(ClientboundSetDisplayObjectivePacket);
     DEFINE_PACKET_CLASS(ClientboundForgetLevelChunkPacket);
@@ -439,6 +441,9 @@ namespace ProtocolCraft
 #endif
 
     // Play serverbound
+#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+    DEFINE_PACKET_CLASS(ServerboundRecipePlacementPacket);
+#endif
     DEFINE_PACKET_CLASS(ServerboundSeenAdvancementsPacket);
     DEFINE_PACKET_CLASS(ServerboundSwingPacket);
     DEFINE_PACKET_CLASS(ServerboundChatPacket);
@@ -452,7 +457,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
     DEFINE_PACKET_CLASS(ServerboundContainerAckPacket);
 #endif
+#if PROTOCOL_VERSION > 335 /* > 1.12 */
     DEFINE_PACKET_CLASS(ServerboundPlaceRecipePacket);
+#endif
     DEFINE_PACKET_CLASS(ServerboundSetCreativeModeSlotPacket);
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
     DEFINE_PACKET_CLASS(ServerboundEditBookPacket);

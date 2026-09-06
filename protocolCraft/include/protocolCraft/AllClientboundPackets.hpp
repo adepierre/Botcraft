@@ -231,7 +231,9 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundPingPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 335 /* > 1.12 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundPlaceGhostRecipePacket.hpp"
+#endif
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerAbilitiesPacket.hpp"
 #if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundPlayerChatHeaderPacket.hpp"
@@ -661,7 +663,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         ClientboundPongResponsePacket,
 #endif
+#if PROTOCOL_VERSION > 335 /* > 1.12 */
         ClientboundPlaceGhostRecipePacket,
+#endif
         ClientboundPlayerAbilitiesPacket,
 #if PROTOCOL_VERSION > 759 /* > 1.19 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
         ClientboundPlayerChatHeaderPacket,

@@ -255,6 +255,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookUpdatePacket.hpp
+    include/protocolCraft/Packets/Game/Serverbound/ServerboundRecipePlacementPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundRenameItemPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundResourcePackPacket.hpp
     include/protocolCraft/Packets/Game/Serverbound/ServerboundSeenAdvancementsPacket.hpp
@@ -577,6 +578,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Recipes/RecipeDisplay.hpp
     include/protocolCraft/Types/Recipes/RecipeDisplayData.hpp
     include/protocolCraft/Types/Recipes/RecipeDisplayEntry.hpp
+    include/protocolCraft/Types/Recipes/RecipePlacementItemMove.hpp
     include/protocolCraft/Types/Recipes/SelectableRecipe.hpp
     include/protocolCraft/Types/Recipes/SelectableRecipeSingleInputEntry.hpp
     include/protocolCraft/Types/Recipes/ShapedCraftingRecipeDisplay.hpp

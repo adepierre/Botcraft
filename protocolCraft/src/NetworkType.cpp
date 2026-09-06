@@ -127,6 +127,9 @@
 #endif
 
 // Recipes
+#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+#include "protocolCraft/Types/Recipes/RecipePlacementItemMove.hpp"
+#endif
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
 #include "protocolCraft/Types/Recipes/Ingredient.hpp"
 #endif
@@ -282,6 +285,9 @@ namespace ProtocolCraft
 #endif
 
     // Recipes
+#if PROTOCOL_VERSION < 338 /* < 1.12.1 */
+    DEFINE_NETWORK_TYPE(RecipePlacementItemMove);
+#endif
 #if PROTOCOL_VERSION > 347 /* > 1.12.2 */
     DEFINE_NETWORK_TYPE(Ingredient);
 #endif
