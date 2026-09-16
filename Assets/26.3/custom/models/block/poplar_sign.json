@@ -1,0 +1,9 @@
+{
+	"parent": "block/base_sign_0",
+	"textures": {
+		"all": "entity/signs/poplar"
+	},
+	"textures_base_size": {
+		"entity/signs/poplar": [64, 32]
+	}
+}
