@@ -18,6 +18,9 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(UseDuration, float);
 #endif
             SERIALIZED_FIELD(Range, float);
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            SERIALIZED_FIELD(DurabilityDamage, VarInt);
+#endif
             SERIALIZED_FIELD(Description, Chat);
 
             DECLARE_READ_WRITE_SERIALIZE;

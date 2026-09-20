@@ -103,6 +103,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
         SERIALIZED_FIELD(BlockParticles, std::vector<std::pair<ExplosionParticleInfo, VarInt>>);
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        SERIALIZED_FIELD(PlaySound, bool);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

@@ -79,17 +79,29 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
             PiercingWeapon,
             KineticWeapon,
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
             SwingAnimation,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            AttackAnimation,
+            InteractAnimation,
 #endif
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
             AdditionalTradeCost,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            BlockTransformer,
+            VillagerFood,
 #endif
             StoredEnchantments,
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
             Dye,
 #endif
             DyedColor,
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
             MapColor,
+#endif
             MapId,
             MapDecorations,
             MapPostProcessing,
@@ -137,6 +149,12 @@ namespace ProtocolCraft
             ContainerLoot,
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
             BreakSound,
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            Compostable,
+            CookingFuel,
+            BrewingFuel,
+            MobVisibility,
+#endif
             Villager_Variant,
             Wolf_Variant,
             Wolf_SoundVariant,
@@ -176,6 +194,13 @@ namespace ProtocolCraft
             Cat_Collar,
             Sheep_Color,
             Shulker_Color,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            ProvidesPotteryPattern,
+            SignTextFront,
+            SignTextBack,
+            Waxed,
+            CushionColor,
 #endif
             NUM_DATA_COMPONENT_TYPES
         };

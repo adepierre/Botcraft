@@ -25,8 +25,10 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(FrameType, VarInt);
         SERIALIZED_FIELD(Flags, int);
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(BackgroundTexture, Internal::Conditioned<Identifier, &AdvancementDisplay::HasBackgroundTexture>);
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         SERIALIZED_FIELD(XCoord, float);
         SERIALIZED_FIELD(YCoord, float);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
 

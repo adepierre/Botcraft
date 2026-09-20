@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
+#if PROTOCOL_VERSION > 765 /* > 1.20.4 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
 #pragma once
 #include "protocolCraft/Types/Components/DataComponentType.hpp"
 
