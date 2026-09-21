@@ -178,6 +178,8 @@ class Server:
             f.write("spawn-monsters=false\n")
             f.write("spawn-protection=0\n")
             f.write("view-distance=5\n")
+            if version > str_to_tuple_version("26.2"):
+                f.write("white-list=false\n")
         print("\tDownload jar...")
         server_file = download_file(manifest["downloads"]["server"]["url"], base_folder, True)
         cmd = [
@@ -218,7 +220,9 @@ class Server:
             self._set_gamerule("mob_griefing", "false")
             self._set_gamerule("random_tick_speed", "0")
             self._set_gamerule("respawn_radius", "0")
-            self._set_gamerule("spectators_generate_chunks", "true")
+            if version < str_to_tuple_version("26.3"):
+                # Default is already true in 26.3+
+                self._set_gamerule("spectators_generate_chunks", "true")
         else:
             self._set_gamerule("announceAdvancements", "false")
             if version > str_to_tuple_version("1.14.2"):
@@ -256,7 +260,7 @@ class Server:
 
     def _set_gamerule(self, gamerule: str, value: str) -> None:
         self.send_command(f"gamerule {gamerule} {value}")
-        self.wait_regex(f".*: Game ?rule {gamerule} (?:is now set to:|has been updated to) {value}.*", 5)
+        self.wait_regex(f".*: Game ?rule {gamerule} (?:is now set to:?|has been updated to) {value}.*", 5)
 
     def send_command(self, command: str):
         if VERBOSE_SERVER:

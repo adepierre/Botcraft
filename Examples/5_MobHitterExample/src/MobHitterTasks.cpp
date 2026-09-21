@@ -48,11 +48,13 @@ Status HitCloseHostiles(BehaviourClient& c)
                 std::shared_ptr<ServerboundAttackPacket> packet_attack = std::make_shared<ServerboundAttackPacket>();
                 packet_attack->SetEntityId(id);
 #endif
+                network_manager->Send(packet_attack);
+
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
                 std::shared_ptr<ServerboundSwingPacket> packet_swing = std::make_shared<ServerboundSwingPacket>();
                 packet_swing->SetHand(0);
-
-                network_manager->Send(packet_attack);
                 network_manager->Send(packet_swing);
+#endif
             }
         }
     }

@@ -87,9 +87,12 @@ item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${
 #elif ${VERSION} < 1.21.5
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={levels:{"minecraft:soul_speed":3}}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
-#else
+#elif ${VERSION} < 26.3
 item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={"minecraft:soul_speed":3}] 1;.*Replaced a slot on ${PLAYER_NAME} with .*
 item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced a slot on ${PLAYER_NAME} with .*
+#else
+item replace entity ${PLAYER_NAME} armor.feet with netherite_boots[enchantments={"minecraft:soul_speed":3}] 1;.*Replaced 1 slot\(s\) on ${PLAYER_NAME} with .*
+item replace entity ${PLAYER_NAME} armor.feet with air 1;.*Replaced 1 slot\(s\) on ${PLAYER_NAME} with .*
 #endif
 forward;left;backward;right;jump;sneak;sprint;yRot;xRot
 0;0;0;0;0;0;0;0;0
