@@ -383,6 +383,9 @@ namespace Botcraft
         CreakingTransient,
 #endif
         Creeper,
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        Cushion,
+#endif
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         DarkOakBoat,
         DarkOakChestBoat,
@@ -553,6 +556,10 @@ namespace Botcraft
         PigZombie,
 #endif
         PolarBear,
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        PoplarBoat,
+        PoplarChestBoat,
+#endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         ThrownSplashPotion,
         ThrownLingeringPotion,

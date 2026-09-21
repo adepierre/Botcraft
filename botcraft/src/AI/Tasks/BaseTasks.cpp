@@ -131,12 +131,14 @@ namespace Botcraft
 #endif
         client.GetNetworkManager()->Send(place_block_packet);
 
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         if (animation)
         {
             std::shared_ptr<ProtocolCraft::ServerboundSwingPacket> animation_packet = std::make_shared<ProtocolCraft::ServerboundSwingPacket>();
             animation_packet->SetHand(static_cast<int>(Hand::Right));
             client.GetNetworkManager()->Send(animation_packet);
         }
+#endif
 
         LookAt(client, Vector3<double>(0.5) + pos, true);
 

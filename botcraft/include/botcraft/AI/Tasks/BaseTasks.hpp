@@ -35,7 +35,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @param pos The position of the block
     /// @param face Face on which we want to clik on
-    /// @param animation Whether or not we should send an animation to the server (vanilla client does)
+    /// @param animation Whether or not we should send an animation to the server (vanilla client does). No effect in 26.3+
     /// @return Failure if couldn't interact (because the client couldn't get close enough for example). Success otherwise.
     Status InteractWithBlock(BehaviourClient& client, const Position& pos, const PlayerDiggingFace face = PlayerDiggingFace::Up, const bool animation = true);
 

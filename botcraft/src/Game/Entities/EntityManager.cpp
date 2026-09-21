@@ -6,6 +6,10 @@
 
 #include "botcraft/Utilities/Logger.hpp"
 
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include <stdexcept>
+#endif
+
 namespace Botcraft
 {
     EntityManager::EntityManager(const std::shared_ptr<NetworkManager>& network_manager) : network_manager(network_manager)
@@ -84,12 +88,47 @@ namespace Botcraft
 
         if (entity != nullptr)
         {
-            const Vector3<double> entity_position = entity->GetPosition();
-            entity->SetPosition(Vector3<double>(
+            Vector3<double> entity_position = entity->GetPosition();
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
+            entity_position = Vector3<double>(
                 (packet.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
                 (packet.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
                 (packet.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
-            ));
+            );
+#else
+            if (packet.GetSingleDelta().has_value())
+            {
+                const std::array<short, 3>& delta = packet.GetSingleDelta().value();
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (delta[i] == 0)
+                    {
+                        continue;
+                    }
+                    entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                }
+            }
+            else if (packet.GetSteppedDeltas().has_value())
+            {
+                const std::vector<std::pair<int, std::array<short, 3>>>& steps = packet.GetSteppedDeltas().value();
+                for (auto& [tick, delta] : steps)
+                {
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        if (delta[i] == 0)
+                        {
+                            continue;
+                        }
+                        entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                    }
+                }
+            }
+            else
+            {
+                throw std::runtime_error("Invalid ClientboundMoveEntityPacket");
+            }
+#endif
+            entity->SetPosition(entity_position);
             entity->SetOnGround(packet.GetOnGround());
         }
     }
@@ -109,12 +148,47 @@ namespace Botcraft
 
         if (entity != nullptr)
         {
-            const Vector3<double> entity_position = entity->GetPosition();
-            entity->SetPosition(Vector3<double>(
+            Vector3<double> entity_position = entity->GetPosition();
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
+            entity_position = Vector3<double>(
                 (packet.GetXA() / 128.0f + entity_position.x * 32.0f) / 32.0f,
                 (packet.GetYA() / 128.0f + entity_position.y * 32.0f) / 32.0f,
                 (packet.GetZA() / 128.0f + entity_position.z * 32.0f) / 32.0f
-            ));
+            );
+#else
+            if (packet.GetSingleDelta().has_value())
+            {
+                const std::array<short, 3>& delta = packet.GetSingleDelta().value();
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (delta[i] == 0)
+                    {
+                        continue;
+                    }
+                    entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                }
+            }
+            else if (packet.GetSteppedDeltas().has_value())
+            {
+                const std::vector<std::pair<int, std::array<short, 3>>>& steps = packet.GetSteppedDeltas().value();
+                for (auto& [tick, delta] : steps)
+                {
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        if (delta[i] == 0)
+                        {
+                            continue;
+                        }
+                        entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                    }
+                }
+            }
+            else
+            {
+                throw std::runtime_error("Invalid ClientboundMoveEntityPacketPosRot");
+            }
+#endif
+            entity->SetPosition(entity_position);
             entity->SetYaw(360.0f * packet.GetYRot() / 256.0f);
             entity->SetPitch(360.0f * packet.GetXRot() / 256.0f);
             entity->SetOnGround(packet.GetOnGround());
@@ -559,6 +633,7 @@ namespace Botcraft
 
         if (entity != nullptr)
         {
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
             entity->SetPosition(packet.GetValues().GetPosition());
             if (entity == local_player)
             {
@@ -566,6 +641,22 @@ namespace Botcraft
             }
             entity->SetYaw(packet.GetValues().GetYRot());
             entity->SetPitch(packet.GetValues().GetXRot());
+#else
+            if (packet.GetPosition().GetValue().GetLeft().has_value())
+            {
+                entity->SetPosition(packet.GetPosition().GetValue().GetLeft().value().GetSteps().back().GetPosition());
+            }
+            else
+            {
+                entity->SetPosition(packet.GetPosition().GetValue().GetRight().value().GetEndPosition());
+            }
+            if (entity == local_player)
+            {
+                return;
+            }
+            entity->SetYaw(packet.GetYRot());
+            entity->SetPitch(packet.GetXRot());
+#endif
             entity->SetOnGround(packet.GetOnGround());
         }
     }
