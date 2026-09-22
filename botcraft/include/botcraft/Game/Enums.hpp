@@ -187,6 +187,9 @@ namespace Botcraft
     enum class PlayerDiggingStatus
     {
         StartDigging = 0,
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ChangeDiggingDirection,
+#endif
         CancelDigging,
         FinishDigging,
         DropItemStack,

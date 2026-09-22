@@ -1326,9 +1326,13 @@ namespace Botcraft
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */
     void World::UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
-#else
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
     void World::UpdateChunkLight(const int x, const int z, const std::string& dim,
         const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask,
+        const std::vector<std::vector<char>>& data, const bool sky)
+#else
+    void World::UpdateChunkLight(const int x, const int z, const std::string& dim,
+        const std::vector<unsigned char>& light_mask, const std::vector<unsigned char>& empty_light_mask,
         const std::vector<std::vector<char>>& data, const bool sky)
 #endif
     {
@@ -1352,8 +1356,10 @@ namespace Botcraft
             // Sky light
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             if ((light_mask >> i) & 1)
-#else
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
             if ((light_mask.size() > i / 64) && (light_mask[i / 64] >> (i % 64)) & 1)
+#else
+            if ((light_mask.size() > i / 8) && (light_mask[i / 8] >> (i % 8)) & 1)
 #endif
             {
                 if (i > 0 && i < num_sections - 1)
@@ -1390,8 +1396,10 @@ namespace Botcraft
             }
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
             else if ((empty_light_mask >> i) & 1)
-#else
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
             else if ((empty_light_mask.size() > i / 64) && (empty_light_mask[i / 64] >> (i % 64)) & 1)
+#else
+            else if ((empty_light_mask.size() > i / 8) && (empty_light_mask[i / 8] >> (i % 8)) & 1)
 #endif
             {
                 if (i > 0 && i < num_sections - 1)

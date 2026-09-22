@@ -3,6 +3,7 @@
 
 #include "protocolCraft/Types/Advancement.hpp"
 #include "protocolCraft/Types/AdvancementDisplay.hpp"
+#include "protocolCraft/Types/AdvancementHolder.hpp"
 #include "protocolCraft/Types/AdvancementProgress.hpp"
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/Types/BlockEntityInfo.hpp"
@@ -69,6 +70,14 @@
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
 #include "protocolCraft/Types/ClockNetworkState.hpp"
 #include "protocolCraft/Types/SetGameRuleEntry.hpp"
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Types/OptionalVarInt.hpp"
+#include "protocolCraft/Types/PositionedAdvancement.hpp"
+#include "protocolCraft/Types/PositionPath.hpp"
+#include "protocolCraft/Types/PositionPathLinear.hpp"
+#include "protocolCraft/Types/PositionPathStepped.hpp"
+#include "protocolCraft/Types/PositionStep.hpp"
 #endif
 
 // Chat
@@ -157,6 +166,7 @@ namespace ProtocolCraft
     // All NetworkType auto serializable methods can be defined here
     DEFINE_NETWORK_TYPE(Advancement);
     DEFINE_NETWORK_TYPE(AdvancementDisplay);
+    DEFINE_NETWORK_TYPE(AdvancementHolder);
     DEFINE_NETWORK_TYPE(AdvancementProgress);
 #if PROTOCOL_VERSION > 756 /* > 1.17.1 */
     DEFINE_NETWORK_TYPE(BlockEntityInfo);
@@ -223,6 +233,14 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     DEFINE_NETWORK_TYPE(ClockNetworkState);
     DEFINE_NETWORK_TYPE(SetGameRuleEntry);
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+    DEFINE_NETWORK_TYPE(OptionalVarInt);
+    DEFINE_NETWORK_TYPE(PositionedAdvancement);
+    DEFINE_NETWORK_TYPE(PositionPath);
+    DEFINE_NETWORK_TYPE(PositionPathLinear);
+    DEFINE_NETWORK_TYPE(PositionPathStepped);
+    DEFINE_NETWORK_TYPE(PositionStep);
 #endif
 
     // Chat

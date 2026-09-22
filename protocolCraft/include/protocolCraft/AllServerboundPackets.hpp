@@ -162,6 +162,9 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundPongPacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Packets/Game/Serverbound/ServerboundPunchPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookChangeSettingsPacket.hpp"
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundRecipeBookSeenRecipePacket.hpp"
@@ -211,7 +214,9 @@
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSpectatorActionPacket.hpp"
 #endif
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundSwingPacket.hpp"
+#endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundTeleportToEntityPacket.hpp"
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp"
@@ -400,6 +405,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         ServerboundPongPacket,
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ServerboundPunchPacket,
+#endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         ServerboundChatSessionUpdatePacket,
 #endif
@@ -446,7 +454,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
         ServerboundSpectatorActionPacket,
 #endif
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         ServerboundSwingPacket,
+#endif
         ServerboundTeleportToEntityPacket,
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         ServerboundTestInstanceBlockActionPacket,

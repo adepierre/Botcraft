@@ -614,9 +614,11 @@ namespace Botcraft
         // Place the block
         network_manager->Send(place_block_packet);
 
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         std::shared_ptr<ServerboundSwingPacket> swing = std::make_shared<ServerboundSwingPacket>();
         swing->SetHand(static_cast<int>(Hand::Right));
         network_manager->Send(swing);
+#endif
 
         if (!wait_confirmation)
         {

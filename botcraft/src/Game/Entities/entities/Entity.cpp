@@ -274,6 +274,9 @@
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
 #include "botcraft/Game/Entities/entities/monster/cubemob/SulfurCubeEntity.hpp"
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "botcraft/Game/Entities/entities/decoration/CushionEntity.hpp"
+#endif
 
 #include <mutex>
 
@@ -485,6 +488,9 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
                 HumanoidArm,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                DyeColor,
 #endif
             };
 
@@ -758,6 +764,11 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
             case EntityMetadataTypes::HumanoidArm:
+                value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
+                break;
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            case EntityMetadataTypes::DyeColor:
                 value = static_cast<int>(ProtocolCraft::ReadData<ProtocolCraft::VarInt>(iter, length));
                 break;
 #endif
@@ -1682,6 +1693,10 @@ namespace Botcraft
 #endif
         case EntityType::Creeper:
             return std::make_shared<CreeperEntity>();
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        case EntityType::Cushion:
+            return std::make_shared<CushionEntity>();
+#endif
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
         case EntityType::DisplayBlockDisplay:
             return std::make_shared<DisplayBlockDisplayEntity>();
@@ -1852,6 +1867,12 @@ namespace Botcraft
 #endif
         case EntityType::PolarBear:
             return std::make_shared<PolarBearEntity>();
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        case EntityType::PoplarBoat:
+            return std::make_shared<BoatEntity>(EntityType::PoplarBoat);
+        case EntityType::PoplarChestBoat:
+            return std::make_shared<ChestBoatEntity>(EntityType::PoplarChestBoat);
+#endif
         case EntityType::PrimedTnt:
             return std::make_shared<PrimedTntEntity>();
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */

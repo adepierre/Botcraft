@@ -11,7 +11,7 @@ namespace Botcraft
     /// @param client The client performing the action
     /// @param entity_id The ID of the entity we want to interact with
     /// @param hand The hand we want to use
-    /// @param swing If true, a swing packet will be sent too
+    /// @param swing If true, a swing packet will be sent too. No effect on 26.3+
     /// @return Success if the entity is right clicked (does not mean the server accepted it though). Failure otherwise.
     Status InteractEntity(BehaviourClient& client, const int entity_id, const Hand hand = Hand::Main, const bool swing = false);
 

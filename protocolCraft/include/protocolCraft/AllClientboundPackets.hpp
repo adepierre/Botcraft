@@ -20,6 +20,11 @@
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundFinishConfigurationPacket.hpp"
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundKeepAlivePacket.hpp"
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundPingPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Packets/Configuration/Clientbound/ClientboundPostEffectsPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/Packets/Configuration/Clientbound/ClientboundRegistryDataPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
@@ -84,6 +89,9 @@
 #endif
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundAddPlayerPacket.hpp"
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundAddTransientBlockPacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundAddVibrationSignalPacket.hpp"
@@ -266,6 +274,9 @@
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundPongResponsePacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundPostEffectsPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundProjectilePowerPacket.hpp"
 #endif
@@ -381,6 +392,9 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundStoreCookiePacket.hpp"
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Packets/Game/Clientbound/ClientboundSwingAnimationPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSystemChatPacket.hpp"
 #endif
@@ -448,6 +462,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         ClientboundResourcePackPopConfigurationPacket,
         ClientboundResourcePackPushConfigurationPacket,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ClientboundPostEffectsConfigurationPacket,
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ClientboundStoreCookieConfigurationPacket,
@@ -607,6 +624,9 @@ namespace ProtocolCraft
         ClientboundTagQueryPacket,
 #endif
         ClientboundExplodePacket,
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ClientboundAddTransientBlockPacket,
+#endif
         ClientboundForgetLevelChunkPacket,
         ClientboundGameEventPacket,
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
@@ -730,6 +750,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         ClientboundResourcePackPacket,
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ClientboundPostEffectsPacket,
+#endif
         ClientboundRespawnPacket,
         ClientboundRotateHeadPacket,
 #if PROTOCOL_VERSION > 736 /* > 1.16.1 */
@@ -818,6 +841,9 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         ClientboundStoreCookiePacket,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ClientboundSwingAnimationPacket,
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         ClientboundSystemChatPacket,

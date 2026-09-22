@@ -98,8 +98,17 @@ namespace ProtocolCraft
         LootPredicate,
         LootModifier,
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        ContextFloatProvider,
+        ContextIntProvider,
+        SlotSource,
+#endif
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
         Dialog,
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        Feature,
+        SwingAnimation,
 #endif
         Uuid,
         NUM_BRIGADIER_PROPERTY_TYPE

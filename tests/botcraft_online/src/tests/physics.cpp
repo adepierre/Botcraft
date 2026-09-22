@@ -146,29 +146,39 @@ TEST_CASE("elytra rocket boost")
         return inventory_manager->GetPlayerInventory()->GetSlot(Window::INVENTORY_HOTBAR_START).GetItemId() == firework_id;
     }, 5000));
 
-    // Jump and wait for going up then falling back to trigger elytra flying mode
-    player->SetInputsJump(true);
-    Utilities::WaitForCondition([&]() -> bool {
-        if (player->GetDirtyInputs())
-        {
-            return false;
-        }
-        player->SetInputsJump(false);
-        return player->GetSpeedY() > 0.0;
-    }, 1500);
-    Utilities::WaitForCondition([&]() -> bool {
-        if (player->GetDirtyInputs())
-        {
-            return false;
-        }
-        player->SetInputsJump(false);
-        return player->GetSpeedY() < 0.0;
-    }, 1500);
-    player->SetInputsJump(true);
-    // Wait for fly mode to start
+    // Wait to be on the ground
     REQUIRE(Utilities::WaitForCondition([&]() {
-        return player->GetDataSharedFlagsId(EntitySharedFlagsId::FallFlying);
+        return player->GetOnGround();
     }, 5000));
+
+    // Jump then deploy elytra when falling, retry if landing without going in fly mode (lag or something ?)
+    bool send_jump = false;
+    REQUIRE(Utilities::WaitForCondition([&]() {
+        if (player->GetDataSharedFlagsId(EntitySharedFlagsId::FallFlying))
+        {
+            return true;
+        }
+        if (player->GetDirtyInputs())
+        {
+            return false;
+        }
+        if (player->GetOnGround())
+        {
+            player->SetInputsJump(true);
+            send_jump = false;
+        }
+        else if (player->GetSpeedY() < 0.0)
+        {
+            player->SetInputsJump(send_jump);
+            send_jump = !send_jump;
+        }
+        else
+        {
+            player->SetInputsJump(false);
+            send_jump = false;
+        }
+        return false;
+    }, 10000));
 
     float previous_z_speed = player->GetSpeedZ();
 

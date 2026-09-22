@@ -27,7 +27,9 @@
 #include "protocolCraft/Types/Components/DataComponentTypeListBeehiveBlockEntityOccupant.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeLodestoneTracker.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeMapId.hpp"
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
 #include "protocolCraft/Types/Components/DataComponentTypeMapItemColor.hpp"
+#endif
 #include "protocolCraft/Types/Components/DataComponentTypeMapPostProcessing.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypePotDecorations.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypePotionContents.hpp"
@@ -82,6 +84,13 @@
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
 #include "protocolCraft/Types/Components/DataComponentTypeSulfurCubeContent.hpp"
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Types/Components/DataComponentTypeBrewingFuel.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeCompostable.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeCookingFuel.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeMobVisibility.hpp"
+#include "protocolCraft/Types/Components/DataComponentTypeSignText.hpp"
+#endif
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
@@ -113,7 +122,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
         DEFINE_NETWORK_TYPE(KineticWeaponCondition);
 #endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
         DEFINE_NETWORK_TYPE(AssetInfo);
         DEFINE_NETWORK_TYPE(MaterialAssetGroup);
 #endif
@@ -129,6 +138,10 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         DEFINE_NETWORK_TYPE(PossibleEffect);
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        DEFINE_NETWORK_TYPE(ResolvableFloat);
+        DEFINE_NETWORK_TYPE(ResolvableInt);
 #endif
         DEFINE_NETWORK_TYPE(StatePropertiesPredicate);
         DEFINE_NETWORK_TYPE(SuspiciousStewEntry);
@@ -162,7 +175,9 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeListBeehiveBlockEntityOccupant);
         DEFINE_NETWORK_TYPE(DataComponentTypeLodestoneTracker);
         DEFINE_NETWORK_TYPE(DataComponentTypeMapId);
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         DEFINE_NETWORK_TYPE(DataComponentTypeMapItemColor);
+#endif
         DEFINE_NETWORK_TYPE(DataComponentTypeMapPostProcessing);
         DEFINE_NETWORK_TYPE(DataComponentTypePotDecorations);
         DEFINE_NETWORK_TYPE(DataComponentTypePotionContents);
@@ -216,6 +231,13 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
         DEFINE_NETWORK_TYPE(DataComponentTypeSulfurCubeContent);
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        DEFINE_NETWORK_TYPE(DataComponentTypeBrewingFuel);
+        DEFINE_NETWORK_TYPE(DataComponentTypeCompostable);
+        DEFINE_NETWORK_TYPE(DataComponentTypeCookingFuel);
+        DEFINE_NETWORK_TYPE(DataComponentTypeMobVisibility);
+        DEFINE_NETWORK_TYPE(DataComponentTypeSignText);
 #endif
 
         std::string_view DataComponentTypesToString(const DataComponentTypes type)
@@ -287,17 +309,29 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
                 "piercing_weapon",
                 "kinetic_weapon",
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
                 "swing_animation",
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                "attack_animation",
+                "interact_animation",
 #endif
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
                 "additional_trade_cost",
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                "block_transformer",
+                "villager_food",
 #endif
                 "stored_enchantments",
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
                 "dye",
 #endif
                 "dyed_color",
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
                 "map_color",
+#endif
                 "map_id",
                 "map_decorations",
                 "map_post_processing",
@@ -345,6 +379,12 @@ namespace ProtocolCraft
                 "container_loot",
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
                 "break_sound",
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                "compostable",
+                "cooking_fuel",
+                "brewing_fuel",
+                "mob_visibility",
+#endif
                 "villager/variant",
                 "wolf/variant",
                 "wolf/sound_variant",
@@ -384,6 +424,13 @@ namespace ProtocolCraft
                 "cat/collar",
                 "sheep/color",
                 "shulker/color",
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                "provides_pottery_pattern",
+                "sign_text_front",
+                "sign_text_back",
+                "waxed",
+                "cushion/color",
 #endif
             };
             if (type <= DataComponentTypes::None || type >= DataComponentTypes::NUM_DATA_COMPONENT_TYPES)
@@ -477,8 +524,10 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeLodestoneTracker>();
             case DataComponentTypes::MapId:
                 return std::make_shared<DataComponentTypeMapId>();
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
             case DataComponentTypes::MapColor:
                 return std::make_shared<DataComponentTypeMapItemColor>();
+#endif
             case DataComponentTypes::MapPostProcessing:
                 return std::make_shared<DataComponentTypeMapPostProcessing>();
             case DataComponentTypes::PotDecorations:
@@ -609,6 +658,8 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypePiercingWeapon>();
             case DataComponentTypes::KineticWeapon:
                 return std::make_shared<DataComponentTypeKineticWeapon>();
+#endif
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
             case DataComponentTypes::SwingAnimation:
                 return std::make_shared<DataComponentTypeSwingAnimation>();
 #endif
@@ -629,6 +680,31 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
             case DataComponentTypes::SulfurCubeContent:
                 return std::make_shared<DataComponentTypeSulfurCubeContent>();
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            case DataComponentTypes::AttackAnimation:
+            case DataComponentTypes::InteractAnimation:
+                return std::make_shared<DataComponentTypeSwingAnimation>();
+            case DataComponentTypes::BrewingFuel:
+                return std::make_shared<DataComponentTypeBrewingFuel>();
+            case DataComponentTypes::Compostable:
+                return std::make_shared<DataComponentTypeCompostable>();
+            case DataComponentTypes::CookingFuel:
+                return std::make_shared<DataComponentTypeCookingFuel>();
+            case DataComponentTypes::BlockTransformer:
+            case DataComponentTypes::ProvidesPotteryPattern:
+                return std::make_shared<DataComponentTypeVariantEnum>();
+            case DataComponentTypes::MobVisibility:
+                return std::make_shared<DataComponentTypeMobVisibility>();
+            case DataComponentTypes::SignTextBack:
+            case DataComponentTypes::SignTextFront:
+                return std::make_shared<DataComponentTypeSignText>();
+            case DataComponentTypes::VillagerFood:
+                return std::make_shared<DataComponentTypeVariantEnum>();
+            case DataComponentTypes::Waxed:
+                return std::make_shared<DataComponentTypeUnit>();
+            case DataComponentTypes::CushionColor:
+                return std::make_shared<DataComponentTypeDyeColor>();
 #endif
             default:
                 // Should never happen but will make the compilers happy

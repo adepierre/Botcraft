@@ -359,9 +359,13 @@ namespace Botcraft
         void UpdateChunkLight(const int x, const int z, const Dimension dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
 #elif PROTOCOL_VERSION > 718 /* > 1.15.2 */ && PROTOCOL_VERSION < 755 /* < 1.17 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim, const int light_mask, const int empty_light_mask, const std::vector<std::vector<char> >& data, const bool sky);
-#elif PROTOCOL_VERSION > 754 /* > 1.16.5 */
+#elif PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
         void UpdateChunkLight(const int x, const int z, const std::string& dim,
             const std::vector<unsigned long long int>& light_mask, const std::vector<unsigned long long int>& empty_light_mask,
+            const std::vector<std::vector<char> >& data, const bool sky);
+#elif PROTOCOL_VERSION > 776 /* > 26.2 */
+        void UpdateChunkLight(const int x, const int z, const std::string& dim,
+            const std::vector<unsigned char>& light_mask, const std::vector<unsigned char>& empty_light_mask,
             const std::vector<std::vector<char> >& data, const bool sky);
 #endif
 

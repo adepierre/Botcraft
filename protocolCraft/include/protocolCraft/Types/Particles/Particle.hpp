@@ -95,6 +95,11 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         PaleOakLeaves,
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        RedPoplarLeaves,
+        OrangePoplarLeaves,
+        YellowPoplarLeaves,
+#endif
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         TintedLeaves,
 #endif

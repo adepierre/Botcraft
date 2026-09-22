@@ -204,6 +204,7 @@ namespace Botcraft
 #endif
         network_manager->Send(packet_digging);
 
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         std::shared_ptr<ServerboundSwingPacket> swing_packet;
         std::chrono::steady_clock::time_point last_time_send_swing;
         if (send_swing)
@@ -213,6 +214,7 @@ namespace Botcraft
            network_manager->Send(swing_packet);
            last_time_send_swing = std::chrono::steady_clock::now();
         }
+#endif
 
         auto start = std::chrono::steady_clock::now();
         bool finished_sent = local_player->GetInstabuild(); // In creative mode we don't need to send a finish digging packet
@@ -239,11 +241,14 @@ namespace Botcraft
 
                 finished_sent = true;
             }
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
             if (send_swing && !finished_sent && std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time_send_swing).count() > 5.0 * ms_per_tick)
             {
                 last_time_send_swing = now;
                 network_manager->Send(swing_packet);
             }
+#endif
+
             const Blockstate* block = world->GetBlock(pos);
 
             if (block == nullptr ||

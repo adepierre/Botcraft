@@ -117,6 +117,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
     DEFINE_PACKET_CLASS(ClientboundCodeOfConductPacket);
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+    DEFINE_PACKET_CLASS(ClientboundPostEffectsConfigurationPacket);
+#endif
 #endif
 
     // Play clientbound
@@ -403,6 +406,11 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundGameRuleValuesPacket);
     DEFINE_PACKET_CLASS(ClientboundLowDiskSpaceWarningPacket);
 #endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+    DEFINE_PACKET_CLASS(ClientboundAddTransientBlockPacket);
+    DEFINE_PACKET_CLASS(ClientboundPostEffectsPacket);
+    DEFINE_PACKET_CLASS(ClientboundSwingAnimationPacket);
+#endif
 
 
     // Explicit instantiation for each serverbound packet class
@@ -454,7 +462,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 316 /* > 1.11.2 */
     DEFINE_PACKET_CLASS(ServerboundSeenAdvancementsPacket);
 #endif
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
     DEFINE_PACKET_CLASS(ServerboundSwingPacket);
+#endif
     DEFINE_PACKET_CLASS(ServerboundChatPacket);
     DEFINE_PACKET_CLASS(ServerboundContainerClickPacket);
 #if PROTOCOL_VERSION > 476 /* > 1.13.2 */
@@ -602,5 +612,8 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
     DEFINE_PACKET_CLASS(ServerboundSpectatorActionPacket);
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+    DEFINE_PACKET_CLASS(ServerboundPunchPacket);
 #endif
 }

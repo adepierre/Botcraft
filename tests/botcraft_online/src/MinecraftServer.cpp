@@ -311,6 +311,9 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
         server_props << "spawn-monsters=false" << "\n";
         server_props << "spawn-protection=0" << "\n";
         server_props << "view-distance=" << options.view_distance << "\n";
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+        server_props << "white-list=false" << "\n";
+#endif
     }
     else
     {
@@ -343,7 +346,7 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
 void MinecraftServer::SetGamerule(const std::string& gamerule, const std::string& value)
 {
     SendLine("gamerule " + gamerule + " " + value);
-    WaitLine(".*: Game ?rule " + gamerule + " (?:is now set to:|has been updated to) " + value + ".*", 5000);
+    WaitLine(".*: Game ?rule " + gamerule + " (?:is now set to:?|has been updated to) " + value + ".*", 5000);
 }
 
 void MinecraftServer::InitServerGamerules()
@@ -385,6 +388,9 @@ void MinecraftServer::InitServerGamerules()
     SetGamerule("mob_griefing", "false");
     SetGamerule("random_tick_speed", "0");
     SetGamerule("respawn_radius", "0");
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
+    // Default is already true in 26.3+
     SetGamerule("spectators_generate_chunks", "true");
+#endif
 #endif
 }

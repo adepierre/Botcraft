@@ -5,8 +5,11 @@
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */ && PROTOCOL_VERSION < 770 /* < 1.21.5 */
 #include "protocolCraft/Types/Identifier.hpp"
 #endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
 #include "protocolCraft/Types/Components/Subtypes/MaterialAssetGroup.hpp"
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Types/Identifier.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -15,7 +18,7 @@ namespace ProtocolCraft
     {
         class TrimMaterial : public NetworkType
         {
-#if PROTOCOL_VERSION < 770 /* < 1.21.5*/
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
             SERIALIZED_FIELD(AssetName, std::string);
             SERIALIZED_FIELD(Ingredient, VarInt);
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
@@ -26,8 +29,11 @@ namespace ProtocolCraft
 #else
             SERIALIZED_FIELD(OverrideArmorMaterials, std::map<Identifier, std::string>);
 #endif
-#else
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
             SERIALIZED_FIELD(Assets, MaterialAssetGroup);
+#endif
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            SERIALIZED_FIELD(PaletteId, Identifier);
 #endif
             SERIALIZED_FIELD(Description, Chat);
 
