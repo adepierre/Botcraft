@@ -16,8 +16,10 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Id_, VarInt);
 #endif
         SERIALIZED_FIELD(Command, std::string);
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */ && PROTOCOL_VERSION < 393 /* < 1.13 */
         SERIALIZED_FIELD(AssumeCommand, bool);
+#endif
+#if PROTOCOL_VERSION < 393 /* < 1.13 */
         SERIALIZED_FIELD(LookedAtBlock, std::optional<NetworkPosition>);
 #endif
 

@@ -12,7 +12,9 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Add Painting";
 
         SERIALIZED_FIELD(Id_, VarInt);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
         SERIALIZED_FIELD(Uuid, UUID);
+#endif
 #if PROTOCOL_VERSION < 393 /* < 1.13 */
         SERIALIZED_FIELD(Title, std::string);
 #else

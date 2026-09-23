@@ -19,7 +19,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(YRot, float);
         SERIALIZED_FIELD(XRot, float);
         SERIALIZED_FIELD(RelativeArguments, char);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
         SERIALIZED_FIELD(Id_, VarInt);
+#endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 762 /* < 1.19.4 */
         SERIALIZED_FIELD(DismountVehicle, bool);
 #endif

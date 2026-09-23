@@ -13,7 +13,9 @@ namespace ProtocolCraft
         DEFINE_CONDITION(HasWidth, GetWidth() > 0);
         SERIALIZED_FIELD(MapId, VarInt);
         SERIALIZED_FIELD(Scale, char);
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(Decorations, std::vector<MapDecoration>);
+#elif PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(TrackingPosition, bool);
         SERIALIZED_FIELD(Decorations, std::vector<MapDecoration>);
 #elif PROTOCOL_VERSION < 755 /* < 1.17 */

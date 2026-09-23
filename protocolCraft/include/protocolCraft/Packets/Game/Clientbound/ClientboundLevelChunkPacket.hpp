@@ -18,7 +18,10 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(X, int);
         SERIALIZED_FIELD(Z, int);
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(FullChunk, bool);
+        SERIALIZED_FIELD(AvailableSections, unsigned short);
+#elif PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(FullChunk, bool);
         SERIALIZED_FIELD(AvailableSections, VarInt);
 #elif PROTOCOL_VERSION < 573 /* < 1.15 */

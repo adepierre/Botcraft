@@ -1,3 +1,4 @@
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
@@ -22,3 +23,4 @@ namespace ProtocolCraft
         DECLARE_READ_WRITE_SERIALIZE;
     };
 } //ProtocolCraft
+#endif

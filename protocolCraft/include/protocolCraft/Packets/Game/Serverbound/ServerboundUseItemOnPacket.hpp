@@ -2,6 +2,9 @@
 
 #include "protocolCraft/BasePacket.hpp"
 #include "protocolCraft/Types/NetworkPosition.hpp"
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+#include "protocolCraft/Types/Item/Slot.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -14,8 +17,13 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Hand, VarInt);
 #endif
         SERIALIZED_FIELD(Location, NetworkPosition);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(Direction, unsigned char);
+        SERIALIZED_FIELD(Item, Slot);
+#else
         SERIALIZED_FIELD(Direction, VarInt);
-#if PROTOCOL_VERSION < 477 /* < 1.14 */
+#endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
         SERIALIZED_FIELD(Hand, VarInt);
 #endif
 #if PROTOCOL_VERSION < 315 /* < 1.11 */

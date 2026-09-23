@@ -26,7 +26,11 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(EffectAmplifier, VarInt);
 #endif
         SERIALIZED_FIELD(EffectDurationTicks, VarInt);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(HideParticles, bool);
+#else
         SERIALIZED_FIELD(Flags, char);
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SERIALIZED_FIELD(FactorData, std::optional<NBT::UnnamedValue>);
 #endif

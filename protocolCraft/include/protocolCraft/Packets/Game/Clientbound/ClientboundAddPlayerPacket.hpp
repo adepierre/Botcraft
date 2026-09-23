@@ -12,11 +12,20 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(EntityId, VarInt);
         SERIALIZED_FIELD(PlayerId, UUID);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Y, int);
+        SERIALIZED_FIELD(Z, int);
+#else
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);
+#endif
         SERIALIZED_FIELD(YRot, unsigned char);
         SERIALIZED_FIELD(XRot, unsigned char);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(CurrentItem, short);
+#endif
 #if PROTOCOL_VERSION < 573 /* < 1.15 */
         SERIALIZED_FIELD(RawMetadata, Internal::Vector<unsigned char, void, 0>);
 #endif

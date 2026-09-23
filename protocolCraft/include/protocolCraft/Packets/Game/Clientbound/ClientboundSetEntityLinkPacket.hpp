@@ -11,6 +11,9 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(SourceId, int);
         SERIALIZED_FIELD(DestId, int);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(Leash, bool);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

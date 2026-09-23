@@ -46,7 +46,9 @@
 #endif
 
 // Play
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundAcceptTeleportationPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundAttackPacket.hpp"
 #endif
@@ -137,8 +139,10 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundMovePlayerPacketStatusOnly.hpp"
 #endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundMoveVehiclePacket.hpp"
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundPaddleBoatPacket.hpp"
+#endif
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundPickItemFromBlockPacket.hpp"
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundPickItemFromEntityPacket.hpp"
@@ -222,7 +226,9 @@
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundTestInstanceBlockActionPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundUseItemOnPacket.hpp"
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
 #include "protocolCraft/Packets/Game/Serverbound/ServerboundUseItemPacket.hpp"
+#endif
 
 // Status
 #include "protocolCraft/Packets/Status/Serverbound/ServerboundPingRequestPacket.hpp"
@@ -279,6 +285,7 @@ namespace ProtocolCraft
 #endif
     >;
 
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     using AllServerboundPlayPackets = std::tuple<
         ServerboundAcceptTeleportationPacket,
 #if PROTOCOL_VERSION > 316 /* > 1.11.2 */ && PROTOCOL_VERSION < 338 /* < 1.12.1 */
@@ -468,11 +475,43 @@ namespace ProtocolCraft
         ServerboundCustomClickActionPacket
 #endif
     >;
+#endif
 
     using AllServerboundStatusPackets = std::tuple<
         ServerboundStatusRequestPacket,
         ServerboundPingRequestStatusPacket
     >;
+
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+    using AllServerboundPlayPackets = std::tuple<
+        ServerboundKeepAlivePacket,
+        ServerboundChatPacket,
+        ServerboundInteractPacket,
+        ServerboundMovePlayerPacket,
+        ServerboundMovePlayerPacketPos,
+        ServerboundMovePlayerPacketRot,
+        ServerboundMovePlayerPacketPosRot,
+        ServerboundPlayerActionPacket,
+        ServerboundUseItemOnPacket,
+        ServerboundSetCarriedItemPacket,
+        ServerboundSwingPacket,
+        ServerboundPlayerCommandPacket,
+        ServerboundPlayerInputPacket,
+        ServerboundContainerClosePacket,
+        ServerboundContainerClickPacket,
+        ServerboundContainerAckPacket,
+        ServerboundSetCreativeModeSlotPacket,
+        ServerboundEnchantItemPacket,
+        ServerboundSignUpdatePacket,
+        ServerboundPlayerAbilitiesPacket,
+        ServerboundCommandSuggestionPacket,
+        ServerboundClientInformationPacket,
+        ServerboundClientCommandPacket,
+        ServerboundCustomPayloadPacket,
+        ServerboundTeleportToEntityPacket,
+        ServerboundResourcePackPacket
+    >;
+#endif
 
     using AllServerboundPackets = Internal::tuple_cat_t<
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */

@@ -51,7 +51,12 @@ namespace ProtocolCraft
 #endif
 
         SERIALIZED_FIELD(EntityId, VarInt);
-#if PROTOCOL_VERSION < 777 /* < 26.3 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(XA, char);
+        SERIALIZED_FIELD(YA, char);
+        SERIALIZED_FIELD(ZA, char);
+        SERIALIZED_FIELD(OnGround, bool);
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
         SERIALIZED_FIELD(XA, short);
         SERIALIZED_FIELD(YA, short);
         SERIALIZED_FIELD(ZA, short);

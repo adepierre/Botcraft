@@ -98,6 +98,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundLightUpdatePacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundLoginPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundLowDiskSpaceWarningPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundMapChunkBulkPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundMapItemDataPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundMerchantOffersPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundMountScreenOpenPacket.hpp
@@ -112,6 +113,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundOpenSignEditorPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundPingPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundPlaceGhostRecipePacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundPlayCompressionPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundPlayerAbilitiesPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundPlayerChatHeaderPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundPlayerChatPacket.hpp
@@ -163,6 +165,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityDataPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityLinkPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityMotionPacket.hpp
+    include/protocolCraft/Packets/Game/Clientbound/ClientboundSetEntityNBTPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetEquipmentPacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetExperiencePacket.hpp
     include/protocolCraft/Packets/Game/Clientbound/ClientboundSetHealthPacket.hpp

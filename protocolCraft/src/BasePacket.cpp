@@ -123,6 +123,11 @@ namespace ProtocolCraft
 #endif
 
     // Play clientbound
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+    DEFINE_PACKET_CLASS(ClientboundMapChunkBulkPacket);
+    DEFINE_PACKET_CLASS(ClientboundPlayCompressionPacket);
+    DEFINE_PACKET_CLASS(ClientboundSetEntityNBTPacket);
+#endif
 #if PROTOCOL_VERSION < 110 /* < 1.9.3 */
     DEFINE_PACKET_CLASS(ClientboundUpdateSignPacket);
 #endif
@@ -133,7 +138,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundBlockEventPacket);
     DEFINE_PACKET_CLASS(ClientboundBlockDestructionPacket);
     DEFINE_PACKET_CLASS(ClientboundBlockUpdatePacket);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ClientboundBossEventPacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundSetCameraPacket);
     DEFINE_PACKET_CLASS(ClientboundContainerClosePacket);
     DEFINE_PACKET_CLASS(ClientboundTakeItemEntityPacket);
@@ -166,9 +173,11 @@ namespace ProtocolCraft
 #endif
     DEFINE_PACKET_CLASS(ClientboundDisconnectPacket);
     DEFINE_PACKET_CLASS(ClientboundSetDisplayObjectivePacket);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ClientboundForgetLevelChunkPacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundKeepAlivePacket);
-#if PROTOCOL_VERSION < 761 /* < 1.19.3 */
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_PACKET_CLASS(ClientboundCustomSoundPacket);
 #endif
 #if PROTOCOL_VERSION > 388 /* > 1.12.2 */
@@ -239,8 +248,12 @@ namespace ProtocolCraft
 #endif
     DEFINE_PACKET_CLASS(ClientboundSetExperiencePacket);
     DEFINE_PACKET_CLASS(ClientboundContainerSetSlotPacket);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ClientboundCooldownPacket);
+#endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ClientboundSetPassengersPacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundSoundPacket);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     DEFINE_PACKET_CLASS(ClientboundAddExperienceOrbPacket);
@@ -285,7 +298,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ClientboundSetChunkCacheCenterPacket);
     DEFINE_PACKET_CLASS(ClientboundSetChunkCacheRadiusPacket);
 #endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ClientboundMoveVehiclePacket);
+#endif
     DEFINE_PACKET_CLASS(ClientboundContainerSetContentPacket);
     DEFINE_PACKET_CLASS(ClientboundContainerSetDataPacket);
     DEFINE_PACKET_CLASS(ClientboundOpenScreenPacket);
@@ -538,7 +553,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ServerboundChangeDifficultyPacket);
 #endif
     DEFINE_PACKET_CLASS(ServerboundTeleportToEntityPacket);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ServerboundPaddleBoatPacket);
+#endif
     DEFINE_PACKET_CLASS(ServerboundPlayerInputPacket);
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
     DEFINE_PACKET_CLASS(ServerboundPlayerLoadedPacket);
@@ -547,7 +564,9 @@ namespace ProtocolCraft
     DEFINE_PACKET_CLASS(ServerboundPongPacket);
 #endif
     DEFINE_PACKET_CLASS(ServerboundCommandSuggestionPacket);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ServerboundAcceptTeleportationPacket);
+#endif
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
     DEFINE_PACKET_CLASS(ServerboundSetCommandBlockPacket);
     DEFINE_PACKET_CLASS(ServerboundSetCommandMinecartPacket);
@@ -559,8 +578,12 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 385 /* > 1.12.2 */
     DEFINE_PACKET_CLASS(ServerboundSetStructureBlockPacket);
 #endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ServerboundUseItemPacket);
+#endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
     DEFINE_PACKET_CLASS(ServerboundMoveVehiclePacket);
+#endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     DEFINE_PACKET_CLASS(ServerboundChatCommandPacket);
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */

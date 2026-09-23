@@ -13,7 +13,13 @@ namespace ProtocolCraft
         static constexpr std::string_view packet_name = "Teleport Entity";
 
         SERIALIZED_FIELD(EntityId, VarInt);
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(X, int);
+        SERIALIZED_FIELD(Y, int);
+        SERIALIZED_FIELD(Z, int);
+        SERIALIZED_FIELD(YRot, unsigned char);
+        SERIALIZED_FIELD(XRot, unsigned char);
+#elif PROTOCOL_VERSION < 768 /* < 1.21.2 */
         SERIALIZED_FIELD(X, double);
         SERIALIZED_FIELD(Y, double);
         SERIALIZED_FIELD(Z, double);

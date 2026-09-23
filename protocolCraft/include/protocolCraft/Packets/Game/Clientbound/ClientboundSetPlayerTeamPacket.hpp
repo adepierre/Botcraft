@@ -17,7 +17,14 @@ namespace ProtocolCraft
 
         SERIALIZED_FIELD(Name_, std::string);
         SERIALIZED_FIELD(Method, char);
-#if PROTOCOL_VERSION < 393 /* < 1.13 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(DisplayName, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerPrefix, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(PlayerSuffix, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(Options, Internal::Conditioned<char, &THIS::Method02>);
+        SERIALIZED_FIELD(NametagVisibility, Internal::Conditioned<std::string, &THIS::Method02>);
+        SERIALIZED_FIELD(Color, Internal::Conditioned<char, &THIS::Method02>);
+#elif PROTOCOL_VERSION < 393 /* < 1.13 */
         SERIALIZED_FIELD(DisplayName, Internal::Conditioned<std::string, &THIS::Method02>);
         SERIALIZED_FIELD(PlayerPrefix, Internal::Conditioned<std::string, &THIS::Method02>);
         SERIALIZED_FIELD(PlayerSuffix, Internal::Conditioned<std::string, &THIS::Method02>);

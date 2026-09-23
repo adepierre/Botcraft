@@ -18,9 +18,15 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SERIALIZED_FIELD(Language, std::string);
         SERIALIZED_FIELD(ViewDistance, char);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(ChatVisibility, unsigned char);
+#else
         SERIALIZED_FIELD(ChatVisibility, VarInt);
+#endif
         SERIALIZED_FIELD(ChatColors, bool);
         SERIALIZED_FIELD(ModelCustomisation, unsigned char);
+#endif
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SERIALIZED_FIELD(MainHand, VarInt);
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 764 /* < 1.20.2 */

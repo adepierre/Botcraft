@@ -23,7 +23,9 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(LocationX, Internal::Conditioned<float, &THIS::Action2>);
         SERIALIZED_FIELD(LocationY, Internal::Conditioned<float, &THIS::Action2>);
         SERIALIZED_FIELD(LocationZ, Internal::Conditioned<float, &THIS::Action2>);
+#if PROTOCOL_VERSION > 47 /* > 1.8.9 */
         SERIALIZED_FIELD(Hand, Internal::Conditioned<VarInt, &THIS::Action0_2>);
+#endif
 #else
         SERIALIZED_FIELD(Hand, VarInt);
         SERIALIZED_FIELD(Location, LpVec3);

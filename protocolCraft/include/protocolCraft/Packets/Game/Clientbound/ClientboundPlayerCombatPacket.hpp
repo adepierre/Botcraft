@@ -4,6 +4,10 @@
 #include "protocolCraft/BasePacket.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
 
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+#include <string>
+#endif
+
 namespace ProtocolCraft
 {
     class ClientboundPlayerCombatPacket : public BasePacket<ClientboundPlayerCombatPacket>
@@ -19,7 +23,11 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(Duration, Internal::Conditioned<VarInt, &THIS::Event1>);
         SERIALIZED_FIELD(PlayerId, Internal::Conditioned<VarInt, &THIS::Event2>);
         SERIALIZED_FIELD(KillerId, Internal::Conditioned<int, &THIS::Event12>);
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(Message, Internal::Conditioned<std::string, &THIS::Event2>);
+#else
         SERIALIZED_FIELD(Message, Internal::Conditioned<Chat, &THIS::Event2>);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

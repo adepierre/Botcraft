@@ -30,7 +30,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         SERIALIZED_FIELD(Uid, short);
 #endif
-#if PROTOCOL_VERSION < 775 /* < 26.1 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(ClickType, unsigned char);
+#elif PROTOCOL_VERSION < 775 /* < 26.1 */
         SERIALIZED_FIELD(ClickType, VarInt);
 #else
         SERIALIZED_FIELD(ContainerInput, VarInt);

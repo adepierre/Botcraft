@@ -40,7 +40,9 @@ namespace ProtocolCraft
 #endif
 
         SERIALIZED_FIELD(EntityId, VarInt);
-#if PROTOCOL_VERSION < 735 /* < 1.16 */
+#if PROTOCOL_VERSION < 107 /* < 1.9 */
+        SERIALIZED_FIELD(Slot, std::pair<short, ProtocolCraft::Slot>);
+#elif PROTOCOL_VERSION < 735 /* < 1.16 */
         SERIALIZED_FIELD(Slot, std::pair<VarInt, ProtocolCraft::Slot>);
 #else
         SERIALIZED_FIELD(Slots, Internal::CustomType<std::map<unsigned char, Slot>, &THIS::ReadSlots, &THIS::WriteSlots>);
