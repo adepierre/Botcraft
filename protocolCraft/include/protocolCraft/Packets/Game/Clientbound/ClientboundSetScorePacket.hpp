@@ -23,7 +23,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         DEFINE_CONDITION(NotRemove, GetMethod() != SetScoreMethod::Remove);
         SERIALIZED_FIELD(Owner, std::string);
-        SERIALIZED_FIELD(Method, Internal::DiffType<SetScoreMethod, char>);
+        SERIALIZED_FIELD(Method, Internal::DiffType<SetScoreMethod, VarInt>);
         SERIALIZED_FIELD(ObjectiveName, std::string);
         SERIALIZED_FIELD(Score, Internal::Conditioned<VarInt, &THIS::NotRemove>);
 #else

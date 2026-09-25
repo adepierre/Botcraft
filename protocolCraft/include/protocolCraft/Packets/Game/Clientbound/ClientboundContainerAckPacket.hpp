@@ -10,7 +10,7 @@ namespace ProtocolCraft
     public:
         static constexpr std::string_view packet_name = "Container Ack";
 
-        SERIALIZED_FIELD(ContainerId, char);
+        SERIALIZED_FIELD(ContainerId, unsigned char);
         SERIALIZED_FIELD(Uid, short);
         SERIALIZED_FIELD(Accepted, bool);
 

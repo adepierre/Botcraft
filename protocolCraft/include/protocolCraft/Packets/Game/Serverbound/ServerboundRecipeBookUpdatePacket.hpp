@@ -2,7 +2,9 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Identifier.hpp"
+#endif
 
 namespace ProtocolCraft
 {
@@ -14,8 +16,12 @@ namespace ProtocolCraft
         DEFINE_CONDITION(Purpose0, GetPurpose() == 0);
         DEFINE_CONDITION(Purpose1, GetPurpose() == 1);
 
-        SERIALIZED_FIELD(Purpose, Internal::Conditioned<VarInt, &THIS::Purpose0>);
+        SERIALIZED_FIELD(Purpose, VarInt);
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
         SERIALIZED_FIELD(Recipe, Internal::Conditioned<Identifier, &THIS::Purpose0>);
+#else
+        SERIALIZED_FIELD(Recipe, Internal::Conditioned<int, &THIS::Purpose0>);
+#endif
         SERIALIZED_FIELD(GuiOpen, Internal::Conditioned<bool, &THIS::Purpose1>);
         SERIALIZED_FIELD(FilteringCraftable, Internal::Conditioned<bool, &THIS::Purpose1>);
 #if PROTOCOL_VERSION > 358 /* > 1.12.2 */

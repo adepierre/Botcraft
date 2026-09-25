@@ -852,6 +852,9 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */ && PROTOCOL_VERSION < 477 /* < 1.14 */
         ClientboundStopSoundPacket,
 #endif
+#if PROTOCOL_VERSION < 110 /* < 1.9.3 */
+        ClientboundUpdateSignPacket,
+#endif
         ClientboundSoundPacket,
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */
         ClientboundStartConfigurationPacket,
@@ -867,9 +870,6 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         ClientboundSystemChatPacket,
-#endif
-#if PROTOCOL_VERSION < 110 /* < 1.9.3 */
-        ClientboundUpdateSignPacket,
 #endif
         ClientboundTabListPacket,
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */

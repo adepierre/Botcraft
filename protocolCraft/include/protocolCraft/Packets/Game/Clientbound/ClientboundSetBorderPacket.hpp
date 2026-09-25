@@ -34,8 +34,8 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(NewSize, Internal::Conditioned<double, &THIS::SetLerpInit>);
         SERIALIZED_FIELD(LerpTime, Internal::Conditioned<VarLong, &THIS::LerpInit>);
         SERIALIZED_FIELD(NewAbsoluteMaxSize, Internal::Conditioned<VarInt, &THIS::Init>);
-        SERIALIZED_FIELD(WarningTime, Internal::Conditioned<VarInt, &THIS::InitWarnTime>);
         SERIALIZED_FIELD(WarningBlocks, Internal::Conditioned<VarInt, &THIS::InitWarnBlock>);
+        SERIALIZED_FIELD(WarningTime, Internal::Conditioned<VarInt, &THIS::InitWarnTime>);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
