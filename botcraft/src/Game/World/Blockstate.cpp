@@ -758,6 +758,11 @@ namespace Botcraft
         return flags[static_cast<size_t>(BlockstateFlags::Bed)];
     }
 
+    bool Blockstate::IsShelfMushroom() const
+    {
+        return flags[static_cast<size_t>(BlockstateFlags::ShelfMushroom)];
+    }
+
     bool Blockstate::IsSoulSand() const
     {
         return flags[static_cast<size_t>(BlockstateFlags::SoulSand)];
@@ -1066,6 +1071,7 @@ namespace Botcraft
         flags[static_cast<size_t>(BlockstateFlags::AnyToolHarvest)] = properties.any_tool_harvest;
         flags[static_cast<size_t>(BlockstateFlags::Slime)] = properties.slime;
         flags[static_cast<size_t>(BlockstateFlags::Bed)] = properties.bed;
+        flags[static_cast<size_t>(BlockstateFlags::ShelfMushroom)] = properties.shelf_mushroom;
         flags[static_cast<size_t>(BlockstateFlags::SoulSand)] = properties.soul_sand;
         flags[static_cast<size_t>(BlockstateFlags::Honey)] = properties.honey;
         flags[static_cast<size_t>(BlockstateFlags::Scaffolding)] = properties.scaffolding;

@@ -63,6 +63,8 @@ namespace Botcraft
         bool slime = false;
         /// @brief True if this block has the BEDS tag
         bool bed = false;
+        /// @brief True if this block is a shelf_mushroom
+        bool shelf_mushroom = false;
         /// @brief True if this block is soul_sand
         bool soul_sand = false;
         /// @brief True if this block is honey
@@ -142,6 +144,7 @@ namespace Botcraft
         bool IsHazardous() const;
         bool IsSlime() const;
         bool IsBed() const;
+        bool IsShelfMushroom() const;
         bool IsSoulSand() const;
         bool IsHoney() const;
         bool IsScaffolding() const;
@@ -229,6 +232,7 @@ namespace Botcraft
             AnyToolHarvest,
             Slime,
             Bed,
+            ShelfMushroom,
             SoulSand,
             Honey,
             Scaffolding,

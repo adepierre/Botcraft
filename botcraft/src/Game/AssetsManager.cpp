@@ -417,6 +417,12 @@ namespace Botcraft
             current_block_properties.bed = Utilities::EndsWith(name, "_bed");
 #endif
 
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
+            current_block_properties.shelf_mushroom = false;
+#else
+            current_block_properties.shelf_mushroom = name == "minecraft:shelf_mushroom";
+#endif
+
             current_block_properties.soul_sand = name == "minecraft:soul_sand";
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -630,6 +636,7 @@ namespace Botcraft
                 false,          //any_tool_harvest
                 false,          //slime
                 false,          //bed
+                false,          //shelf_mushroom
                 false,          //soul_sand
                 false,          //honey
                 false,          //scaffolding

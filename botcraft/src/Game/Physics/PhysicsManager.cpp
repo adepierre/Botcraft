@@ -1619,7 +1619,11 @@ namespace Botcraft
                             {
                                 restitution = std::max(restitution, 1.0);
                             }
-                            else if (block_below->IsBed())
+                            else if (block_below->IsBed()
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+                                || block_below->IsShelfMushroom()
+#endif
+                            )
                             {
                                 restitution = std::max(restitution, 0.75);
                             }
