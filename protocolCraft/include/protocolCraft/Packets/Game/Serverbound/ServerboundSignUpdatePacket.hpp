@@ -17,7 +17,7 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(IsFrontText, bool);
 #endif
         SERIALIZED_FIELD(Lines, std::array<std::string, 4>);
-#if PROTOCL_VERSION > 776 /* > 26.2 */
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
         SERIALIZED_FIELD(Slot, VarInt);
 #endif
 
