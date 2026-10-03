@@ -33,7 +33,7 @@ namespace ProtocolCraft
             size_t index = 0;
             for (const auto& [k, v] : slots)
             {
-                WriteData<unsigned char>(index != slots.size() - 1 ? k | (1 << 7) : k, container);
+                WriteData<unsigned char>(index++ != slots.size() - 1 ? k | (1 << 7) : k, container);
                 WriteData<Slot>(v, container);
             }
         }
