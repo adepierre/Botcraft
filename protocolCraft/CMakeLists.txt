@@ -635,6 +635,7 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Utilities/AutoSerializedToJson.hpp
     include/protocolCraft/Utilities/ConstexprStrProcessing.hpp
     include/protocolCraft/Utilities/CustomType.hpp
+    include/protocolCraft/Utilities/DynamicType.hpp
     include/protocolCraft/Utilities/GZip.hpp
     include/protocolCraft/Utilities/Json.hpp
     include/protocolCraft/Utilities/RecursiveWrapper.hpp

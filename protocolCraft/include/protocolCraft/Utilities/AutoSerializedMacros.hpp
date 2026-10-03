@@ -237,7 +237,37 @@
 
 // Define a Packet with auto serializable fields
 #define DEFINE_PACKET_CLASS(ClassName)   \
-    DEFINE_READ(ClassName);               \
-    DEFINE_WRITE(ClassName);              \
-    DEFINE_SERIALIZE(ClassName);          \
+    DEFINE_READ(ClassName);              \
+    DEFINE_WRITE(ClassName);             \
+    DEFINE_SERIALIZE(ClassName);         \
     template class BasePacket<ClassName>
+
+/// @brief A dynamic field that is created by Factory(value of Field)
+#define SERIALIZED_DYNAMIC_DATA_FIELD(Name, TypeField, Base, Factory)                                \
+    SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Name, Internal::DynamicType<Base, &TypeField, &Factory>); \
+    GETTER(Name)
+
+/// @brief Public setter that also recreates the payload through Factory
+#define DYNAMIC_TYPE_SETTER(Name, DataName, Factory)                                                                         \
+    public:                                                                                                                  \
+        auto& Set##Name(                                                                                                     \
+            std::conditional_t<std::is_arithmetic_v<Name##_type::storage_type> || std::is_enum_v<Name##_type::storage_type>, \
+            Name##_type::storage_type, const Name##_type::storage_type&> Name##_) {                                          \
+                Name = Name##_;                                                                                              \
+                DataName = Factory(Name);                                                                                    \
+                return *this;                                                                                                \
+            }                                                                                                                \
+        static_assert(true, "Forcing ;")
+
+/// @brief Type field + payload field + both getters + type setter
+/// @param ClassName Name of the current class (THIS is not accessible from NetworkType)
+/// @param TypeName Name of the Type field
+/// @param DataName Name of the Data field
+/// @param BaseClass Name of the common base class for all Data types
+/// @param Factory Factory Function pointer. Should have a signature std::shared_ptr<Base>(TypeValue)
+/// @param ... Type of the TypeName field (passed as VA_ARGS because it can contain some ,)
+#define SERIALIZED_DYNAMIC_FIELD(ClassName, TypeName, DataName, BaseClass, Factory, ...) \
+    SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(TypeName, __VA_ARGS__);                       \
+    SERIALIZED_DYNAMIC_DATA_FIELD(DataName, ClassName::TypeName, BaseClass, Factory);    \
+    GETTER(TypeName);                                                                    \
+    DYNAMIC_TYPE_SETTER(TypeName, DataName, Factory)

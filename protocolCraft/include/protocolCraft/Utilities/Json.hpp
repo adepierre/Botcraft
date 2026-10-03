@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cassert>
 #include <map>
 #include <stdexcept>
@@ -8,7 +9,6 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
-#include <array>
 
 #include "protocolCraft/Utilities/RecursiveWrapper.hpp"
 

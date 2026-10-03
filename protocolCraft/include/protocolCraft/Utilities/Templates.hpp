@@ -105,6 +105,9 @@ namespace ProtocolCraft
         template <typename T, auto ReadFunc, auto WriteFunc, auto SerializeFunc>
         struct CustomType;
 
+        template <typename BaseType, auto TypeField, auto Factory>
+        struct DynamicType;
+
         template <typename T>                         constexpr bool IsArray                              = false;
         template <typename T, size_t N>               constexpr bool IsArray<std::array<T, N>>            = true;
         template <typename T>                         constexpr bool IsVector                             = false;
@@ -125,6 +128,7 @@ namespace ProtocolCraft
         template <typename T, auto C, bool b>         constexpr bool IsConditioned<Conditioned<T, C, b>>  = true;
         template <typename T>                         constexpr bool IsCustomType                         = false;
         template <typename T, auto R, auto W, auto S> constexpr bool IsCustomType<CustomType<T, R, W, S>> = true;
+        template <typename B, auto T, auto F>         constexpr bool IsCustomType<DynamicType<B, T, F>>   = true;
         template <typename T>                         constexpr bool IsSharedPtr                          = false;
         template <typename T>                         constexpr bool IsSharedPtr<std::shared_ptr<T>>      = true;
 
@@ -144,6 +148,7 @@ namespace ProtocolCraft
         template <typename T, auto F>                 struct SerializedType<Conditioned<T, F, true>>  { using storage_type = std::optional<typename SerializedType<T>::storage_type>;                                         using serialization_type = T;                  };
         template <typename T, auto F>                 struct SerializedType<Conditioned<T, F, false>> { using storage_type = typename SerializedType<T>::storage_type;                                                        using serialization_type = T;                  };
         template <typename T, auto R, auto W, auto S> struct SerializedType<CustomType<T, R, W, S>>   { using storage_type = typename SerializedType<T>::storage_type;                                                        using serialization_type = T;                  };
+        template <typename B, auto T, auto F>         struct SerializedType<DynamicType<B, T, F>>     { using storage_type = std::shared_ptr<B>;                                                                              using serialization_type = std::shared_ptr<B>; };
 
         /// @brief To be used in constexpr else to fail compilation in a C++ compliant way
         /// @tparam T Any type
