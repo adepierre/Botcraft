@@ -26,14 +26,14 @@ namespace ProtocolCraft
     public:
         auto& SetSource(const std::optional<int>& Source_)
         {
-            SetFlags(Source.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
+            SetFlags(Source_.has_value() ? (GetFlags() | 0x01) : (GetFlags() & ~0x01));
             Source = Source_;
             return *this;
         }
 
         auto& SetName_(const std::optional<Identifier>& Name__)
         {
-            SetFlags(Name_.has_value() ? (GetFlags() | 0x02) : (GetFlags() & ~0x02));
+            SetFlags(Name__.has_value() ? (GetFlags() | 0x02) : (GetFlags() & ~0x02));
             Name_ = Name__;
             return *this;
         }
