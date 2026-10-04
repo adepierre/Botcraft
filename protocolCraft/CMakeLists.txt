@@ -363,9 +363,6 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/PlayerUpdate.hpp
     include/protocolCraft/Types/PositionedAdvancement.hpp
     include/protocolCraft/Types/PositionMoveRotation.hpp
-    include/protocolCraft/Types/PositionPath.hpp
-    include/protocolCraft/Types/PositionPathLinear.hpp
-    include/protocolCraft/Types/PositionPathStepped.hpp
     include/protocolCraft/Types/PositionStep.hpp
     include/protocolCraft/Types/Record.hpp
     include/protocolCraft/Types/SaltSignature.hpp
@@ -579,6 +576,11 @@ set(protocolCraft_PUBLIC_HDR
     include/protocolCraft/Types/Particles/TrailParticleOption.hpp
     include/protocolCraft/Types/Particles/VibrationParticleOption.hpp
 
+    include/protocolCraft/Types/PositionPath/PositionPath.hpp
+    include/protocolCraft/Types/PositionPath/PositionPathData.hpp
+    include/protocolCraft/Types/PositionPath/PositionPathLinear.hpp
+    include/protocolCraft/Types/PositionPath/PositionPathStepped.hpp
+
     include/protocolCraft/Types/Recipes/CompositeSlotDisplay.hpp
     include/protocolCraft/Types/Recipes/DyedSlotDemoDisplayData.hpp
     include/protocolCraft/Types/Recipes/FurnaceRecipeDisplay.hpp
@@ -659,7 +661,7 @@ set(protocolCraft_SRC
 
     src/Types/Components/Subtypes/ConsumeEffects/ConsumeEffect.cpp
 
-    src/Types/Components/Subtypes/ItemAttributeModifiers/Display.cpp
+    src/Types/Components/Subtypes/ItemAttributeModifiers/ItemAttributeModifiersDisplay.cpp
 
     src/Types/Debug/DebugSubscription.cpp
 
@@ -667,6 +669,8 @@ set(protocolCraft_SRC
     src/Types/NBT/Tag.cpp
 
     src/Types/Particles/Particle.cpp
+
+    src/Types/PositionPath/PositionPath.cpp
 
     src/Types/Recipes/Recipe.cpp
     src/Types/Recipes/RecipeDisplay.cpp

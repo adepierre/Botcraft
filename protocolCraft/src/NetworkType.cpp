@@ -74,9 +74,6 @@
 #if PROTOCOL_VERSION > 776 /* > 26.2 */
 #include "protocolCraft/Types/OptionalVarInt.hpp"
 #include "protocolCraft/Types/PositionedAdvancement.hpp"
-#include "protocolCraft/Types/PositionPath.hpp"
-#include "protocolCraft/Types/PositionPathLinear.hpp"
-#include "protocolCraft/Types/PositionPathStepped.hpp"
 #include "protocolCraft/Types/PositionStep.hpp"
 #endif
 
@@ -156,9 +153,8 @@
 #endif
 
 // Vibrations
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-#include "protocolCraft/Types/Vibrations/BlockPositionSource.hpp"
-#include "protocolCraft/Types/Vibrations/EntityPositionSource.hpp"
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+#include "protocolCraft/Types/Vibrations/VibrationPath.hpp"
 #endif
 
 namespace ProtocolCraft
@@ -237,9 +233,6 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 776 /* > 26.2 */
     DEFINE_NETWORK_TYPE(OptionalVarInt);
     DEFINE_NETWORK_TYPE(PositionedAdvancement);
-    DEFINE_NETWORK_TYPE(PositionPath);
-    DEFINE_NETWORK_TYPE(PositionPathLinear);
-    DEFINE_NETWORK_TYPE(PositionPathStepped);
     DEFINE_NETWORK_TYPE(PositionStep);
 #endif
 
@@ -323,9 +316,8 @@ namespace ProtocolCraft
 #endif
 
     // Vibrations
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    DEFINE_NETWORK_TYPE(BlockPositionSource);
-    DEFINE_NETWORK_TYPE(EntityPositionSource);
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */ && PROTOCOL_VERSION < 759 /* < 1.19 */
+    DEFINE_NETWORK_TYPE(VibrationPath);
 #endif
 
 }

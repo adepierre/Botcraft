@@ -2,12 +2,10 @@
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 #include "protocolCraft/Types/Identifier.hpp"
 
 #include <memory>
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-#include <string_view>
-#endif
 
 namespace ProtocolCraft
 {
@@ -46,32 +44,31 @@ namespace ProtocolCraft
 
     class Recipe : public NetworkType
     {
-        SERIALIZED_FIELD(RecipeId, Identifier);
+    private:
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Identifier);
+        static std::shared_ptr<RecipeData> CreateRecipeData(const Identifier& type);
 #else
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, RecipeDataType);
+        static std::shared_ptr<RecipeData> CreateRecipeData(const RecipeDataType type);
 #endif
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<RecipeData>);
+
+#if PROTOCOL_VERSION < 453 /* < 1.14 */
+        SERIALIZED_FIELD(RecipeId, Identifier);
+        SERIALIZED_DYNAMIC_FIELD(Recipe, Type, Data, RecipeData, Recipe::CreateRecipeData, Identifier);
+#elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Identifier);
+        SERIALIZED_FIELD(RecipeId, Identifier);
+        SERIALIZED_DYNAMIC_DATA_FIELD(Data, Recipe::Type, RecipeData, Recipe::CreateRecipeData);
+#else
+        SERIALIZED_FIELD(RecipeId, Identifier);
+        SERIALIZED_DYNAMIC_FIELD(Recipe, Type, Data, RecipeData, Recipe::CreateRecipeData, Internal::DiffType<RecipeDataType, VarInt>);
+#endif
+
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
+        GETTER(Type);
+        DYNAMIC_TYPE_SETTER(Type, Data, Recipe::CreateRecipeData);
+#endif
 
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER(Type);
-        GETTER(Data);
-
-    public:
-        virtual ~Recipe() override;
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        Recipe& SetType(const Identifier& type_);
-#else
-        Recipe& SetType(const RecipeDataType type_);
-#endif
-
-
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        std::string_view GetName() const;
-#endif
     };
 }
 #endif

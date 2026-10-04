@@ -1,6 +1,7 @@
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
 #pragma once
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 namespace ProtocolCraft
 {
@@ -19,13 +20,10 @@ namespace ProtocolCraft
 
         class ItemAttributeModifiersDisplay : public NetworkType
         {
-            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<ItemAttributeModifiersDisplayType, VarInt>);
-            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<ItemAttributeModifiersDisplayData>);
+        private:
+            static std::shared_ptr<ItemAttributeModifiersDisplayData> CreateItemAttributeModifiersDisplayData(const ItemAttributeModifiersDisplayType type);
 
-            GETTER(Type);
-            GETTER(Data);
-
-            ItemAttributeModifiersDisplay& SetType(const ItemAttributeModifiersDisplayType type_);
+            SERIALIZED_DYNAMIC_FIELD(ItemAttributeModifiersDisplay, Type, Data, ItemAttributeModifiersDisplayData, ItemAttributeModifiersDisplay::CreateItemAttributeModifiersDisplayData, Internal::DiffType<ItemAttributeModifiersDisplayType, VarInt>);
 
             DECLARE_READ_WRITE_SERIALIZE;
         };

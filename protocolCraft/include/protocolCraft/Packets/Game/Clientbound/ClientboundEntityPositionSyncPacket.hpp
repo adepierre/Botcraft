@@ -5,7 +5,7 @@
 #if PROTOCOL_VERSION < 777 /* < 26.3 */
 #include "protocolCraft/Types/PositionMoveRotation.hpp"
 #else
-#include "protocolCraft/Types/PositionPath.hpp"
+#include "protocolCraft/Types/PositionPath/PositionPath.hpp"
 #endif
 
 namespace ProtocolCraft

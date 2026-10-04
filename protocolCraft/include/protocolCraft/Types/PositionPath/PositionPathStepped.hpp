@@ -1,14 +1,14 @@
 #if PROTOCOL_VERSION > 776 /* > 26.2 */
 #pragma once
 
-#include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Types/PositionPath/PositionPathData.hpp"
 #include "protocolCraft/Types/PositionStep.hpp"
 
 #include <array>
 
 namespace ProtocolCraft
 {
-    class PositionPathStepped : public NetworkType
+    class PositionPathStepped : public PositionPathData
     {
         SERIALIZED_FIELD(Steps, std::vector<PositionStep>);
 

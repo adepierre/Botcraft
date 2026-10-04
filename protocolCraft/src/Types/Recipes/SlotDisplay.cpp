@@ -32,85 +32,39 @@ namespace ProtocolCraft
 #endif
 
 
-    SlotDisplay& SlotDisplay::SetType(const SlotDisplaysDataType type)
+    std::shared_ptr<SlotDisplayData> SlotDisplay::CreateSlotDisplayData(const SlotDisplayDataType type)
     {
-        if (type <= SlotDisplaysDataType::None || type >= SlotDisplaysDataType::NUM_SLOT_DISPLAYS_DATA_TYPES)
+        switch (type)
         {
-            throw std::runtime_error("Unable to create SlotDisplaysData with id: " + std::to_string(static_cast<int>(type)) + ".");
-        }
-        Type = type;
-
-        switch (Type)
-        {
-        case SlotDisplaysDataType::Empty:
-        case SlotDisplaysDataType::AnyFuel:
-            Data = std::make_shared<SlotDisplayDataEmpty>();
-            break;
-        case SlotDisplaysDataType::Item:
-            Data = std::make_shared<ItemSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::ItemStack:
-            Data = std::make_shared<ItemStackSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::Tag:
-            Data = std::make_shared<TagSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::SmithingTrim:
-            Data = std::make_shared<SmithingTrimDemoSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::WithRemainder:
-            Data = std::make_shared<WithRemainderSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::Composite:
-            Data = std::make_shared<CompositeSlotDisplay>();
-            break;
+        case SlotDisplayDataType::Empty:
+        case SlotDisplayDataType::AnyFuel:
+            return std::make_shared<SlotDisplayDataEmpty>();
+        case SlotDisplayDataType::Item:
+            return std::make_shared<ItemSlotDisplay>();
+        case SlotDisplayDataType::ItemStack:
+            return std::make_shared<ItemStackSlotDisplay>();
+        case SlotDisplayDataType::Tag:
+            return std::make_shared<TagSlotDisplay>();
+        case SlotDisplayDataType::SmithingTrim:
+            return std::make_shared<SmithingTrimDemoSlotDisplay>();
+        case SlotDisplayDataType::WithRemainder:
+            return std::make_shared<WithRemainderSlotDisplay>();
+        case SlotDisplayDataType::Composite:
+            return std::make_shared<CompositeSlotDisplay>();
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        case SlotDisplaysDataType::WithAnyPotion:
-            Data = std::make_shared<WithAnyPotionSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::OnlyWithComponent:
-            Data = std::make_shared<OnlyWithComponentSlotDisplay>();
-            break;
-        case SlotDisplaysDataType::DyedSlotDemo:
-            Data = std::make_shared<DyedSlotDemoDisplayData>();
-            break;
+        case SlotDisplayDataType::WithAnyPotion:
+            return std::make_shared<WithAnyPotionSlotDisplay>();
+        case SlotDisplayDataType::OnlyWithComponent:
+            return std::make_shared<OnlyWithComponentSlotDisplay>();
+        case SlotDisplayDataType::DyedSlotDemo:
+            return std::make_shared<DyedSlotDemoDisplayData>();
 #endif
         default:
             // This should not happen
-            throw std::runtime_error("Unable to create SlotDisplaysData with id: " + std::to_string(static_cast<int>(Type)) + ".");
-            Data = nullptr;
-            break;
-        }
-        return *this;
-    }
-
-
-    void SlotDisplay::ReadImpl(ReadIterator& iter, size_t& length)
-    {
-        SetType(ReadData<SlotDisplaysDataType, VarInt>(iter, length));
-        if (GetData() != nullptr)
-        {
-            GetData()->Read(iter, length);
+            throw std::runtime_error("Unable to create SlotDisplaysData with id: " + std::to_string(static_cast<int>(type)) + ".");
         }
     }
 
-    void SlotDisplay::WriteImpl(WriteContainer& container) const
-    {
-        WriteData<SlotDisplaysDataType, VarInt>(GetType(), container);
-        if (GetData() != nullptr)
-        {
-            GetData()->Write(container);
-        }
-    }
-
-    Json::Value SlotDisplay::SerializeImpl() const
-    {
-        Json::Value output;
-
-        output[std::string(field_name<Type_index>)] = GetType();
-        output[std::string(field_name<Data_index>)] = GetData() == nullptr ? Json::Object() : GetData()->Serialize();
-
-        return output;
-    }
+    DEFINE_NETWORK_TYPE(SlotDisplay);
 }
 #endif

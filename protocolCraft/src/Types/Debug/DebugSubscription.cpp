@@ -50,11 +50,6 @@ namespace ProtocolCraft
     {
         std::shared_ptr<DebugSubscriptionData> DebugSubscriptionDataFactory(const DebugSubscriptionDataType debug_subscription_data_type_)
         {
-            if (debug_subscription_data_type_ <= DebugSubscriptionDataType::None || debug_subscription_data_type_ >= DebugSubscriptionDataType::NUM_DEBUG_SUBSCRIPTION_DATA_TYPES)
-            {
-                throw std::runtime_error("Unable to create debug subscription data with id: " + std::to_string(static_cast<int>(debug_subscription_data_type_)) + ".");
-            }
-
             switch (debug_subscription_data_type_)
             {
             case DebugSubscriptionDataType::DedicatedServerTickTime:
@@ -92,7 +87,7 @@ namespace ProtocolCraft
             default:
                 // Should never happen
                 throw std::runtime_error("Unable to create debug subscription data with id: " + std::to_string(static_cast<int>(debug_subscription_data_type_)) + ".");
-                break;
+                return nullptr;
             }
 
             // Should never happen
@@ -101,17 +96,14 @@ namespace ProtocolCraft
         }
     }
 
-    DebugSubscriptionUpdate& DebugSubscriptionUpdate::SetDataType(const DebugSubscriptionDataType data_type_)
+    std::shared_ptr<DebugSubscriptionData> DebugSubscriptionUpdate::CreateDebugSubscriptionData(const DebugSubscriptionDataType type)
     {
-        DataType = data_type_;
-        Data = DebugSubscriptionDataFactory(DataType);
-
-        return *this;
+        return DebugSubscriptionDataFactory(type);
     }
 
-    DebugSubscriptionUpdate& DebugSubscriptionUpdate::SetDataTypeNoData(const DebugSubscriptionDataType data_type_)
+    DebugSubscriptionUpdate& DebugSubscriptionUpdate::SetDataTypeNoData(const DebugSubscriptionDataType type)
     {
-        DataType = data_type_;
+        Type = type;
         Data = std::nullopt;
 
         return *this;
@@ -119,18 +111,18 @@ namespace ProtocolCraft
 
     void DebugSubscriptionUpdate::ReadImpl(ReadIterator& iter, size_t& length)
     {
-        DataType = ReadData<DebugSubscriptionDataType, VarInt>(iter, length);
+        Type = ReadData<DebugSubscriptionDataType, VarInt>(iter, length);
         const bool has_data = ReadData<bool>(iter, length);
         if (has_data)
         {
-            Data = DebugSubscriptionDataFactory(DataType);
+            Data = DebugSubscriptionDataFactory(Type);
             Data.value()->Read(iter, length);
         }
     }
 
     void DebugSubscriptionUpdate::WriteImpl(WriteContainer& container) const
     {
-        WriteData<DebugSubscriptionDataType, VarInt>(DataType, container);
+        WriteData<DebugSubscriptionDataType, VarInt>(Type, container);
         WriteData<bool>(Data.has_value(), container);
         if (Data.has_value() && Data.value() != nullptr)
         {
@@ -138,55 +130,14 @@ namespace ProtocolCraft
         }
     }
 
-    Json::Value DebugSubscriptionUpdate::SerializeImpl() const
+    DEFINE_SERIALIZE(DebugSubscriptionUpdate);
+
+
+    std::shared_ptr<DebugSubscriptionData> DebugSubscriptionEvent::CreateDebugSubscriptionData(const DebugSubscriptionDataType type)
     {
-        Json::Value output;
-
-        output[std::string(field_name<DataType_index>)] = static_cast<int>(DataType);
-        if (Data.has_value())
-        {
-            output[std::string(field_name<Data_index>)] = Data == nullptr ? Json::Object() : Data.value()->Serialize();
-        }
-
-        return output;
+        return DebugSubscriptionDataFactory(type);
     }
 
-
-    DebugSubscriptionEvent& DebugSubscriptionEvent::SetDataType(const DebugSubscriptionDataType data_type_)
-    {
-        DataType = data_type_;
-        Data = DebugSubscriptionDataFactory(DataType);
-
-        return *this;
-    }
-
-    void DebugSubscriptionEvent::ReadImpl(ReadIterator& iter, size_t& length)
-    {
-        DataType = ReadData<DebugSubscriptionDataType, VarInt>(iter, length);
-        Data = DebugSubscriptionDataFactory(DataType);
-        if (Data != nullptr)
-        {
-            Data->Read(iter, length);
-        }
-    }
-
-    void DebugSubscriptionEvent::WriteImpl(WriteContainer& container) const
-    {
-        WriteData<DebugSubscriptionDataType, VarInt>(DataType, container);
-        if (Data != nullptr)
-        {
-            Data->Write(container);
-        }
-    }
-
-    Json::Value DebugSubscriptionEvent::SerializeImpl() const
-    {
-        Json::Value output;
-
-        output[std::string(field_name<DataType_index>)] = static_cast<int>(DataType);
-        output[std::string(field_name<Data_index>)] = Data == nullptr ? Json::Object() : Data->Serialize();
-
-        return output;
-    }
+    DEFINE_NETWORK_TYPE(DebugSubscriptionEvent);
 }
 #endif

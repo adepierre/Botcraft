@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 namespace ProtocolCraft
 {
@@ -299,24 +300,10 @@ namespace ProtocolCraft
     class Particle : public NetworkType
     {
     public:
-        Particle();
-        virtual ~Particle();
-        std::string_view GetName() const;
+        static std::shared_ptr<ParticleOption> CreateParticleOption(const ParticleType type);
 
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Option, std::shared_ptr<ParticleOption>);
-
-        GETTER(ParticleType);
-        GETTER(Option);
-
-        Particle& SetParticleType(const ProtocolCraft::ParticleType particle_type_);
+        SERIALIZED_DYNAMIC_FIELD(Particle, ParticleType, Option, ParticleOption, Particle::CreateParticleOption, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
 
         DECLARE_READ_WRITE_SERIALIZE;
-
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-    public:
-        void ReadOption(ReadIterator& iter, size_t& length);
-        void WriteOption(WriteContainer& container) const;
-#endif
     };
 }

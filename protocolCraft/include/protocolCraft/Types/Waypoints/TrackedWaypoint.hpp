@@ -4,13 +4,14 @@
 #include <memory>
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 #include "protocolCraft/Types/Either.hpp"
 #include "protocolCraft/Types/Waypoints/WaypointIcon.hpp"
 
 namespace ProtocolCraft
 {
-    enum class TrackedWaypointType
+    enum class TrackedWaypointDataType
     {
         None = -1,
         Empty,
@@ -24,15 +25,12 @@ namespace ProtocolCraft
 
     class TrackedWaypoint : public NetworkType
     {
+    private:
+        static std::shared_ptr<TrackedWaypointData> CreateTrackedWaypointData(const TrackedWaypointDataType type);
+
         SERIALIZED_FIELD(Identifier, Either<UUID, std::string>);
         SERIALIZED_FIELD(Icon, WaypointIcon);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<TrackedWaypointType, VarInt>);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<TrackedWaypointData>);
-
-        GETTER(Type);
-        GETTER(Data);
-
-        TrackedWaypoint& SetType(const TrackedWaypointType type);
+        SERIALIZED_DYNAMIC_FIELD(TrackedWaypoint, Type, Data, TrackedWaypointData, TrackedWaypoint::CreateTrackedWaypointData, Internal::DiffType<TrackedWaypointDataType, VarInt>);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

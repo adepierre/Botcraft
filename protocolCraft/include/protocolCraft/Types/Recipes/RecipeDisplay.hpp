@@ -2,6 +2,7 @@
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 #include <memory>
 
@@ -22,16 +23,12 @@ namespace ProtocolCraft
 
     class RecipeDisplay : public NetworkType
     {
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<RecipeDisplayDataType, VarInt>);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<RecipeDisplayData>);
+    private:
+        static std::shared_ptr<RecipeDisplayData> CreateRecipeDisplayData(const RecipeDisplayDataType type);
+
+        SERIALIZED_DYNAMIC_FIELD(RecipeDisplay, Type, Data, RecipeDisplayData, RecipeDisplay::CreateRecipeDisplayData, Internal::DiffType<RecipeDisplayDataType, VarInt>);
 
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER(Type);
-        GETTER(Data);
-
-    public:
-        RecipeDisplay& SetType(const RecipeDisplayDataType type);
     };
 }
 #endif

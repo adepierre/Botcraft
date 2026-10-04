@@ -2,12 +2,13 @@
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 #include <memory>
 
 namespace ProtocolCraft
 {
-    enum class SlotDisplaysDataType
+    enum class SlotDisplayDataType
     {
         None = -1,
         Empty,
@@ -32,16 +33,12 @@ namespace ProtocolCraft
 
     class SlotDisplay : public NetworkType
     {
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<SlotDisplaysDataType, VarInt>);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<SlotDisplayData>);
+    private:
+        static std::shared_ptr<SlotDisplayData> CreateSlotDisplayData(const SlotDisplayDataType type);
+
+        SERIALIZED_DYNAMIC_FIELD(SlotDisplay, Type, Data, SlotDisplayData, SlotDisplay::CreateSlotDisplayData, Internal::DiffType<SlotDisplayDataType, VarInt>);
 
         DECLARE_READ_WRITE_SERIALIZE;
-
-        GETTER(Type);
-        GETTER(Data);
-
-    public:
-        SlotDisplay& SetType(const SlotDisplaysDataType type);
     };
 }
 #endif

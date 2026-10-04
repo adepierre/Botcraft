@@ -2,6 +2,7 @@
 #pragma once
 
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 #include <memory>
 #include <optional>
@@ -34,27 +35,28 @@ namespace ProtocolCraft
 
     class DebugSubscriptionUpdate : public NetworkType
     {
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(DataType, DebugSubscriptionDataType);
+    private:
+        static std::shared_ptr<DebugSubscriptionData> CreateDebugSubscriptionData(const DebugSubscriptionDataType type);
+
+        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<DebugSubscriptionDataType, VarInt>);
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::optional<std::shared_ptr<DebugSubscriptionData>>);
 
-        GETTER(DataType);
+        GETTER(Type);
         GETTER(Data);
 
-        DebugSubscriptionUpdate& SetDataType(const DebugSubscriptionDataType data_type_);
-        DebugSubscriptionUpdate& SetDataTypeNoData(const DebugSubscriptionDataType data_type_);
+        DYNAMIC_TYPE_SETTER(Type, Data, DebugSubscriptionUpdate::CreateDebugSubscriptionData);
+        // Special case to set the type and set the data to empty std::optional
+        DebugSubscriptionUpdate& SetDataTypeNoData(const DebugSubscriptionDataType type);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };
 
     class DebugSubscriptionEvent : public NetworkType
     {
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(DataType, DebugSubscriptionDataType);
-        SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<DebugSubscriptionData>);
+    private:
+        static std::shared_ptr<DebugSubscriptionData> CreateDebugSubscriptionData(const DebugSubscriptionDataType type);
 
-        GETTER(DataType);
-        GETTER(Data);
-
-        DebugSubscriptionEvent& SetDataType(const DebugSubscriptionDataType data_type_);
+        SERIALIZED_DYNAMIC_FIELD(DebugSubscriptionEvent, Type, Data, DebugSubscriptionData, DebugSubscriptionEvent::CreateDebugSubscriptionData, Internal::DiffType<DebugSubscriptionDataType, VarInt>);
 
         DECLARE_READ_WRITE_SERIALIZE;
     };

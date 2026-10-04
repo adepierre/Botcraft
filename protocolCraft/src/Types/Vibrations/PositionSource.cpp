@@ -3,11 +3,15 @@
 #include "protocolCraft/Types/Vibrations/PositionSource.hpp"
 #include "protocolCraft/Types/Vibrations/BlockPositionSource.hpp"
 #include "protocolCraft/Types/Vibrations/EntityPositionSource.hpp"
+#include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
 #include <stdexcept>
 
 namespace ProtocolCraft
 {
+    DEFINE_NETWORK_TYPE(BlockPositionSource);
+    DEFINE_NETWORK_TYPE(EntityPositionSource);
+
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
     std::shared_ptr<PositionSource> PositionSource::CreatePositionSource(const PositionSourceType position_source_type)
     {
@@ -19,6 +23,7 @@ namespace ProtocolCraft
                 return std::make_shared<EntityPositionSource>();
             default:
                 throw std::runtime_error("Unable to create position source with type: " + std::to_string(static_cast<int>(position_source_type)));
+                return nullptr;
         }
     }
 #else
@@ -35,6 +40,7 @@ namespace ProtocolCraft
         else
         {
             throw std::runtime_error("Unable to create position source with type: " + position_source_type.GetFull());
+            return nullptr;
         }
     }
 #endif

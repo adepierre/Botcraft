@@ -1,6 +1,7 @@
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #pragma once
 #include "protocolCraft/NetworkType.hpp"
+#include "protocolCraft/Utilities/DynamicType.hpp"
 
 #include <memory>
 
@@ -23,16 +24,12 @@ namespace ProtocolCraft
 
         class ConsumeEffect : public NetworkType
         {
-            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Internal::DiffType<ConsumeEffectDataType, VarInt>);
-            SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Data, std::shared_ptr<ConsumeEffectData>);
+        private:
+            static std::shared_ptr<ConsumeEffectData> CreateConsumeEffectData(const ConsumeEffectDataType type);
+
+            SERIALIZED_DYNAMIC_FIELD(ConsumeEffect, Type, Data, ConsumeEffectData, ConsumeEffect::CreateConsumeEffectData, Internal::DiffType<ConsumeEffectDataType, VarInt>);
 
             DECLARE_READ_WRITE_SERIALIZE;
-
-            GETTER(Type);
-            GETTER(Data);
-
-        public:
-            ConsumeEffect& SetType(const ConsumeEffectDataType type);
         };
     }
 }
