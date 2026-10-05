@@ -5,7 +5,7 @@
 #if PROTOCOL_VERSION < 777 /* < 26.3 */
 #include <vector>
 #else
-#include "protocolCraft/Types/Item/Slot.hpp"
+#include "protocolCraft/Types/Item/ItemStackTemplate.hpp"
 #include <optional>
 #endif
 
@@ -18,10 +18,10 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 777 /* < 26.3 */
             SERIALIZED_FIELD(Sides, std::vector<VarInt>);
 #else
-            SERIALIZED_FIELD(Back, std::optional<Slot>);
-            SERIALIZED_FIELD(Left, std::optional<Slot>);
-            SERIALIZED_FIELD(Right, std::optional<Slot>);
-            SERIALIZED_FIELD(Front, std::optional<Slot>);
+            SERIALIZED_FIELD(Back, std::optional<ItemStackTemplate>);
+            SERIALIZED_FIELD(Left, std::optional<ItemStackTemplate>);
+            SERIALIZED_FIELD(Right, std::optional<ItemStackTemplate>);
+            SERIALIZED_FIELD(Front, std::optional<ItemStackTemplate>);
 #endif
 
             DECLARE_READ_WRITE_SERIALIZE;

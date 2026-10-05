@@ -9,6 +9,9 @@ namespace ProtocolCraft
         class TeleportRandomlyConsumeEffect : public ConsumeEffectData
         {
             SERIALIZED_FIELD(Diameter, float);
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            SERIALIZED_FIELD(DirectionalParticles, bool);
+#endif
 
             DECLARE_READ_WRITE_SERIALIZE;
         };
