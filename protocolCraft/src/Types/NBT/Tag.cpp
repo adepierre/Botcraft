@@ -6,23 +6,6 @@ namespace ProtocolCraft
 
     namespace NBT
     {
-        enum class TagType : char
-        {
-            TagEnd = 0,
-            TagByte,
-            TagShort,
-            TagInt,
-            TagLong,
-            TagFloat,
-            TagDouble,
-            TagByteArray,
-            TagString,
-            TagList,
-            TagCompound,
-            TagIntArray,
-            TagLongArray
-        };
-
         std::string ReadNBTString(ReadIterator& iter, size_t& length);
         void WriteNBTString(const std::string& s, WriteContainer& container);
 
@@ -86,244 +69,77 @@ namespace ProtocolCraft
         }
 
 
-        const std::string& Tag::GetName() const
+        const Tag& Tag::operator[](const std::string& s) const
         {
-            return name;
+            if (!std::holds_alternative<RecursiveWrapper<TagCompound>>(val))
+            {
+                throw std::runtime_error("NBT::Tag is not a TagCompound");
+            }
+
+            return get<TagCompound>().at(s);
         }
 
-        void Tag::ReadUnnamedImpl(ReadIterator& iter, size_t& length)
+        size_t Tag::size() const
         {
-            const TagType type = static_cast<TagType>(ReadData<char>(iter, length));
+            size_t output;
 
-            if (type == TagType::TagEnd)
-            {
-                val = Internal::TagVariant();
-                return;
-            }
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
 
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            // Name is read but ignored
-            name = ReadNBTString(iter, length);
-#endif
-            name = "";
-
-            switch (type)
-            {
-            case TagType::TagEnd:
-                // Should not happen but for completeness
-                break;
-            case TagType::TagByte:
-                val = ReadData<char>(iter, length);
-                break;
-            case TagType::TagShort:
-                val = ReadData<short>(iter, length);
-                break;
-            case TagType::TagInt:
-                val = ReadData<int>(iter, length);
-                break;
-            case TagType::TagLong:
-                val = ReadData<long long int>(iter, length);
-                break;
-            case TagType::TagFloat:
-                val = ReadData<float>(iter, length);
-                break;
-            case TagType::TagDouble:
-                val = ReadData<double>(iter, length);
-                break;
-            case TagType::TagByteArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<char, int>>(iter, length);
-                break;
-            case TagType::TagString:
-                val = ReadNBTString(iter, length);
-                break;
-            case TagType::TagList:
-                val = ReadData<TagList>(iter, length);
-                break;
-            case TagType::TagCompound:
-                val = ReadData<TagCompound>(iter, length);
-                break;
-            case TagType::TagIntArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<int, int>>(iter, length);
-                break;
-            case TagType::TagLongArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<long long int, int>>(iter, length);
-                break;
-            default:
-                break;
-            }
-        }
-
-        void Tag::WriteUnnamedImpl(WriteContainer& container) const
-        {
-            WriteData<char>(static_cast<char>(val.index()), container);
-
-            if (std::holds_alternative<TagEnd>(val))
-            {
-                return;
-            }
-
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-            // Always empty string is written as this is unnamed
-            WriteNBTString("", container);
-#endif
-
-            std::visit([&](auto&& arg)
+                if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>> || std::is_same_v<T, RecursiveWrapper<TagCompound>>)
                 {
-                    using T = std::decay_t<decltype(arg)>;
+                    output = arg.get().size();
+                }
+                else if constexpr (
+                    std::is_same_v<T, TagByteArray> ||
+                    std::is_same_v<T, TagIntArray> ||
+                    std::is_same_v<T, TagLongArray>
+                )
+                {
+                    output = arg.size();
+                }
+                else
+                {
+                    throw std::runtime_error("NBT::Tag is not a container, no size() method implemented");
+                }
+            }, val);
 
-                    if constexpr (std::is_same_v<T, TagEnd>)
-                    {
-                        return;
-                    }
-                    else if constexpr (std::is_same_v<T, TagByteArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<char, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagString>)
-                    {
-                        WriteNBTString(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
-                    {
-                        WriteData<TagList>(arg.get(), container);
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
-                    {
-                        WriteData<TagCompound>(arg.get(), container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagIntArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<int, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagLongArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<long long int, int>>(arg, container);
-                    }
-                    else
-                    {
-                        WriteData<T>(arg, container);
-                    }
-                }, val);
+            return output;
         }
+
+        bool Tag::contains(const std::string& s) const
+        {
+            return is<TagCompound>() && get<TagCompound>().count(s);
+        }
+
 
         void Tag::ReadImpl(ReadIterator& iter, size_t& length)
         {
-            const TagType type = static_cast<TagType>(ReadData<char>(iter, length));
-
-            if (type == TagType::TagEnd)
-            {
-                val = Internal::TagVariant();
-                return;
-            }
-
-            name = ReadNBTString(iter, length);
-
-            switch (type)
-            {
-            case TagType::TagEnd:
-                // Should not happen but for completeness
-                break;
-            case TagType::TagByte:
-                val = ReadData<char>(iter, length);
-                break;
-            case TagType::TagShort:
-                val = ReadData<short>(iter, length);
-                break;
-            case TagType::TagInt:
-                val = ReadData<int>(iter, length);
-                break;
-            case TagType::TagLong:
-                val = ReadData<long long int>(iter, length);
-                break;
-            case TagType::TagFloat:
-                val = ReadData<float>(iter, length);
-                break;
-            case TagType::TagDouble:
-                val = ReadData<double>(iter, length);
-                break;
-            case TagType::TagByteArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<char, int>>(iter, length);
-                break;
-            case TagType::TagString:
-                val = ReadNBTString(iter, length);
-                break;
-            case TagType::TagList:
-                val = ReadData<TagList>(iter, length);
-                break;
-            case TagType::TagCompound:
-                val = ReadData<TagCompound>(iter, length);
-                break;
-            case TagType::TagIntArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<int, int>>(iter, length);
-                break;
-            case TagType::TagLongArray:
-                // Special case, use int as size instead of varint
-                val = ReadData<Vector<long long int, int>>(iter, length);
-                break;
-            default:
-                break;
-            }
+            ReadPayload(ReadData<TagType, char>(iter, length), iter, length);
         }
 
         void Tag::WriteImpl(WriteContainer& container) const
         {
             WriteData<char>(static_cast<char>(val.index()), container);
+            WritePayload(container);
+        }
 
-            if (std::holds_alternative<TagEnd>(val))
+        std::string Tag::ReadNamed(ReadIterator& iter, size_t& length)
+        {
+            const TagType type = ReadData<TagType, char>(iter, length);
+            const std::string tag_name = type == TagType::TagEnd ? "" : ReadNBTString(iter, length);
+            ReadPayload(type, iter, length);
+            return tag_name;
+        }
+
+        void Tag::WriteNamed(const std::string& tag_name, WriteContainer& container) const
+        {
+            WriteData<char>(static_cast<char>(val.index()), container);
+            if (!std::holds_alternative<TagEnd>(val))
             {
-                return;
+                WriteNBTString(tag_name, container);
             }
-
-            WriteNBTString(name, container);
-
-            std::visit([&](auto&& arg)
-                {
-                    using T = std::decay_t<decltype(arg)>;
-
-                    if constexpr (std::is_same_v<T, TagEnd>)
-                    {
-                        return;
-                    }
-                    else if constexpr (std::is_same_v<T, TagByteArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<char, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagString>)
-                    {
-                        WriteNBTString(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
-                    {
-                        WriteData<TagList>(arg.get(), container);
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
-                    {
-                        WriteData<TagCompound>(arg.get(), container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagIntArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<int, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, TagLongArray>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<long long int, int>>(arg, container);
-                    }
-                    else
-                    {
-                        WriteData<T>(arg, container);
-                    }
-                }, val);
+            WritePayload(container);
         }
 
         Json::Value Tag::SerializeImpl() const
@@ -342,68 +158,114 @@ namespace ProtocolCraft
                     {
                         output["type"] = GetTagName<TagList>();
                         output["content"] = arg.get();
-                        output["name"] = GetName();
                     }
                     else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
                     {
                         output["type"] = GetTagName<TagCompound>();
                         output["content"] = arg.get();
-                        output["name"] = GetName();
                     }
                     else
                     {
                         output["type"] = GetTagName<T>();
                         output["content"] = arg;
-                        output["name"] = GetName();
                     }
                 }, val);
 
             return output;
         }
 
-        const Tag& Tag::operator[](const std::string& s) const
+        void Tag::ReadPayload(const TagType type, ReadIterator& iter, size_t& length)
         {
-            if (!std::holds_alternative<RecursiveWrapper<TagCompound>>(val))
+            switch (type)
             {
-                throw std::runtime_error("NBT::Tag is not a TagCompound");
+            case TagType::TagEnd:
+                val = Internal::TagVariant();
+                break;
+            case TagType::TagByte:
+                val = ReadData<char>(iter, length);
+                break;
+            case TagType::TagShort:
+                val = ReadData<short>(iter, length);
+                break;
+            case TagType::TagInt:
+                val = ReadData<int>(iter, length);
+                break;
+            case TagType::TagLong:
+                val = ReadData<long long int>(iter, length);
+                break;
+            case TagType::TagFloat:
+                val = ReadData<float>(iter, length);
+                break;
+            case TagType::TagDouble:
+                val = ReadData<double>(iter, length);
+                break;
+            case TagType::TagByteArray:
+                // Special case, use int as size instead of varint
+                val = ReadData<Vector<char, int>>(iter, length);
+                break;
+            case TagType::TagString:
+                val = ReadNBTString(iter, length);
+                break;
+            case TagType::TagList:
+                val = ReadData<TagList>(iter, length);
+                break;
+            case TagType::TagCompound:
+                val = ReadData<TagCompound>(iter, length);
+                break;
+            case TagType::TagIntArray:
+                // Special case, use int as size instead of varint
+                val = ReadData<Vector<int, int>>(iter, length);
+                break;
+            case TagType::TagLongArray:
+                // Special case, use int as size instead of varint
+                val = ReadData<Vector<long long int, int>>(iter, length);
+                break;
+            default:
+                break;
             }
-
-            return get<TagCompound>().at(s);
         }
 
-        size_t Tag::size() const
+        void Tag::WritePayload(WriteContainer& container) const
         {
-            size_t output;
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
 
-            std::visit([&](auto&& arg)
+                if constexpr (std::is_same_v<T, TagEnd>)
                 {
-                    using T = std::decay_t<decltype(arg)>;
-
-                    if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>> ||
-                        std::is_same_v<T, RecursiveWrapper<TagCompound>>)
-                    {
-                        output = arg.get().size();
-                    }
-                    else if constexpr (
-                        std::is_same_v<T, TagByteArray> ||
-                        std::is_same_v<T, TagIntArray> ||
-                        std::is_same_v<T, TagLongArray>
-                    )
-                    {
-                        output = arg.size();
-                    }
-                    else
-                    {
-                        throw std::runtime_error("NBT::Tag is not a container, no size() method implemented");
-                    }
-                }, val);
-
-            return output;
-        }
-
-        bool Tag::contains(const std::string& s) const
-        {
-            return is<TagCompound>() && get<TagCompound>().count(s);
+                    return;
+                }
+                else if constexpr (std::is_same_v<T, TagByteArray>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<char, int>>(arg, container);
+                }
+                else if constexpr (std::is_same_v<T, TagString>)
+                {
+                    WriteNBTString(arg, container);
+                }
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
+                {
+                    WriteData<TagList>(arg.get(), container);
+                }
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
+                {
+                    WriteData<TagCompound>(arg.get(), container);
+                }
+                else if constexpr (std::is_same_v<T, TagIntArray>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<int, int>>(arg, container);
+                }
+                else if constexpr (std::is_same_v<T, TagLongArray>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<long long int, int>>(arg, container);
+                }
+                else
+                {
+                    WriteData<T>(arg, container);
+                }
+            }, val);
         }
 
 
@@ -482,66 +344,64 @@ namespace ProtocolCraft
         {
             WriteData<char>(static_cast<char>(vals.index()), container);
 
-            std::visit([&](auto&& arg)
-                {
-                    using T = std::decay_t<decltype(arg)>;
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
 
-                    if constexpr (std::is_same_v<T, std::vector<TagEnd>>)
+                if constexpr (std::is_same_v<T, std::vector<TagEnd>>)
+                {
+                    WriteData<int>(static_cast<int>(arg.size()), container);
+                }
+                else if constexpr (std::is_same_v<T, std::vector<TagByteArray>>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<Vector<char, int>, int>>(arg, container);
+                }
+                else if constexpr (std::is_same_v<T, std::vector<TagString>>)
+                {
+                    WriteData<int>(static_cast<int>(arg.size()), container);
+                    for (size_t i = 0; i < arg.size(); ++i)
                     {
-                        WriteData<int>(static_cast<int>(arg.size()), container);
+                        WriteNBTString(arg[i], container);
                     }
-                    else if constexpr (std::is_same_v<T, std::vector<TagByteArray>>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<Vector<char, int>, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, std::vector<TagString>>)
-                    {
-                        WriteData<int>(static_cast<int>(arg.size()), container);
-                        for (size_t i = 0; i < arg.size(); ++i)
-                        {
-                            WriteNBTString(arg[i], container);
-                        }
-                    }
-                    else if constexpr (std::is_same_v<T, std::vector<TagIntArray>>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<Vector<int, int>, int>>(arg, container);
-                    }
-                    else if constexpr (std::is_same_v<T, std::vector<TagLongArray>>)
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<Vector<long long int, int>, int>>(arg, container);
-                    }
-                    else
-                    {
-                        // Special case, use int as size instead of varint
-                        WriteData<Vector<typename T::value_type, int>>(arg, container);
-                    }
-                }, vals);
+                }
+                else if constexpr (std::is_same_v<T, std::vector<TagIntArray>>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<Vector<int, int>, int>>(arg, container);
+                }
+                else if constexpr (std::is_same_v<T, std::vector<TagLongArray>>)
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<Vector<long long int, int>, int>>(arg, container);
+                }
+                else
+                {
+                    // Special case, use int as size instead of varint
+                    WriteData<Vector<typename T::value_type, int>>(arg, container);
+                }
+            }, vals);
         }
 
         Json::Value TagList::SerializeImpl() const
         {
             Json::Value output;
 
-            std::visit([&](auto&& arg)
-                {
-                    using T = std::decay_t<decltype(arg)>;
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
 
-                    if constexpr (std::is_same_v<T, std::vector<TagEnd>>)
+                if constexpr (std::is_same_v<T, std::vector<TagEnd>>)
+                {
+                    output = Json::Array();
+                    for (size_t i = 0; i < arg.size(); ++i)
                     {
-                        output = Json::Array();
-                        for (size_t i = 0; i < arg.size(); ++i)
-                        {
-                            output.push_back({});
-                        }
+                        output.push_back({});
                     }
-                    else
-                    {
-                        output = arg;
-                    }
-                }, vals);
+                }
+                else
+                {
+                    output = arg;
+                }
+            }, vals);
 
             return output;
         }
@@ -573,7 +433,8 @@ namespace ProtocolCraft
         {
             while (true)
             {
-                const Tag tag = ReadData<Tag>(iter, length);
+                Tag tag;
+                std::string name = tag.ReadNamed(iter, length);
 
                 // If it's a TagEnd, stop reading data
                 if (tag.is<TagEnd>())
@@ -582,16 +443,21 @@ namespace ProtocolCraft
                 }
 
                 // Else insert it
-                insert({ tag.GetName(), tag });
+                emplace(std::move(name), std::move(tag));
             }
         }
 
         void TagCompound::WriteImpl(WriteContainer& container) const
         {
-            // Write each named tag
-            for (const auto& p : *this)
+            // Write each tag with its key as name
+            for (const auto& [name, tag] : *this)
             {
-                WriteData<Tag>(p.second, container);
+                // This is not a valid compound
+                if (tag.is<TagEnd>())
+                {
+                    continue;
+                }
+                tag.WriteNamed(name, container);
             }
 
             // Add additional end tag
@@ -601,7 +467,6 @@ namespace ProtocolCraft
         Json::Value TagCompound::SerializeImpl() const
         {
             // std::map<std::string, Tag> is directly convertible to Json::Value
-            // Tag.name will be duplicated as both keys and part of value though
             return *static_cast<const std::map<std::string, Tag>*>(this);
         }
 

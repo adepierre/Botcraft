@@ -2,6 +2,8 @@
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/NBT/Tag.hpp"
 
+#include <string>
+
 namespace ProtocolCraft
 {
     namespace NBT
@@ -40,6 +42,7 @@ namespace ProtocolCraft
         {
         public:
             Value();
+            Value(TagCompound c, std::string root_name = "");
             Value(const UnnamedValue& unnamed);
             Value(UnnamedValue&& unnamed);
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
@@ -50,10 +53,15 @@ namespace ProtocolCraft
             virtual ~Value() override;
 
             bool HasData() const;
+            const std::string& GetName() const;
 
             friend std::istream& operator>>(std::istream& is, Value& v);
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
+            virtual void WriteImpl(WriteContainer& container) const override;
+
+        private:
+            std::string name;
         };
     }
 }

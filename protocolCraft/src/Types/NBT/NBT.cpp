@@ -31,12 +31,22 @@ namespace ProtocolCraft
 
         void UnnamedValue::ReadImpl(ReadIterator& iter, size_t& length)
         {
-            Tag::ReadUnnamedImpl(iter, length);
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            // Name is read but ignored
+            Tag::ReadNamed(iter, length);
+#else
+            Tag::ReadImpl(iter, length);
+#endif
         }
 
         void UnnamedValue::WriteImpl(WriteContainer& container) const
         {
-            Tag::WriteUnnamedImpl(container);
+#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
+            // Always empty string is written as this is unnamed
+            Tag::WriteNamed("", container);
+#else
+            Tag::WriteImpl(container);
+#endif
         }
 
 
@@ -65,14 +75,14 @@ namespace ProtocolCraft
         {
             // Untrusted == size prefixed
             const int size = ReadData<VarInt>(iter, length);
-            Tag::ReadUnnamedImpl(iter, length);
+            Tag::ReadImpl(iter, length);
         }
 
         void UntrustedValue::WriteImpl(WriteContainer& container) const
         {
             // Untrusted == size prefixed
             std::vector<unsigned char> temp_container;
-            Tag::WriteUnnamedImpl(temp_container);
+            Tag::WriteImpl(temp_container);
             WriteData<VarInt>(static_cast<int>(temp_container.size()), container);
             WriteByteArray(temp_container, container);
         }
@@ -80,6 +90,11 @@ namespace ProtocolCraft
 
 
         Value::Value()
+        {
+
+        }
+
+        Value::Value(TagCompound c, std::string root_name) : Tag(std::move(c)), name(std::move(root_name))
         {
 
         }
@@ -116,6 +131,11 @@ namespace ProtocolCraft
             return !is<TagEnd>();
         }
 
+        const std::string& Value::GetName() const
+        {
+            return name;
+        }
+
         std::istream& operator>>(std::istream& is, Value& v)
         {
             std::vector<unsigned char> file_content = std::vector<unsigned char>(
@@ -139,11 +159,11 @@ namespace ProtocolCraft
                 const std::vector<unsigned char> decompressed = ExtractGZip(iter, length);
                 ReadIterator decomp_iter = decompressed.begin();
                 size_t decomp_length = decompressed.size();
-                Tag::ReadImpl(decomp_iter, decomp_length);
+                name = Tag::ReadNamed(decomp_iter, decomp_length);
             }
             else
             {
-                Tag::ReadImpl(iter, length);
+                name = Tag::ReadNamed(iter, length);
             }
 
             if (is<TagEnd>())
@@ -156,5 +176,10 @@ namespace ProtocolCraft
                 throw std::runtime_error("Error reading NBT value, not starting with compound");
             }
         }
-}
+
+        void Value::WriteImpl(WriteContainer& container) const
+        {
+            Tag:WriteNamed(name, container);
+        }
+    }
 }

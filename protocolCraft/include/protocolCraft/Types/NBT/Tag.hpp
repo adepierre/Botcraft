@@ -26,6 +26,23 @@ namespace ProtocolCraft
         using TagIntArray = std::vector<int>;
         using TagLongArray = std::vector<long long int>;
 
+        enum class TagType : char
+        {
+            TagEnd = 0,
+            TagByte,
+            TagShort,
+            TagInt,
+            TagLong,
+            TagFloat,
+            TagDouble,
+            TagByteArray,
+            TagString,
+            TagList,
+            TagCompound,
+            TagIntArray,
+            TagLongArray
+        };
+
         namespace Internal
         {
             using TagVariant = std::variant<
@@ -64,7 +81,10 @@ namespace ProtocolCraft
         class Tag : public NetworkType
         {
         public:
-            const std::string& GetName() const;
+            Tag() = default;
+
+            template <typename T, std::enable_if_t<std::is_constructible_v<Internal::TagVariant, T&&>, bool> = true>
+            Tag(T&& v) : val(std::forward<T>(v)) {}
 
             template<typename T>
             bool is() const;
@@ -113,21 +133,30 @@ namespace ProtocolCraft
             bool contains(const std::string& s) const;
 
         protected:
-            void ReadUnnamedImpl(ReadIterator& iter, size_t& length);
-            void WriteUnnamedImpl(WriteContainer& container) const;
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
             virtual void WriteImpl(WriteContainer& container) const override;
+            std::string ReadNamed(ReadIterator& iter, size_t& length);
+            void WriteNamed(const std::string& tag_name, WriteContainer& container) const;
             virtual Json::Value SerializeImpl() const override;
 
         private:
+            void ReadPayload(const TagType type, ReadIterator& iter, size_t& length);
+            void WritePayload(WriteContainer& container) const;
+
+            friend class TagCompound;
+
+        private:
             Internal::TagVariant val;
-            std::string name;
         };
 
 
         class TagList : public NetworkType
         {
         public:
+            TagList() = default;
+            template<typename T, std::enable_if_t<std::is_convertible_v<std::vector<T>, Internal::TagListVariant>, bool> = true>
+            TagList(std::vector<T> v) : vals(std::move(v)) {}
+
             size_t size() const;
 
             template<

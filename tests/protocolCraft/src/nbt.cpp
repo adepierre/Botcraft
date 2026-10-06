@@ -36,7 +36,7 @@ TEST_CASE("Empty NBT")
 
 TEST_CASE("Tag short only")
 {
-    std::vector<unsigned char> data = { 0x02, 0x00, 0x09, 0x73,0x68,0x6F, 0x72, 0x74, 0x54, 0x65, 0x73, 0x74, 0x7F, 0xFF };
+    std::vector<unsigned char> data = { 0x02, 0x7F, 0xFF };
     ReadIterator iter = data.begin();
     size_t length = data.size();
 
@@ -46,10 +46,9 @@ TEST_CASE("Tag short only")
         CHECK_THROWS(n.Read(iter, length));
     }
 
-    SECTION("Valid short NamedTag")
+    SECTION("Valid short Tag")
     {
         NBT::Tag t = ReadData<NBT::Tag>(iter, length);
-        CHECK(t.GetName() == "shortTest");
         CHECK(t.is<short>());
         CHECK(t.get<NBT::TagShort>() == 32767);
         CHECK(t.get<short>() == 32767);
@@ -61,7 +60,7 @@ TEST_CASE("Tag short only")
         CHECK_THROWS(t.as_list_of<short>());
         CHECK_THROWS(t.as_list_of<NBT::TagCompound>());
 
-        Json::Value check_serialization = { { "name", "shortTest"}, {"type", "TagShort"}, {"content", 32767} };
+        Json::Value check_serialization = { { "type", "TagShort" }, { "content", 32767 } };
         CHECK(t.Serialize().Dump() == check_serialization.Dump());
     }
 }
@@ -440,4 +439,88 @@ TEST_CASE("Unnamed NBT")
 #else
     CHECK(serialized == data);
 #endif
+}
+
+TEST_CASE("Build NBT in code")
+{
+    NBT::Value nbt = NBT::TagCompound{
+        { "name", "Steve" },
+        { "count", 3 },
+        { "health", 20.0f },
+        { "flag", NBT::TagByte{ 1 } },
+        { "pos", NBT::TagList(std::vector<NBT::TagInt>{ 1, 2, 3 }) },
+        { "colours", NBT::TagIntArray{ 0xFF0000, 0x00FF00 } },
+        { "nested", NBT::TagCompound{ { "a", 1LL } } },
+    };
+
+    SECTION("Nothing")
+    {
+
+    }
+
+    SECTION("Round trip")
+    {
+        std::vector<unsigned char> first;
+        WriteData<NBT::Value>(nbt, first);
+
+        ReadIterator iter = first.begin();
+        size_t length = first.size();
+        const NBT::Value read = ReadData<NBT::Value>(iter, length);
+
+        std::vector<unsigned char> second;
+        WriteData<NBT::Value>(read, second);
+        CHECK(first == second);
+        nbt = read;
+    }
+
+    CHECK(nbt.HasData());
+    CHECK(nbt.GetName() == "");
+    CHECK(nbt.size() == 7);
+
+    REQUIRE(nbt.contains("name"));
+    REQUIRE(nbt["name"].is<NBT::TagString>());
+    CHECK(nbt["name"].get<NBT::TagString>() == "Steve");
+
+    REQUIRE(nbt.contains("count"));
+    REQUIRE(nbt["count"].is<NBT::TagInt>());
+    CHECK(nbt["count"].get<NBT::TagInt>() == 3);
+
+    REQUIRE(nbt.contains("health"));
+    REQUIRE(nbt["health"].is<NBT::TagFloat>());
+    CHECK(nbt["health"].get<NBT::TagFloat>() == 20.0f);
+
+    REQUIRE(nbt.contains("flag"));
+    REQUIRE(nbt["flag"].is<NBT::TagByte>());
+    CHECK(nbt["flag"].get<NBT::TagByte>() == 1);
+
+    REQUIRE(nbt.contains("pos"));
+    REQUIRE(nbt["pos"].is_list_of<NBT::TagInt>());
+    CHECK(nbt["pos"].as_list_of<NBT::TagInt>().size() == 3);
+    CHECK(nbt["pos"].as_list_of<NBT::TagInt>() == std::vector<NBT::TagInt>{ 1, 2, 3 });
+
+    REQUIRE(nbt.contains("colours"));
+    REQUIRE(nbt["colours"].is<NBT::TagIntArray>());
+    CHECK(nbt["colours"].get<NBT::TagIntArray>().size() == 2);
+
+    REQUIRE(nbt.contains("nested"));
+    REQUIRE(nbt["nested"].is<NBT::TagCompound>());
+    REQUIRE(nbt["nested"].contains("a"));
+    REQUIRE(nbt["nested"]["a"].is<NBT::TagLong>());
+    CHECK(nbt["nested"]["a"].get<NBT::TagLong>() == 1);
+}
+
+TEST_CASE("Built NBT bytes")
+{
+    const NBT::Value nbt(NBT::TagCompound{ { "bot", 1 }, { "craft", "42" } }, "root");
+    const std::vector<unsigned char> expected = {
+        0x0A,                                                            // Compound
+        0x00, 0x04, 'r', 'o', 'o', 't',                                  // root name
+        0x03, 0x00, 0x03, 'b', 'o', 't', 0x00, 0x00, 0x00, 0x01,         // TagInt "bot" = 1
+        0x08, 0x00, 0x05, 'c', 'r', 'a', 'f', 't', 0x00, 0x02, '4', '2', // TagString "craft" = "42"
+        0x00                                                             // TagEnd
+    };
+
+    std::vector<unsigned char> serialized;
+    WriteData<NBT::Value>(nbt, serialized);
+    CHECK(serialized == expected);
 }

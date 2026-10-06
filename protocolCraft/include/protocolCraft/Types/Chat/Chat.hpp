@@ -49,7 +49,7 @@ namespace ProtocolCraft
             raw_text = ReadData<std::string>(iter, length);
             text = ParseChat(Json::Parse(raw_text));
 #else
-            NBT::Tag::ReadUnnamedImpl(iter, length);
+            NBT::Tag::ReadImpl(iter, length);
             if (is<NBT::TagCompound>())
             {
                 text = ParseChat(get<NBT::TagCompound>());
@@ -67,7 +67,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             WriteData<std::string>(raw_text, container);
 #else
-            NBT::Tag::WriteUnnamedImpl(container);
+            NBT::Tag::WriteImpl(container);
 #endif
         }
 
