@@ -6,6 +6,10 @@
 
 #include "botcraft/Utilities/Logger.hpp"
 
+#include "protocolCraft/Types/PositionPath/PositionPathData.hpp"
+#include "protocolCraft/Types/PositionPath/PositionPathLinear.hpp"
+#include "protocolCraft/Types/PositionPath/PositionPathStepped.hpp"
+
 #if PROTOCOL_VERSION > 776 /* > 26.2 */
 #include <stdexcept>
 #endif
@@ -642,13 +646,17 @@ namespace Botcraft
             entity->SetYaw(packet.GetValues().GetYRot());
             entity->SetPitch(packet.GetValues().GetXRot());
 #else
-            if (packet.GetPosition().GetValue().GetLeft().has_value())
+            switch (packet.GetPosition().GetType())
             {
-                entity->SetPosition(packet.GetPosition().GetValue().GetLeft().value().GetSteps().back().GetPosition());
-            }
-            else
-            {
-                entity->SetPosition(packet.GetPosition().GetValue().GetRight().value().GetEndPosition());
+            case ProtocolCraft::PositionPathDataType::Linear:
+                entity->SetPosition(std::static_pointer_cast<ProtocolCraft::PositionPathLinear>(packet.GetPosition().GetData())->GetEndPosition());
+                break;
+            case ProtocolCraft::PositionPathDataType::Stepped:
+                entity->SetPosition(std::static_pointer_cast<ProtocolCraft::PositionPathStepped>(packet.GetPosition().GetData())->GetSteps().back().GetPosition());
+                break;
+            default:
+                throw std::runtime_error("Unknown PositionPathDataType" + std::to_string(static_cast<int>(packet.GetPosition().GetType())));
+                break;
             }
             if (entity == local_player)
             {

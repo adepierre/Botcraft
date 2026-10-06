@@ -85,9 +85,11 @@ namespace Botcraft
 #endif
         output["metadata"]["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value({ {"particle_type", GetDataParticle()->GetName() }, {"particle_data", GetDataParticle()->Serialize()} }) : ProtocolCraft::Json::Value();
+        output["metadata"]["data_particle"] = GetDataParticle() ? GetDataParticle()->Serialize() : ProtocolCraft::Json::Value();
 #else
         output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value(GetDataParticle().value()) : ProtocolCraft::Json::Value();
+        output["metadata"]["data_particle_argument1"] = GetDataParticleArgument1();
+        output["metadata"]["data_particle_argument2"] = GetDataParticleArgument2();
 #endif
         return output;
     }
