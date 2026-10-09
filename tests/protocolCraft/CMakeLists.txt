@@ -1,6 +1,7 @@
 project(protocolCraft_tests)
 
 set(SRC_FILES
+    src/chat.cpp
     src/constexpr_string_processing.cpp
     src/hashed_slot.cpp
     src/json.cpp

@@ -6,6 +6,8 @@
 #include "protocolCraft/NetworkType.hpp"
 #else
 #include "protocolCraft/Types/NBT/Tag.hpp"
+
+#include <vector>
 #endif
 
 namespace ProtocolCraft
@@ -50,26 +52,16 @@ namespace ProtocolCraft
             text = ParseChat(Json::Parse(raw_text));
 #else
             NBT::Tag::ReadImpl(iter, length);
-            if (is<NBT::TagCompound>())
-            {
-                text = ParseChat(get<NBT::TagCompound>());
-            }
-            else if (is<NBT::TagString>())
-            {
-                text = get<NBT::TagString>();
-            }
+            text = ParseChat(*this);
 #endif
-
         }
 
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         virtual void WriteImpl(WriteContainer& container) const override
         {
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
             WriteData<std::string>(raw_text, container);
-#else
-            NBT::Tag::WriteImpl(container);
-#endif
         }
+#endif
 
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         virtual Json::Value SerializeImpl() const override
@@ -84,9 +76,11 @@ namespace ProtocolCraft
 
     private:
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        std::string ParseChat(const Json::Value& raw_json);
+        static std::string ParseChat(const Json::Value& raw_json);
 #else
-        std::string ParseChat(const NBT::TagCompound& raw);
+        static std::string ParseChatCompound(const NBT::TagCompound& raw);
+        static std::vector<std::string> ParseChatParts(const NBT::Tag& tag);
+        static std::string ParseChat(const NBT::Tag& tag);
 #endif
 
 
