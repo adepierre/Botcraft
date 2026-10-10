@@ -20,7 +20,7 @@ TEST_CASE("Empty NBT")
     {
         n = ReadData<NBT::Value>(iter, length);
         CHECK_FALSE(n.HasData());
-        CHECK_THROWS(n["a"]);
+        CHECK_FALSE(n.contains("a"));
     }
 
     SECTION("Serialization")
@@ -523,4 +523,58 @@ TEST_CASE("Built NBT bytes")
     std::vector<unsigned char> serialized;
     WriteData<NBT::Value>(nbt, serialized);
     CHECK(serialized == expected);
+}
+
+TEST_CASE("Edit NBT")
+{
+    NBT::Value nbt;
+    nbt["name"] = "Steve";
+    nbt["nested"]["a"] = 1;
+    nbt["pos"].as_list_of<NBT::TagInt>() = { 1, 2, 3 };
+    nbt["empty"] = NBT::TagList();
+
+    REQUIRE(nbt.HasData());
+    REQUIRE(nbt.size() == 4);
+    REQUIRE(nbt["nested"]["a"].is<NBT::TagInt>());
+    REQUIRE(nbt["empty"].is_list_of<NBT::TagEnd>());
+
+    SECTION("Edit compound in place")
+    {
+        nbt["name"].get<NBT::TagString>() += " (Bot)";
+        nbt["nested"]["a"].get<NBT::TagInt>() += 41;
+        nbt["nested"]["b"] = NBT::TagShort{ 7 };
+
+        CHECK(nbt["name"].get<NBT::TagString>() == "Steve (Bot)");
+        CHECK(nbt["nested"]["a"].get<NBT::TagInt>() == 42);
+        REQUIRE(nbt["nested"]["b"].is<NBT::TagShort>());
+        CHECK(nbt["nested"]["b"].get<NBT::TagShort>() == 7);
+
+        nbt["nested"].get<NBT::TagCompound>().erase("a");
+        CHECK_FALSE(nbt["nested"].contains("a"));
+    }
+
+    SECTION("Edit lists in place")
+    {
+        nbt["pos"].as_list_of<NBT::TagInt>().push_back(4);
+        nbt["pos"].as_list_of<NBT::TagInt>()[0] = 0;
+        CHECK(nbt["pos"].as_list_of<NBT::TagInt>() == std::vector<NBT::TagInt>{ 0, 2, 3, 4 });
+
+        // Empty lists (with default TagEnd type) can be retyped
+        nbt["empty"].as_list_of<NBT::TagCompound>().push_back({ { "id", "minecraft:sharpness" }, { "lvl", NBT::TagShort{ 5 } } });
+        nbt["empty"].as_list_of<NBT::TagCompound>()[0]["lvl"].get<NBT::TagShort>() = 2;
+        REQUIRE(nbt["empty"].is_list_of<NBT::TagCompound>());
+        CHECK(nbt["empty"].as_list_of<NBT::TagCompound>()[0]["lvl"].get<NBT::TagShort>() == 2);
+
+        // Non empty lists can't
+        CHECK_THROWS(nbt["pos"].as_list_of<NBT::TagString>());
+    }
+
+    SECTION("Const access doesn't insert")
+    {
+        const NBT::Value& const_nbt = nbt;
+        CHECK_THROWS(const_nbt["missing"]);
+        CHECK_FALSE(nbt.contains("missing"));
+        // Non empty, non compound tag can't become a compound
+        CHECK_THROWS(nbt["name"]["a"]);
+    }
 }

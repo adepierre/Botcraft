@@ -81,6 +81,16 @@ namespace ProtocolCraft
             return get<TagCompound>().at(s);
         }
 
+        Tag& Tag::operator[](const std::string& s)
+        {
+            if (is<TagEnd>())
+            {
+                val = TagCompound();
+            }
+
+            return get<TagCompound>()[s];
+        }
+
         size_t Tag::size() const
         {
             size_t output;

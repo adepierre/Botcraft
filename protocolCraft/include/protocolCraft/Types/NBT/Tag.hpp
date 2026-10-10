@@ -3,6 +3,7 @@
 #include <variant>
 #include <vector>
 #include <string>
+#include <utility>
 #include <map>
 
 #include "protocolCraft/Utilities/RecursiveWrapper.hpp"
@@ -95,31 +96,11 @@ namespace ProtocolCraft
             >
             bool is_list_of() const;
 
-            template<
-                typename T,
-                std::enable_if_t<
-                std::is_same_v<T, TagByte> ||
-                std::is_same_v<T, TagShort> ||
-                std::is_same_v<T, TagInt> ||
-                std::is_same_v<T, TagLong> ||
-                std::is_same_v<T, TagFloat> ||
-                std::is_same_v<T, TagDouble>, bool
-                > = true
-            >
-            T get() const;
-
-            template<
-                typename T,
-                std::enable_if_t<
-                std::is_same_v<T, TagByteArray> ||
-                std::is_same_v<T, TagString> ||
-                std::is_same_v<T, TagList> ||
-                std::is_same_v<T, TagCompound> ||
-                std::is_same_v<T, TagIntArray> ||
-                std::is_same_v<T, TagLongArray>, bool
-                > = true
-            >
+            template<typename T>
             const T& get() const;
+
+            template<typename T>
+            T& get();
 
             template<
                 typename T,
@@ -127,7 +108,15 @@ namespace ProtocolCraft
             >
             const std::vector<T>& as_list_of() const;
 
+            /// @brief Empty Tag becomes an empty TagList
+            template<
+                typename T,
+                std::enable_if_t<std::is_convertible_v<std::vector<T>, Internal::TagListVariant>, bool> = true
+            >
+            std::vector<T>& as_list_of();
+
             const Tag& operator[](const std::string& s) const;
+            Tag& operator[](const std::string& s);
 
             size_t size() const;
             bool contains(const std::string& s) const;
@@ -171,6 +160,12 @@ namespace ProtocolCraft
             >
             const std::vector<T>& as_list_of() const;
 
+            template<
+                typename T,
+                std::enable_if_t<std::is_convertible_v<std::vector<T>, Internal::TagListVariant>, bool> = true
+            >
+            std::vector<T>& as_list_of();
+
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
             virtual void WriteImpl(WriteContainer& container) const override;
@@ -186,6 +181,7 @@ namespace ProtocolCraft
             using std::map<std::string, Tag>::map;
 
         public:
+            using std::map<std::string, Tag>::operator[];
             const Tag& operator[](const std::string& s) const;
             bool contains(const std::string& s) const;
 
@@ -224,66 +220,28 @@ namespace ProtocolCraft
             return is<TagList>() && get<TagList>().is_of<T>();
         }
 
-        template<
-            typename T,
-            std::enable_if_t<
-            std::is_same_v<T, TagByte> ||
-            std::is_same_v<T, TagShort> ||
-            std::is_same_v<T, TagInt> ||
-            std::is_same_v<T, TagLong> ||
-            std::is_same_v<T, TagFloat> ||
-            std::is_same_v<T, TagDouble>, bool
-            >
-        >
-        T Tag::get() const
+        template<typename T>
+        const T& Tag::get() const
         {
-            if (!std::holds_alternative<T>(val))
+            if (!is<T>())
             {
                 throw std::runtime_error("Trying to get the wrong type from NBT::Tag");
             }
-            return std::get<T>(val);
-        }
-
-        template<
-            typename T,
-            std::enable_if_t<
-            std::is_same_v<T, TagByteArray> ||
-            std::is_same_v<T, TagString> ||
-            std::is_same_v<T, TagList> ||
-            std::is_same_v<T, TagCompound> ||
-            std::is_same_v<T, TagIntArray> ||
-            std::is_same_v<T, TagLongArray>, bool
-            >
-        >
-        const T& Tag::get() const
-        {
-            // special case for TagCompound (removing the RecursiveWrapper)
-            if constexpr (std::is_same_v<T, TagCompound>)
+            // special case for TagList and TagCompound (removing the RecursiveWrapper)
+            if constexpr (std::is_same_v<T, TagList> || std::is_same_v<T, TagCompound>)
             {
-                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<TagCompound>>(val))
-                {
-                    throw std::runtime_error("Trying to get the wrong type from NBT::Tag");
-                }
-                return std::get<ProtocolCraft::Internal::RecursiveWrapper<TagCompound>>(val).get();
+                return std::get<ProtocolCraft::Internal::RecursiveWrapper<T>>(val).get();
             }
-            // special case for TagList (removing the RecursiveWrapper)
-            else if constexpr (std::is_same_v<T, TagList>)
-            {
-                if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<TagList>>(val))
-                {
-                    throw std::runtime_error("Trying to get the wrong type from NBT::Tag");
-                }
-                return std::get<ProtocolCraft::Internal::RecursiveWrapper<TagList>>(val).get();
-            }
-            // all other cases should work with generic template
             else
             {
-                if (!std::holds_alternative<T>(val))
-                {
-                    throw std::runtime_error("Trying to get the wrong type from NBT::Tag");
-                }
                 return std::get<T>(val);
             }
+        }
+
+        template<typename T>
+        T& Tag::get()
+        {
+            return const_cast<T&>(std::as_const(*this).get<T>());
         }
 
         template<
@@ -295,6 +253,19 @@ namespace ProtocolCraft
             if (!std::holds_alternative<ProtocolCraft::Internal::RecursiveWrapper<TagList>>(val))
             {
                 throw std::runtime_error("Trying to get a list from another NBT::Tag type");
+            }
+            return get<TagList>().as_list_of<T>();
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<std::is_convertible_v<std::vector<T>, Internal::TagListVariant>, bool>
+        >
+        std::vector<T>& Tag::as_list_of()
+        {
+            if (is<TagEnd>())
+            {
+                val = TagList();
             }
             return get<TagList>().as_list_of<T>();
         }
@@ -321,6 +292,19 @@ namespace ProtocolCraft
                 throw std::runtime_error("Trying to get the wrong type from NBT::TagList");
             }
             return std::get<std::vector<T>>(vals);
+        }
+
+        template<
+            typename T,
+            std::enable_if_t<std::is_convertible_v<std::vector<T>, Internal::TagListVariant>, bool>
+        >
+        std::vector<T>& TagList::as_list_of()
+        {
+            if (size() == 0)
+            {
+                vals = std::vector<T>();
+            }
+            return const_cast<std::vector<T>&>(std::as_const(*this).as_list_of<T>());
         }
     }
 }
