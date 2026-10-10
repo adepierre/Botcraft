@@ -9,6 +9,20 @@
 #include <array>
 #endif
 
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
+#include "protocolCraft/Types/Particles/Particle.hpp"
+#include "protocolCraft/Types/Particles/DustParticleOption.hpp"
+#endif
+
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+#include "protocolCraft/Types/PositionPath/PositionPath.hpp"
+#include "protocolCraft/Types/PositionPath/PositionPathLinear.hpp"
+#endif
+
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+#include "protocolCraft/Types/Components/Subtypes/ConsumeEffects/ConsumeEffect.hpp"
+#endif
+
 using namespace ProtocolCraft;
 
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
@@ -43,3 +57,68 @@ TEST_CASE("LpVec3")
     CHECK_THAT(reconstructed.GetZ(), Catch::Matchers::WithinAbs(vec3_and_serialized.first[2], 1e-3));
 }
 #endif
+
+namespace
+{
+    template <typename T>
+    T RoundTrip(const T& in)
+    {
+        std::vector<unsigned char> bytes;
+        WriteData<T>(in, bytes);
+        ReadIterator iter = bytes.cbegin();
+        size_t length = bytes.size();
+        T out = ReadData<T>(iter, length);
+        CHECK(length == 0);
+        return out;
+    }
+}
+
+TEST_CASE("Dynamic type")
+{
+#if PROTOCOL_VERSION > 392 /* > 1.12.2 */
+    SECTION("Particle with options")
+    {
+        Particle p;
+        p.SetParticleType(ParticleType::Dust);
+        std::static_pointer_cast<DustParticleOption>(p.GetOption())->SetScale(2.0f);
+        const Particle read = RoundTrip(p);
+        CHECK(read.GetParticleType() == ParticleType::Dust);
+        REQUIRE(std::dynamic_pointer_cast<DustParticleOption>(read.GetOption()) != nullptr);
+        CHECK(std::static_pointer_cast<DustParticleOption>(read.GetOption())->GetScale() == 2.0f);
+    }
+#endif
+
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+    SECTION("PositionPath")
+    {
+        PositionPath path;
+        path.SetType(PositionPathDataType::Linear);
+        std::static_pointer_cast<PositionPathLinear>(path.GetData())->SetEndPosition({ 1.0, 2.0, 3.0 });
+        const PositionPath read = RoundTrip(path);
+        REQUIRE(read.GetType() == PositionPathDataType::Linear);
+        CHECK(std::static_pointer_cast<PositionPathLinear>(read.GetData())->GetEndPosition() == std::array<double, 3>{ 1.0, 2.0, 3.0 });
+    }
+#endif
+
+    SECTION("Payload never set")
+    {
+        SECTION("Particle")
+        {
+            RoundTrip(Particle());
+        }
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+        SECTION("Vibration")
+        {
+            Particle vibration;
+            vibration.SetParticleType(ParticleType::Vibration);
+            RoundTrip(vibration);
+        }
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+        SECTION("Consume Effect")
+        {
+            RoundTrip(Components::ConsumeEffect());
+        }
+#endif
+    }
+}
