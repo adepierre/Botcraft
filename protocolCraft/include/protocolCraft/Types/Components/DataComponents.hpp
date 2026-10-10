@@ -205,8 +205,6 @@ namespace ProtocolCraft
             NUM_DATA_COMPONENT_TYPES
         };
 
-        std::string_view DataComponentTypesToString(const DataComponentTypes type);
-
         class DataComponentType;
 
         class DataComponentPredicate : public NetworkType
@@ -227,21 +225,17 @@ namespace ProtocolCraft
 
         };
 
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        class LengthPrefixedDataComponentPatch;
-#endif
 
-        class DataComponentPatch : public NetworkType
+        template <bool LengthPrefixed>
+        class BasicDataComponentPatch : public NetworkType
         {
         public:
-            DataComponentPatch() = default;
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-            DataComponentPatch(const LengthPrefixedDataComponentPatch& p);
-#endif
-            virtual ~DataComponentPatch() override;
+            BasicDataComponentPatch() = default;
+            template <bool P>
+            BasicDataComponentPatch(const BasicDataComponentPatch<P>& other) : map(other.GetMap()) {}
 
             const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& GetMap() const;
-            DataComponentPatch& SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
+            BasicDataComponentPatch& SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
 
         protected:
             virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
@@ -250,10 +244,15 @@ namespace ProtocolCraft
 
         private:
             std::map<DataComponentTypes, std::shared_ptr<DataComponentType>> map;
-
         };
 
+        extern template BasicDataComponentPatch<false>;
+        using DataComponentPatch = BasicDataComponentPatch<false>;
+
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        extern template BasicDataComponentPatch<true>;
+        using LengthPrefixedDataComponentPatch = BasicDataComponentPatch<true>;
+
         class HashedDataComponentPatch : public NetworkType
         {
         public:
@@ -264,24 +263,6 @@ namespace ProtocolCraft
             SERIALIZED_FIELD(RemovedComponents, Internal::DiffType<std::vector<DataComponentTypes>, std::vector<VarInt>>);
 
             DECLARE_READ_WRITE_SERIALIZE;
-        };
-
-        class LengthPrefixedDataComponentPatch : public NetworkType
-        {
-        public:
-            LengthPrefixedDataComponentPatch() = default;
-            LengthPrefixedDataComponentPatch(const DataComponentPatch& p);
-
-            const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& GetMap() const;
-            LengthPrefixedDataComponentPatch& SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_);
-
-        protected:
-            virtual void ReadImpl(ReadIterator& iter, size_t& length) override;
-            virtual void WriteImpl(WriteContainer& container) const override;
-            virtual Json::Value SerializeImpl() const override;
-
-        private:
-            std::map<DataComponentTypes, std::shared_ptr<DataComponentType>> map;
         };
 #endif
     }

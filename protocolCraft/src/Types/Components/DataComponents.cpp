@@ -94,6 +94,8 @@
 
 #include "protocolCraft/Utilities/AutoSerializedToJson.hpp"
 
+#include <stdexcept>
+
 namespace ProtocolCraft
 {
     namespace Components
@@ -239,206 +241,6 @@ namespace ProtocolCraft
         DEFINE_NETWORK_TYPE(DataComponentTypeMobVisibility);
         DEFINE_NETWORK_TYPE(DataComponentTypeSignText);
 #endif
-
-        std::string_view DataComponentTypesToString(const DataComponentTypes type)
-        {
-            static constexpr std::array<std::string_view, static_cast<size_t>(DataComponentTypes::NUM_DATA_COMPONENT_TYPES)> names = {
-                "custom_data",
-                "max_stack_size",
-                "max_damage",
-                "damage",
-                "unbreakable",
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
-                "use_effects",
-#endif
-                "custom_name",
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
-                "minimum_attack_charge",
-                "damage_type",
-#endif
-                "item_name",
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-                "item_model",
-#endif
-                "lore",
-                "rarity",
-                "enchantments",
-                "can_place_on",
-                "can_break",
-                "attribute_modifiers",
-                "custom_model_data",
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-                "hide_additional_tooltip",
-                "hide_tooltip",
-#endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "tooltip_display",
-#endif
-                "repair_cost",
-                "creative_slot_lock",
-                "enchantment_glint_override",
-                "intangible_projectile",
-                "food",
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-                "fire_resistant",
-#endif
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-                "consumable",
-                "use_remainder",
-                "use_cooldown",
-                "damage_resistant",
-#endif
-                "tool",
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "weapon",
-#endif
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
-                "attack_range",
-#endif
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-                "enchantable",
-                "equippable",
-                "repairable",
-                "glider",
-                "tooltip_style",
-                "death_protection",
-#endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "blocks_attacks",
-#endif
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
-                "piercing_weapon",
-                "kinetic_weapon",
-#endif
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */ && PROTOCOL_VERSION < 777 /* < 26.3 */
-                "swing_animation",
-#endif
-#if PROTOCOL_VERSION > 776 /* > 26.2 */
-                "attack_animation",
-                "interact_animation",
-#endif
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "additional_trade_cost",
-#endif
-#if PROTOCOL_VERSION > 776 /* > 26.2 */
-                "block_transformer",
-                "villager_food",
-#endif
-                "stored_enchantments",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "dye",
-#endif
-                "dyed_color",
-#if PROTOCOL_VERSION < 777 /* < 26.3 */
-                "map_color",
-#endif
-                "map_id",
-                "map_decorations",
-                "map_post_processing",
-                "charged_projectiles",
-                "bundle_contents",
-                "potion_contents",
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "potion_duration_scale",
-#endif
-                "suspicious_stew_effects",
-                "writable_book_content",
-                "written_book_content",
-                "trim",
-                "debug_stick_state",
-                "entity_data",
-                "bucket_entity_data",
-                "block_entity_data",
-                "instrument",
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "provides_trim_material",
-#endif
-                "ominous_bottle_amplifier",
-#if PROTOCOL_VERSION > 766 /* > 1.20.6 */
-                "jukebox_playable",
-#endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "provides_banner_patterns",
-#endif
-                "recipes",
-                "lodestone_tracker",
-                "firework_explosion",
-                "fireworks",
-                "profile",
-                "note_block_sound",
-                "banner_patterns",
-                "base_color",
-                "pot_decorations",
-                "container",
-                "block_state",
-                "bees",
-#if PROTOCOL_VERSION > 775 /* > 26.1.2 */
-                "sulfur_cube_content",
-#endif
-                "lock",
-                "container_loot",
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-                "break_sound",
-#if PROTOCOL_VERSION > 776 /* > 26.2 */
-                "compostable",
-                "cooking_fuel",
-                "brewing_fuel",
-                "mob_visibility",
-#endif
-                "villager/variant",
-                "wolf/variant",
-                "wolf/sound_variant",
-                "wolf/collar",
-                "fox/variant",
-                "salmon/size",
-                "parrot/variant",
-                "tropical_fish/pattern",
-                "tropical_fish/base_color",
-                "tropical_fish/pattern_color",
-                "mooshroom/variant",
-                "rabbit/variant",
-                "pig/variant",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "pig/sound_variant",
-#endif
-                "cow/variant",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "cow/sound_variant",
-#endif
-                "chicken/variant",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "chicken/sound_variant",
-#endif
-#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
-                "zombie_nautilus/variant",
-#endif
-                "frog/variant",
-                "horse/variant",
-                "painting/variant",
-                "llama/variant",
-                "axolotl/variant",
-                "cat/variant",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-                "cat/sound_variant",
-#endif
-                "cat/collar",
-                "sheep/color",
-                "shulker/color",
-#endif
-#if PROTOCOL_VERSION > 776 /* > 26.2 */
-                "provides_pottery_pattern",
-                "sign_text_front",
-                "sign_text_back",
-                "waxed",
-                "cushion/color",
-#endif
-            };
-            if (type <= DataComponentTypes::None || type >= DataComponentTypes::NUM_DATA_COMPONENT_TYPES)
-            {
-                return "";
-            }
-            return names[static_cast<size_t>(type)];
-        }
 
         std::shared_ptr<DataComponentType> CreateComponentType(const DataComponentTypes type)
         {
@@ -708,8 +510,11 @@ namespace ProtocolCraft
 #endif
             default:
                 // Should never happen but will make the compilers happy
-                throw std::runtime_error("Unable to create data component with id: " + std::to_string(static_cast<int>(type)) + ".");
+                throw std::runtime_error("Unable to create data component with id: " + std::to_string(static_cast<int>(type)));
+                return nullptr;
             }
+
+            return nullptr;
         }
 
         DataComponentPredicate::~DataComponentPredicate()
@@ -767,7 +572,7 @@ namespace ProtocolCraft
             for (const auto& p : map)
             {
                 output["map"].push_back({
-                    { "name", DataComponentTypesToString(p.first) },
+                    { "type", p.first },
                     { "data", p.second == nullptr ? nullptr : p.second->Serialize() }
                 });
             }
@@ -775,32 +580,21 @@ namespace ProtocolCraft
             return output;
         }
 
-
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        DataComponentPatch::DataComponentPatch(const LengthPrefixedDataComponentPatch& p)
-        {
-            map = p.GetMap();
-        }
-#endif
-
-
-        DataComponentPatch::~DataComponentPatch()
-        {
-
-        }
-
-        const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& DataComponentPatch::GetMap() const
+        template<bool LengthPrefixed>
+        const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& BasicDataComponentPatch<LengthPrefixed>::GetMap() const
         {
             return map;
         }
 
-        DataComponentPatch& DataComponentPatch::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
+        template<bool LengthPrefixed>
+        BasicDataComponentPatch<LengthPrefixed>& BasicDataComponentPatch<LengthPrefixed>::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
         {
             map = map_;
             return *this;
         }
 
-        void DataComponentPatch::ReadImpl(ReadIterator& iter, size_t& length)
+        template<bool LengthPrefixed>
+        void BasicDataComponentPatch<LengthPrefixed>::ReadImpl(ReadIterator& iter, size_t& length)
         {
             const int num_data = ReadData<VarInt>(iter, length);
             const int num_void = ReadData<VarInt>(iter, length);
@@ -810,11 +604,24 @@ namespace ProtocolCraft
             for (int i = 0; i < num_data; ++i)
             {
                 const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
+                int data_size = 0;
+                if constexpr (LengthPrefixed)
+                {
+                   data_size = ReadData<VarInt>(iter, length);
+                }
                 std::shared_ptr<DataComponentType> data = CreateComponentType(type);
+                const size_t pre_data_length = length;
 
                 if (data != nullptr)
                 {
                     data->Read(iter, length);
+                    if constexpr (LengthPrefixed)
+                    {
+                        if (pre_data_length - length != data_size)
+                        {
+                            throw std::runtime_error("Wrong data size when reading length prefixed component");
+                        }
+                    }
                 }
                 map.insert({ type, data });
             }
@@ -826,7 +633,8 @@ namespace ProtocolCraft
             }
         }
 
-        void DataComponentPatch::WriteImpl(WriteContainer& container) const
+        template<bool LengthPrefixed>
+        void BasicDataComponentPatch<LengthPrefixed>::WriteImpl(WriteContainer& container) const
         {
             int num_data = 0;
             for (const auto& p : map)
@@ -844,8 +652,19 @@ namespace ProtocolCraft
                 {
                     continue;
                 }
+
                 WriteData<DataComponentTypes, VarInt>(p.first, container);
-                p.second->Write(container);
+                if constexpr (LengthPrefixed)
+                {
+                    WriteContainer temp;
+                    p.second->Write(temp);
+                    WriteData<VarInt>(static_cast<int>(temp.size()), container);
+                    WriteByteArray(temp, container);
+                }
+                else
+                {
+                    p.second->Write(container);
+                }
             }
 
             for (const auto& p : map)
@@ -858,7 +677,8 @@ namespace ProtocolCraft
             }
         }
 
-        Json::Value DataComponentPatch::SerializeImpl() const
+        template<bool LengthPrefixed>
+        Json::Value BasicDataComponentPatch<LengthPrefixed>::SerializeImpl() const
         {
             Json::Value output;
 
@@ -866,7 +686,7 @@ namespace ProtocolCraft
             for (const auto& p : map)
             {
                 output["map"].push_back({
-                    { "name", DataComponentTypesToString(p.first) },
+                    { "type", p.first },
                     { "data", p.second == nullptr ? nullptr : p.second->Serialize() }
                 });
             }
@@ -874,7 +694,11 @@ namespace ProtocolCraft
             return output;
         }
 
+        template class BasicDataComponentPatch<false>;
+
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+        template class BasicDataComponentPatch<true>;
+
         HashedDataComponentPatch::HashedDataComponentPatch(const DataComponentPatch& patch)
         {
             for (const auto& [k, v] : patch.GetMap())
@@ -915,103 +739,6 @@ namespace ProtocolCraft
         }
 
         DEFINE_NETWORK_TYPE(HashedDataComponentPatch);
-#endif
-
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        LengthPrefixedDataComponentPatch::LengthPrefixedDataComponentPatch(const DataComponentPatch& p)
-        {
-            map = p.GetMap();
-        }
-
-        const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& LengthPrefixedDataComponentPatch::GetMap() const
-        {
-            return map;
-        }
-
-        LengthPrefixedDataComponentPatch& LengthPrefixedDataComponentPatch::SetMap(const std::map<DataComponentTypes, std::shared_ptr<DataComponentType>>& map_)
-        {
-            map = map_;
-            return *this;
-        }
-
-        void LengthPrefixedDataComponentPatch::ReadImpl(ReadIterator& iter, size_t& length)
-        {
-            const int num_data = ReadData<VarInt>(iter, length);
-            const int num_void = ReadData<VarInt>(iter, length);
-
-            map.clear();
-
-            for (int i = 0; i < num_data; ++i)
-            {
-                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
-                const int data_size = ReadData<VarInt>(iter, length);
-                std::shared_ptr<DataComponentType> data = CreateComponentType(type);
-
-                if (data != nullptr)
-                {
-                    data->Read(iter, length);
-                }
-                map.insert({ type, data });
-            }
-
-            for (int i = 0; i < num_void; ++i)
-            {
-                const DataComponentTypes type = ReadData<DataComponentTypes, VarInt>(iter, length);
-                map.insert({ type, nullptr });
-            }
-        }
-
-        void LengthPrefixedDataComponentPatch::WriteImpl(WriteContainer& container) const
-        {
-            int num_data = 0;
-            for (const auto& p : map)
-            {
-                num_data += p.second != nullptr;
-            }
-            const int num_void = static_cast<int>(map.size()) - num_data;
-
-            WriteData<VarInt>(num_data, container);
-            WriteData<VarInt>(num_void, container);
-
-            for (const auto& p : map)
-            {
-                if (p.second == nullptr)
-                {
-                    continue;
-                }
-                WriteData<DataComponentTypes, VarInt>(p.first, container);
-                WriteContainer temp;
-                // Serialize to an intermediate vector to get the size
-                p.second->Write(temp);
-                WriteData<VarInt>(static_cast<int>(temp.size()), container);
-                WriteByteArray(temp, container);
-            }
-
-            for (const auto& p : map)
-            {
-                if (p.second != nullptr)
-                {
-                    continue;
-                }
-                WriteData<DataComponentTypes, VarInt>(p.first, container);
-            }
-        }
-
-        Json::Value LengthPrefixedDataComponentPatch::SerializeImpl() const
-        {
-            Json::Value output;
-
-            output["map"] = Json::Array();
-            for (const auto& p : map)
-            {
-                output["map"].push_back({
-                    { "name", DataComponentTypesToString(p.first) },
-                    { "data", p.second == nullptr ? nullptr : p.second->Serialize() }
-                });
-            }
-
-            return output;
-        }
 #endif
     }
 }

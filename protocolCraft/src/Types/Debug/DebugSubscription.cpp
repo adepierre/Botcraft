@@ -91,7 +91,6 @@ namespace ProtocolCraft
             }
 
             // Should never happen
-            throw std::runtime_error("Unable to create debug subscription data with id: " + std::to_string(static_cast<int>(debug_subscription_data_type_)) + ".");
             return nullptr;
         }
     }

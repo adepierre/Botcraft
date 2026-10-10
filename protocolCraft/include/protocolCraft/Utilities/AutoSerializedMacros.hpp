@@ -253,8 +253,8 @@
         auto& Set##Name(                                                                                                     \
             std::conditional_t<std::is_arithmetic_v<Name##_type::storage_type> || std::is_enum_v<Name##_type::storage_type>, \
             Name##_type::storage_type, const Name##_type::storage_type&> Name##_) {                                          \
+                DataName = Factory(Name##_); /* Create the data before setting the type in case the type is invalid */       \
                 Name = Name##_;                                                                                              \
-                DataName = Factory(Name);                                                                                    \
                 return *this;                                                                                                \
             }                                                                                                                \
         static_assert(true, "Forcing ;")

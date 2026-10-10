@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string_view>
 
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Utilities/DynamicType.hpp"
@@ -33,7 +32,7 @@ namespace ProtocolCraft
         NoxiousGasCloud,
         Geyser,
         GeyserBase,
-        GeyerPoof,
+        GeyserPoof,
         GeyserPlume,
 #endif
         Cloud,

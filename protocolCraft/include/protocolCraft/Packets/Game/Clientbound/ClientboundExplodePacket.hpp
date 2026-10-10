@@ -1,7 +1,6 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
-#include "protocolCraft/Types/NetworkPosition.hpp"
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "protocolCraft/Types/Particles/Particle.hpp"
 #include "protocolCraft/Types/Sound/SoundEvent.hpp"

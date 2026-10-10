@@ -4,7 +4,7 @@
 #include "protocolCraft/Types/PositionPath/PositionPathData.hpp"
 #include "protocolCraft/Types/PositionStep.hpp"
 
-#include <array>
+#include <vector>
 
 namespace ProtocolCraft
 {

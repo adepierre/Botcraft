@@ -1,5 +1,7 @@
 #include "protocolCraft/Types/NBT/Tag.hpp"
 
+#include <stdexcept>
+
 namespace ProtocolCraft
 {
     using namespace Internal;
@@ -146,30 +148,29 @@ namespace ProtocolCraft
         {
             Json::Value output;
 
-            std::visit([&](auto&& arg)
-                {
-                    using T = std::decay_t<decltype(arg)>;
+            std::visit([&](auto&& arg) {
+                using T = std::decay_t<decltype(arg)>;
 
-                    if constexpr (std::is_same_v<T, TagEnd>)
-                    {
-                        output["type"] = GetTagName<T>();
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
-                    {
-                        output["type"] = GetTagName<TagList>();
-                        output["content"] = arg.get();
-                    }
-                    else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
-                    {
-                        output["type"] = GetTagName<TagCompound>();
-                        output["content"] = arg.get();
-                    }
-                    else
-                    {
-                        output["type"] = GetTagName<T>();
-                        output["content"] = arg;
-                    }
-                }, val);
+                if constexpr (std::is_same_v<T, TagEnd>)
+                {
+                    output["type"] = GetTagName<T>();
+                }
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<TagList>>)
+                {
+                    output["type"] = GetTagName<TagList>();
+                    output["content"] = arg.get();
+                }
+                else if constexpr (std::is_same_v<T, RecursiveWrapper<TagCompound>>)
+                {
+                    output["type"] = GetTagName<TagCompound>();
+                    output["content"] = arg.get();
+                }
+                else
+                {
+                    output["type"] = GetTagName<T>();
+                    output["content"] = arg;
+                }
+            }, val);
 
             return output;
         }
@@ -221,6 +222,8 @@ namespace ProtocolCraft
                 val = ReadData<Vector<long long int, int>>(iter, length);
                 break;
             default:
+                // Should not happen
+                throw std::runtime_error("Unknown tag type " + std::to_string(static_cast<int>(type)));
                 break;
             }
         }
@@ -336,6 +339,8 @@ namespace ProtocolCraft
                 vals = ReadData<Vector<Vector<long long int, int>, int>>(iter, length);
                 break;
             default:
+                // Should not happen
+                throw std::runtime_error("Unknown tag type " + std::to_string(static_cast<int>(tags_type)));
                 break;
             }
         }

@@ -18,7 +18,7 @@ namespace ProtocolCraft
         Vec3i,
         Chunk,
         Azimuth,
-        NUM_WAYPOINT_TYPES
+        NUM_TRACKED_WAYPOINT_DATA_TYPES
     };
 
     class TrackedWaypointData;

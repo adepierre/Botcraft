@@ -179,7 +179,7 @@ namespace ProtocolCraft
 
         void Value::WriteImpl(WriteContainer& container) const
         {
-            Tag:WriteNamed(name, container);
+            Tag::WriteNamed(name, container);
         }
     }
 }

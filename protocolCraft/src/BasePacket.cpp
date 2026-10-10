@@ -180,7 +180,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION > 47 /* > 1.8.9 */ && PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_PACKET_CLASS(ClientboundCustomSoundPacket);
 #endif
-#if PROTOCOL_VERSION > 388 /* > 1.12.2 */
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     DEFINE_PACKET_CLASS(ClientboundTagQueryPacket);
 #endif
     DEFINE_PACKET_CLASS(ClientboundOpenSignEditorPacket);

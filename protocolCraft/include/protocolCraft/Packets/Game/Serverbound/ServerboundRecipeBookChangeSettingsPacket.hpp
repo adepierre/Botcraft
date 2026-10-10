@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
 #include "protocolCraft/BasePacket.hpp"
 
 namespace ProtocolCraft

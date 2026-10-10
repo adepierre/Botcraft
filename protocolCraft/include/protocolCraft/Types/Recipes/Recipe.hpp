@@ -58,14 +58,11 @@ namespace ProtocolCraft
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(Type, Identifier);
         SERIALIZED_FIELD(RecipeId, Identifier);
         SERIALIZED_DYNAMIC_DATA_FIELD(Data, Recipe::Type, RecipeData, Recipe::CreateRecipeData);
+        GETTER(Type);
+        DYNAMIC_TYPE_SETTER(Type, Data, Recipe::CreateRecipeData);
 #else
         SERIALIZED_FIELD(RecipeId, Identifier);
         SERIALIZED_DYNAMIC_FIELD(Recipe, Type, Data, RecipeData, Recipe::CreateRecipeData, Internal::DiffType<RecipeDataType, VarInt>);
-#endif
-
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */ && PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        GETTER(Type);
-        DYNAMIC_TYPE_SETTER(Type, Data, Recipe::CreateRecipeData);
 #endif
 
         DECLARE_READ_WRITE_SERIALIZE;

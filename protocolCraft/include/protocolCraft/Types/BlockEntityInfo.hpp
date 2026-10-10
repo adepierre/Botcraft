@@ -1,6 +1,6 @@
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #pragma once
 
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/NetworkType.hpp"
 #include "protocolCraft/Types/NBT/NBT.hpp"
 

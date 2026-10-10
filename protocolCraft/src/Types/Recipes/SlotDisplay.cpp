@@ -61,8 +61,12 @@ namespace ProtocolCraft
 #endif
         default:
             // This should not happen
-            throw std::runtime_error("Unable to create SlotDisplaysData with id: " + std::to_string(static_cast<int>(type)) + ".");
+            throw std::runtime_error("Unable to create SlotDisplayData with id: " + std::to_string(static_cast<int>(type)) + ".");
+            return nullptr;
         }
+
+        // This should not happen
+        return nullptr;
     }
 
     DEFINE_NETWORK_TYPE(SlotDisplay);

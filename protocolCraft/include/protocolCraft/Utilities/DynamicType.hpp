@@ -58,6 +58,11 @@ namespace ProtocolCraft
                 {
                     val->Write(container);
                 }
+                else
+                {
+                    // No data have been set after the type: write the default payload so the bytes stay readable
+                    Factory(c->*TypeField)->Write(container);
+                }
             }
 
             template <typename C>

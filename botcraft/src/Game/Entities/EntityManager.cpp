@@ -655,7 +655,7 @@ namespace Botcraft
                 entity->SetPosition(std::static_pointer_cast<ProtocolCraft::PositionPathStepped>(packet.GetPosition().GetData())->GetSteps().back().GetPosition());
                 break;
             default:
-                throw std::runtime_error("Unknown PositionPathDataType" + std::to_string(static_cast<int>(packet.GetPosition().GetType())));
+                throw std::runtime_error("Unknown PositionPathDataType: " + std::to_string(static_cast<int>(packet.GetPosition().GetType())));
                 break;
             }
             if (entity == local_player)

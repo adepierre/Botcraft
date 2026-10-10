@@ -149,7 +149,7 @@ namespace ProtocolCraft
 #endif
 #if PROTOCOL_VERSION > 775 /* > 26.1.2 */
         case ParticleType::GeyserBase:
-        case ParticleType::GeyerPoof:
+        case ParticleType::GeyserPoof:
             return std::make_shared<GeyserBaseParticleOptions>();
         case ParticleType::Geyser:
         case ParticleType::GeyserPlume:

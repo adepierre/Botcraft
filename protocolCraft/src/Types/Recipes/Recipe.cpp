@@ -91,11 +91,6 @@ namespace ProtocolCraft
 #else
     std::shared_ptr<RecipeData> Recipe::CreateRecipeData(const RecipeDataType type)
     {
-        if (type <= RecipeDataType::None || type >= RecipeDataType::NUM_RECIPE_DATA_TYPES)
-        {
-            throw std::runtime_error("Unable to create recipe with id: " + std::to_string(static_cast<int>(type)) + ".");
-        }
-
         switch (type)
         {
         case RecipeDataType::CraftingShaped:

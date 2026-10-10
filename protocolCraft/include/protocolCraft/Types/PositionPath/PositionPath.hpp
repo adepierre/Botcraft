@@ -12,7 +12,7 @@ namespace ProtocolCraft
         None = -1,
         Linear,
         Stepped,
-        NUM_POSITIONPATH_TYPES
+        NUM_POSITION_PATH_TYPES
     };
 
     class PositionPathData;

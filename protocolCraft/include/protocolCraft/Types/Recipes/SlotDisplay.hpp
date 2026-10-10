@@ -26,7 +26,7 @@ namespace ProtocolCraft
         SmithingTrim,
         WithRemainder,
         Composite,
-        NUM_SLOT_DISPLAYS_DATA_TYPES
+        NUM_SLOT_DISPLAY_DATA_TYPES
     };
 
     class SlotDisplayData;
