@@ -11,7 +11,7 @@ namespace ProtocolCraft
     class EntityModifierData : public NetworkType
     {
 
-#if PROTOCOL_VERSION < 767 /* < 1.20.6 */
+#if PROTOCOL_VERSION < 767 /* < 1.21 */
         SERIALIZED_FIELD(Uuid, UUID);
 #else
         SERIALIZED_FIELD(Id, Identifier);

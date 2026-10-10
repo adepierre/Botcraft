@@ -986,7 +986,7 @@ namespace Botcraft
                     biome_type = BiomeType::FrozenOcean;
                 }
 #endif
-#if PROTOCOL_VERSION > 767 /* > 1.20.1 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                 else if (string_biome_type == "PaleGarden")
                 {
                     biome_type = BiomeType::PaleGarden;

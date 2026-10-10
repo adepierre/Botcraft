@@ -48,7 +48,7 @@
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
 #include "protocolCraft/Types/PlayerUpdate.hpp"
 #endif
-#if PROTOCOL_VERSION > 767 /* > 1.21.2 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "protocolCraft/Types/PositionMoveRotation.hpp"
 #endif
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */
@@ -207,7 +207,7 @@ namespace ProtocolCraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     DEFINE_NETWORK_TYPE(PlayerUpdate);
 #endif
-#if PROTOCOL_VERSION > 767 /* > 1.21.2 */
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     DEFINE_NETWORK_TYPE(PositionMoveRotation);
 #endif
 #if PROTOCOL_VERSION < 739 /* < 1.16.2 */

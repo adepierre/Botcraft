@@ -73,7 +73,7 @@ namespace Botcraft
         return it->second;
     }
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.4 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     std::string EntityAttribute::TypeToString(const Type type)
     {
         switch (type)

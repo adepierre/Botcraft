@@ -35,7 +35,7 @@
 #include "protocolCraft/Types/Components/DataComponentTypePotionContents.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeRarity.hpp"
 #include "protocolCraft/Types/Components/DataComponentTypeResolvableProfile.hpp"
-#if PROTOCOL_VERSION < 774 /* < 1.21.115 */
+#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
 #include "protocolCraft/Types/Components/DataComponentTypeResourceLocation.hpp"
 #endif
 #include "protocolCraft/Types/Components/DataComponentTypeSuspiciousStewEffects.hpp"
@@ -410,7 +410,7 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeTooltipDisplay>();
             case DataComponentTypes::Weapon:
                 return std::make_shared<DataComponentTypeWeapon>();
-#if PROTOCOL_VERSION < 775 /* < 1.21.11 */
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
             case DataComponentTypes::Chicken_Variant:
                 return std::make_shared<DataComponentTypeEitherRegistryVarint>();
 #endif
@@ -451,7 +451,7 @@ namespace ProtocolCraft
                 return std::make_shared<DataComponentTypeFloat>();
             case DataComponentTypes::AttackRange:
                 return std::make_shared<DataComponentTypeAttackRange>();
-#if PROTOCOL_VERSION < 775 /* < 1.21.11 */
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
             case DataComponentTypes::DamageType:
             case DataComponentTypes::ZombieNautilus_Variant:
                 return std::make_shared<DataComponentTypeEitherRegistryVarint>();

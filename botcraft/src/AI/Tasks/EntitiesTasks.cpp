@@ -62,7 +62,7 @@ namespace Botcraft
 #endif
         network_manager->Send(packet_interact);
 
-#if PROTOCOL_VERSION < 777 /* < 26.2 */
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         if (swing)
         {
             std::shared_ptr<ServerboundSwingPacket> packet_swing = std::make_shared<ServerboundSwingPacket>();

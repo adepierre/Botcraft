@@ -208,7 +208,7 @@
 #if PROTOCOL_VERSION < 757 /* < 1.18 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelChunkPacket.hpp"
 #endif
-#if PROTOCOL_VERSION > 756 /* > 1.17 */
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelChunkWithLightPacket.hpp"
 #endif
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundLevelEventPacket.hpp"
@@ -381,7 +381,7 @@
 #endif
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSetPlayerTeamPacket.hpp"
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSetScorePacket.hpp"
-#if PROTOCOL_VERSION > 756 /* > 1.17 */
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
 #include "protocolCraft/Packets/Game/Clientbound/ClientboundSetSimulationDistancePacket.hpp"
 #endif
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */

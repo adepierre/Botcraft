@@ -133,7 +133,7 @@ namespace Botcraft
         double GetValue() const;
         std::optional<Modifier> GetModifier(const ModifierKey& key);
 
-#if PROTOCOL_VERSION < 766 /* < 1.20.4 */
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         static std::string TypeToString(const Type type);
         static Type StringToType(const std::string& s);
 #endif

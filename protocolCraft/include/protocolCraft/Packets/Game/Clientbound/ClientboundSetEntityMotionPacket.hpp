@@ -1,7 +1,7 @@
 #pragma once
 
 #include "protocolCraft/BasePacket.hpp"
-#if PROTOCOL_VERSION > 772 /* > 1.21.9 */
+#if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "protocolCraft/Types/LpVec3.hpp"
 #endif
 

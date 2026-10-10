@@ -1,4 +1,4 @@
-#if PROTOCOL_VERSION > 773 /* > 1.21.11 */
+#if PROTOCOL_VERSION > 773 /* > 1.21.10 */
 #pragma once
 
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
