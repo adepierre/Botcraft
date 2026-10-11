@@ -119,7 +119,7 @@ namespace Botcraft
             EVP_CIPHER_CTX_free(decryption_context);
             decryption_context = nullptr;
         }
-        
+
         decryption_context = EVP_CIPHER_CTX_new();
         EVP_DecryptInit_ex(decryption_context, EVP_aes_128_cfb8(), nullptr, raw_shared_secret.data(), raw_shared_secret.data());
 

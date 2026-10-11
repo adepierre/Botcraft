@@ -254,6 +254,7 @@ set(botcraft_PRIVATE_HDR
     private_include/botcraft/Network/Authentifier.hpp
     private_include/botcraft/Network/AESEncrypter.hpp
     private_include/botcraft/Network/Compression.hpp
+    private_include/botcraft/Network/Https.hpp
     private_include/botcraft/Network/TCP_Com.hpp
 
     private_include/botcraft/Network/DNS/DNSMessage.hpp
@@ -498,6 +499,7 @@ set(botcraft_SRC
     src/Network/AESEncrypter.cpp
     src/Network/Authentifier.cpp
     src/Network/Compression.cpp
+    src/Network/Https.cpp
     src/Network/LastSeenMessagesTracker.cpp
     src/Network/NetworkManager.cpp
     src/Network/TCP_Com.cpp
@@ -695,10 +697,13 @@ if(BOTCRAFT_ENCRYPTION)
     target_link_libraries(botcraft PRIVATE OpenSSL::SSL)
     target_link_libraries(botcraft PRIVATE OpenSSL::Crypto)
     target_compile_definitions(botcraft PRIVATE USE_ENCRYPTION=1)
+    if(WIN32)
+        target_link_libraries(botcraft PRIVATE crypt32)
+    endif()
 endif(BOTCRAFT_ENCRYPTION)
 
 if(WIN32 AND MINGW)
-    target_link_libraries(botcraft PRIVATE ws2_32 crypt32)
+    target_link_libraries(botcraft PRIVATE ws2_32)
     # Copy dll from the compiler folder
     get_filename_component(COMPILER_FOLDER ${CMAKE_CXX_COMPILER} DIRECTORY)
     add_custom_command(TARGET botcraft POST_BUILD

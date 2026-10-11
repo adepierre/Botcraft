@@ -19,7 +19,5 @@ namespace Botcraft::Utilities
     std::vector<unsigned char> DecodeBase64(const std::string& s);
 
     std::vector<unsigned char> RSAToBytes(const std::string& s);
-
-    long long int TimestampMilliFromISO8601(const std::string& s);
 #endif
 }

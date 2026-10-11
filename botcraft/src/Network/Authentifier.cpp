@@ -1,41 +1,73 @@
-#include <asio/ip/tcp.hpp>
 #include <asio/connect.hpp>
-#include <asio/streambuf.hpp>
-#include <asio/read_until.hpp>
+#include <asio/ip/tcp.hpp>
 #include <asio/read.hpp>
+#include <asio/read_until.hpp>
+#include <asio/streambuf.hpp>
 
 #ifdef USE_ENCRYPTION
 #include <asio/ssl.hpp>
 #include <openssl/sha.h>
 #endif
 
-#include <iomanip>
 #include <fstream>
-#include <sstream>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #include "botcraft/Network/Authentifier.hpp"
+#include "botcraft/Network/Https.hpp"
 #include "botcraft/Utilities/Logger.hpp"
-
+#include "botcraft/Utilities/MiscUtilities.hpp"
 #include "botcraft/Utilities/StringUtilities.hpp"
+
+#include "protocolCraft/Utilities/Json.hpp"
+
 
 using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    const std::string Authentifier::cached_credentials_path = "botcraft_cached_credentials.json";
-    const std::string Authentifier::botcraft_app_id = "a0ad834d-e78a-4881-87f6-390aa0f4b283";
-    const Json::Value Authentifier::defaultCachedCredentials = {
-        { "msa", {
-            { "access_token", nullptr },
-            { "expires_date", nullptr },
-            { "refresh_token", nullptr }
-        }},
-        { "name", nullptr },
-        { "id", nullptr },
-        { "mc_token", nullptr },
-        { "expires_date", nullptr }
-    };
+#ifdef USE_ENCRYPTION
+    namespace
+    {
+        static const std::string botcraft_app_id = "a0ad834d-e78a-4881-87f6-390aa0f4b283";
+        static const std::string cached_credentials_path = "botcraft_cached_credentials.json";
+        static const Json::Value default_cached_credentials = {
+            { "msa", {
+                { "access_token", nullptr },
+                { "expires_date", nullptr },
+                { "refresh_token", nullptr }
+            }},
+            { "name", nullptr },
+            { "id", nullptr },
+            { "mc_token", nullptr },
+            { "expires_date", nullptr }
+        };
+
+        /// @brief Get the cached credentials of one account, throw if the cache file is not valid JSON
+        /// @param key Key of the account in the cache file
+        /// @return Cached credentials, or the default ones if the account is not in the file
+        Json::Value LoadCachedAccount(const std::string& key);
+
+        /// @brief Save the credentials of one account, keeping the other accounts of the file
+        void SaveCachedAccount(const std::string& key, const Json::Value& account);
+
+        /// @brief Get a Minecraft token using the Microsoft auth flow (MSA -> XBL -> XSTS -> MC)
+        /// @param cached Cached credentials of the account. "msa", "mc_token" and "expires_date" are erased, then set again on success
+        /// @return The Minecraft access token, throw if failed
+        std::string GetMCTokenFromMicrosoft(Json::Value& cached);
+
+        /// @brief Get the Minecraft profile of a Minecraft token
+        /// @param mc_token Minecraft access token
+        /// @return Pair of {uuid, name}, throw if failed
+        std::pair<std::string, std::string> GetMCProfile(const std::string& mc_token);
+
+        /// @brief Convert ISO8601 time to timestamp
+        /// @param s Date/time
+        /// @return Number of ms since epoch
+        long long int TimestampMilliFromISO8601(const std::string& s);
+    }
+#endif
 
 
     Authentifier::Authentifier()
@@ -65,104 +97,65 @@ namespace Botcraft
 #ifndef USE_ENCRYPTION
         return false;
 #else
+        try
+        {
+            Json::Value cached = LoadCachedAccount(cache_key);
+            // Cached value will be updated upon leaving the scope. If any step fails, value will have missing fields to make sure next run doesn't use garbage values
+            Utilities::OnEndScope save_cache([&]() { SaveCachedAccount(cache_key, cached); });
 
-        const Json::Value cached = GetCachedAccountOrDefault(cache_key);
-        if (!cached.contains("mc_token") || !cached["mc_token"].is_string() ||
-            !cached.contains("expires_date") || !cached["expires_date"].is_number() ||
-            !cached.contains("name") || !cached["name"].is_string() ||
-            !cached.contains("id") || !cached["id"].is_string())
-        {
-            LOG_WARNING("Missing or malformed cached credentials for Microsoft account, starting auth flow...");
-        }
-        else if (cached["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
-        {
-            LOG_INFO("Cached Minecraft token for Microsoft account expired, starting auth flow...");
-        }
-        else
-        {
-            mc_access_token = cached["mc_token"].get_string();
-            player_display_name = cached["name"].get_string();
-            mc_player_uuid = cached["id"].get_string();
+            const long long int now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            const bool cached_ok =
+                cached.contains("mc_token") && cached["mc_token"].is_string() &&
+                cached.contains("expires_date") && cached["expires_date"].is_number() &&
+                cached.contains("name") && cached["name"].is_string() &&
+                cached.contains("id") && cached["id"].is_string();
+
+            if (cached_ok && cached["expires_date"].get<long long int>() >= now)
+            {
+                LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
+                mc_access_token = cached["mc_token"].get_string();
+                player_display_name = cached["name"].get_string();
+                mc_player_uuid = cached["id"].get_string();
+            }
+            else
+            {
+                if (cached_ok)
+                {
+                    LOG_INFO("Cached Minecraft token for Microsoft account expired, starting auth flow...");
+                }
+                else
+                {
+                    LOG_WARNING("Missing or malformed cached credentials for Microsoft account, starting auth flow...");
+                }
+
+                mc_access_token = GetMCTokenFromMicrosoft(cached);
+
+                // We assume you're using an account owning minecraft so we don't check (and also a bit because it's complicated)
+                // If you don't, Botcraft won't work on online mode.
+                // But you can buy yourself a copy of the game: https://www.minecraft.net/get-minecraft
+                LOG_INFO("Assuming the account owns Minecraft...");
+
+                LOG_INFO("Trying to get MC profile...");
+                cached.get_object().erase("id");
+                cached.get_object().erase("name");
+                std::tie(mc_player_uuid, player_display_name) = GetMCProfile(mc_access_token);
+                cached["id"] = mc_player_uuid;
+                cached["name"] = player_display_name;
+                LOG_INFO("MC profile obtained!");
+            }
             UpdateUUIDBytes();
-            LOG_INFO("Cached Minecraft token for Microsoft account still valid.");
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-            LOG_INFO("Getting player certificates...");
-            if (!GetPlayerCertificates())
-            {
-                LOG_ERROR("Unable to get player certificates");
-                return false;
-            }
-            LOG_INFO("Player certificates obtained!");
+            GetPlayerCertificates();
 #endif
+            LOG_INFO("Authentication completed!");
             return true;
         }
-
-        // This auth flow was initially inspired from https://github.com/maxsupermanhd/go-mc-ms-auth
-        LOG_INFO("Trying to get Microsoft access token...");
-        const std::string msa_token = GetMSAToken(cache_key);
-        if (msa_token.empty())
+        catch (const std::exception& e)
         {
-            LOG_ERROR("Unable to get a microsoft auth token");
+            LOG_ERROR(e.what());
             return false;
         }
-
-        LOG_INFO("Trying to get XBL token...");
-        const std::string xbl_token = GetXBLToken(msa_token);
-        if (xbl_token.empty())
-        {
-            LOG_ERROR("Unable to get a XBL token");
-            return false;
-        }
-        LOG_INFO("XBL token obtained!");
-
-        LOG_INFO("Trying to get XSTS token...");
-        const auto [xsts_token, xsts_userhash] = GetXSTSToken(xbl_token);
-        if (xsts_token.empty())
-        {
-            LOG_ERROR("Unable to get a XSTS token");
-            return false;
-        }
-        LOG_INFO("XSTS token obtained!");
-
-        LOG_INFO("Trying to get MC token...");
-        if (!GetMCToken(xsts_token, xsts_userhash, cache_key))
-        {
-            LOG_ERROR("Unable to get a MC token");
-            return false;
-        }
-        LOG_INFO("MC token obtained! Almost there...");
-
-
-        // We assume you're using an account owning minecraft so
-        // we don't check (and also a bit because it's complicated)
-        // If you don't, Botcraft won't work on online mode.
-        // But you can buy yourself a copy of the game:
-        // https://www.minecraft.net/get-minecraft
-        LOG_INFO("Assuming the account owns Minecraft...");
-
-        LOG_INFO("Trying to get MC profile...");
-        if (!GetMCProfile(cache_key))
-        {
-            LOG_ERROR("Unable to get a MC profile");
-            return false;
-        }
-        UpdateUUIDBytes();
-        LOG_INFO("MC profile obtained!");
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        LOG_INFO("Getting player certificates...");
-        if (!GetPlayerCertificates())
-        {
-            LOG_ERROR("Unable to get player certificates");
-            return false;
-        }
-        LOG_INFO("Player certificates obtained!");
-#endif
-
-        LOG_INFO("Authentication completed!");
-
-        return true;
 #endif
     }
 
@@ -171,30 +164,26 @@ namespace Botcraft
 #ifndef USE_ENCRYPTION
         return false;
 #else
-        mc_access_token = mc_token;
-
-        LOG_INFO("Trying to get MC profile...");
-        if (!GetMCProfile(std::nullopt))
+        try
         {
-            LOG_ERROR("Unable to get a MC profile");
-            return false;
-        }
-        UpdateUUIDBytes();
-        LOG_INFO("MC profile obtained!");
+            mc_access_token = mc_token;
+
+            LOG_INFO("Trying to get MC profile...");
+            std::tie(mc_player_uuid, player_display_name) = GetMCProfile(mc_access_token);
+            UpdateUUIDBytes();
+            LOG_INFO("MC profile obtained!");
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        LOG_INFO("Getting player certificates...");
-        if (!GetPlayerCertificates())
+            GetPlayerCertificates();
+#endif
+            LOG_INFO("Authentication completed!");
+            return true;
+        }
+        catch (const std::exception& e)
         {
-            LOG_ERROR("Unable to get player certificates");
+            LOG_ERROR(e.what());
             return false;
         }
-        LOG_INFO("Player certificates obtained!");
-#endif
-
-        LOG_INFO("Authentication completed!");
-
-        return true;
 #endif
     }
 
@@ -314,7 +303,7 @@ namespace Botcraft
         return key_signature;
     }
 
-    const long long int Authentifier::GetKeyTimestamp() const
+    long long int Authentifier::GetKeyTimestamp() const
     {
         return key_timestamp;
     }
@@ -456,188 +445,100 @@ namespace Botcraft
     }
 
 #ifdef USE_ENCRYPTION
-    Json::Value Authentifier::GetAllCachedAccounts() const
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
+    void Authentifier::GetPlayerCertificates()
     {
-        std::ifstream cache_file(cached_credentials_path);
-        if (!cache_file.good())
-        {
-            return {};
-        }
-        Json::Value cached_content;
-        cache_file >> cached_content;
-        cache_file.close();
+        // Certificates are not cached cause they're sometimes made invalid before the expire date (not sure why or when)
+        // So instead we get new ones for each connection (vanilla like behaviour)
+        LOG_INFO("Getting player certificates...");
 
-        return cached_content;
+#if PROTOCOL_VERSION == 759 /* 1.19 */
+        const std::string signature_field = "publicKeySignature";
+#else
+        const std::string signature_field = "publicKeySignatureV2";
+#endif
+        const Json::Value response = CheckJsonResponse(
+            POSTRequest("api.minecraftservices.com", "/player/certificates", "application/json", "application/json", "Bearer " + mc_access_token, ""),
+            "player certificates acquisition",
+            { "keyPair", signature_field, "expiresAt" }
+        );
+
+        const Json::Value& key_pair = response["keyPair"];
+        if (!key_pair.contains("privateKey") || !key_pair.contains("publicKey"))
+        {
+            throw std::runtime_error("Error trying to get player certificates, no keyPair/privateKey or keyPair/publicKey in response");
+        }
+
+        // Extract signature key from PEM string
+        if (private_key != nullptr)
+        {
+            RSA_free(private_key);
+        }
+        BIO* keybio = BIO_new_mem_buf((void*)key_pair["privateKey"].get_string().c_str(), -1);
+        private_key = PEM_read_bio_RSAPrivateKey(keybio, nullptr, nullptr, nullptr);
+        BIO_free(keybio);
+
+        public_key = key_pair["publicKey"].get_string();
+        key_signature = response[signature_field].get_string();
+        // Convert expires date in ISO8601 to ms since UNIX epoch
+        key_timestamp = TimestampMilliFromISO8601(response["expiresAt"].get_string());
+
+        LOG_INFO("Player certificates obtained!");
     }
+#endif
+#endif
 
-    Json::Value Authentifier::GetCachedAccountOrDefault(const std::optional<std::string>& cache_key) const
+#ifdef USE_ENCRYPTION
+    namespace
     {
-        if (!cache_key.has_value())
+        Json::Value ReadCacheFile()
         {
-            return defaultCachedCredentials;
+            std::ifstream file(cached_credentials_path, std::ios::in);
+            std::stringstream content;
+            // If the file is missing, nothing is read and content stays empty
+            content << file.rdbuf();
+            return content.str().empty() ? Json::Object() : Json::Parse(content.str(), true);
         }
 
-        const Json::Value profiles = GetAllCachedAccounts();
-
-        if (profiles.size() > 0 &&
-            profiles.contains(cache_key.value()) &&
-            profiles[cache_key.value()].is_object())
+        Json::Value LoadCachedAccount(const std::string& key)
         {
-            return profiles[cache_key.value()];
-        }
-
-        return defaultCachedCredentials;
-    }
-
-    void Authentifier::WriteCacheFile(const Json::Value& profiles) const
-    {
-        std::ofstream cached_ofile(cached_credentials_path);
-        if (!cached_ofile.is_open())
-        {
-            return;
-        }
-        cached_ofile << profiles.Dump(4) << std::endl;
-        cached_ofile.close();
-    }
-
-    std::string Authentifier::GetMSAToken(const std::optional<std::string>& cache_key) const
-    {
-        // Retrieve cached microsoft credentials
-        Json::Value cached = GetCachedAccountOrDefault(cache_key);
-
-        auto save_cache = [&] {
-            if (!cache_key.has_value()) { return; }
-            Json::Value profiles = GetAllCachedAccounts();
-            profiles[cache_key.value()] = cached;
-            WriteCacheFile(profiles);
-        };
-
-        // In case there is something wrong in the cached data
-        if (!cached.contains("msa") || !cached["msa"].is_object() ||
-            !cached["msa"].contains("refresh_token") || !cached["msa"]["refresh_token"].is_string() ||
-            !cached["msa"].contains("access_token") || !cached["msa"]["access_token"].is_string() ||
-            !cached["msa"].contains("expires_date") || !cached["msa"]["expires_date"].is_number())
-        {
-            LOG_ERROR("Error trying to get cached Microsoft credentials");
-            cached.get_object().erase("msa");
-            save_cache();
-            LOG_INFO("Starting authentication process...");
-            return MSAAuthDeviceFlow(cache_key);
-        }
-
-        if (cached["msa"]["expires_date"].get<long long int>() < std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count())
-        {
-            LOG_INFO("Refreshing Microsoft token...");
-            const std::string refresh_data =
-                "client_id=" + botcraft_app_id +
-                "&refresh_token=" + cached["msa"]["refresh_token"].get_string() +
-                "&grant_type=refresh_token" +
-                "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient";
-
-            const WebRequestResponse post_response = POSTRequest("login.live.com", "/oauth20_token.srf",
-                "application/x-www-form-urlencoded", "*/*", "", refresh_data);
-
-            // If refresh fails restart the whole auth flow
-            if (post_response.status_code != 200)
+            const Json::Value profiles = ReadCacheFile();
+            // File is not valid
+            if (!profiles.is_object())
             {
-                LOG_ERROR("Response returned with status code " << post_response.status_code
-                    << " (" << post_response.status_message << ") during Microsoft token refresh:\n"
-                    << post_response.response.Dump(4));
-                cached.get_object().erase("msa");
-                save_cache();
-                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(cache_key);
+                throw std::runtime_error("Error trying to read " + cached_credentials_path + ", fix or delete it");
             }
-
-            const Json::Value& response = post_response.response;
-
-            if (!response.contains("expires_in"))
+            if (profiles.contains(key) && profiles[key].is_object())
             {
-                LOG_ERROR("Error trying to refresh Microsoft token, no expires_in in response");
-                cached.get_object().erase("msa");
-                save_cache();
-                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(cache_key);
+                return profiles[key];
             }
+            return default_cached_credentials;
+        }
 
-            if (!response.contains("refresh_token"))
+        void SaveCachedAccount(const std::string& key, const Json::Value& account)
+        {
+            // Read again: another bot of this program may have saved its account since we loaded ours
+            Json::Value profiles = ReadCacheFile();
+            if (!profiles.is_object())
             {
-                LOG_ERROR("Error trying to refresh microsoft token, no refresh_token in response");
-                cached.get_object().erase("msa");
-                save_cache();
-                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(cache_key);
+                LOG_ERROR("Error trying to read " << cached_credentials_path << ", credentials not saved");
+                return;
             }
-
-            if (!response.contains("access_token"))
-            {
-                LOG_ERROR("Error trying to refresh microsoft token, no access_token in response");
-                cached.get_object().erase("msa");
-                save_cache();
-                LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
-                return MSAAuthDeviceFlow(cache_key);
-            }
-
-            cached["msa"] = {
-                { "access_token", response["access_token"].get_string() },
-                { "refresh_token", response["refresh_token"].get_string() },
-                { "expires_date", response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() },
-            };
-
-            save_cache();
-
-            LOG_INFO("Cached Microsoft token refreshed");
-
-            return response["access_token"].get_string();
+            profiles[key] = account;
+            std::ofstream file(cached_credentials_path);
+            file << profiles.Dump(4) << std::endl;
         }
 
-        LOG_INFO("Cached Microsoft token still valid");
-
-        return cached["msa"]["access_token"].get_string();
-    }
-
-    std::string Authentifier::MSAAuthDeviceFlow(const std::optional<std::string>& cache_key) const
-    {
-        const std::string auth_data = "client_id=" + botcraft_app_id + "&scope=XboxLive.signin%20offline_access";
-
-        const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/devicecode",
-            "application/x-www-form-urlencoded", "*/*", "", auth_data);
-
-        if (post_response.status_code != 200)
+        Json::Value MSAAuthDeviceFlow()
         {
-            LOG_ERROR("Response returned with status code " << post_response.status_code << " ("
-                << post_response.status_message << ") during microsoft authentification:\n"
-                << post_response.response.Dump(4));
-            return "";
-        }
+            const Json::Value auth_response = CheckJsonResponse(
+                POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/devicecode", "application/x-www-form-urlencoded", "*/*", "",
+                    "client_id=" + botcraft_app_id + "&scope=XboxLive.signin%20offline_access"),
+                "microsoft authentification", { "interval", "message", "device_code" }
+            );
 
-        const Json::Value& auth_response = post_response.response;
-
-        if (!auth_response.contains("interval"))
-        {
-            LOG_ERROR("Error trying to get microsoft token, no interval in authentication response");
-            return "";
-        }
-
-        if (!auth_response.contains("message"))
-        {
-            LOG_ERROR("Error trying to get microsoft token, no message in authentication response");
-            return "";
-        }
-
-        if (!auth_response.contains("device_code"))
-        {
-            LOG_ERROR("Error trying to get microsoft token, no device_code in authentication response");
-            return "";
-        }
-
-        // Display the instructions the user has to follow to authenticate in the console
-        LOG_ALWAYS(auth_response["message"].get_string());
-
-        const long long int pool_interval = auth_response["interval"].get_number<long long int>();
-        while (true)
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(pool_interval + 1));
+            // Display the instructions the user has to follow to authenticate in the console
+            LOG_ALWAYS(auth_response["message"].get_string());
 
             const std::string check_auth_status_data =
                 "client_id=" + botcraft_app_id +
@@ -645,574 +546,265 @@ namespace Botcraft
                 "&grant_type=urn:ietf:params:oauth:grant-type:device_code" +
                 "&device_code=" + auth_response["device_code"].get_string();
 
-            const WebRequestResponse post_response = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/token",
-                "application/x-www-form-urlencoded", "*/*", "", check_auth_status_data);
-
-            const Json::Value& status_response = post_response.response;
-
-            if (post_response.status_code == 400)
+            long long int poll_interval = auth_response["interval"].get_number<long long int>();
+            const long long int expires_in = auth_response.contains("expires_in") ? auth_response["expires_in"].get_number<long long int>() : 900;
+            const std::chrono::steady_clock::time_point deadline = std::chrono::steady_clock::now() + std::chrono::seconds(expires_in);
+            while (std::chrono::steady_clock::now() < deadline)
             {
-                if (!status_response.contains("error"))
-                {
-                    LOG_ERROR("Unknown error happened during microsoft device authentication process");
-                    return "";
-                }
+                std::this_thread::sleep_for(std::chrono::seconds(poll_interval + 1));
 
-                const std::string error = status_response["error"].get_string();
+                const WebRequestResponse status = POSTRequest("login.microsoftonline.com", "/consumers/oauth2/v2.0/token",
+                    "application/x-www-form-urlencoded", "*/*", "", check_auth_status_data);
 
-                if (error == "authorization_pending")
+                if (status.status_code == 400 && status.response.contains("error"))
                 {
-                    continue;
-                }
-                else if (error == "authorization_declined")
-                {
-                    LOG_ERROR("User declined authorization during microsoft device authentication check");
-                    return "";
-                }
-                else if (error == "expired_token")
-                {
-                    LOG_ERROR("User took too long to perform device authentication, aborting");
-                    return "";
-                }
-                else if (error == "invalid_grant")
-                {
-                    if (!status_response.contains("error_description"))
+                    const std::string error = status.response["error"].get_string();
+                    if (error == "authorization_pending")
                     {
-                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated (no further information)");
+                        continue;
                     }
-                    else
+                    if (error == "slow_down")
                     {
-                        LOG_ERROR("While waiting for microsoft device authentication, token got invalidated: " << status_response["error_description"].get_string());
+                        poll_interval += 5;
+                        continue;
                     }
-
-                    return "";
-                }
-            }
-            else if (post_response.status_code == 200)
-            {
-                if (!status_response.contains("expires_in"))
-                {
-                    LOG_ERROR("Error trying to get microsoft token, no expires_in in device authentication status response");
-                    return "";
+                    // authorization_declined, expired_token, bad_verification_code, invalid_grant...
+                    throw std::runtime_error("Error during microsoft device authentication: " + error +
+                        (status.response.contains("error_description") ? " (" + status.response["error_description"].get_string() + ")" : ""));
                 }
 
-                if (!status_response.contains("refresh_token"))
-                {
-                    LOG_ERROR("Error trying to get microsoft token, no refresh_token in device authentication status response");
-                    return "";
-                }
-
-                if (!status_response.contains("access_token"))
-                {
-                    LOG_ERROR("Error trying to get microsoft token, no access_token in device authentication status response");
-                    return "";
-                }
-
-                if (cache_key.has_value())
-                {
-                    Json::Value profiles = GetAllCachedAccounts();
-                    profiles[cache_key.value()]["msa"] = {
-                        { "access_token", status_response["access_token"].get_string() },
-                        { "refresh_token", status_response["refresh_token"].get_string() },
-                        { "expires_date", status_response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() },
-                    };
-                    WriteCacheFile(profiles);
-                }
-
+                const Json::Value response = CheckJsonResponse(status, "microsoft device authentification check", { "access_token", "refresh_token", "expires_in" });
                 LOG_INFO("Newly obtained Microsoft token stored in cache");
+                return response;
+            }
+            throw std::runtime_error("Microsoft device authentication timed out");
+        }
 
-                return status_response["access_token"].get_string();
+        std::string GetMSAToken(Json::Value& cached)
+        {
+            const long long int now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+            // Copy, as "msa" is erased below
+            const Json::Value msa = cached["msa"];
+            const bool cached_ok =
+                msa.contains("refresh_token") && msa["refresh_token"].is_string() &&
+                msa.contains("access_token") && msa["access_token"].is_string() &&
+                msa.contains("expires_date") && msa["expires_date"].is_number();
+
+            if (cached_ok && msa["expires_date"].get<long long int>() >= now)
+            {
+                LOG_INFO("Cached Microsoft token still valid");
+                return msa["access_token"].get_string();
+            }
+
+            // Set again at the end, only if we get a new token
+            cached.get_object().erase("msa");
+
+            Json::Value response;
+            if (!cached_ok)
+            {
+                LOG_ERROR("Error trying to get cached Microsoft credentials");
+                LOG_INFO("Starting authentication process...");
+                response = MSAAuthDeviceFlow();
             }
             else
             {
-                LOG_ERROR("Response returned with status code " << post_response.status_code << " (" << post_response.status_message << ") during microsoft device authentification check");
-                return "";
-            }
-        }
-    }
-
-    std::string Authentifier::GetXBLToken(const std::string& msa_token) const
-    {
-        Json::Value request_data = {
-            { "Properties", {
-                    {"AuthMethod", "RPS"},
-                    {"SiteName", "user.auth.xboxlive.com"},
-                    {"RpsTicket", "d=" + msa_token}
+                LOG_INFO("Refreshing Microsoft token...");
+                try
+                {
+                    response = CheckJsonResponse(POSTRequest("login.live.com", "/oauth20_token.srf",
+                        "application/x-www-form-urlencoded", "*/*", "",
+                        "client_id=" + botcraft_app_id +
+                        "&refresh_token=" + msa["refresh_token"].get_string() +
+                        "&grant_type=refresh_token" +
+                        "&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient"),
+                        "Microsoft token refresh", { "access_token", "refresh_token", "expires_in" });
+                    LOG_INFO("Cached Microsoft token refreshed");
                 }
-            },
-            { "RelyingParty", "http://auth.xboxlive.com"},
-            { "TokenType", "JWT"}
-        };
+                catch (const std::exception& e)
+                {
+                    // If refresh fails restart the whole auth flow
+                    LOG_ERROR(e.what());
+                    LOG_INFO("Failed to refresh token, starting Microsoft authentication process...");
+                    response = MSAAuthDeviceFlow();
+                }
+            }
 
-        const WebRequestResponse post_response = POSTRequest("user.auth.xboxlive.com", "/user/authenticate",
-            "application/json", "application/json", "", request_data.Dump());
-
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Response returned with status code " << post_response.status_code
-                << " (" << post_response.status_message << ") during XBL authentication:\n"
-                << post_response.response.Dump(4));
-            return "";
+            cached["msa"] = {
+                { "access_token", response["access_token"].get_string() },
+                { "refresh_token", response["refresh_token"].get_string() },
+                { "expires_date", response["expires_in"].get<long long int>() + now }
+            };
+            return response["access_token"].get_string();
         }
 
-        const Json::Value& response = post_response.response;
-
-        if (!response.contains("Token"))
+        std::string GetXBLToken(const std::string& msa_token)
         {
-            LOG_ERROR("Error trying to get XBL token, no Token in authentication response");
-            return "";
+            const Json::Value request_data = {
+                { "Properties", {
+                        {"AuthMethod", "RPS"},
+                        {"SiteName", "user.auth.xboxlive.com"},
+                        {"RpsTicket", "d=" + msa_token}
+                    }
+                },
+                { "RelyingParty", "http://auth.xboxlive.com"},
+                { "TokenType", "JWT"}
+            };
+
+            return CheckJsonResponse(
+                POSTRequest("user.auth.xboxlive.com", "/user/authenticate", "application/json", "application/json", "", request_data.Dump()),
+                "XBL authentication",
+                { "Token" }
+            )["Token"].get_string();
         }
 
-        return response["Token"].get_string();
-    }
-
-    std::pair<std::string, std::string> Authentifier::GetXSTSToken(const std::string& xbl_token) const
-    {
-        Json::Value request_data = {
-            { "Properties", {
+        std::pair<std::string, std::string> GetXSTSToken(const std::string& xbl_token)
+        {
+            const Json::Value request_data = {
+                { "Properties", {
                     {"SandboxId", "RETAIL"},
                     {"UserTokens", { xbl_token } }
-                }
-            },
-            { "RelyingParty", "rp://api.minecraftservices.com/"},
-            { "TokenType", "JWT"}
-        };
+                }},
+                { "RelyingParty", "rp://api.minecraftservices.com/"},
+                { "TokenType", "JWT"}
+            };
 
-        const WebRequestResponse post_response = POSTRequest("xsts.auth.xboxlive.com", "/xsts/authorize",
-            "application/json", "application/json", "", request_data.Dump());
+            const Json::Value response = CheckJsonResponse(
+                POSTRequest("xsts.auth.xboxlive.com", "/xsts/authorize", "application/json", "application/json", "", request_data.Dump()),
+                "XSTS authentication",
+                { "Token", "DisplayClaims" }
+            );
 
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Response returned with status code " << post_response.status_code
-                << " (" << post_response.status_message << ") during XSTS authentication:\n"
-                << post_response.response.Dump(4));
-            return { "", "" };
+            const Json::Value& display_claims = response["DisplayClaims"];
+            if (
+                !display_claims.contains("xui") ||
+                !display_claims["xui"].is_array() ||
+                display_claims["xui"].size() < 1 ||
+                !display_claims["xui"][0].contains("uhs")
+            )
+            {
+                throw std::runtime_error("Error trying to get XSTS token, no DisplayClaims/xui/0/uhs in authentication response");
+            }
+
+            return { response["Token"].get_string(), display_claims["xui"][0]["uhs"].get_string() };
         }
 
-        const Json::Value& response = post_response.response;
-
-        if (!response.contains("Token"))
+        std::string GetMCTokenFromMicrosoft(Json::Value& cached)
         {
-            LOG_ERROR("Error trying to get XSTS token, no Token in authentication response");
-            return { "", "" };
-        }
+            LOG_INFO("Trying to get Microsoft access token...");
+            const std::string msa_token = GetMSAToken(cached);
 
-        if (!response.contains("DisplayClaims") || !response["DisplayClaims"].contains("xui")
-            || !response["DisplayClaims"]["xui"].is_array() || response["DisplayClaims"]["xui"].size() < 1
-            || !response["DisplayClaims"]["xui"][0].contains("uhs"))
-        {
-            LOG_ERROR("Error trying to get XSTS token, no DisplayClaims/xui/0/uhs in authentication response");
-            return { "", "" };
-        }
+            LOG_INFO("Trying to get XBL token...");
+            const std::string xbl_token = GetXBLToken(msa_token);
+            LOG_INFO("XBL token obtained!");
 
-        return { response["Token"].get_string(), response["DisplayClaims"]["xui"][0]["uhs"].get_string() };
-    }
+            LOG_INFO("Trying to get XSTS token...");
+            const auto [xsts_token, user_hash] = GetXSTSToken(xbl_token);
+            LOG_INFO("XSTS token obtained!");
 
-    bool Authentifier::GetMCToken(const std::string& xsts_token, const std::string& user_hash, const std::optional<std::string>& cache_key)
-    {
-        Json::Value cached = GetCachedAccountOrDefault(cache_key);
-
-        auto save_cache = [&] {
-            if (!cache_key.has_value()) { return; }
-            Json::Value profiles = GetAllCachedAccounts();
-            profiles[cache_key.value()] = cached;
-            WriteCacheFile(profiles);
-        };
-
-        Json::Value request_data = {
-            { "identityToken", "XBL3.0 x=" + user_hash + ";" + xsts_token }
-        };
-
-        const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/authentication/login_with_xbox",
-            "application/json", "application/json", "", request_data.Dump());
-
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Response returned with status code " << post_response.status_code
-                << " (" << post_response.status_message << ") during MC authentication:\n"
-                << post_response.response.Dump(4));
+            LOG_INFO("Trying to get MC token...");
+            const long long int now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            // Set again below, only if we get a new token with an expiry date
             cached.get_object().erase("mc_token");
             cached.get_object().erase("expires_date");
-            save_cache();
-            return false;
-        }
 
-        const Json::Value& response = post_response.response;
+            const Json::Value request_data = {
+                { "identityToken", "XBL3.0 x=" + user_hash + ";" + xsts_token }
+            };
+            const Json::Value response = CheckJsonResponse(
+                POSTRequest("api.minecraftservices.com", "/authentication/login_with_xbox", "application/json", "application/json", "", request_data.Dump()),
+                "MC authentication",
+                { "access_token" }
+            );
 
-        if (!response.contains("access_token"))
-        {
-            LOG_ERROR("Error trying to get MC token, no access_token in authentication response");
-            cached.get_object().erase("mc_token");
-            cached.get_object().erase("expires_date");
-            save_cache();
-            return false;
-        }
-
-        if (!response.contains("expires_in"))
-        {
-            LOG_WARNING("No expires_in in authentication response of MC");
-            cached.get_object().erase("mc_token");
-            cached.get_object().erase("expires_date");
-            save_cache();
-            mc_access_token = response["access_token"].get_string();
-            // if no expires_in assuming it is one-time, don't need to cache it
-            return true;
-        }
-
-        mc_access_token = response["access_token"].get_string();
-
-        cached["mc_token"] = mc_access_token;
-        cached["expires_date"] = response["expires_in"].get<long long int>() + std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-        save_cache();
-
-        return true;
-    }
-
-    bool Authentifier::GetMCProfile(const std::optional<std::string>& cache_key)
-    {
-        Json::Value cached = GetCachedAccountOrDefault(cache_key);
-
-        auto save_cache = [&] {
-            if (!cache_key.has_value()) { return; }
-            Json::Value profiles = GetAllCachedAccounts();
-            profiles[cache_key.value()] = cached;
-            WriteCacheFile(profiles);
-        };
-
-        const WebRequestResponse get_response = GETRequest("api.minecraftservices.com", "/minecraft/profile",
-            "Bearer " + mc_access_token);
-
-        if (get_response.status_code != 200)
-        {
-            LOG_ERROR("Response returned with status code " << get_response.status_code << " (" << get_response.status_message << ") during MC profile retrieval");
-            cached.get_object().erase("name");
-            cached.get_object().erase("id");
-            save_cache();
-            return false;
-        }
-
-        const Json::Value& response = get_response.response;
-
-        if (response.contains("errorMessage"))
-        {
-            LOG_ERROR("Error trying to get MC profile : " << response["errorMessage"].get_string());
-            cached.get_object().erase("name");
-            cached.get_object().erase("id");
-            save_cache();
-            return false;
-        }
-
-        if (!response.contains("id"))
-        {
-            LOG_ERROR("Error trying to get MC profile, no id in response");
-            cached.get_object().erase("name");
-            cached.get_object().erase("id");
-            save_cache();
-            return false;
-        }
-
-        if (!response.contains("name"))
-        {
-            LOG_ERROR("Error trying to get MC profile, no name in response");
-            cached.get_object().erase("name");
-            cached.get_object().erase("id");
-            save_cache();
-            return false;
-        }
-
-        mc_player_uuid = response["id"].get_string();
-        UpdateUUIDBytes();
-        player_display_name = response["name"].get_string();
-
-        cached["id"] = mc_player_uuid;
-        cached["name"] = player_display_name;
-        save_cache();
-
-        return true;
-    }
-
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    bool Authentifier::GetPlayerCertificates()
-    {
-        // Certificates are not cached cause they're sometimes made invalid before the expire date (not sure why or when)
-        // So instead we get new ones for each connection (vanilla like behaviour)
-
-        LOG_INFO("Starting player certificates acquisition process...");
-
-        const WebRequestResponse post_response = POSTRequest("api.minecraftservices.com", "/player/certificates",
-            "application/json", "application/json", "Bearer " + mc_access_token, "");
-
-        if (post_response.status_code != 200)
-        {
-            LOG_ERROR("Response returned with status code " << post_response.status_code
-                << " (" << post_response.status_message << ") during player certificates acquisition:\n"
-                << post_response.response.Dump(4));
-            return false;
-        }
-
-        const Json::Value& response = post_response.response;
-
-        if (!response.contains("keyPair"))
-        {
-            LOG_ERROR("Error trying to get player certificates, no keyPair in response");
-            return false;
-        }
-
-        if (!response["keyPair"].contains("privateKey"))
-        {
-            LOG_ERROR("Error trying to get player certificates, no privateKey in response");
-            return false;
-        }
-
-        if (!response["keyPair"].contains("publicKey"))
-        {
-            LOG_ERROR("Error trying to get player certificates, no publicKey in response");
-            return false;
-        }
-
-#if PROTOCOL_VERSION == 759 /* 1.19 */
-        if (!response.contains("publicKeySignature"))
-        {
-            LOG_ERROR("Error trying to get player certificates, no publicKeySignature in response");
-            return false;
-        }
-#else
-        if (!response.contains("publicKeySignatureV2"))
-        {
-            LOG_ERROR("Error trying to get player certificates, no publicKeySignatureV2 in response");
-            return false;
-        }
-#endif
-
-        // Extract signature key from PEM string
-        if (private_key != nullptr)
-        {
-            RSA_free(private_key);
-        }
-        private_key = nullptr;
-        BIO* keybio = BIO_new_mem_buf((void*)response["keyPair"]["privateKey"].get_string().c_str(), -1);
-        private_key = PEM_read_bio_RSAPrivateKey(keybio, &private_key, NULL, NULL);
-        BIO_free(keybio);
-
-        public_key = response["keyPair"]["publicKey"].get_string();
-#if PROTOCOL_VERSION == 759 /* 1.19 */
-        key_signature = response["publicKeySignature"].get_string();
-#else
-        key_signature = response["publicKeySignatureV2"].get_string();
-#endif
-        // Convert expires date in ISO8601 to ms since UNIX epoch
-        key_timestamp = Utilities::TimestampMilliFromISO8601(response["expiresAt"].get_string());
-
-        return true;
-    }
-#endif
-
-    const WebRequestResponse Authentifier::WebRequest(const std::string& host, const std::string& raw_request) const
-    {
-        asio::io_context io_context;
-
-        // Get a list of endpoints corresponding to the server name.
-        asio::ip::tcp::resolver resolver(io_context);
-        asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, "https");
-
-        asio::ssl::context ctx(asio::ssl::context::sslv23);
-        ctx.set_default_verify_paths();
-        ctx.set_options(asio::ssl::context::default_workarounds | asio::ssl::context::verify_none);
-
-        asio::ssl::stream<asio::ip::tcp::socket> socket(io_context, ctx);
-        socket.set_verify_mode(asio::ssl::verify_none);
-        socket.set_verify_callback([](bool, asio::ssl::verify_context&) {return true; });
-        SSL_set_tlsext_host_name(socket.native_handle(), host.c_str());
-        asio::connect(socket.lowest_layer(), endpoints);
-        socket.handshake(socket.client);
-        socket.lowest_layer().set_option(asio::ip::tcp::no_delay(true));
-
-        // Send the request
-        asio::streambuf request;
-        std::ostream request_stream(&request);
-        request_stream << raw_request;
-
-        asio::write(socket, request);
-
-        WebRequestResponse web_response;
-
-        // Read the response status line. The response streambuf will automatically
-        // grow to accommodate the entire line. The growth may be limited by passing
-        // a maximum size to the streambuf constructor.
-        asio::streambuf response;
-        asio::read_until(socket, response, "\r\n");
-
-        // Check that response is OK.
-        std::istream response_stream(&response);
-        std::string http_version;
-        response_stream >> http_version;
-        response_stream >> web_response.status_code;
-        std::getline(response_stream, web_response.status_message);
-
-        // Remove any \r in status message
-        web_response.status_message.erase(std::remove(web_response.status_message.begin(), web_response.status_message.end(), '\r'),
-            web_response.status_message.end());
-
-        if (!response_stream || http_version.substr(0, 5) != "HTTP/")
-        {
-            LOG_ERROR("Invalid response during web request");
-            web_response.response = {};
-            return web_response;
-        }
-
-        // Empty response
-        if (web_response.status_code == 204)
-        {
-            web_response.response = {};
-            return web_response;
-        }
-
-        // Read the response headers, which are terminated by a blank line.
-        asio::read_until(socket, response, "\r\n\r\n");
-
-        // Process the response headers.
-        long long int data_length = -1;
-        bool chunked = false;
-        std::string header;
-        while (std::getline(response_stream, header) && header != "\r")
-        {
-            // Remove trailing \r
-            if (!header.empty() && header.back() == '\r')
+            if (response.contains("expires_in"))
             {
-                header.pop_back();
+                cached["mc_token"] = response["access_token"].get_string();
+                cached["expires_date"] = response["expires_in"].get<long long int>() + now;
+            }
+            else
+            {
+                // If no expires_in assuming it is one-time, don't need to cache it
+                LOG_WARNING("No expires_in in authentication response of MC");
+            }
+            LOG_INFO("MC token obtained! Almost there...");
+
+            return response["access_token"].get_string();
+        }
+
+        std::pair<std::string, std::string> GetMCProfile(const std::string& mc_token)
+        {
+            const Json::Value response = CheckJsonResponse(
+                GETRequest("api.minecraftservices.com", "/minecraft/profile", "Bearer " + mc_token),
+                "MC profile retrieval",
+                { "id", "name" }
+            );
+
+            return { response["id"].get_string(), response["name"].get_string() };
+        }
+
+        int IsLeap(const int year)
+        {
+            if (year % 400 == 0) { return 1; }
+            if (year % 100 == 0) { return 0; }
+            if (year % 4 == 0) { return 1; }
+            return 0;
+        }
+
+        int DaysFrom0(const int year)
+        {
+            const long long y = year - 1;
+            return 365 * y + y / 400 - y / 100 + y / 4;
+        }
+
+        int DaysFrom1970(int32_t year)
+        {
+            return DaysFrom0(year) - DaysFrom0(1970);
+        }
+
+        int DaysFrom1Jan(const int year, const int month, const int day)
+        {
+            static constexpr std::array<std::array<int, 12>, 2> days =
+            { {
+              { 0,31,59,90,120,151,181,212,243,273,304,334},
+              { 0,31,60,91,121,152,182,213,244,274,305,335}
+            } };
+
+            return days[IsLeap(year)][month - 1] + day - 1;
+        }
+
+        long long int TimestampMilliFromISO8601(const std::string& s)
+        {
+            std::tm t{};
+            std::stringstream iso8601(s);
+            iso8601 >> std::get_time(&t, "%Y-%m-%dT%H:%M:%S");
+
+            if (iso8601.fail() || t.tm_mon < 0 || t.tm_mon > 11)
+            {
+                LOG_ERROR("Error trying to parse ISO 8601 string: " << s);
+                return 0;
             }
 
-            if (header.find("Content-Length: ") == 0)
+            std::string millis;
+            if (iso8601.peek() == '.')
             {
-                data_length = std::stoll(header.substr(16));
-            }
-            else if (header.find("Transfer-Encoding:") == 0 && header.find("chunked") != std::string::npos)
-            {
-                chunked = true;
-            }
-        }
-
-        // Write whatever content we already have to output.
-        std::stringstream output_stringstream;
-        if (response.size() > 0)
-        {
-            output_stringstream << &response;
-        }
-
-        // Read until EOF, writing data to output as we go.
-        asio::error_code error;
-        while (asio::read(socket, response, asio::transfer_at_least(1), error))
-        {
-            output_stringstream << &response;
-        }
-        const std::string raw_body = output_stringstream.str();
-
-        if (error != asio::error::eof && (data_length < 0 || raw_body.size() != static_cast<size_t>(data_length)))
-        {
-            LOG_ERROR("Error trying to read web request response, Error:\n " << error);
-            web_response.response = {};
-            return web_response;
-        }
-
-        if (chunked)
-        {
-            std::string decoded_body;
-            bool decode_ok = false;
-            size_t pos = 0;
-
-            while (pos < raw_body.size())
-            {
-                const size_t line_end = raw_body.find("\r\n", pos);
-                if (line_end == std::string::npos)
+                iso8601.get();
+                while (millis.size() < 3 && std::isdigit(iso8601.peek()))
                 {
-                    // This means the response is probably malformed
-                    break;
+                    millis += static_cast<char>(iso8601.get());
                 }
-
-                std::string size_line = raw_body.substr(pos, line_end - pos);
-                const size_t semicolon = size_line.find(";");
-                if (semicolon != std::string::npos)
-                {
-                    size_line.resize(semicolon);
-                }
-
-                const size_t chunk_size = std::stoull(size_line, nullptr, 16);
-
-                pos = line_end + 2;
-                if (chunk_size == 0)
-                {
-                    decode_ok = true;
-                    break;
-                }
-
-                if (pos + chunk_size > raw_body.size())
-                {
-                    break;
-                }
-
-                decoded_body.append(raw_body, pos, chunk_size);
-                // Skip chunk data + "\r\n"
-                pos += chunk_size + 2;
             }
+            millis.resize(3, '0');
 
-            if (!decode_ok)
-            {
-                LOG_ERROR("Malformed chunked web request response");
-                web_response.response = {};
-                return web_response;
-            }
+            const int year = t.tm_year + 1900;
+            const int month = t.tm_mon + 1;
+            const int day = t.tm_mday;
+            const int days_since_epoch = DaysFrom1970(year) + DaysFrom1Jan(year, month, day);
 
-            web_response.response = Json::Parse(decoded_body);
+            const long long int sec = 3600 * 24 * days_since_epoch + 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
+
+            return sec * 1000 + std::stoll(millis);
         }
-        else
-        {
-            web_response.response = Json::Parse(raw_body);
-        }
-
-        return web_response;
-    }
-
-    const WebRequestResponse Authentifier::POSTRequest(const std::string& host, const std::string& endpoint,
-        const std::string& content_type, const std::string& accept,
-        const std::string& authorization, const std::string& data) const
-    {
-        // Form the request. We specify the "Connection: close" header so that the
-        // server will close the socket after transmitting the response. This will
-        // allow us to treat all data up until the EOF as the content.
-        std::string raw_request = "";
-        raw_request += "POST " + endpoint + " HTTP/1.1 \r\n";
-        raw_request += "Host: " + host + "\r\n";
-        raw_request += "User-Agent: C/1.0\r\n";
-        raw_request += "Content-Type: " + content_type + " \r\n";
-        raw_request += "Accept: " + accept + "\r\n";
-        if (!authorization.empty())
-        {
-            raw_request += "Authorization: " + authorization + "\r\n";
-        }
-        raw_request += "Content-Length: " + std::to_string(data.length()) + "\r\n";
-        raw_request += "Connection: close\r\n\r\n";
-        raw_request += data;
-
-        return WebRequest(host, raw_request);
-    }
-
-    const WebRequestResponse Authentifier::GETRequest(const std::string& host, const std::string& endpoint, const std::string& authorization) const
-    {
-        // Form the request. We specify the "Connection: close" header so that the
-        // server will close the socket after transmitting the response. This will
-        // allow us to treat all data up until the EOF as the content.
-        std::string raw_request = "";
-        raw_request += "GET " + endpoint + " HTTP/1.1 \r\n";
-        raw_request += "Host: " + host + "\r\n";
-        if (!authorization.empty())
-        {
-            raw_request += "Authorization: " + authorization + "\r\n";
-        }
-        raw_request += "User-Agent: C/1.0\r\n";
-        raw_request += "Connection: close\r\n\r\n";
-
-        return WebRequest(host, raw_request);
     }
 #endif
 }

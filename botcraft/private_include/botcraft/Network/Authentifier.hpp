@@ -2,8 +2,7 @@
 #include <array>
 #include <optional>
 #include <string>
-
-#include "protocolCraft/Utilities/Json.hpp"
+#include <vector>
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include <random>
@@ -19,13 +18,6 @@ typedef struct rsa_st RSA;
 
 namespace Botcraft
 {
-    struct WebRequestResponse
-    {
-        ProtocolCraft::Json::Value response;
-        unsigned int status_code = 0;
-        std::string status_message;
-    };
-
     class Authentifier
     {
     public:
@@ -52,7 +44,7 @@ namespace Botcraft
         RSA* GetPrivateKey() const;
         const std::string& GetPublicKey() const;
         const std::string& GetKeySignature() const;
-        const long long int GetKeyTimestamp() const;
+        long long int GetKeyTimestamp() const;
 
 #if PROTOCOL_VERSION == 759 /* 1.19 */
         /// @brief Compute the signature of a message
@@ -93,96 +85,13 @@ namespace Botcraft
         void UpdateUUIDBytes();
 
 #ifdef USE_ENCRYPTION
-        /// @brief Get the content of the whole cache file
-        /// @return The content in JSON
-        ProtocolCraft::Json::Value GetAllCachedAccounts() const;
-
-        /// @brief Get the cached credentials for a key
-        /// @return Cached credentials for the given account, or default if not found in cached
-        ProtocolCraft::Json::Value GetCachedAccountOrDefault(const std::optional<std::string>& cache_key) const;
-
-        /// @brief Save a profiles list to cache file
-        /// @param profiles A json object with logins as keys and cache credentials as values
-        void WriteCacheFile(const ProtocolCraft::Json::Value& profiles) const;
-
-        /// @brief Check if there is a saved credentials file and
-        /// if the token is still valid. Refresh it if not.
-        /// If file doesn't exist, launch auth device flow
-        /// @param cache_key If present, the value will be stored in the cache file under the given key
-        /// @return The microsoft access token, empty if failed.
-        std::string GetMSAToken(const std::optional<std::string>& cache_key) const;
-
-        /// @brief Try to authenticate with microsoft account using device flow.
-        /// @param cache_key If present, the values will be stored in the cache file under the given key
-        /// @return The microsoft access token, empty if failed.
-        std::string MSAAuthDeviceFlow(const std::optional<std::string>& cache_key) const;
-
-        /// @brief Try to get XBox Live token from Microsoft token.
-        /// @param msa_token Microsoft access token
-        /// @return XBL token, empty if failed.
-        std::string GetXBLToken(const std::string& msa_token) const;
-
-        /// @brief Try to get XSTS token from XBL token.
-        /// @param xbl_token XBL token
-        /// @return Pair of {XSTS token, userhash}, empty if failed.
-        std::pair<std::string, std::string> GetXSTSToken(const std::string& xbl_token) const;
-
-        /// @brief Try to get MC token from XSTS token and user hash
-        /// @param xsts_token XSTS Token
-        /// @param user_hash User hash
-        /// @param cache_key If present, the value will be stored in the cache file under the given key
-        /// @return True if minecraft token was correctly updated, false otherwise
-        bool GetMCToken(const std::string& xsts_token, const std::string& user_hash, const std::optional<std::string>& cache_key);
-
-        /// @brief Try to get Minecraft profile from Minecraft token
-        /// @param cache_key If present, the values will be stored in the cache file under the given key
-        /// @return True if the profile was correctly updated, false otherwise
-        bool GetMCProfile(const std::optional<std::string>& cache_key);
-
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        /// @brief Try to get player certificates using Minecraft token
-        /// @return True if the certificates were correctly fetched, false otherwise
-        bool GetPlayerCertificates();
+        /// @brief Get player certificates using the Minecraft token, throw if failed
+        void GetPlayerCertificates();
 #endif
-
-        /// @brief Send a web request with ssl stuff
-        /// @param host The host address
-        /// @param raw_request The full request (header + content) as it should be sent
-        /// @return A WebRequestResponse returned by the server
-        const WebRequestResponse WebRequest(const std::string& host, const std::string& raw_request) const;
-
-        /// @brief Send a POST request with ssl stuff
-        /// @param host The host address (after https:// and before the first /)
-        /// @param endpoint The endpoint (after the first /)
-        /// @param content_type Data type
-        /// @param accept Accept header value
-        /// @param data Actual data to send
-        /// @param authorization Optional authorization header, only if not empty
-        /// @return A WebRequestResponse returned by the server
-        const WebRequestResponse POSTRequest(const std::string& host, const std::string& endpoint,
-            const std::string& content_type, const std::string& accept,
-            const std::string& authorization, const std::string& data) const;
-
-        /// @brief Send a GET request with ssl stuff
-        /// @param host The host address (after https:// and before the first /)
-        /// @param endpoint The endpoint (after the first /)
-        /// @param authorization Optional authorization header, only set if not empty
-        /// @return A WebRequestResponse returned by the server
-        const WebRequestResponse GETRequest(const std::string& host, const std::string& endpoint,
-            const std::string& authorization = "") const;
 #endif
 
     private:
-
-        /// @brief Path to cache the credentials
-        static const std::string cached_credentials_path;
-
-        /// @brief Botcraft app ID for microsoft auth
-        static const std::string botcraft_app_id;
-
-        /// @brief Default cached credentials JSON
-        static const ProtocolCraft::Json::Value defaultCachedCredentials;
-
         std::string player_display_name;
         std::string mc_access_token;
         std::string mc_player_uuid;
