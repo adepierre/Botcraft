@@ -38,7 +38,7 @@ namespace Botcraft
         bool GetIsActive() const;
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         bool GetIsTearingDown() const;
-        const std::optional<Position>& GetHomePos() const;
+        std::optional<Position> GetHomePos() const;
 #endif
 
         void SetCanMove(const bool can_move);

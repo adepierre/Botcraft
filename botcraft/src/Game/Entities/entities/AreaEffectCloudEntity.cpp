@@ -85,7 +85,7 @@ namespace Botcraft
 #endif
         output["metadata"]["data_waiting"] = GetDataWaiting();
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        output["metadata"]["data_particle"] = GetDataParticle() ? GetDataParticle()->Serialize() : ProtocolCraft::Json::Value();
+        output["metadata"]["data_particle"] = GetDataParticle().Serialize();
 #else
         output["metadata"]["data_particle"] = GetDataParticle() ? ProtocolCraft::Json::Value(GetDataParticle().value()) : ProtocolCraft::Json::Value();
         output["metadata"]["data_particle_argument1"] = GetDataParticleArgument1();
@@ -136,10 +136,10 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-    std::shared_ptr<ProtocolCraft::Particle> AreaEffectCloudEntity::GetDataParticle() const
+    ProtocolCraft::Particle AreaEffectCloudEntity::GetDataParticle() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::shared_ptr<ProtocolCraft::Particle>>(metadata.at("data_particle"));
+        return std::any_cast<ProtocolCraft::Particle>(metadata.at("data_particle"));
     }
 #else
     std::optional<int> AreaEffectCloudEntity::GetDataParticle() const

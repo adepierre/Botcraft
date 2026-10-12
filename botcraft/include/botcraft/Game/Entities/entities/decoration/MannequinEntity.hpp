@@ -33,9 +33,9 @@ namespace Botcraft
         // Metadata stuff
         virtual void SetMetadataValue(const int index, const std::any& value) override;
 
-        const ProtocolCraft::Components::DataComponentTypeResolvableProfile& GetDataProfile() const;
+        ProtocolCraft::Components::DataComponentTypeResolvableProfile GetDataProfile() const;
         bool GetDataImmovable() const;
-        const std::optional<ProtocolCraft::Chat>& GetDataDescription() const;
+        std::optional<ProtocolCraft::Chat> GetDataDescription() const;
 
         void SetDataProfile(const ProtocolCraft::Components::DataComponentTypeResolvableProfile& data_profile);
         void SetDataImmovable(const bool data_immovable);

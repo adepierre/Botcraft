@@ -30,7 +30,10 @@ namespace Botcraft
     void EntityAttribute::RemoveModifier(const ModifierKey& key)
     {
         // If no element is removed, value is still up to date
-        up_to_date = modifiers.erase(key) > 0;
+        if (modifiers.erase(key) > 0)
+        {
+            up_to_date = false;
+        }
     }
 
     void EntityAttribute::SetModifier(const ModifierKey& key, const Modifier& modifier)

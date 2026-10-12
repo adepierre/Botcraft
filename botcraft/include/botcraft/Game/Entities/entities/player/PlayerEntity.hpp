@@ -64,8 +64,8 @@ namespace Botcraft
         ProtocolCraft::NBT::Value GetDataShoulderLeft() const;
         ProtocolCraft::NBT::Value GetDataShoulderRight() const;
 #else
-        const std::optional<int>& GetDataShoulderParrotLeft() const;
-        const std::optional<int>& GetDataShoulderParrotRight() const;
+        std::optional<int> GetDataShoulderParrotLeft() const;
+        std::optional<int> GetDataShoulderParrotRight() const;
 #endif
 
         void SetDataPlayerAbsorptionId(const float data_player_absorption_id);

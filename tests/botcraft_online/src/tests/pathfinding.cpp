@@ -221,12 +221,12 @@ TEST_CASE("speed pathfinding")
     std::shared_ptr<Botcraft::LocalPlayer> local_player = bot->GetLocalPlayer();
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
+    const Botcraft::Position delta(0, 0, 24);
+    const float distance = std::sqrtf(delta.SqrNorm());
+
     bool sprint = false;
     int speed_effect = 0;
     float botcraft_speed_factor = 1.0f;
-    // Expected time is an estimate to check consistency with previous versions. It's not consistent with distance/theoretical speed
-    // This is mainly due to the way we travel from block to block instead of from start to goal directly
-    float expected_time_s = 0.0f;
 
     SECTION("no speed")
     {
@@ -235,12 +235,10 @@ TEST_CASE("speed pathfinding")
         SECTION("walk")
         {
             sprint = false;
-            expected_time_s = 5.75f;
         }
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 4.5f;
         }
     }
     SECTION("botcraft cheaty speed")
@@ -250,12 +248,10 @@ TEST_CASE("speed pathfinding")
         SECTION("walk")
         {
             sprint = false;
-            expected_time_s = 3.9f;
         }
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 3.2f;
         }
     }
     SECTION("speed I")
@@ -265,12 +261,10 @@ TEST_CASE("speed pathfinding")
         SECTION("walk")
         {
             sprint = false;
-            expected_time_s = 4.8f;
         }
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 3.8f;
         }
     }
     SECTION("speed II")
@@ -280,14 +274,14 @@ TEST_CASE("speed pathfinding")
         SECTION("walk")
         {
             sprint = false;
-            expected_time_s = 4.1f;
         }
         SECTION("sprint")
         {
             sprint = true;
-            expected_time_s = 3.3f;
         }
     }
+    // Expected time is an estimate based on distance/speed with a small extra time for the first few ticks when not at full speed
+    float expected_time_s = (distance / ((1.0f + 0.2f * speed_effect) * (sprint ? 5.612f : 4.317f)) + 0.2f) / botcraft_speed_factor;
 
     INFO("Sprint: " << sprint);
     INFO("Speed effect: " << speed_effect);
@@ -314,8 +308,6 @@ TEST_CASE("speed pathfinding")
             return false;
             }, 5000));
     }
-
-    const Botcraft::Position delta(0, 0, 24);
 
     const Botcraft::Vector3<double> init_position = local_player->GetPosition();
 

@@ -44,8 +44,7 @@ namespace Botcraft
 #endif
         bool GetDataWaiting() const;
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        //TODO: pointed object won't be thread safe
-        std::shared_ptr<ProtocolCraft::Particle> GetDataParticle() const;
+        ProtocolCraft::Particle GetDataParticle() const;
 #else
         std::optional<int> GetDataParticle() const;
         int GetDataParticleArgument1() const;

@@ -23,6 +23,7 @@ namespace Botcraft
 
     std::shared_ptr<LocalPlayer> EntityManager::GetLocalPlayer()
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         return local_player;
     }
 
@@ -52,6 +53,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundLoginPacket& packet)
     {
+        std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         local_player = std::make_shared<LocalPlayer>();
         local_player->SetEntityID(packet.GetPlayerId());
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
@@ -59,7 +61,6 @@ namespace Botcraft
 #else
         local_player->SetGameMode(static_cast<GameType>(packet.GetCommonPlayerSpawnInfo().GetGameType()));
 #endif
-        std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
         entities[packet.GetPlayerId()] = local_player;
     }
 
@@ -79,16 +80,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPos& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity != nullptr)
         {
@@ -109,7 +101,7 @@ namespace Botcraft
                     {
                         continue;
                     }
-                    entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                    entity_position[i] = (std::round(entity_position[i] * 4096.0) + delta[i]) / 4096.0;
                 }
             }
             else if (packet.GetSteppedDeltas().has_value())
@@ -123,7 +115,7 @@ namespace Botcraft
                         {
                             continue;
                         }
-                        entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                        entity_position[i] = (std::round(entity_position[i] * 4096.0) + delta[i]) / 4096.0;
                     }
                 }
             }
@@ -139,16 +131,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketPosRot& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity != nullptr)
         {
@@ -169,7 +152,7 @@ namespace Botcraft
                     {
                         continue;
                     }
-                    entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                    entity_position[i] = (std::round(entity_position[i] * 4096.0) + delta[i]) / 4096.0;
                 }
             }
             else if (packet.GetSteppedDeltas().has_value())
@@ -183,7 +166,7 @@ namespace Botcraft
                         {
                             continue;
                         }
-                        entity_position[i] = (delta[i] + std::round(entity_position[i]) * 4096.0) / 4096.0;
+                        entity_position[i] = (std::round(entity_position[i] * 4096.0) + delta[i]) / 4096.0;
                     }
                 }
             }
@@ -201,16 +184,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveEntityPacketRot& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity != nullptr)
         {
@@ -248,8 +222,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundExplodePacket& packet)
     {
-
-        std::shared_ptr<Entity> entity = local_player;
+        std::shared_ptr<Entity> entity = GetLocalPlayer();
 
         if (entity == nullptr)
         {
@@ -323,20 +296,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     void EntityManager::Handle(ProtocolCraft::ClientboundAddPlayerPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
+        if (entity == nullptr)
         {
-            std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it == entities.end())
-            {
-                entity = Entity::CreateEntity(EntityType::Player);
-                entities[packet.GetEntityId()] = entity;
-            }
-            else
-            {
-                entity = it->second;
-            }
+            entity = Entity::CreateEntity(EntityType::Player);
+            entities[packet.GetEntityId()] = entity;
         }
 
         entity->SetEntityID(packet.GetEntityId());
@@ -353,23 +318,15 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetHealthPacket& packet)
     {
-        local_player->SetHealth(packet.GetHealth());
-        local_player->SetFood(packet.GetFood());
-        local_player->SetFoodSaturation(packet.GetFoodSaturation());
+        std::shared_ptr<LocalPlayer> player = GetLocalPlayer();
+        player->SetHealth(packet.GetHealth());
+        player->SetFood(packet.GetFood());
+        player->SetFoodSaturation(packet.GetFoodSaturation());
     }
 
     void EntityManager::Handle(ProtocolCraft::ClientboundTeleportEntityPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity != nullptr)
         {
@@ -396,9 +353,10 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundPlayerAbilitiesPacket& packet)
     {
-        local_player->SetAbilitiesFlags(packet.GetFlags());
-        local_player->SetFlyingSpeed(packet.GetFlyingSpeed());
-        local_player->SetWalkingSpeed(packet.GetWalkingSpeed());
+        std::shared_ptr<LocalPlayer> player = GetLocalPlayer();
+        player->SetAbilitiesFlags(packet.GetFlags());
+        player->SetFlyingSpeed(packet.GetFlyingSpeed());
+        player->SetWalkingSpeed(packet.GetWalkingSpeed());
     }
 
 #if PROTOCOL_VERSION == 755 /* 1.17 */
@@ -420,10 +378,11 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundRespawnPacket& packet)
     {
+        std::shared_ptr<LocalPlayer> player = GetLocalPlayer();
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        local_player->SetGameMode(static_cast<GameType>(packet.GetPlayerGameType()));
+        player->SetGameMode(static_cast<GameType>(packet.GetPlayerGameType()));
 #else
-        local_player->SetGameMode(static_cast<GameType>(packet.GetCommonPlayerSpawnInfo().GetGameType()));
+        player->SetGameMode(static_cast<GameType>(packet.GetCommonPlayerSpawnInfo().GetGameType()));
 #endif
     }
 
@@ -432,7 +391,7 @@ namespace Botcraft
         switch (packet.GetType())
         {
         case 3: // CHANGE_GAME_MODE
-            local_player->SetGameMode(static_cast<GameType>(packet.GetParam()));
+            GetLocalPlayer()->SetGameMode(static_cast<GameType>(packet.GetParam()));
             break;
         default:
             break;
@@ -441,16 +400,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityDataPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -464,16 +414,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEntityMotionPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -492,16 +433,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundSetEquipmentPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -522,16 +454,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateAttributesPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -572,16 +495,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundUpdateMobEffectPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -599,17 +513,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundRemoveMobEffectPacket& packet)
     {
-
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr)
         {
@@ -624,22 +528,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void EntityManager::Handle(ProtocolCraft::ClientboundEntityPositionSyncPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity != nullptr)
         {
+            std::shared_ptr<LocalPlayer> player = GetLocalPlayer();
 #if PROTOCOL_VERSION < 777 /* < 26.3 */
             entity->SetPosition(packet.GetValues().GetPosition());
-            if (entity == local_player)
+            if (entity == player)
             {
                 return;
             }
@@ -658,7 +554,7 @@ namespace Botcraft
                 throw std::runtime_error("Unknown PositionPathDataType: " + std::to_string(static_cast<int>(packet.GetPosition().GetType())));
                 break;
             }
-            if (entity == local_player)
+            if (entity == player)
             {
                 return;
             }
@@ -671,16 +567,7 @@ namespace Botcraft
 
     void EntityManager::Handle(ProtocolCraft::ClientboundMoveMinecartPacket& packet)
     {
-        std::shared_ptr<Entity> entity = nullptr;
-
-        {
-            std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
-            auto it = entities.find(packet.GetEntityId());
-            if (it != entities.end())
-            {
-                entity = it->second;
-            }
-        }
+        std::shared_ptr<Entity> entity = GetEntity(packet.GetEntityId());
 
         if (entity == nullptr || !entity->IsAbstractMinecart())
         {

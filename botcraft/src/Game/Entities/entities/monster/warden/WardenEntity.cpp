@@ -57,7 +57,7 @@ namespace Botcraft
     {
         ProtocolCraft::Json::Value output = MonsterEntity::Serialize();
 
-        output["client_anger_level"] = GetClientAngerLevel();
+        output["metadata"]["client_anger_level"] = GetClientAngerLevel();
 
         return output;
     }

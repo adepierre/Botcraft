@@ -196,7 +196,7 @@ namespace Botcraft
     std::vector<ProtocolCraft::Particle> LivingEntity::GetDataEffectParticles() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::vector<ProtocolCraft::Particle>>(metadata.at("data_effect_particle"));
+        return std::any_cast<std::vector<ProtocolCraft::Particle>>(metadata.at("data_effect_particles"));
     }
 #endif
 

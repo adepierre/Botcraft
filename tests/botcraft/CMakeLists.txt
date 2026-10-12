@@ -5,6 +5,7 @@ set(SRC_FILES
     src/behaviour_tree.cpp
     src/blackboard.cpp
     src/blockstate.cpp
+    src/entities.cpp
     src/items.cpp
     src/pathfinding.cpp
     src/world.cpp

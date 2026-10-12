@@ -49,7 +49,15 @@ namespace Botcraft
         else if (index - hierarchy_metadata_count < metadata_count)
         {
             std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
+            const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
+            metadata[metadata_name] = value;
+            if (metadata_name == "id_size")
+            {
+                SizeChanged(std::any_cast<int>(value));
+#if USE_GUI
+                OnSizeUpdated();
+#endif
+            }
         }
     }
 
@@ -73,7 +81,7 @@ namespace Botcraft
 
     int AbstractCubeMobEntity::GetIdSizeImpl() const
     {
-        return std::any_cast<bool>(metadata.at("id_size"));
+        return std::any_cast<int>(metadata.at("id_size"));
     }
 
     void AbstractCubeMobEntity::SizeChanged(const int new_size)

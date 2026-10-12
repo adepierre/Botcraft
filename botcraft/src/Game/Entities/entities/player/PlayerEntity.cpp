@@ -141,8 +141,10 @@ namespace Botcraft
         output["metadata"]["data_shoulder_left"] = GetDataShoulderLeft().Serialize();
         output["metadata"]["data_shoulder_right"] = GetDataShoulderRight().Serialize();
 #else
-        output["metadata"]["data_shoulder_parrot_left"] = GetDataShoulderParrotLeft().has_value() ? ProtocolCraft::Json::Value(GetDataShoulderParrotLeft().value()) : nullptr;
-        output["metadata"]["data_shoulder_parrot_right"] = GetDataShoulderParrotRight().has_value() ? ProtocolCraft::Json::Value(GetDataShoulderParrotRight().value()) : nullptr;
+        const std::optional<int> data_shoulder_parrot_left = GetDataShoulderParrotLeft();
+        output["metadata"]["data_shoulder_parrot_left"] = data_shoulder_parrot_left.has_value() ? ProtocolCraft::Json::Value(data_shoulder_parrot_left.value()) : nullptr;
+        const std::optional<int> data_shoulder_parrot_right = GetDataShoulderParrotRight();
+        output["metadata"]["data_shoulder_parrot_right"] = data_shoulder_parrot_right.has_value() ? ProtocolCraft::Json::Value(data_shoulder_parrot_right.value()) : nullptr;
 #endif
 
         output["attributes"]["attack_damage"] = GetAttributeAttackDamageValue();
@@ -223,16 +225,16 @@ namespace Botcraft
         return std::any_cast<ProtocolCraft::NBT::Value>(metadata.at("data_shoulder_right"));
     }
 #else
-    const std::optional<int>& PlayerEntity::GetDataShoulderParrotLeft() const
+    std::optional<int> PlayerEntity::GetDataShoulderParrotLeft() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("data_shoulder_parrot_left"));
+        return std::any_cast<std::optional<int>>(metadata.at("data_shoulder_parrot_left"));
     }
 
-    const std::optional<int>& PlayerEntity::GetDataShoulderParrotRight() const
+    std::optional<int> PlayerEntity::GetDataShoulderParrotRight() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<int>&>(metadata.at("data_shoulder_parrot_right"));
+        return std::any_cast<std::optional<int>>(metadata.at("data_shoulder_parrot_right"));
     }
 #endif
 

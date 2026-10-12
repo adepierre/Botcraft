@@ -67,7 +67,8 @@ namespace Botcraft
 
         output["metadata"]["data_profile"] = GetDataProfile().Serialize();
         output["metadata"]["data_immovable"] = GetDataImmovable();
-        output["metadata"]["data_description"] = GetDataDescription().has_value() ? GetDataDescription().value().Serialize() : nullptr;
+        const std::optional<ProtocolCraft::Chat> data_description = GetDataDescription();
+        output["metadata"]["data_description"] = data_description.has_value() ? data_description.value().Serialize() : nullptr;
 
         return output;
     }
@@ -86,10 +87,10 @@ namespace Botcraft
         }
     }
 
-    const ProtocolCraft::Components::DataComponentTypeResolvableProfile& MannequinEntity::GetDataProfile() const
+    ProtocolCraft::Components::DataComponentTypeResolvableProfile MannequinEntity::GetDataProfile() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Components::DataComponentTypeResolvableProfile&>(metadata.at("data_profile"));
+        return std::any_cast<ProtocolCraft::Components::DataComponentTypeResolvableProfile>(metadata.at("data_profile"));
     }
 
     bool MannequinEntity::GetDataImmovable() const
@@ -98,10 +99,10 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("data_immovable"));
     }
 
-    const std::optional<ProtocolCraft::Chat>& MannequinEntity::GetDataDescription() const
+    std::optional<ProtocolCraft::Chat> MannequinEntity::GetDataDescription() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<ProtocolCraft::Chat>&>(metadata.at("data_description"));
+        return std::any_cast<std::optional<ProtocolCraft::Chat>>(metadata.at("data_description"));
     }
 
 

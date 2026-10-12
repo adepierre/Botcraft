@@ -10,7 +10,7 @@ namespace Botcraft
         "is_active",
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         "is_tearing_down",
-        "home_pose",
+        "home_pos",
 #endif
     } };
 
@@ -74,7 +74,8 @@ namespace Botcraft
         output["metadata"]["is_active"] = GetIsActive();
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
         output["metadata"]["is_tearing_down"] = GetIsTearingDown();
-        output["metadata"]["is_tearing_down"] = GetHomePos() ? GetHomePos().value().Serialize() : ProtocolCraft::Json::Value(nullptr);
+        const std::optional<Position> home_pos = GetHomePos();
+        output["metadata"]["home_pos"] = home_pos.has_value() ? home_pos.value().Serialize() : ProtocolCraft::Json::Value(nullptr);
 #endif
 
 
@@ -114,10 +115,10 @@ namespace Botcraft
         return std::any_cast<bool>(metadata.at("is_tearing_down"));
     }
 
-    const std::optional<Position>& CreakingEntity::GetHomePos() const
+    std::optional<Position> CreakingEntity::GetHomePos() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const std::optional<Position>&>(metadata.at("home_pos"));
+        return std::any_cast<std::optional<Position>>(metadata.at("home_pos"));
     }
 #endif
 

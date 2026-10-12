@@ -1,4 +1,5 @@
 #include "botcraft/Game/Entities/entities/Entity.hpp"
+#include "botcraft/Game/Entities/entities/UnknownEntity.hpp"
 
 #include "protocolCraft/Types/Item/Slot.hpp"
 #include "protocolCraft/Types/Chat/Chat.hpp"
@@ -1582,7 +1583,8 @@ namespace Botcraft
         switch (type)
         {
         case EntityType::None:
-            return nullptr;
+            LOG_WARNING("Unknown entity type " << static_cast<int>(type) << ", using UnknownEntity");
+            return std::make_shared<UnknownEntity>();
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         case EntityType::Allay:
             return std::make_shared<AllayEntity>();
@@ -2024,7 +2026,8 @@ namespace Botcraft
             return std::make_shared<FishingHookEntity>();
 #endif
         default:
-            return nullptr;
+            LOG_WARNING("Unknown entity type " << static_cast<int>(type) << ", using UnknownEntity");
+            return std::make_shared<UnknownEntity>();
         }
     }
 
@@ -2034,7 +2037,8 @@ namespace Botcraft
         switch (type)
         {
         case ObjectEntityType::None:
-            return nullptr;
+            LOG_WARNING("Unknown entity type " << static_cast<int>(type) << ", using UnknownEntity");
+            return std::make_shared<UnknownEntity>();
         case ObjectEntityType::Boat:
             return std::make_shared<BoatEntity>();
         case ObjectEntityType::ItemEntity:
@@ -2092,7 +2096,8 @@ namespace Botcraft
             return std::make_shared<ThrownTridentEntity>();
 #endif
         default:
-            return nullptr;
+            LOG_WARNING("Unknown entity type " << static_cast<int>(type) << ", using UnknownEntity");
+            return std::make_shared<UnknownEntity>();
         }
     }
 #endif

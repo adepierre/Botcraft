@@ -36,7 +36,7 @@ namespace Botcraft
 
 
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
-        const std::string& GetDataType() const;
+        std::string GetDataType() const;
         void SetDataType(const std::string& data_type);
 #else
         int GetDataType() const;

@@ -76,7 +76,7 @@ namespace Botcraft
     }
 
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
-    const std::string& SalmonEntity::GetDataType() const
+    std::string SalmonEntity::GetDataType() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return GetDataTypeImpl();
