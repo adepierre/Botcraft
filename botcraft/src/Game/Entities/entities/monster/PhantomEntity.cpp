@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/monster/PhantomEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, PhantomEntity::metadata_count> PhantomEntity::metadata_names{ {
-        "id_size",
-    } };
-
     PhantomEntity::PhantomEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIdSize(0);
     }
 
@@ -57,34 +52,15 @@ namespace Botcraft
     }
 
 
-    void PhantomEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION < 771 /* < 1.21.6 */
-            FlyingMobEntity::SetMetadataValue(index, value);
-#else
-            MobEntity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int PhantomEntity::GetIdSize() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("id_size"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"));
     }
 
 
     void PhantomEntity::SetIdSize(const int id_size)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_size"] = id_size;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"), id_size);
     }
 
 

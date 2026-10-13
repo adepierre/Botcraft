@@ -1,9 +1,5 @@
 #include "botcraft/Game/Entities/entities/animal/AnimalEntity.hpp"
 
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-#include <mutex>
-#endif
-
 namespace Botcraft
 {
     AnimalEntity::AnimalEntity()

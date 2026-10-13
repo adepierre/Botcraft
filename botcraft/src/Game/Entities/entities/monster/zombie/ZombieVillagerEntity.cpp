@@ -1,24 +1,11 @@
 #include "botcraft/Game/Entities/entities/monster/zombie/ZombieVillagerEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ZombieVillagerEntity::metadata_count> ZombieVillagerEntity::metadata_names{ {
-        "data_converting_id",
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "data_villager_data",
-#else
-        "data_villager_profession_id",
-#endif
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        "data_villager_data_finalized",
-#endif
-    } };
-
     ZombieVillagerEntity::ZombieVillagerEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataConvertingId(false);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataVillagerData(VillagerData{ 2, 0, 1 }); // TODO: from 1.21.9 it's a random profession and a type depending on the biome, but we don't really care on the clientside I guess
@@ -76,73 +63,52 @@ namespace Botcraft
     }
 
 
-    void ZombieVillagerEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            ZombieEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool ZombieVillagerEntity::GetDataConvertingId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_converting_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_converting_id"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     VillagerData ZombieVillagerEntity::GetDataVillagerData() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<VillagerData>(metadata.at("data_villager_data"));
+        return GetMetadata<VillagerData>(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_data"));
     }
 #else
     int ZombieVillagerEntity::GetDataVillagerProfessionId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_villager_profession_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_profession_id"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     bool ZombieVillagerEntity::GetDataVillagerDataFinalized() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_villager_data_finalized"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_data_finalized"));
     }
 #endif
 
 
     void ZombieVillagerEntity::SetDataConvertingId(const bool data_converting_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_converting_id"] = data_converting_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_converting_id"), data_converting_id);
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void ZombieVillagerEntity::SetDataVillagerData(const VillagerData& data_villager_data)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_villager_data"] = data_villager_data;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_data"), data_villager_data);
     }
 #else
     void ZombieVillagerEntity::SetDataVillagerProfessionId(const int data_villager_profession_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_villager_profession_id"] = data_villager_profession_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_profession_id"), data_villager_profession_id);
     }
 #endif
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     void ZombieVillagerEntity::SetDataVillagerDataFinalized(const bool data_villager_data_finalized)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_villager_data_finalized"] = data_villager_data_finalized;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_villager_data_finalized"), data_villager_data_finalized);
     }
 #endif
 

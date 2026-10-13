@@ -1,26 +1,12 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/turtle/TurtleEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, TurtleEntity::metadata_count> TurtleEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        "home_pos",
-#endif
-        "has_egg",
-        "laying_egg",
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        "travel_pos",
-        "going_home",
-        "travelling",
-#endif
-    } };
-
     TurtleEntity::TurtleEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetHomePos(Position(0, 0, 0));
 #endif
@@ -87,56 +73,37 @@ namespace Botcraft
     }
 
 
-    void TurtleEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     Position TurtleEntity::GetHomePos() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Position>(metadata.at("home_pos"));
+        return GetMetadata<Position>(BOTCRAFT_ENTITY_METADATA_INDEX("home_pos"));
     }
 #endif
 
     bool TurtleEntity::GetHasEgg() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("has_egg"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("has_egg"));
     }
 
     bool TurtleEntity::GetLayingEgg() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("laying_egg"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("laying_egg"));
     }
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     Position TurtleEntity::GetTravelPos() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Position>(metadata.at("travel_pos"));
+        return GetMetadata<Position>(BOTCRAFT_ENTITY_METADATA_INDEX("travel_pos"));
     }
 
     bool TurtleEntity::GetGoingHome() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("going_home"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("going_home"));
     }
 
     bool TurtleEntity::GetTravelling() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("travelling"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("travelling"));
     }
 #endif
 
@@ -144,40 +111,34 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void TurtleEntity::SetHomePos(const Position& home_pos)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["home_pos"] = home_pos;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("home_pos"), home_pos);
     }
 #endif
 
     void TurtleEntity::SetHasEgg(const bool has_egg)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["has_egg"] = has_egg;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("has_egg"), has_egg);
     }
 
     void TurtleEntity::SetLayingEgg(const bool laying_egg)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["laying_egg"] = laying_egg;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("laying_egg"), laying_egg);
     }
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void TurtleEntity::SetTravelPos(const Position& travel_pos)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["travel_pos"] = travel_pos;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("travel_pos"), travel_pos);
     }
 
     void TurtleEntity::SetGoingHome(const bool going_home)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["going_home"] = going_home;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("going_home"), going_home);
     }
 
     void TurtleEntity::SetTravelling(const bool travelling)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["travelling"] = travelling;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("travelling"), travelling);
     }
 #endif
 

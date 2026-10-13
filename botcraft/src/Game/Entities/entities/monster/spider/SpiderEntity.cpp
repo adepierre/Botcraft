@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/monster/spider/SpiderEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, SpiderEntity::metadata_count> SpiderEntity::metadata_names{ {
-        "data_flags_id",
-    } };
-
     SpiderEntity::SpiderEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataFlagsId(0);
 
         // Initialize all attributes with default values
@@ -56,30 +51,15 @@ namespace Botcraft
     }
 
 
-    void SpiderEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char SpiderEntity::GetDataFlagsId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_flags_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"));
     }
 
 
     void SpiderEntity::SetDataFlagsId(const char data_flags_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_flags_id"] = data_flags_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"), data_flags_id);
     }
 
 

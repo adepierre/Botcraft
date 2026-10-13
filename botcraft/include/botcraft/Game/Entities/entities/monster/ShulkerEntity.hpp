@@ -6,13 +6,17 @@ namespace Botcraft
 {
     class ShulkerEntity : public AbstractGolemEntity
     {
-    protected:
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        static constexpr int metadata_count = 3;
-#else
-        static constexpr int metadata_count = 4;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_attach_face_id"),
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
+            std::string_view("data_attach_pos_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_peek_id"),
+            std::string_view("data_color_id"),
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AbstractGolemEntity::metadata_count + AbstractGolemEntity::hierarchy_metadata_count;
 
     public:
@@ -31,8 +35,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         Direction GetDataAttachFaceId() const;
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         std::optional<Position> GetDataAttachPosId() const;

@@ -1,33 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/wolf/WolfEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, WolfEntity::metadata_count> WolfEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 499 /* < 1.15 */
-        "data_health_id",
-#endif
-        "data_interested_id",
-        "data_collar_color",
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
-        "data_remaining_anger_time",
-#else
-        "data_anger_end_time",
-#endif
-#endif
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        "data_variant_id",
-#endif
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        "data_sound_variant_id",
-#endif
-    } };
-
     WolfEntity::WolfEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
         SetDataHealthId(1.0f);
 #endif
@@ -114,51 +92,33 @@ namespace Botcraft
     }
 
 
-    void WolfEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            TamableAnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
     float WolfEntity::GetDataHealthId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_health_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_health_id"));
     }
 #endif
 
     bool WolfEntity::GetDataInterestedId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_interested_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_interested_id"));
     }
 
     int WolfEntity::GetDataCollarColor() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_collar_color"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_collar_color"));
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     int WolfEntity::GetDataRemainingAngerTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_remaining_anger_time"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_remaining_anger_time"));
     }
 #else
     long long int WolfEntity::GetDataAngerEndTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<long long int>(metadata.at("data_anger_end_time"));
+        return GetMetadata<long long int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_anger_end_time"));
     }
 #endif
 #endif
@@ -166,16 +126,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     int WolfEntity::GetDataVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     int WolfEntity::GetDataSoundVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_sound_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"));
     }
 #endif
 
@@ -183,35 +141,30 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 499 /* < 1.15 */
     void WolfEntity::SetDataHealthId(const float data_health_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_health_id"] = data_health_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_health_id"), data_health_id);
     }
 #endif
 
     void WolfEntity::SetDataInterestedId(const bool data_interested_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_interested_id"] = data_interested_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_interested_id"), data_interested_id);
     }
 
     void WolfEntity::SetDataCollarColor(const int data_collar_color)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_collar_color"] = data_collar_color;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_collar_color"), data_collar_color);
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     void WolfEntity::SetDataRemainingAngerTime(const int data_remaining_anger_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_remaining_anger_time"] = data_remaining_anger_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_remaining_anger_time"), data_remaining_anger_time);
     }
 #else
     void WolfEntity::SetDataAngerEndTime(const long long int data_anger_end_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_anger_end_time"] = data_anger_end_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_anger_end_time"), data_anger_end_time);
     }
 #endif
 #endif
@@ -219,16 +172,14 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
     void WolfEntity::SetDataVariantId(const int data_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_variant_id"] = data_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"), data_variant_id);
     }
 #endif
 
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     void WolfEntity::SetDataSoundVariantId(const int data_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_sound_variant_id"] = data_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"), data_variant_id);
     }
 #endif
 

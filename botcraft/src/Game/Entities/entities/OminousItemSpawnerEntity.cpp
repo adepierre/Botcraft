@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "botcraft/Game/Entities/entities/OminousItemSpawnerEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, OminousItemSpawnerEntity::metadata_count> OminousItemSpawnerEntity::metadata_names{ {
-        "data_item",
-    } };
-
     OminousItemSpawnerEntity::OminousItemSpawnerEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataItem(ProtocolCraft::Slot());
     }
 
@@ -53,30 +48,15 @@ namespace Botcraft
     }
 
 
-    void OminousItemSpawnerEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     ProtocolCraft::Slot OminousItemSpawnerEntity::GetDataItem() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<const ProtocolCraft::Slot&>(metadata.at("data_item"));
+        return GetMetadata<ProtocolCraft::Slot>(BOTCRAFT_ENTITY_METADATA_INDEX("data_item"));
     }
 
 
     void OminousItemSpawnerEntity::SetDataItem(const ProtocolCraft::Slot& data_item)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_item"] = data_item;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_item"), data_item);
     }
 
 

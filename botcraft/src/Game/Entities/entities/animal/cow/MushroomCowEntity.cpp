@@ -1,19 +1,12 @@
 #include "botcraft/Game/Entities/entities/animal/cow/MushroomCowEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-    const std::array<std::string, MushroomCowEntity::metadata_count> MushroomCowEntity::metadata_names{ {
-        "data_type",
-    } };
-#endif
-
     MushroomCowEntity::MushroomCowEntity()
     {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetDataType("red");
 #else
@@ -65,48 +58,27 @@ namespace Botcraft
     }
 
 
-    void MushroomCowEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-            CowEntity::SetMetadataValue(index, value);
-#else
-            AbstractCowEntity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     std::string MushroomCowEntity::GetDataType() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::string>(metadata.at("data_type"));
+        return GetMetadata<std::string>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"));
     }
 
 
     void MushroomCowEntity::SetDataType(const std::string& data_type)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type"] = data_type;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"), data_type);
     }
 #else
     int MushroomCowEntity::GetDataType() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_type"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"));
     }
 
 
     void MushroomCowEntity::SetDataType(const int data_type)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type"] = data_type;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"), data_type);
     }
 #endif
 #endif

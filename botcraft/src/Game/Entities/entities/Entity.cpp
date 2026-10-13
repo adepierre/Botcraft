@@ -235,8 +235,6 @@
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/fish/TropicalFishEntity.hpp"
-#endif
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/turtle/TurtleEntity.hpp"
 #endif
 #include "botcraft/Game/Entities/entities/monster/VexEntity.hpp"
@@ -279,25 +277,10 @@
 #include "botcraft/Game/Entities/entities/decoration/CushionEntity.hpp"
 #endif
 
-#include <mutex>
+#include <stdexcept>
 
 namespace Botcraft
 {
-    const std::array<std::string, Entity::metadata_count> Entity::metadata_names{ {
-        "data_shared_flags_id",
-        "data_air_supply_id",
-        "data_custom_name",
-        "data_custom_name_visible",
-        "data_silent",
-        "data_no_gravity",
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "data_pose",
-#endif
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        "data_ticks_frozen",
-#endif
-    } };
-
     Entity::Entity()
     {
         {
@@ -326,6 +309,7 @@ namespace Botcraft
         }
 
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataSharedFlagsId(0);
         SetDataAirSupplyId(300);
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
@@ -366,6 +350,33 @@ namespace Botcraft
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return GetHeightImpl();
+    }
+
+
+    void Entity::SetMetadataImpl(const int index, const std::any& value)
+    {
+        if (index < 0 || index >= static_cast<int>(metadata.size()))
+        {
+            throw std::runtime_error("Invalid metadata index " + std::to_string(index) + " for " + GetName());
+        }
+        metadata[index] = value;
+        OnMetadataChangedImpl(index);
+    }
+
+    void Entity::SetMetadata(const int index, const std::any& value)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        SetMetadataImpl(index, value);
+    }
+
+    void Entity::OnMetadataChangedImpl(const int index)
+    {
+#if USE_GUI && PROTOCOL_VERSION > 404 /* > 1.13.2 */
+        if (index == BOTCRAFT_ENTITY_METADATA_INDEX("data_pose"))
+        {
+            OnSizeUpdated();
+        }
+#endif
     }
 
 
@@ -746,8 +757,8 @@ namespace Botcraft
                 const float y = ProtocolCraft::ReadData<float>(iter, length);
                 const float z = ProtocolCraft::ReadData<float>(iter, length);
                 value = Vector3<float>(x, y, z);
+                break;
             }
-            break;
             case EntityMetadataTypes::Quaternion:
             {
                 const float x = ProtocolCraft::ReadData<float>(iter, length);
@@ -755,8 +766,8 @@ namespace Botcraft
                 const float z = ProtocolCraft::ReadData<float>(iter, length);
                 const float w = ProtocolCraft::ReadData<float>(iter, length);
                 value = std::array<float, 4>{x, y, z, w};
+                break;
             }
-            break;
 #endif
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
             case EntityMetadataTypes::ResolvableProfile:
@@ -777,22 +788,8 @@ namespace Botcraft
                 LOG_ERROR("Unknown type in entity metadata : " << type << ".Stopping current metadata parsing.");
                 return;
             }
-            SetMetadataValue(index, value);
+            SetMetadata(index, value);
         }
-    }
-
-    void Entity::SetMetadataValue(const int index, const std::any& value)
-    {
-        assert(index >= 0 && index < metadata_count);
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        const std::string& metadata_name = metadata_names[index];
-        metadata[metadata_name] = value;
-#if USE_GUI && PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        if (metadata_name == "data_pose")
-        {
-            OnSizeUpdated();
-        }
-#endif
     }
 
 
@@ -810,55 +807,47 @@ namespace Botcraft
 
     int Entity::GetDataAirSupplyId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_air_supply_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_air_supply_id"));
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     std::optional<ProtocolCraft::Chat> Entity::GetDataCustomName() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::Chat>>(metadata.at("data_custom_name"));
+        return GetMetadata<std::optional<ProtocolCraft::Chat>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name"));
     }
 #else
     std::string Entity::GetDataCustomName() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::string>(metadata.at("data_custom_name"));
+        return GetMetadata<std::string>(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name"));
     }
 #endif
 
     bool Entity::GetDataCustomNameVisible() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_custom_name_visible"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name_visible"));
     }
 
     bool Entity::GetDataSilent() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_silent"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_silent"));
     }
 
     bool Entity::GetDataNoGravity() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_no_gravity"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_no_gravity"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     Pose Entity::GetDataPose() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return GetDataPoseImpl();
+        return GetMetadata<Pose>(BOTCRAFT_ENTITY_METADATA_INDEX("data_pose"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     int Entity::GetDataTicksFrozen() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_ticks_frozen"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_ticks_frozen"));
     }
 #endif
 
@@ -877,55 +866,47 @@ namespace Botcraft
 
     void Entity::SetDataAirSupplyId(const int data_air_supply_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_air_supply_id"] = data_air_supply_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_air_supply_id"), data_air_supply_id);
     }
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void Entity::SetDataCustomName(const std::optional<ProtocolCraft::Chat>& data_custom_name)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_custom_name"] = data_custom_name;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name"), data_custom_name);
     }
 #else
     void Entity::SetDataCustomName(const std::string& data_custom_name)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_custom_name"] = data_custom_name;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name"), data_custom_name);
     }
 #endif
 
     void Entity::SetDataCustomNameVisible(const bool data_custom_name_visible)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_custom_name_visible"] = data_custom_name_visible;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_custom_name_visible"), data_custom_name_visible);
     }
 
     void Entity::SetDataSilent(const bool data_silent)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_silent"] = data_silent;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_silent"), data_silent);
     }
 
     void Entity::SetDataNoGravity(const bool data_no_gravity)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_no_gravity"] = data_no_gravity;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_no_gravity"), data_no_gravity);
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void Entity::SetDataPose(const Pose data_pose)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        SetDataPoseImpl(data_pose);
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_pose"), data_pose);
     }
 #endif
 
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
     void Entity::SetDataTicksFrozen(const int data_ticks_frozen)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_ticks_frozen"] = data_ticks_frozen;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_ticks_frozen"), data_ticks_frozen);
     }
 #endif
 
@@ -1025,6 +1006,7 @@ namespace Botcraft
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
         return effects;
     }
+
 
 #if USE_GUI
     std::vector<Renderer::Face> Entity::GetFaces(const bool reset_uptodate_status)
@@ -1209,22 +1191,6 @@ namespace Botcraft
         effects = effects_;
     }
 
-    void Entity::RemoveEffect(const EntityEffectType type)
-    {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        for (auto it = effects.begin(); it != effects.end();)
-        {
-            if (it->type == type)
-            {
-                it = effects.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
-        }
-    }
-
     void Entity::AddEffect(const EntityEffect& effect)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
@@ -1245,11 +1211,28 @@ namespace Botcraft
         effects.push_back(effect);
     }
 
-#if USE_GUI
-    void Entity::SetAreRenderedFacesUpToDate(const bool should_be_updated_)
+    void Entity::RemoveEffect(const EntityEffectType type)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        are_rendered_faces_up_to_date = should_be_updated_;
+        for (auto it = effects.begin(); it != effects.end();)
+        {
+            if (it->type == type)
+            {
+                it = effects.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+
+
+#if USE_GUI
+    void Entity::SetAreRenderedFacesUpToDate(const bool are_rendered_faces_up_to_date_)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        are_rendered_faces_up_to_date = are_rendered_faces_up_to_date_;
     }
 #endif
 
@@ -1294,6 +1277,7 @@ namespace Botcraft
 
         return output;
     }
+
 
     bool Entity::IsLocalPlayer() const
     {
@@ -2102,6 +2086,7 @@ namespace Botcraft
     }
 #endif
 
+
 #if USE_GUI
     void Entity::InitializeFaces()
     {
@@ -2200,9 +2185,10 @@ namespace Botcraft
     }
 #endif
 
+
     char Entity::GetDataSharedFlagsIdImpl() const
     {
-        return std::any_cast<char>(metadata.at("data_shared_flags_id"));
+        return GetMetadataImpl<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shared_flags_id"));
     }
 
     bool Entity::GetDataSharedFlagsIdImpl(const EntitySharedFlagsId id) const
@@ -2212,7 +2198,7 @@ namespace Botcraft
 
     void Entity::SetDataSharedFlagsIdImpl(const char data_shared_flags_id)
     {
-        metadata["data_shared_flags_id"] = data_shared_flags_id;
+        SetMetadataImpl(BOTCRAFT_ENTITY_METADATA_INDEX("data_shared_flags_id"), data_shared_flags_id);
     }
 
     void Entity::SetDataSharedFlagsIdImpl(const EntitySharedFlagsId id, const bool b)
@@ -2229,15 +2215,12 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     Pose Entity::GetDataPoseImpl() const
     {
-        return std::any_cast<Pose>(metadata.at("data_pose"));
+        return GetMetadataImpl<Pose>(BOTCRAFT_ENTITY_METADATA_INDEX("data_pose"));
     }
 
     void Entity::SetDataPoseImpl(const Pose data_pose)
     {
-        metadata["data_pose"] = data_pose;
-#if USE_GUI
-        OnSizeUpdated();
-#endif
+        SetMetadataImpl(BOTCRAFT_ENTITY_METADATA_INDEX("data_pose"), data_pose);
     }
 #endif
 

@@ -1,21 +1,12 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/animal/goat/GoatEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, GoatEntity::metadata_count> GoatEntity::metadata_names{ {
-        "data_is_screaming_goat",
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-        "data_has_left_horn",
-        "data_has_right_horn",
-#endif
-    } };
-
     GoatEntity::GoatEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataIsScreamingGoat(false);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SetDataHasLeftHorn(true);
@@ -72,57 +63,38 @@ namespace Botcraft
     }
 
 
-    void GoatEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool GoatEntity::GetDataIsScreamingGoat() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_is_screaming_goat"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_screaming_goat"));
     }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     bool GoatEntity::GetDataHasLeftHorn() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_has_left_horn"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_has_left_horn"));
     }
 
     bool GoatEntity::GetDataHasRightHorn() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_has_right_horn"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_has_right_horn"));
     }
 #endif
 
 
     void GoatEntity::SetDataIsScreamingGoat(const bool data_is_screaming_goat)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_is_screaming_goat"] = data_is_screaming_goat;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_screaming_goat"), data_is_screaming_goat);
     }
 
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
     void GoatEntity::SetDataHasLeftHorn(const bool data_has_left_horn)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_has_left_horn"] = data_has_left_horn;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_has_left_horn"), data_has_left_horn);
     }
 
     void GoatEntity::SetDataHasRightHorn(const bool data_has_right_horn)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_has_right_horn"] = data_has_right_horn;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_has_right_horn"), data_has_right_horn);
     }
 #endif
 

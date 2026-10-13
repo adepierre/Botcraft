@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "botcraft/Game/Entities/entities/animal/golem/CopperGolemEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CopperGolemEntity::metadata_count> CopperGolemEntity::metadata_names{ {
-        "copper_golem_state",
-    } };
-
     CopperGolemEntity::CopperGolemEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetCopperGolemState(0);
 
         // Initialize all attributes with default values
@@ -58,30 +53,15 @@ namespace Botcraft
     }
 
 
-    void CopperGolemEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractGolemEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int CopperGolemEntity::GetCopperGolemState() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("copper_golem_state"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("copper_golem_state"));
     }
 
 
     void CopperGolemEntity::SetCopperGolemState(const int copper_golem_state)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["copper_golem_state"] = copper_golem_state;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("copper_golem_state"), copper_golem_state);
     }
 
 

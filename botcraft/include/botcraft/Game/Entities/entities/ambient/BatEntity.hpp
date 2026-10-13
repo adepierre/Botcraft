@@ -6,9 +6,12 @@ namespace Botcraft
 {
     class BatEntity : public AmbientCreatureEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_id_flags"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AmbientCreatureEntity::metadata_count + AmbientCreatureEntity::hierarchy_metadata_count;
 
     public:
@@ -27,8 +30,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         char GetDataIdFlags() const;
 
         void SetDataIdFlags(const char data_id_flags);

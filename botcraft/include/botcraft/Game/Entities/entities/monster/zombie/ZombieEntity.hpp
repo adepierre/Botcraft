@@ -6,15 +6,19 @@ namespace Botcraft
 {
     class ZombieEntity : public MonsterEntity
     {
-    protected:
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        static constexpr int metadata_count = 3;
-#elif PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        static constexpr int metadata_count = 4;
-#else
-        static constexpr int metadata_count = 3;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_baby_id"),
+            std::string_view("data_special_type_id"),
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
+            std::string_view("data_are_hands_up"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+            std::string_view("data_drowned_conversion_id"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = MonsterEntity::metadata_count + MonsterEntity::hierarchy_metadata_count;
 
     public:
@@ -33,8 +37,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetDataBabyId() const;
         int GetDataSpecialTypeId() const;
 #if PROTOCOL_VERSION < 405 /* < 1.14 */

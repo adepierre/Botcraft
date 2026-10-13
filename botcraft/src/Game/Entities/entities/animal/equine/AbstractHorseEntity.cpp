@@ -1,19 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/equine/AbstractHorseEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AbstractHorseEntity::metadata_count> AbstractHorseEntity::metadata_names{ {
-        "data_id_flags",
-#if PROTOCOL_VERSION < 762 /* < 1.19.4 */
-        "data_id_owner_uuid",
-#endif
-    } };
-
     AbstractHorseEntity::AbstractHorseEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataIdFlags(0);
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         SetDataIdOwnerUuid(std::optional<ProtocolCraft::UUID>());
@@ -63,45 +55,28 @@ namespace Botcraft
     }
 
 
-    void AbstractHorseEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char AbstractHorseEntity::GetDataIdFlags() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_id_flags"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_flags"));
     }
 
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
     std::optional<ProtocolCraft::UUID> AbstractHorseEntity::GetDataIdOwnerUuid() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_id_owner_uuid"));
+        return GetMetadata<std::optional<ProtocolCraft::UUID>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_owner_uuid"));
     }
 #endif
 
 
     void AbstractHorseEntity::SetDataIdFlags(const char data_id_flags)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_flags"] = data_id_flags;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_flags"), data_id_flags);
     }
 
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
     void AbstractHorseEntity::SetDataIdOwnerUuid(const std::optional<ProtocolCraft::UUID>& data_id_owner_uuid)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_owner_uuid"] = data_id_owner_uuid;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_owner_uuid"), data_id_owner_uuid);
     }
 #endif
 

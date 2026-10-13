@@ -1,22 +1,12 @@
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/piglin/PiglinEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, PiglinEntity::metadata_count> PiglinEntity::metadata_names{ {
-        "data_baby_id",
-#if PROTOCOL_VERSION < 737 /* < 1.16.2 */
-        "data_immune_to_zombification",
-#endif
-        "data_is_charging_crossbow",
-        "data_is_dancing",
-    } };
-
     PiglinEntity::PiglinEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBabyId(false);
 #if PROTOCOL_VERSION < 737 /* < 1.16.2 */
         SetDataImmuneToZombification(false);
@@ -77,73 +67,48 @@ namespace Botcraft
     }
 
 
-    void PiglinEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION > 736 /* > 1.16.1 */
-            AbstractPiglinEntity::SetMetadataValue(index, value);
-#else
-            MonsterEntity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool PiglinEntity::GetDataBabyId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_baby_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"));
     }
 
 #if PROTOCOL_VERSION < 737 /* < 1.16.2 */
     bool PiglinEntity::GetDataImmuneToZombification() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_immune_to_zombification"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_immune_to_zombification"));
     }
 #endif
 
     bool PiglinEntity::GetDataIsChargingCrossbow() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_is_charging_crossbow"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_charging_crossbow"));
     }
 
     bool PiglinEntity::GetDataIsDancing() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_is_dancing"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_dancing"));
     }
 
 
     void PiglinEntity::SetDataBabyId(const bool data_baby_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_baby_id"] = data_baby_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"), data_baby_id);
     }
 
 #if PROTOCOL_VERSION < 737 /* < 1.16.2 */
     void PiglinEntity::SetDataImmuneToZombification(const bool data_immune_to_zombification)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_immune_to_zombification"] = data_immune_to_zombification;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_immune_to_zombification"), data_immune_to_zombification);
     }
 #endif
     void PiglinEntity::SetDataIsChargingCrossbow(const bool data_is_charging_crossbow)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_is_charging_crossbow"] = data_is_charging_crossbow;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_charging_crossbow"), data_is_charging_crossbow);
     }
 
     void PiglinEntity::SetDataIsDancing(const bool data_is_dancing)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_is_dancing"] = data_is_dancing;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_dancing"), data_is_dancing);
     }
 
     double PiglinEntity::GetWidthImpl() const

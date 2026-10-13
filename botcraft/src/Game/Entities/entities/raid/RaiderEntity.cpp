@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/raid/RaiderEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, RaiderEntity::metadata_count> RaiderEntity::metadata_names{ {
-        "is_celebrating",
-    } };
-
     RaiderEntity::RaiderEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIsCelebrating(false);
     }
 
@@ -36,30 +31,15 @@ namespace Botcraft
     }
 
 
-    void RaiderEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            PatrollingMonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool RaiderEntity::GetIsCelebrating() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("is_celebrating"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("is_celebrating"));
     }
 
 
     void RaiderEntity::SetIsCelebrating(const bool is_celebrating)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["is_celebrating"] = is_celebrating;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("is_celebrating"), is_celebrating);
     }
 
 }

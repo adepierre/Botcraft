@@ -6,13 +6,15 @@ namespace Botcraft
 {
     class PrimedTntEntity : public Entity
     {
-    protected:
-#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        static constexpr int metadata_count = 1;
-#else
-        static constexpr int metadata_count = 2;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_fuse_id"),
+#if PROTOCOL_VERSION > 764 /* > 1.20.2 */
+            std::string_view("data_block_state_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 
     public:
@@ -31,8 +33,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetDataFuseId() const;
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         int GetDataBlockStateId() const;

@@ -1,25 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/pig/PigEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, PigEntity::metadata_count> PigEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        "data_saddle_id",
-#endif
-        "data_boost_time",
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        "data_variant_id",
-#endif
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        "data_sound_variant_id",
-#endif
-    } };
-
     PigEntity::PigEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetDataSaddleId(false);
 #endif
@@ -83,46 +69,29 @@ namespace Botcraft
     }
 
 
-    void PigEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     bool PigEntity::GetDataSaddleId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_saddle_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_saddle_id"));
     }
 #endif
 
     int PigEntity::GetDataBoostTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_boost_time"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_boost_time"));
     }
 
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     int PigEntity::GetDataVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     int PigEntity::GetDataSoundVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_sound_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"));
     }
 #endif
 
@@ -130,30 +99,26 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void PigEntity::SetDataSaddleId(const bool data_saddle_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_saddle_id"] = data_saddle_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_saddle_id"), data_saddle_id);
     }
 #endif
 
     void PigEntity::SetDataBoostTime(const int data_boost_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_boost_time"] = data_boost_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_boost_time"), data_boost_time);
     }
 
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
     void PigEntity::SetDataVariantId(const int data_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_variant_id"] = data_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"), data_variant_id);
     }
 #endif
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     void PigEntity::SetDataSoundVariantId(const int data_sound_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_sound_variant_id"] = data_sound_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"), data_sound_variant_id);
     }
 #endif
 

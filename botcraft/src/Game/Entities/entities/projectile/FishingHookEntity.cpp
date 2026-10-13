@@ -1,19 +1,11 @@
 #include "botcraft/Game/Entities/entities/projectile/FishingHookEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, FishingHookEntity::metadata_count> FishingHookEntity::metadata_names{ {
-        "data_hooked_entity",
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-        "data_biting",
-#endif
-    } };
-
     FishingHookEntity::FishingHookEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataHookedEntity(0);
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         SetDataBiting(false);
@@ -64,49 +56,28 @@ namespace Botcraft
     }
 
 
-    void FishingHookEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-            ProjectileEntity::SetMetadataValue(index, value);
-#else
-            Entity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int FishingHookEntity::GetDataHookedEntity() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_hooked_entity"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_hooked_entity"));
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     bool FishingHookEntity::GetDataBiting() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_biting"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_biting"));
     }
 #endif
 
 
     void FishingHookEntity::SetDataHookedEntity(const int data_hooked_entity)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_hooked_entity"] = data_hooked_entity;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_hooked_entity"), data_hooked_entity);
     }
 
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
     void FishingHookEntity::SetDataBiting(const bool data_biting)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_biting"] = data_biting;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_biting"), data_biting);
     }
 #endif
 

@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/parrot/ParrotEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ParrotEntity::metadata_count> ParrotEntity::metadata_names{ {
-        "data_variant_id",
-    } };
-
     ParrotEntity::ParrotEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataVariantId(0);
 
         // Initialize all attributes with default values
@@ -65,30 +60,15 @@ namespace Botcraft
     }
 
 
-    void ParrotEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            ShoulderRidingEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int ParrotEntity::GetDataVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"));
     }
 
 
     void ParrotEntity::SetDataVariantId(const int data_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_variant_id"] = data_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"), data_variant_id);
     }
 
 

@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
 #include "botcraft/Game/Entities/entities/animal/nautilus/AbstractNautilusEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AbstractNautilusEntity::metadata_count> AbstractNautilusEntity::metadata_names{ {
-        "data_dash",
-    } };
-
     AbstractNautilusEntity::AbstractNautilusEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataDash(false);
 
         // Initialize all attributes with default values
@@ -44,30 +39,15 @@ namespace Botcraft
     }
 
 
-    void AbstractNautilusEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            TamableAnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool AbstractNautilusEntity::GetDataDash() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_dash"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_dash"));
     }
 
 
     void AbstractNautilusEntity::SetDataDash(const bool data_dash)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_dash"] = data_dash;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_dash"), data_dash);
     }
 
 

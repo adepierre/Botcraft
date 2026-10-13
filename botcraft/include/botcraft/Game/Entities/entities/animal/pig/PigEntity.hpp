@@ -6,13 +6,21 @@ namespace Botcraft
 {
     class PigEntity : public AnimalEntity
     {
-    protected:
-#if PROTOCOL_VERSION < 775 /* < 26.1 */
-        static constexpr int metadata_count = 2;
-#else
-        static constexpr int metadata_count = 3;
+    private:
+        static constexpr std::array metadata_names{
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+            std::string_view("data_saddle_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_boost_time"),
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
+            std::string_view("data_variant_id"),
+#endif
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+            std::string_view("data_sound_variant_id"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
     public:
@@ -31,8 +39,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         bool GetDataSaddleId() const;
 #endif

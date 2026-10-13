@@ -7,13 +7,31 @@ namespace Botcraft
 {
     class DisplayEntity : public Entity
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        static constexpr int metadata_count = 14;
+            std::string_view("data_interpolation_start_delta_ticks_id"),
+            std::string_view("data_interpolation_duration_id"),
 #else
-        static constexpr int metadata_count = 15;
+            std::string_view("data_transformation_interpolation_start_delta_ticks_id"),
+            std::string_view("data_transformation_interpolation_duration_id"),
+            std::string_view("data_pos_rot_interpolation_duration_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_translation_id"),
+            std::string_view("data_scale_id"),
+            std::string_view("data_left_rotation_id"),
+            std::string_view("data_right_rotation_id"),
+            std::string_view("data_billboard_render_constraints_id"),
+            std::string_view("data_brightness_override_id"),
+            std::string_view("data_view_range_id"),
+            std::string_view("data_shadow_radius_id"),
+            std::string_view("data_shadow_strength_id"),
+            std::string_view("data_width_id"),
+            std::string_view("data_height_id"),
+            std::string_view("data_glow_color_override_id"),
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 
     public:
@@ -25,8 +43,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         int GetDataInterpolationStartDeltaTicksId() const;
         int GetDataInterpolationDurationId() const;

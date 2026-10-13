@@ -1,18 +1,12 @@
 #include "botcraft/Game/Entities/entities/monster/illager/AbstractIllagerEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 405 /* < 1.14 */
-    const std::array<std::string, AbstractIllagerEntity::metadata_count> AbstractIllagerEntity::metadata_names{ {
-        "has_target",
-    } };
-#endif
     AbstractIllagerEntity::AbstractIllagerEntity()
     {
-#if PROTOCOL_VERSION < 405 /* < 1.14 */
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
         SetHasTarget(0);
 #endif
     }
@@ -39,29 +33,14 @@ namespace Botcraft
     }
 
 
-    void AbstractIllagerEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char AbstractIllagerEntity::GetHasTarget() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("has_target"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("has_target"));
     }
 
     void AbstractIllagerEntity::SetHasTarget(const char has_target)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["has_target"] = has_target;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("has_target"), has_target);
     }
 #endif
 

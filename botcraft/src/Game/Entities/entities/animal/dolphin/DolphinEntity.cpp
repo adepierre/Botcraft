@@ -1,21 +1,12 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/dolphin/DolphinEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, DolphinEntity::metadata_count> DolphinEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        "treasure_pos",
-#endif
-        "got_fish",
-        "moistness_level",
-    } };
-
     DolphinEntity::DolphinEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         SetTreasurePos(Position(0, 0, 0));
 #endif
@@ -76,62 +67,39 @@ namespace Botcraft
     }
 
 
-    void DolphinEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-            WaterAnimalEntity::SetMetadataValue(index, value);
-#else
-            AgeableWaterCreatureEntity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     Position DolphinEntity::GetTreasurePos() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Position>(metadata.at("treasure_pos"));
+        return GetMetadata<Position>(BOTCRAFT_ENTITY_METADATA_INDEX("treasure_pos"));
     }
 #endif
 
     bool DolphinEntity::GetGotFish() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("got_fish"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("got_fish"));
     }
 
     int DolphinEntity::GetMoistnessLevel() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("moistness_level"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("moistness_level"));
     }
 
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void DolphinEntity::SetTreasurePos(const Position& treasure_pos)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["treasure_pos"] = treasure_pos;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("treasure_pos"), treasure_pos);
     }
 #endif
 
     void DolphinEntity::SetGotFish(const bool got_fish)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["got_fish"] = got_fish;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("got_fish"), got_fish);
     }
 
     void DolphinEntity::SetMoistnessLevel(const int moistness_level)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["moistness_level"] = moistness_level;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("moistness_level"), moistness_level);
     }
 
 

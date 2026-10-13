@@ -18,18 +18,27 @@ namespace Botcraft
     class BoatEntity : public AbstractBoatEntity
 #endif
     {
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+    private:
+        static constexpr std::array metadata_names{
+#if PROTOCOL_VERSION < 765 /* < 1.20.3 */
+            std::string_view("data_id_hurt"),
+            std::string_view("data_id_hurtdir"),
+            std::string_view("data_id_damage"),
+#endif
+            std::string_view("data_id_type"),
+            std::string_view("data_id_paddle_left"),
+            std::string_view("data_id_paddle_right"),
+#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
+            std::string_view("data_id_bubble_time"),
+#endif
+        };
+#endif
     protected:
-#if PROTOCOL_VERSION < 341 /* < 1.13 */
-        static constexpr int metadata_count = 6;
-#elif PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        static constexpr int metadata_count = 7;
-#elif PROTOCOL_VERSION < 768 /* < 1.21.2 */
-        static constexpr int metadata_count = 4;
+#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #else
         static constexpr int metadata_count = 0;
-#endif
-#if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-        static const std::array<std::string, metadata_count> metadata_names;
 #endif
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
@@ -64,8 +73,6 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         int GetDataIdHurt() const;
         int GetDataIdHurtdir() const;

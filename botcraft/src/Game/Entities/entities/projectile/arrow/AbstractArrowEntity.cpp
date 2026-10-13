@@ -1,25 +1,11 @@
 #include "botcraft/Game/Entities/entities/projectile/arrow/AbstractArrowEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AbstractArrowEntity::metadata_count> AbstractArrowEntity::metadata_names{ {
-        "id_flags",
-#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
-        "data_owneruuid_id",
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "pierce_level",
-#endif
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-        "in_ground",
-#endif
-    } };
-
     AbstractArrowEntity::AbstractArrowEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIdFlags(0);
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
         SetDataOwneruuidId(std::optional<ProtocolCraft::UUID>());
@@ -66,81 +52,56 @@ namespace Botcraft
     }
 
 
-    void AbstractArrowEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-            ProjectileEntity::SetMetadataValue(index, value);
-#else
-            Entity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char AbstractArrowEntity::GetIdFlags() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("id_flags"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("id_flags"));
     }
 
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     std::optional<ProtocolCraft::UUID> AbstractArrowEntity::GetDataOwneruuidId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_owneruuid_id"));
+        return GetMetadata<std::optional<ProtocolCraft::UUID>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_owneruuid_id"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     char AbstractArrowEntity::GetPierceLevel() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("pierce_level"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("pierce_level"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     bool AbstractArrowEntity::GetInGround() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("in_ground"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("in_ground"));
     }
 #endif
 
 
     void AbstractArrowEntity::SetIdFlags(const char id_flags)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_flags"] = id_flags;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_flags"), id_flags);
     }
 
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
     void AbstractArrowEntity::SetDataOwneruuidId(const std::optional<ProtocolCraft::UUID>& data_owneruuid_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_owneruuid_id"] = data_owneruuid_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_owneruuid_id"), data_owneruuid_id);
     }
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void AbstractArrowEntity::SetPierceLevel(const char pierce_level)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["pierce_level"] = pierce_level;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("pierce_level"), pierce_level);
     }
 #endif
 
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void AbstractArrowEntity::SetInGround(const bool in_ground)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["in_ground"] = in_ground;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("in_ground"), in_ground);
     }
 #endif
 

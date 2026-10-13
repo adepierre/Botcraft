@@ -2,17 +2,12 @@
 #include "botcraft/Game/Entities/entities/monster/cubemob/AbstractCubeMobEntity.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AbstractCubeMobEntity::metadata_count> AbstractCubeMobEntity::metadata_names{ {
-        "id_size",
-    } };
-
     AbstractCubeMobEntity::AbstractCubeMobEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIdSize(1);
 
         // Initialize all attributes with default values
@@ -40,24 +35,18 @@ namespace Botcraft
     }
 
 
-    void AbstractCubeMobEntity::SetMetadataValue(const int index, const std::any& value)
+    void AbstractCubeMobEntity::OnMetadataChangedImpl(const int index)
     {
         if (index < hierarchy_metadata_count)
         {
-            AgeableMobEntity::SetMetadataValue(index, value);
+            AgeableMobEntity::OnMetadataChangedImpl(index);
         }
-        else if (index - hierarchy_metadata_count < metadata_count)
+        else if (index == BOTCRAFT_ENTITY_METADATA_INDEX("id_size"))
         {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
-            metadata[metadata_name] = value;
-            if (metadata_name == "id_size")
-            {
-                SizeChanged(std::any_cast<int>(value));
+            SizeChanged(GetMetadataImpl<int>(index));
 #if USE_GUI
-                OnSizeUpdated();
+            OnSizeUpdated();
 #endif
-            }
         }
     }
 
@@ -70,18 +59,13 @@ namespace Botcraft
 
     void AbstractCubeMobEntity::SetIdSize(const int id_size)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_size"] = id_size;
-        SizeChanged(id_size);
-#if USE_GUI
-        OnSizeUpdated();
-#endif
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"), id_size);
     }
 
 
     int AbstractCubeMobEntity::GetIdSizeImpl() const
     {
-        return std::any_cast<int>(metadata.at("id_size"));
+        return GetMetadataImpl<int>(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"));
     }
 
     void AbstractCubeMobEntity::SizeChanged(const int new_size)

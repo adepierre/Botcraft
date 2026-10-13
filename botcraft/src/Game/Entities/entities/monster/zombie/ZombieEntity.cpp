@@ -1,23 +1,11 @@
 #include "botcraft/Game/Entities/entities/monster/zombie/ZombieEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ZombieEntity::metadata_count> ZombieEntity::metadata_names{ {
-        "data_baby_id",
-        "data_special_type_id",
-#if PROTOCOL_VERSION < 405 /* < 1.14 */
-        "data_are_hands_up",
-#endif
-#if PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        "data_drowned_conversion_id",
-#endif
-    } };
-
     ZombieEntity::ZombieEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBabyId(false);
         SetDataSpecialTypeId(0);
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
@@ -82,73 +70,52 @@ namespace Botcraft
     }
 
 
-    void ZombieEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool ZombieEntity::GetDataBabyId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_baby_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"));
     }
 
     int ZombieEntity::GetDataSpecialTypeId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_special_type_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_special_type_id"));
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     bool ZombieEntity::GetDataAreHandsUp() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_are_hands_up"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_are_hands_up"));
     }
 #endif
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     bool ZombieEntity::GetDataDrownedConversionId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_drowned_conversion_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_drowned_conversion_id"));
     }
 #endif
 
 
     void ZombieEntity::SetDataBabyId(const bool data_baby_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_baby_id"] = data_baby_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"), data_baby_id);
     }
 
     void ZombieEntity::SetDataSpecialTypeId(const int data_special_type_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_special_type_id"] = data_special_type_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_special_type_id"), data_special_type_id);
     }
 
 #if PROTOCOL_VERSION < 405 /* < 1.14 */
     void ZombieEntity::SetDataAreHandsUp(const bool data_are_hands_up)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_are_hands_up"] = data_are_hands_up;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_are_hands_up"), data_are_hands_up);
     }
 #endif
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
     void ZombieEntity::SetDataDrownedConversionId(const bool data_drowned_conversion_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_drowned_conversion_id"] = data_drowned_conversion_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_drowned_conversion_id"), data_drowned_conversion_id);
     }
 #endif
 

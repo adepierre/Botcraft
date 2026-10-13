@@ -1,19 +1,11 @@
 #include "botcraft/Game/Entities/entities/boss/wither/WitherBossEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, WitherBossEntity::metadata_count> WitherBossEntity::metadata_names{ {
-        "data_target_a",
-        "data_target_b",
-        "data_target_c",
-        "data_id_inv",
-    } };
-
     WitherBossEntity::WitherBossEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataTargetA(0);
         SetDataTargetB(0);
         SetDataTargetC(0);
@@ -70,66 +62,45 @@ namespace Botcraft
     }
 
 
-    void WitherBossEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int WitherBossEntity::GetDataTargetA() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_target_a"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_a"));
     }
 
     int WitherBossEntity::GetDataTargetB() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_target_b"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_b"));
     }
 
     int WitherBossEntity::GetDataTargetC() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_target_c"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_c"));
     }
 
     int WitherBossEntity::GetDataIdInv() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_id_inv"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_inv"));
     }
 
 
     void WitherBossEntity::SetDataTargetA(const int data_target_a)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_target_a"] = data_target_a;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_a"), data_target_a);
     }
 
     void WitherBossEntity::SetDataTargetB(const int data_target_b)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_target_b"] = data_target_b;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_b"), data_target_b);
     }
 
     void WitherBossEntity::SetDataTargetC(const int data_target_c)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_target_c"] = data_target_c;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_target_c"), data_target_c);
     }
 
     void WitherBossEntity::SetDataIdInv(const int data_id_inv)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_inv"] = data_id_inv;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_inv"), data_id_inv);
     }
 
 

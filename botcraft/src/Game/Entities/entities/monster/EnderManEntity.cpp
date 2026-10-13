@@ -1,20 +1,11 @@
 #include "botcraft/Game/Entities/entities/monster/EnderManEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, EnderManEntity::metadata_count> EnderManEntity::metadata_names{ {
-        "data_carry_state",
-        "data_creepy",
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        "data_stared_at",
-#endif
-    } };
-
     EnderManEntity::EnderManEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataCarryState(0);
         SetDataCreepy(false);
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
@@ -73,57 +64,38 @@ namespace Botcraft
     }
 
 
-    void EnderManEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int EnderManEntity::GetDataCarryState() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_carry_state"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_carry_state"));
     }
 
     bool EnderManEntity::GetDataCreepy() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_creepy"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_creepy"));
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     bool EnderManEntity::GetDataStaredAt() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_stared_at"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_stared_at"));
     }
 #endif
 
 
     void EnderManEntity::SetDataCarryState(const int data_carry_state)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_carry_state"] = data_carry_state;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_carry_state"), data_carry_state);
     }
 
     void EnderManEntity::SetDataCreepy(const bool data_creepy)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_creepy"] = data_creepy;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_creepy"), data_creepy);
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void EnderManEntity::SetDataStaredAt(const bool data_stared_at)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_stared_at"] = data_stared_at;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_stared_at"), data_stared_at);
     }
 #endif
 

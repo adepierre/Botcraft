@@ -2,18 +2,12 @@
 #include "botcraft/Game/Entities/entities/monster/cubemob/SulfurCubeEntity.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, SulfurCubeEntity::metadata_count> SulfurCubeEntity::metadata_names{ {
-        "max_fuse",
-        "from_bucket",
-    } };
-
     SulfurCubeEntity::SulfurCubeEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetMaxFuse(-1);
         SetFromBucket(false);
 
@@ -62,42 +56,25 @@ namespace Botcraft
     }
 
 
-    void SulfurCubeEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractCubeMobEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int SulfurCubeEntity::GetMaxFuse() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("max_fuse"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("max_fuse"));
     }
 
     bool SulfurCubeEntity::GetFromBucket() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("from_bucket"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("from_bucket"));
     }
 
 
     void SulfurCubeEntity::SetMaxFuse(const int max_fuse)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["max_fuse"] = max_fuse;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("max_fuse"), max_fuse);
     }
 
     void SulfurCubeEntity::SetFromBucket(const bool from_bucket)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["from_bucket"] = from_bucket;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("from_bucket"), from_bucket);
     }
 
 

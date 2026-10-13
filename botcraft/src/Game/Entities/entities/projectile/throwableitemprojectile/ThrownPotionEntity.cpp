@@ -5,21 +5,12 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #endif
 
-#if PROTOCOL_VERSION < 579 /* < 1.16 */
-#include <mutex>
-#endif
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 579 /* < 1.16 */
-    const std::array<std::string, ThrownPotionEntity::metadata_count> ThrownPotionEntity::metadata_names{ {
-        "data_item_stack",
-    } };
-#endif
-
     ThrownPotionEntity::ThrownPotionEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 579 /* < 1.16 */
         SetDataItemStack(ProtocolCraft::Slot());
 #endif
@@ -71,30 +62,15 @@ namespace Botcraft
     }
 
 
-    void ThrownPotionEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            ThrowableProjectileEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     ProtocolCraft::Slot ThrownPotionEntity::GetDataItemStack() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_item_stack"));
+        return GetMetadata<ProtocolCraft::Slot>(BOTCRAFT_ENTITY_METADATA_INDEX("data_item_stack"));
     }
 
 
     void ThrownPotionEntity::SetDataItemStack(const ProtocolCraft::Slot& data_item_stack)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_item_stack"] = data_item_stack;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_item_stack"), data_item_stack);
     }
 #endif
 

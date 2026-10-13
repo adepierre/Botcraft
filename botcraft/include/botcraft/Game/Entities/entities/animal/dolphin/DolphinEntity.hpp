@@ -15,13 +15,16 @@ namespace Botcraft
     class DolphinEntity : public AgeableWaterCreatureEntity
 #endif
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        static constexpr int metadata_count = 3;
-#else
-        static constexpr int metadata_count = 2;
+            std::string_view("treasure_pos"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("got_fish"),
+            std::string_view("moistness_level"),
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         static constexpr int hierarchy_metadata_count = WaterAnimalEntity::metadata_count + WaterAnimalEntity::hierarchy_metadata_count;
 #else
@@ -44,8 +47,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         Position GetTreasurePos() const;
 #endif

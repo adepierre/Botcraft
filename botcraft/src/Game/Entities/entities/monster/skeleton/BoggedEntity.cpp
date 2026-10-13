@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "botcraft/Game/Entities/entities/monster/skeleton/BoggedEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, BoggedEntity::metadata_count> BoggedEntity::metadata_names{ {
-        "data_sheared",
-    } };
-
     BoggedEntity::BoggedEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataSheared(false);
 
         // Initialize all attributes with default values
@@ -56,30 +51,15 @@ namespace Botcraft
     }
 
 
-    void BoggedEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractSkeletonEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool BoggedEntity::GetDataSheared() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_sheared"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_sheared"));
     }
 
 
     void BoggedEntity::SetDataSheared(const bool data_sheared)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_sheared"] = data_sheared;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_sheared"), data_sheared);
     }
 
 

@@ -15,9 +15,12 @@ namespace Botcraft
     class PhantomEntity : public MobEntity
 #endif
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("id_size"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #if PROTOCOL_VERSION < 771 /* < 1.21.6 */
         static constexpr int hierarchy_metadata_count = FlyingMobEntity::metadata_count + FlyingMobEntity::hierarchy_metadata_count;
 #else
@@ -40,8 +43,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetIdSize() const;
 
         void SetIdSize(const int id_size);

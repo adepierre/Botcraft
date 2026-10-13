@@ -1,19 +1,11 @@
 #include "botcraft/Game/Entities/entities/AgeableMobEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AgeableMobEntity::metadata_count> AgeableMobEntity::metadata_names{ {
-        "data_baby_id",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        "age_locked",
-#endif
-    } };
-
     AgeableMobEntity::AgeableMobEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBabyId(false);
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
         SetAgeLocked(false);
@@ -44,45 +36,28 @@ namespace Botcraft
     }
 
 
-    void AgeableMobEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            PathfinderMobEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool AgeableMobEntity::GetDataBabyId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_baby_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"));
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     bool AgeableMobEntity::GetAgeLocked() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("age_locked"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("age_locked"));
     }
 #endif
 
 
     void AgeableMobEntity::SetDataBabyId(const bool data_baby_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_baby_id"] = data_baby_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_baby_id"), data_baby_id);
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     void AgeableMobEntity::SetAgeLocked(const bool age_locked)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["age_locked"] = age_locked;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("age_locked"), age_locked);
     }
 #endif
 

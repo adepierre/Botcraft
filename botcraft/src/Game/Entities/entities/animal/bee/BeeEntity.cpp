@@ -1,22 +1,12 @@
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
 #include "botcraft/Game/Entities/entities/animal/bee/BeeEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, BeeEntity::metadata_count> BeeEntity::metadata_names{ {
-        "data_flags_id",
-#if PROTOCOL_VERSION < 774 /* < 1.21.11 */
-        "data_remaining_anger_time",
-#else
-        "data_anger_end_time",
-#endif
-    } };
-
     BeeEntity::BeeEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataFlagsId(0);
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
         SetDataRemainingAngerTime(0);
@@ -81,57 +71,38 @@ namespace Botcraft
     }
 
 
-    void BeeEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char BeeEntity::GetDataFlagsId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_flags_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"));
     }
 
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     int BeeEntity::GetDataRemainingAngerTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_remaining_anger_time"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_remaining_anger_time"));
     }
 #else
     long long int BeeEntity::GetDataAngerEndTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<long long int>(metadata.at("data_anger_end_time"));
+        return GetMetadata<long long int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_anger_end_time"));
     }
 #endif
 
 
     void BeeEntity::SetDataFlagsId(const char data_flags_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_flags_id"] = data_flags_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"), data_flags_id);
     }
 
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     void BeeEntity::SetDataRemainingAngerTime(const int data_remaining_anger_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_remaining_anger_time"] = data_remaining_anger_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_remaining_anger_time"), data_remaining_anger_time);
     }
 #else
     void BeeEntity::SetDataAngerEndTime(const long long int data_anger_end_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_anger_end_time"] = data_anger_end_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_anger_end_time"), data_anger_end_time);
     }
 #endif
 

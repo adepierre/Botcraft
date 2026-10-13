@@ -1,17 +1,11 @@
 #include "botcraft/Game/Entities/entities/decoration/ItemFrameEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ItemFrameEntity::metadata_count> ItemFrameEntity::metadata_names{ {
-        "data_item",
-        "data_rotation",
-    } };
-
     ItemFrameEntity::ItemFrameEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataItem(ProtocolCraft::Slot());
         SetDataRotation(0);
     }
@@ -55,42 +49,25 @@ namespace Botcraft
     }
 
 
-    void ItemFrameEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            HangingEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     ProtocolCraft::Slot ItemFrameEntity::GetDataItem() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_item"));
+        return GetMetadata<ProtocolCraft::Slot>(BOTCRAFT_ENTITY_METADATA_INDEX("data_item"));
     }
 
     int ItemFrameEntity::GetDataRotation() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_rotation"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_rotation"));
     }
 
 
     void ItemFrameEntity::SetDataItem(const ProtocolCraft::Slot& data_item)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_item"] = data_item;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_item"), data_item);
     }
 
     void ItemFrameEntity::SetDataRotation(const int data_rotation)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_rotation"] = data_rotation;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_rotation"), data_rotation);
     }
 
 

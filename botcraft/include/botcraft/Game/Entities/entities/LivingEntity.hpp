@@ -15,15 +15,26 @@ namespace Botcraft
 {
     class LivingEntity : public Entity
     {
-    protected:
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        static constexpr int metadata_count = 7;
-#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        static constexpr int metadata_count = 6;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_living_entity_flags"),
+            std::string_view("data_health_id"),
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+            std::string_view("data_effect_color_id"),
 #else
-        static constexpr int metadata_count = 5;
+            std::string_view("data_effect_particles"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_effect_ambience_id"),
+            std::string_view("data_arrow_count_id"),
+#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
+            std::string_view("data_stinger_count_id"),
+#endif
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            std::string_view("sleeping_pos_id"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 
     public:
@@ -35,8 +46,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         char GetDataLivingEntityFlags() const;
         float GetDataHealthId() const;
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */

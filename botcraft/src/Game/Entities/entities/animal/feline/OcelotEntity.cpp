@@ -1,20 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/feline/OcelotEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, OcelotEntity::metadata_count> OcelotEntity::metadata_names{ {
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "data_trusting",
-#else
-        "data_type_id",
-#endif
-    } };
-
     OcelotEntity::OcelotEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         SetDataTrusting(false);
 #else
@@ -71,44 +62,27 @@ namespace Botcraft
     }
 
 
-    void OcelotEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     bool OcelotEntity::GetDataTrusting() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_trusting"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusting"));
     }
 
 
     void OcelotEntity::SetDataTrusting(const bool data_trusting)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_trusting"] = data_trusting;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusting"), data_trusting);
     }
 #else
     int OcelotEntity::GetDataTypeId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_type_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"));
     }
 
 
     void OcelotEntity::SetDataTypeId(const int data_type_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type_id"] = data_type_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"), data_type_id);
     }
 #endif
 

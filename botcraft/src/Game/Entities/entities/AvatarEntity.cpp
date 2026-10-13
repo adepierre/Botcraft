@@ -1,18 +1,12 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "botcraft/Game/Entities/entities/AvatarEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AvatarEntity::metadata_count> AvatarEntity::metadata_names{ {
-        "data_player_main_hand",
-        "data_player_mode_customisation",
-    } };
-
     AvatarEntity::AvatarEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataPlayerMainHand(0);
         SetDataPlayerModeCustomisation(0);
     }
@@ -40,59 +34,39 @@ namespace Botcraft
     }
 
 
-    void AvatarEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            LivingEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
-
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     char AvatarEntity::GetDataPlayerMainHand() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_player_main_hand"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"));
     }
 #else
     int AvatarEntity::GetDataPlayerMainHand() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_player_main_hand"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"));
     }
 #endif
 
     char AvatarEntity::GetDataPlayerModeCustomisation() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_player_mode_customisation"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_mode_customisation"));
     }
 
 
 #if PROTOCOL_VERSION < 774 /* < 1.21.11 */
     void AvatarEntity::SetDataPlayerMainHand(const char data_player_main_hand)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_main_hand"] = data_player_main_hand;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"), data_player_main_hand);
     }
 #else
     void AvatarEntity::SetDataPlayerMainHand(const int data_player_main_hand)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_main_hand"] = data_player_main_hand;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"), data_player_main_hand);
     }
 #endif
 
     void AvatarEntity::SetDataPlayerModeCustomisation(const char data_player_mode_customisation)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_mode_customisation"] = data_player_mode_customisation;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_mode_customisation"), data_player_mode_customisation);
     }
 
 }

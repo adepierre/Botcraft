@@ -1,21 +1,12 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/animal/frog/TadpoleEntity.hpp"
 
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-#include <mutex>
-#endif
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-    const std::array<std::string, TadpoleEntity::metadata_count> TadpoleEntity::metadata_names{ {
-        "age_locked",
-    } };
-#endif
-
     TadpoleEntity::TadpoleEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
         SetAgeLocked(false);
 #endif
@@ -64,31 +55,15 @@ namespace Botcraft
     }
 
 
-    void TadpoleEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractFishEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
-
     bool TadpoleEntity::GetAgeLocked() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("age_locked"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("age_locked"));
     }
 
 
     void TadpoleEntity::SetAgeLocked(const bool age_locked)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["age_locked"] = age_locked;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("age_locked"), age_locked);
     }
 #endif
 

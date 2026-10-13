@@ -14,19 +14,21 @@ namespace Botcraft
     class AbstractArrowEntity : public Entity
 #endif
     {
-    protected:
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-        static constexpr int metadata_count = 3;
-#elif PROTOCOL_VERSION > 578 /* > 1.15.2 */
-        static constexpr int metadata_count = 2;
-#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        static constexpr int metadata_count = 3;
-#elif PROTOCOL_VERSION > 393 /* > 1.13 */
-        static constexpr int metadata_count = 2;
-#else
-        static constexpr int metadata_count = 1;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("id_flags"),
+#if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
+            std::string_view("data_owneruuid_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            std::string_view("pierce_level"),
+#endif
+#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
+            std::string_view("in_ground"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
         static constexpr int hierarchy_metadata_count = ProjectileEntity::metadata_count + ProjectileEntity::hierarchy_metadata_count;
 #else
@@ -42,8 +44,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         char GetIdFlags() const;
 #if PROTOCOL_VERSION < 579 /* < 1.16 */ && PROTOCOL_VERSION > 393 /* > 1.13 */
         std::optional<ProtocolCraft::UUID> GetDataOwneruuidId() const;

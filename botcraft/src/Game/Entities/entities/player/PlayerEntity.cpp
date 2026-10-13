@@ -1,26 +1,11 @@
 #include "botcraft/Game/Entities/entities/player/PlayerEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, PlayerEntity::metadata_count> PlayerEntity::metadata_names{ {
-        "data_player_absorption_id",
-        "data_score_id",
-#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
-        "data_player_mode_customisation",
-        "data_player_main_hand",
-        "data_shoulder_left",
-        "data_shoulder_right",
-#else
-        "data_shoulder_parrot_left",
-        "data_shoulder_parrot_right",
-#endif
-    } };
-
     PlayerEntity::PlayerEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataPlayerAbsorptionId(0.0f);
         SetDataScoreId(0);
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */
@@ -171,121 +156,88 @@ namespace Botcraft
     }
 
 
-    void PlayerEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
-            LivingEntity::SetMetadataValue(index, value);
-#else
-            AvatarEntity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     float PlayerEntity::GetDataPlayerAbsorptionId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_player_absorption_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_absorption_id"));
     }
 
     int PlayerEntity::GetDataScoreId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_score_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_score_id"));
     }
 
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */
     char PlayerEntity::GetDataPlayerModeCustomisation() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_player_mode_customisation"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_mode_customisation"));
     }
 
     char PlayerEntity::GetDataPlayerMainHand() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_player_main_hand"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"));
     }
 
     ProtocolCraft::NBT::Value PlayerEntity::GetDataShoulderLeft() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::NBT::Value>(metadata.at("data_shoulder_left"));
+        return GetMetadata<ProtocolCraft::NBT::Value>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_left"));
     }
 
     ProtocolCraft::NBT::Value PlayerEntity::GetDataShoulderRight() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::NBT::Value>(metadata.at("data_shoulder_right"));
+        return GetMetadata<ProtocolCraft::NBT::Value>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_right"));
     }
 #else
     std::optional<int> PlayerEntity::GetDataShoulderParrotLeft() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<int>>(metadata.at("data_shoulder_parrot_left"));
+        return GetMetadata<std::optional<int>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_parrot_left"));
     }
 
     std::optional<int> PlayerEntity::GetDataShoulderParrotRight() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<int>>(metadata.at("data_shoulder_parrot_right"));
+        return GetMetadata<std::optional<int>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_parrot_right"));
     }
 #endif
 
 
     void PlayerEntity::SetDataPlayerAbsorptionId(const float data_player_absorption_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_absorption_id"] = data_player_absorption_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_absorption_id"), data_player_absorption_id);
     }
 
     void PlayerEntity::SetDataScoreId(const int data_score_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_score_id"] = data_score_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_score_id"), data_score_id);
     }
 
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */
     void PlayerEntity::SetDataPlayerModeCustomisation(const char data_player_mode_customisation)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_mode_customisation"] = data_player_mode_customisation;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_mode_customisation"), data_player_mode_customisation);
     }
 
     void PlayerEntity::SetDataPlayerMainHand(const char data_player_main_hand)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_player_main_hand"] = data_player_main_hand;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_player_main_hand"), data_player_main_hand);
     }
 
     void PlayerEntity::SetDataShoulderLeft(const ProtocolCraft::NBT::Value& data_shoulder_left)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shoulder_left"] = data_shoulder_left;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_left"), data_shoulder_left);
     }
 
     void PlayerEntity::SetDataShoulderRight(const ProtocolCraft::NBT::Value& data_shoulder_right)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shoulder_right"] = data_shoulder_right;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_right"), data_shoulder_right);
     }
 #else
     void PlayerEntity::SetDataShoulderParrotLeft(const std::optional<int>& data_shoulder_parrot_left)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shoulder_parrot_left"] = data_shoulder_parrot_left;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_parrot_left"), data_shoulder_parrot_left);
     }
 
     void PlayerEntity::SetDataShoulderParrotRight(const std::optional<int>& data_shoulder_parrot_right)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shoulder_parrot_right"] = data_shoulder_parrot_right;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shoulder_parrot_right"), data_shoulder_parrot_right);
     }
 #endif
 

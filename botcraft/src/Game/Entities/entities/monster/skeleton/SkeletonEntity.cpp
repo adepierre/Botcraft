@@ -1,19 +1,12 @@
 #include "botcraft/Game/Entities/entities/monster/skeleton/SkeletonEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-    const std::array<std::string, SkeletonEntity::metadata_count> SkeletonEntity::metadata_names{ {
-        "data_stray_conversion_id",
-    } };
-#endif
-
     SkeletonEntity::SkeletonEntity()
     {
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         SetDataStrayConversionId(false);
 #endif
     }
@@ -57,30 +50,15 @@ namespace Botcraft
     }
 
 
-    void SkeletonEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractSkeletonEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool SkeletonEntity::GetDataStrayConversionId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_stray_conversion_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_stray_conversion_id"));
     }
 
 
     void SkeletonEntity::SetDataStrayConversionId(const bool data_stray_conversion_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_stray_conversion_id"] = data_stray_conversion_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_stray_conversion_id"), data_stray_conversion_id);
     }
 #endif
 

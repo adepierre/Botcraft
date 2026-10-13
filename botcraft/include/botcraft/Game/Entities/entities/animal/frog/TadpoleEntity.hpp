@@ -7,12 +7,17 @@ namespace Botcraft
 {
     class TadpoleEntity : public AbstractFishEntity
     {
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("age_locked"),
+        };
+#endif
     protected:
 #if PROTOCOL_VERSION < 775 /* < 26.1 */
         static constexpr int metadata_count = 0;
 #else
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #endif
         static constexpr int hierarchy_metadata_count = AbstractFishEntity::metadata_count + AbstractFishEntity::hierarchy_metadata_count;
 
@@ -33,8 +38,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetAgeLocked() const;
 
         void SetAgeLocked(const bool age_locked);

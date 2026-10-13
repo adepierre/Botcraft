@@ -1,31 +1,12 @@
 #include "botcraft/Game/Entities/entities/LivingEntity.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, LivingEntity::metadata_count> LivingEntity::metadata_names{ {
-        "data_living_entity_flags",
-        "data_health_id",
-#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
-        "data_effect_color_id",
-#else
-        "data_effect_particles",
-#endif
-        "data_effect_ambience_id",
-        "data_arrow_count_id",
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        "data_stinger_count_id",
-#endif
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "sleeping_pos_id",
-#endif
-    } };
-
     LivingEntity::LivingEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataLivingEntityFlags(0);
         SetDataHealthId(1.0f);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
@@ -161,19 +142,6 @@ namespace Botcraft
     }
 
 
-    void LivingEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char LivingEntity::GetDataLivingEntityFlags() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
@@ -182,41 +150,35 @@ namespace Botcraft
 
     float LivingEntity::GetDataHealthId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_health_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_health_id"));
     }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     int LivingEntity::GetDataEffectColorId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_effect_color_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_color_id"));
     }
 #else
     std::vector<ProtocolCraft::Particle> LivingEntity::GetDataEffectParticles() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::vector<ProtocolCraft::Particle>>(metadata.at("data_effect_particles"));
+        return GetMetadata<std::vector<ProtocolCraft::Particle>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_particles"));
     }
 #endif
 
     bool LivingEntity::GetDataEffectAmbienceId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_effect_ambience_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_ambience_id"));
     }
 
     int LivingEntity::GetDataArrowCountId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_arrow_count_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_arrow_count_id"));
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     int LivingEntity::GetDataStingerCountId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_stinger_count_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_stinger_count_id"));
     }
 #endif
 
@@ -231,55 +193,47 @@ namespace Botcraft
 
     void LivingEntity::SetDataLivingEntityFlags(const char data_living_entity_flags)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_living_entity_flags"] = data_living_entity_flags;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_living_entity_flags"), data_living_entity_flags);
     }
 
     void LivingEntity::SetDataHealthId(const float data_health_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_health_id"] = data_health_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_health_id"), data_health_id);
     }
 
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
     void LivingEntity::SetDataEffectColorId(const int data_effect_color_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_effect_color_id"] = data_effect_color_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_color_id"), data_effect_color_id);
     }
 #else
     void LivingEntity::SetDataEffectParticles(const std::vector<ProtocolCraft::Particle>& data_effect_particles)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_effect_particles"] = data_effect_particles;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_particles"), data_effect_particles);
     }
 #endif
 
     void LivingEntity::SetDataEffectAmbienceId(const bool data_effect_ambience_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_effect_ambience_id"] = data_effect_ambience_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_effect_ambience_id"), data_effect_ambience_id);
     }
 
     void LivingEntity::SetDataArrowCountId(const int data_arrow_count_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_arrow_count_id"] = data_arrow_count_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_arrow_count_id"), data_arrow_count_id);
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void LivingEntity::SetDataStingerCountId(const int data_stinger_count_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_stinger_count_id"] = data_stinger_count_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_stinger_count_id"), data_stinger_count_id);
     }
 #endif
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void LivingEntity::SetSleepingPosId(const std::optional<Position>& sleeping_pos_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["sleeping_pos_id"] = sleeping_pos_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("sleeping_pos_id"), sleeping_pos_id);
     }
 #endif
 
@@ -544,13 +498,13 @@ namespace Botcraft
 
     char LivingEntity::GetDataLivingEntityFlagsImpl() const
     {
-        return std::any_cast<char>(metadata.at("data_living_entity_flags"));
+        return GetMetadataImpl<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_living_entity_flags"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     std::optional<Position> LivingEntity::GetSleepingPosIdImpl() const
     {
-        return std::any_cast<std::optional<Position>>(metadata.at("sleeping_pos_id"));
+        return GetMetadataImpl<std::optional<Position>>(BOTCRAFT_ENTITY_METADATA_INDEX("sleeping_pos_id"));
     }
 #endif
 

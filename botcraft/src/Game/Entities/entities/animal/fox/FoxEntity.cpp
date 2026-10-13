@@ -1,20 +1,12 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/fox/FoxEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, FoxEntity::metadata_count> FoxEntity::metadata_names{ {
-        "data_type_id",
-        "data_flags_id",
-        "data_trusted_id_0",
-        "data_trusted_id_1",
-    } };
-
     FoxEntity::FoxEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataTypeId(0);
         SetDataFlagsId(0);
         SetDataTrustedId0(std::optional<ProtocolCraft::UUID>());
@@ -74,66 +66,45 @@ namespace Botcraft
     }
 
 
-    void FoxEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int FoxEntity::GetDataTypeId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_type_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"));
     }
 
     char FoxEntity::GetDataFlagsId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_flags_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"));
     }
 
     std::optional<ProtocolCraft::UUID> FoxEntity::GetDataTrustedId0() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_trusted_id_0"));
+        return GetMetadata<std::optional<ProtocolCraft::UUID>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusted_id_0"));
     }
 
     std::optional<ProtocolCraft::UUID> FoxEntity::GetDataTrustedId1() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::UUID>>(metadata.at("data_trusted_id_1"));
+        return GetMetadata<std::optional<ProtocolCraft::UUID>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusted_id_1"));
     }
 
 
     void FoxEntity::SetDataTypeId(const int data_type_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type_id"] = data_type_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"), data_type_id);
     }
 
     void FoxEntity::SetDataFlagsId(const char data_flags_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_flags_id"] = data_flags_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_flags_id"), data_flags_id);
     }
 
     void FoxEntity::SetDataTrustedId0(const std::optional<ProtocolCraft::UUID>& data_trusted_id_0)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_trusted_id_0"] = data_trusted_id_0;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusted_id_0"), data_trusted_id_0);
     }
 
     void FoxEntity::SetDataTrustedId1(const std::optional<ProtocolCraft::UUID>& data_trusted_id_1)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_trusted_id_1"] = data_trusted_id_1;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_trusted_id_1"), data_trusted_id_1);
     }
 
 

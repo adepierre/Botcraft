@@ -1,21 +1,12 @@
 #if PROTOCOL_VERSION > 578 /* > 1.15.2 */
 #include "botcraft/Game/Entities/entities/monster/StriderEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, StriderEntity::metadata_count> StriderEntity::metadata_names{ {
-        "data_boost_time",
-        "data_suffocating",
-#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        "data_saddle_id",
-#endif
-    } };
-
     StriderEntity::StriderEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBoostTime(0);
         SetDataSuffocating(false);
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
@@ -71,57 +62,38 @@ namespace Botcraft
     }
 
 
-    void StriderEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int StriderEntity::GetDataBoostTime() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_boost_time"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_boost_time"));
     }
 
     bool StriderEntity::GetDataSuffocating() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_suffocating"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_suffocating"));
     }
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     bool StriderEntity::GetDataSaddleId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_saddle_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_saddle_id"));
     }
 #endif
 
 
     void StriderEntity::SetDataBoostTime(const int data_boost_time)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_boost_time"] = data_boost_time;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_boost_time"), data_boost_time);
     }
 
     void StriderEntity::SetDataSuffocating(const bool data_suffocating)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_suffocating"] = data_suffocating;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_suffocating"), data_suffocating);
     }
 
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
     void StriderEntity::SetDataSaddleId(const bool data_saddle_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_saddle_id"] = data_saddle_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_saddle_id"), data_saddle_id);
     }
 #endif
 

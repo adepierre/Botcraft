@@ -1,22 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/chicken/ChickenEntity.hpp"
 
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include <mutex>
-#endif
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-    const std::array<std::string, ChickenEntity::metadata_count> ChickenEntity::metadata_names{ {
-        "data_variant_id",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        "data_sound_variant_id",
-#endif
-    }};
-#endif
-
     ChickenEntity::ChickenEntity()
     {
+        // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         SetDataVariantId(0);
 #endif
@@ -67,45 +56,28 @@ namespace Botcraft
         return output;
     }
 
-    void ChickenEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int ChickenEntity::GetDataVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"));
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     int ChickenEntity::GetDataSoundVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_sound_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"));
     }
 #endif
 
 
     void ChickenEntity::SetDataVariantId(const int data_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_variant_id"] = data_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_variant_id"), data_variant_id);
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     void ChickenEntity::SetDataSoundVariantId(const int data_sound_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_sound_variant_id"] = data_sound_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"), data_sound_variant_id);
     }
 #endif
 #endif

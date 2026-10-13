@@ -1,22 +1,12 @@
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #include "botcraft/Game/Entities/entities/monster/creaking/CreakingEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CreakingEntity::metadata_count> CreakingEntity::metadata_names{ {
-        "can_move",
-        "is_active",
-#if PROTOCOL_VERSION > 768 /* > 1.21.3 */
-        "is_tearing_down",
-        "home_pos",
-#endif
-    } };
-
     CreakingEntity::CreakingEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetCanMove(true);
         SetIsActive(false);
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
@@ -83,69 +73,48 @@ namespace Botcraft
     }
 
 
-    void CreakingEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool CreakingEntity::GetCanMove() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("can_move"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("can_move"));
     }
 
     bool CreakingEntity::GetIsActive() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("is_active"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("is_active"));
     }
 
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
     bool CreakingEntity::GetIsTearingDown() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("is_tearing_down"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("is_tearing_down"));
     }
 
     std::optional<Position> CreakingEntity::GetHomePos() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<Position>>(metadata.at("home_pos"));
+        return GetMetadata<std::optional<Position>>(BOTCRAFT_ENTITY_METADATA_INDEX("home_pos"));
     }
 #endif
 
 
     void CreakingEntity::SetCanMove(const bool can_move)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["can_move"] = can_move;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("can_move"), can_move);
     }
 
     void CreakingEntity::SetIsActive(const bool is_active)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["is_active"] = is_active;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("is_active"), is_active);
     }
 
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
     void CreakingEntity::SetIsTearingDown(const bool is_tearing_down)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["is_tearing_down"] = is_tearing_down;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("is_tearing_down"), is_tearing_down);
     }
 
     void CreakingEntity::SetHomePos(const std::optional<Position>& home_pos)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["home_pos"] = home_pos;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("home_pos"), home_pos);
     }
 #endif
 

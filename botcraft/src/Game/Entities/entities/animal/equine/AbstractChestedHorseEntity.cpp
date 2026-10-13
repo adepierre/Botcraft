@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/equine/AbstractChestedHorseEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, AbstractChestedHorseEntity::metadata_count> AbstractChestedHorseEntity::metadata_names{ {
-        "data_id_chest",
-    } };
-
     AbstractChestedHorseEntity::AbstractChestedHorseEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataIdChest(false);
 
         // Initialize all attributes with default values
@@ -43,30 +38,15 @@ namespace Botcraft
     }
 
 
-    void AbstractChestedHorseEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractHorseEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool AbstractChestedHorseEntity::GetDataIdChest() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_id_chest"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_chest"));
     }
 
 
     void AbstractChestedHorseEntity::SetDataIdChest(const bool data_id_chest)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_chest"] = data_id_chest;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_chest"), data_id_chest);
     }
 
 }

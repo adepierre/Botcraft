@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/item/FallingBlockEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, FallingBlockEntity::metadata_count> FallingBlockEntity::metadata_names{ {
-        "data_start_pos",
-    } };
-
     FallingBlockEntity::FallingBlockEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataStartPos(Position(0, 0, 0));
     }
 
@@ -52,30 +47,15 @@ namespace Botcraft
     }
 
 
-    void FallingBlockEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     Position FallingBlockEntity::GetDataStartPos() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Position>(metadata.at("data_start_pos"));
+        return GetMetadata<Position>(BOTCRAFT_ENTITY_METADATA_INDEX("data_start_pos"));
     }
 
 
     void FallingBlockEntity::SetDataStartPos(const Position& data_start_pos)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_start_pos"] = data_start_pos;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_start_pos"), data_start_pos);
     }
 
 

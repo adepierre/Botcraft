@@ -1,25 +1,17 @@
 #include "botcraft/Game/Entities/entities/monster/cubemob/SlimeEntity.hpp"
 #include "botcraft/Utilities/Logger.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION < 776 /* < 26.2 */
-    const std::array<std::string, SlimeEntity::metadata_count> SlimeEntity::metadata_names{ {
-        "id_size",
-    } };
-#endif
-
     SlimeEntity::SlimeEntity()
     {
+        // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         // As Slime don't inherit from MonsterEntity, AttackDamage is not initialized in parent constructor
         // It is overwritten when size is set, but it needs to be initialized before
         attributes.insert({ EntityAttribute::Type::AttackDamage, EntityAttribute(EntityAttribute::Type::AttackDamage, 1.0) });
 
 #if PROTOCOL_VERSION < 776 /* < 26.2 */
-
-        // Initialize all metadata with default values
         SetIdSize(1);
 #endif
     }
@@ -62,24 +54,18 @@ namespace Botcraft
     }
 
 
-    void SlimeEntity::SetMetadataValue(const int index, const std::any& value)
+    void SlimeEntity::OnMetadataChangedImpl(const int index)
     {
         if (index < hierarchy_metadata_count)
         {
-            MobEntity::SetMetadataValue(index, value);
+            MobEntity::OnMetadataChangedImpl(index);
         }
-        else if (index - hierarchy_metadata_count < metadata_count)
+        else if (index == BOTCRAFT_ENTITY_METADATA_INDEX("id_size"))
         {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            const std::string& metadata_name = metadata_names[index - hierarchy_metadata_count];
-            metadata[metadata_name] = value;
-            if (metadata_name == "id_size")
-            {
-                SizeChanged(std::any_cast<int>(value));
+            SizeChanged(GetMetadataImpl<int>(index));
 #if USE_GUI
-                OnSizeUpdated();
+            OnSizeUpdated();
 #endif
-            }
         }
     }
 
@@ -92,17 +78,12 @@ namespace Botcraft
 
     void SlimeEntity::SetIdSize(const int id_size)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_size"] = id_size;
-        SizeChanged(id_size);
-#if USE_GUI
-        OnSizeUpdated();
-#endif
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"), id_size);
     }
 
     int SlimeEntity::GetIdSizeImpl() const
     {
-        return std::any_cast<int>(metadata.at("id_size"));
+        return GetMetadataImpl<int>(BOTCRAFT_ENTITY_METADATA_INDEX("id_size"));
     }
 
     void SlimeEntity::SizeChanged(const int new_size)

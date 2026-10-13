@@ -1,20 +1,12 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/projectile/arrow/ThrownTridentEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ThrownTridentEntity::metadata_count> ThrownTridentEntity::metadata_names{ {
-        "id_loyalty",
-#if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        "id_foil",
-#endif
-    } };
-
     ThrownTridentEntity::ThrownTridentEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIdLoyalty(0);
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
         SetIdFoil(false);
@@ -62,45 +54,28 @@ namespace Botcraft
     }
 
 
-    void ThrownTridentEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractArrowEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char ThrownTridentEntity::GetIdLoyalty() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("id_loyalty"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("id_loyalty"));
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     bool ThrownTridentEntity::GetIdFoil() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("id_foil"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("id_foil"));
     }
 #endif
 
 
     void ThrownTridentEntity::SetIdLoyalty(const char id_loyalty)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_loyalty"] = id_loyalty;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_loyalty"), id_loyalty);
     }
 
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
     void ThrownTridentEntity::SetIdFoil(const bool id_foil)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["id_foil"] = id_foil;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("id_foil"), id_foil);
     }
 #endif
 

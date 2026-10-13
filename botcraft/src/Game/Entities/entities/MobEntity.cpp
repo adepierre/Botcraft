@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/MobEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, MobEntity::metadata_count> MobEntity::metadata_names{ {
-        "data_mob_flags_id",
-    } };
-
     MobEntity::MobEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataMobFlagsId(0);
 
         // Initialize all attributes with default values
@@ -46,30 +41,15 @@ namespace Botcraft
     }
 
 
-    void MobEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            LivingEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char MobEntity::GetDataMobFlagsId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_mob_flags_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_mob_flags_id"));
     }
 
 
     void MobEntity::SetDataMobFlagsId(const char data_mob_flags_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_mob_flags_id"] = data_mob_flags_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_mob_flags_id"), data_mob_flags_id);
     }
 
 

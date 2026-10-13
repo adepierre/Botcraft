@@ -1,17 +1,11 @@
 #include "botcraft/Game/Entities/entities/vehicle/minecart/MinecartCommandBlockEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, MinecartCommandBlockEntity::metadata_count> MinecartCommandBlockEntity::metadata_names{ {
-        "data_id_command_name",
-        "data_id_last_output",
-    } };
-
     MinecartCommandBlockEntity::MinecartCommandBlockEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataIdCommandName("");
         SetDataIdLastOutput(ProtocolCraft::Chat());
     }
@@ -55,42 +49,25 @@ namespace Botcraft
     }
 
 
-    void MinecartCommandBlockEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractMinecartEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     std::string MinecartCommandBlockEntity::GetDataIdCommandName() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::string>(metadata.at("data_id_command_name"));
+        return GetMetadata<std::string>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_command_name"));
     }
 
     ProtocolCraft::Chat MinecartCommandBlockEntity::GetDataIdLastOutput() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::Chat>(metadata.at("data_id_last_output"));
+        return GetMetadata<ProtocolCraft::Chat>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_last_output"));
     }
 
 
     void MinecartCommandBlockEntity::SetDataIdCommandName(const std::string& data_id_command_name)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_command_name"] = data_id_command_name;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_command_name"), data_id_command_name);
     }
 
     void MinecartCommandBlockEntity::SetDataIdLastOutput(const ProtocolCraft::Chat& data_id_last_output)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_last_output"] = data_id_last_output;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_last_output"), data_id_last_output);
     }
 
 

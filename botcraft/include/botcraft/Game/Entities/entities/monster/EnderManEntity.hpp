@@ -6,13 +6,16 @@ namespace Botcraft
 {
     class EnderManEntity : public MonsterEntity
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_carry_state"),
+            std::string_view("data_creepy"),
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */
-        static constexpr int metadata_count = 3;
-#else
-        static constexpr int metadata_count = 2;
+            std::string_view("data_stared_at"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = MonsterEntity::metadata_count + MonsterEntity::hierarchy_metadata_count;
 
     public:
@@ -31,8 +34,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetDataCarryState() const;
         bool GetDataCreepy() const;
 #if PROTOCOL_VERSION > 498 /* > 1.14.4 */

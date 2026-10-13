@@ -4,21 +4,12 @@
 #include "botcraft/Game/AssetsManager.hpp"
 #endif
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, FireworkRocketEntity::metadata_count> FireworkRocketEntity::metadata_names{ {
-        "data_id_fireworks_item",
-        "data_attached_to_target",
-#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        "data_shot_at_angle",
-#endif
-    } };
-
     FireworkRocketEntity::FireworkRocketEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SetDataIdFireworksItem(ProtocolCraft::Slot());
 #else
@@ -85,73 +76,48 @@ namespace Botcraft
     }
 
 
-    void FireworkRocketEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-#if PROTOCOL_VERSION > 578 /* > 1.15.2 */
-            ProjectileEntity::SetMetadataValue(index, value);
-#else
-            Entity::SetMetadataValue(index, value);
-#endif
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     ProtocolCraft::Slot FireworkRocketEntity::GetDataIdFireworksItem() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::Slot>(metadata.at("data_id_fireworks_item"));
+        return GetMetadata<ProtocolCraft::Slot>(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_fireworks_item"));
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     std::optional<int> FireworkRocketEntity::GetDataAttachedToTarget() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<int>>(metadata.at("data_attached_to_target"));
+        return GetMetadata<std::optional<int>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_attached_to_target"));
     }
 
     bool FireworkRocketEntity::GetDataShotAtAngle() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_shot_at_angle"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shot_at_angle"));
     }
 #else
     int FireworkRocketEntity::GetDataAttachedToTarget() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_attached_to_target"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_attached_to_target"));
     }
 #endif
 
 
     void FireworkRocketEntity::SetDataIdFireworksItem(const ProtocolCraft::Slot& data_id_fireworks_item)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_id_fireworks_item"] = data_id_fireworks_item;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_id_fireworks_item"), data_id_fireworks_item);
     }
 
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
     void FireworkRocketEntity::SetDataAttachedToTarget(const std::optional<int>& data_attached_to_target)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_attached_to_target"] = data_attached_to_target;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_attached_to_target"), data_attached_to_target);
     }
 
     void FireworkRocketEntity::SetDataShotAtAngle(const bool data_shot_at_angle)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shot_at_angle"] = data_shot_at_angle;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shot_at_angle"), data_shot_at_angle);
     }
 #else
     void FireworkRocketEntity::SetDataAttachedToTarget(const int data_attached_to_target)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_attached_to_target"] = data_attached_to_target;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_attached_to_target"), data_attached_to_target);
     }
 #endif
 

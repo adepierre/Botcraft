@@ -7,9 +7,17 @@ namespace Botcraft
 {
     class PandaEntity : public AnimalEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("unhappy_counter"),
+            std::string_view("sneeze_counter"),
+            std::string_view("eat_counter"),
+            std::string_view("main_gene_id"),
+            std::string_view("hidden_gene_id"),
+            std::string_view("data_id_flags"),
+        };
     protected:
-        static constexpr int metadata_count = 6;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
     public:
@@ -28,8 +36,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetUnhappyCounter() const;
         int GetSneezeCounter() const;
         int GetEatCounter() const;

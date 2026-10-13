@@ -1,8 +1,6 @@
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
 #include "botcraft/Game/Entities/entities/monster/breeze/BreezeEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
     BreezeEntity::BreezeEntity()

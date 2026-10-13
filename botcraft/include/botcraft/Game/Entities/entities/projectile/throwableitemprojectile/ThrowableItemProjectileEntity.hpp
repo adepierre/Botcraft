@@ -9,10 +9,15 @@ namespace Botcraft
 {
     class ThrowableItemProjectileEntity : public ThrowableProjectileEntity
     {
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_item_stack"),
+        };
+#endif
     protected:
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #else
         static constexpr int metadata_count = 0;
 #endif
@@ -28,8 +33,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         ProtocolCraft::Slot GetDataItemStack() const;
 
         void SetDataItemStack(const ProtocolCraft::Slot& data_item_stack);

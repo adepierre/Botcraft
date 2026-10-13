@@ -1,21 +1,12 @@
 #include "botcraft/Game/Entities/entities/ExperienceOrbEntity.hpp"
 
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-#include <mutex>
-#endif
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-    const std::array<std::string, ExperienceOrbEntity::metadata_count> ExperienceOrbEntity::metadata_names{ {
-        "data_value",
-    } };
-#endif
-
     ExperienceOrbEntity::ExperienceOrbEntity()
     {
-#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
+#if PROTOCOL_VERSION > 769 /* > 1.21.4 */
         SetDataValue(0);
 #endif
     }
@@ -59,30 +50,15 @@ namespace Botcraft
 
 
 
-    void ExperienceOrbEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int ExperienceOrbEntity::GetDataValue() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_value"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_value"));
     }
 
 
     void ExperienceOrbEntity::SetDataValue(const int data_value)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_value"] = data_value;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_value"), data_value);
     }
 #endif
 

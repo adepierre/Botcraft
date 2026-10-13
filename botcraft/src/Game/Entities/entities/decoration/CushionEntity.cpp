@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 776 /* > 26.2 */
 #include "botcraft/Game/Entities/entities/decoration/CushionEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CushionEntity::metadata_count> CushionEntity::metadata_names{ {
-        "data_color",
-    } };
-
     CushionEntity::CushionEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataColor(0);
     }
 
@@ -53,31 +48,15 @@ namespace Botcraft
     }
 
 
-    void CushionEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            BlockAttachedEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
-
     int CushionEntity::GetDataColor() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_color"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_color"));
     }
 
 
     void CushionEntity::SetDataColor(const int data_color)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_color"] = data_color;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_color"), data_color);
     }
 
 

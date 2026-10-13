@@ -7,9 +7,12 @@ namespace Botcraft
 {
     class PufferfishEntity : public AbstractFishEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("puff_state"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AbstractFishEntity::metadata_count + AbstractFishEntity::hierarchy_metadata_count;
 
     public:
@@ -28,8 +31,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetPuffState() const;
 
         void SetPuffState(const int puff_state);

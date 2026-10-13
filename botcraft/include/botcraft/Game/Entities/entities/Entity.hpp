@@ -1,11 +1,14 @@
 #pragma once
 
 #include <any>
+#include <array>
 #include <chrono>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <shared_mutex>
+#include <string_view>
 
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "protocolCraft/Types/Chat/Chat.hpp"
@@ -50,15 +53,23 @@ namespace Botcraft
 
     class Entity
     {
-    protected:
-#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
-        static constexpr int metadata_count = 8;
-#elif PROTOCOL_VERSION > 404 /* > 1.13.2 */
-        static constexpr int metadata_count = 7;
-#else
-        static constexpr int metadata_count = 6;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_shared_flags_id"),
+            std::string_view("data_air_supply_id"),
+            std::string_view("data_custom_name"),
+            std::string_view("data_custom_name_visible"),
+            std::string_view("data_silent"),
+            std::string_view("data_no_gravity"),
+#if PROTOCOL_VERSION > 404 /* > 1.13.2 */
+            std::string_view("data_pose"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION > 754 /* > 1.16.5 */
+            std::string_view("data_ticks_frozen"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = 0;
 
     public:
@@ -72,9 +83,41 @@ namespace Botcraft
         double GetWidth() const;
         double GetHeight() const;
 
+    protected:
         // Metadata stuff
+        template <size_t N>
+        static constexpr int FindMetadataIndex(const std::array<std::string_view, N>& names, const std::string_view name)
+        {
+            for (size_t i = 0; i < N; ++i)
+            {
+                if (names[i] == name)
+                {
+                    return static_cast<int>(i);
+                }
+            }
+            return -1;
+        }
+
+        template <typename T>
+        T GetMetadataImpl(const int index) const
+        {
+            return std::any_cast<T>(metadata.at(index));
+        }
+
+        template <typename T>
+        T GetMetadata(const int index) const
+        {
+            std::shared_lock<std::shared_mutex> lock(entity_mutex);
+            return GetMetadataImpl<T>(index);
+        }
+
+        void SetMetadataImpl(const int index, const std::any& value);
+        void SetMetadata(const int index, const std::any& value);
+        virtual void OnMetadataChangedImpl(const int index);
+
+
+    public:
         void LoadMetadataFromRawArray(const std::vector<unsigned char>& data);
-        virtual void SetMetadataValue(const int index, const std::any& value);
 
         char GetDataSharedFlagsId() const;
         bool GetDataSharedFlagsId(const EntitySharedFlagsId id) const;
@@ -94,6 +137,7 @@ namespace Botcraft
         int GetDataTicksFrozen() const;
 #endif
 
+
         void SetDataSharedFlagsId(const char data_shared_flags_id);
         void SetDataSharedFlagsId(const EntitySharedFlagsId id, const bool b);
         void SetDataAirSupplyId(const int data_air_supply_id);
@@ -111,6 +155,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
         void SetDataTicksFrozen(const int data_ticks_frozen);
 #endif
+
 
         // Generic properties getter
         int GetEntityID() const;
@@ -156,8 +201,10 @@ namespace Botcraft
         void SetAreRenderedFacesUpToDate(const bool are_rendered_faces_up_to_date_);
 #endif
 
+
         // In case it's needed one day, could be useful
         virtual ProtocolCraft::Json::Value Serialize() const;
+
 
         virtual bool IsLocalPlayer() const;
         virtual bool IsRemotePlayer() const;
@@ -243,11 +290,13 @@ namespace Botcraft
         virtual bool IsAbstractCubeMob() const;
 #endif
 
+
         // Factory stuff
         static std::shared_ptr<Entity> CreateEntity(const EntityType type);
 #if PROTOCOL_VERSION < 458 /* < 1.14 */
         static std::shared_ptr<Entity> CreateObjectEntity(const ObjectEntityType type);
 #endif
+
 
     protected:
 #if USE_GUI
@@ -282,16 +331,24 @@ namespace Botcraft
         std::map<EquipmentSlot, ProtocolCraft::Slot> equipments;
         std::vector<EntityEffect> effects;
 
-        std::map<std::string, std::any> metadata;
+        std::vector<std::any> metadata;
 
 #if USE_GUI
-        //All the faces of this model
+        // All the faces of this model
         std::vector<FaceDescriptor> face_descriptors;
         std::vector<Renderer::Face> faces;
 
         bool are_rendered_faces_up_to_date;
 #endif
     };
+
+    // Can be used inside any entity-derived class to get the index of a given key
+#define BOTCRAFT_ENTITY_METADATA_INDEX(name)                       \
+    ([]() {                                                        \
+        constexpr int i = FindMetadataIndex(metadata_names, name); \
+        static_assert(i >= 0, "Unknown metadata " name);           \
+        return hierarchy_metadata_count + i;                       \
+    }())
 
     enum class EntityType
     {

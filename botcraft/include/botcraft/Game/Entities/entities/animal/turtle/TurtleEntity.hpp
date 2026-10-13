@@ -7,13 +7,21 @@ namespace Botcraft
 {
     class TurtleEntity : public AnimalEntity
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        static constexpr int metadata_count = 6;
-#else
-        static constexpr int metadata_count = 2;
+            std::string_view("home_pos"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("has_egg"),
+            std::string_view("laying_egg"),
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+            std::string_view("travel_pos"),
+            std::string_view("going_home"),
+            std::string_view("travelling"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = AnimalEntity::metadata_count + AnimalEntity::hierarchy_metadata_count;
 
     public:
@@ -32,8 +40,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 770 /* < 1.21.5 */
         Position GetHomePos() const;
 #endif

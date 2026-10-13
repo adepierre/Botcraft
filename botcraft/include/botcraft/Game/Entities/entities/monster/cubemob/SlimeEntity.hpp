@@ -14,10 +14,15 @@ namespace Botcraft
     class SlimeEntity : public AbstractCubeMobEntity
 #endif
     {
+#if PROTOCOL_VERSION < 776 /* < 26.2 */
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("id_size"),
+        };
+#endif
     protected:
 #if PROTOCOL_VERSION < 776 /* < 26.2 */
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = MobEntity::metadata_count + MobEntity::hierarchy_metadata_count;
 #else
         static constexpr int metadata_count = 0;
@@ -41,13 +46,12 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetIdSize() const;
 
         void SetIdSize(const int id_size);
 
     protected:
+        void OnMetadataChangedImpl(const int index) override;
         int GetIdSizeImpl() const;
         void SizeChanged(const int new_size);
 #else

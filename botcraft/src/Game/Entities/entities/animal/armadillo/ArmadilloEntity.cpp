@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
 #include "botcraft/Game/Entities/entities/animal/armadillo/ArmadilloEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, ArmadilloEntity::metadata_count> ArmadilloEntity::metadata_names{ {
-        "armadillo_state",
-    } };
-
     ArmadilloEntity::ArmadilloEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetArmadilloState(0);
 
         // Initialize all attributes with default values
@@ -57,30 +52,15 @@ namespace Botcraft
     }
 
 
-    void ArmadilloEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int ArmadilloEntity::GetArmadilloState() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("armadillo_state"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("armadillo_state"));
     }
 
 
     void ArmadilloEntity::SetArmadilloState(const int armadillo_state)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["armadillo_state"] = armadillo_state;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("armadillo_state"), armadillo_state);
     }
 
 

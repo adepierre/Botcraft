@@ -6,9 +6,14 @@ namespace Botcraft
 {
     class AbstractBoatEntity : public VehicleEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_id_paddle_left"),
+            std::string_view("data_id_paddle_right"),
+            std::string_view("data_id_bubble_time"),
+        };
     protected:
-        static constexpr int metadata_count = 3;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = VehicleEntity::metadata_count + VehicleEntity::hierarchy_metadata_count;
 
     public:
@@ -20,8 +25,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetDataIdPaddleLeft() const;
         bool GetDataIdPaddleRight() const;
         int GetDataIdBubbleTime() const;

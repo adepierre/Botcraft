@@ -7,9 +7,12 @@ namespace Botcraft
 {
     class GlowSquidEntity : public SquidEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_dark_ticks_remaining"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = SquidEntity::metadata_count + SquidEntity::hierarchy_metadata_count;
 
     public:
@@ -28,8 +31,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetDataDarkTicksRemaining() const;
 
         void SetDataDarkTicksRemaining(const int data_dark_ticks_remaining);

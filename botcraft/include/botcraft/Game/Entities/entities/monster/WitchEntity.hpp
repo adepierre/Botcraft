@@ -14,9 +14,12 @@ namespace Botcraft
     class WitchEntity : public MobEntity
 #endif
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_using_item"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int hierarchy_metadata_count = RaiderEntity::metadata_count + RaiderEntity::hierarchy_metadata_count;
 #else
@@ -39,8 +42,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetDataUsingItem() const;
 
         void SetDataUsingItem(const bool data_using_item);

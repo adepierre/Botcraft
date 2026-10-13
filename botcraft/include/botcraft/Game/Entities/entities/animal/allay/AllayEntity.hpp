@@ -7,12 +7,18 @@ namespace Botcraft
 {
     class AllayEntity : public PathfinderMobEntity
     {
+#if PROTOCOL_VERSION > 759 /* > 1.19 */
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_dancing"),
+            std::string_view("data_can_duplicate"),
+        };
+#endif
     protected:
 #if PROTOCOL_VERSION < 760 /* < 1.19.1 */
         static constexpr int metadata_count = 0;
 #else
-        static constexpr int metadata_count = 2;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #endif
         static constexpr int hierarchy_metadata_count = PathfinderMobEntity::metadata_count + PathfinderMobEntity::hierarchy_metadata_count;
 
@@ -32,8 +38,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetDataDancing() const;
         bool GetDataCanDuplicate() const;
 

@@ -9,15 +9,21 @@ namespace Botcraft
 {
     class AreaEffectCloudEntity : public Entity
     {
-    protected:
-#if PROTOCOL_VERSION > 765 /* > 1.20.4 */
-        static constexpr int metadata_count = 3;
-#elif PROTOCOL_VERSION > 340 /* > 1.12.2 */
-        static constexpr int metadata_count = 4;
-#else
-        static constexpr int metadata_count = 6;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_radius"),
+#if PROTOCOL_VERSION < 766 /* < 1.20.5 */
+            std::string_view("data_color"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_waiting"),
+            std::string_view("data_particle"),
+#if PROTOCOL_VERSION < 341 /* < 1.13 */
+            std::string_view("data_particle_argument1"),
+            std::string_view("data_particle_argument2"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 
     public:
@@ -36,8 +42,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         float GetDataRadius() const;
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         int GetDataColor() const;
@@ -65,6 +69,7 @@ namespace Botcraft
 #endif
 
     protected:
+        void OnMetadataChangedImpl(const int index) override;
         float GetDataRadiusImpl() const;
         virtual double GetWidthImpl() const override;
         virtual double GetHeightImpl() const override;

@@ -1,23 +1,12 @@
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
 #include "botcraft/Game/Entities/entities/animal/feline/CatEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CatEntity::metadata_count> CatEntity::metadata_names{ {
-        "data_type_id",
-        "is_lying",
-        "relax_state_one",
-        "data_collar_color",
-#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
-        "data_sound_variant_id",
-#endif
-    } };
-
     CatEntity::CatEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataTypeId(1);
         SetIsLying(false);
         SetRelaxStateOne(false);
@@ -79,81 +68,58 @@ namespace Botcraft
     }
 
 
-    void CatEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            TamableAnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int CatEntity::GetDataTypeId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_type_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"));
     }
 
     bool CatEntity::GetIsLying() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("is_lying"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("is_lying"));
     }
 
     bool CatEntity::GetRelaxStateOne() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("relax_state_one"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("relax_state_one"));
     }
 
     int CatEntity::GetDataCollarColor() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_collar_color"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_collar_color"));
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     int CatEntity::GetDataSoundVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_sound_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"));
     }
 #endif
 
 
     void CatEntity::SetDataTypeId(const int data_type_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type_id"] = data_type_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type_id"), data_type_id);
     }
 
     void CatEntity::SetIsLying(const bool is_lying)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["is_lying"] = is_lying;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("is_lying"), is_lying);
     }
 
     void CatEntity::SetRelaxStateOne(const bool relax_state_one)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["relax_state_one"] = relax_state_one;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("relax_state_one"), relax_state_one);
     }
 
     void CatEntity::SetDataCollarColor(const int data_collar_color)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_collar_color"] = data_collar_color;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_collar_color"), data_collar_color);
     }
 
 #if PROTOCOL_VERSION > 774 /* > 1.21.11 */
     void CatEntity::SetDataSoundVariantId(const int data_sound_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_sound_variant_id"] = data_sound_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_sound_variant_id"), data_sound_variant_id);
     }
 #endif
 

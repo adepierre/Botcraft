@@ -14,15 +14,25 @@ namespace Botcraft
     class AbstractMinecartEntity : public VehicleEntity
 #endif
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
-        static constexpr int metadata_count = 6;
-#elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
-        static constexpr int metadata_count = 3;
-#else
-        static constexpr int metadata_count = 2;
+            std::string_view("data_id_hurt"),
+            std::string_view("data_id_hurtdir"),
+            std::string_view("data_id_damage"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+            std::string_view("data_id_display_block"),
+#else
+            std::string_view("data_id_custom_display_block"),
+#endif
+            std::string_view("data_id_display_offset"),
+#if PROTOCOL_VERSION < 770 /* < 1.21.5 */
+            std::string_view("data_id_custom_display"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         static constexpr int hierarchy_metadata_count = Entity::metadata_count + Entity::hierarchy_metadata_count;
 #else
@@ -38,8 +48,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
 #if PROTOCOL_VERSION < 765 /* < 1.20.3 */
         int GetDataIdHurt() const;
         int GetDataIdHurtdir() const;

@@ -1,18 +1,11 @@
 #include "botcraft/Game/Entities/entities/monster/CreeperEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CreeperEntity::metadata_count> CreeperEntity::metadata_names{ {
-        "data_swell_dir",
-        "data_is_powered",
-        "data_is_ignited",
-    } };
-
     CreeperEntity::CreeperEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataSwellDir(-1);
         SetDataIsPowered(false);
         SetDataIsIgnited(false);
@@ -61,54 +54,35 @@ namespace Botcraft
     }
 
 
-    void CreeperEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int CreeperEntity::GetDataSwellDir() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_swell_dir"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_swell_dir"));
     }
 
     bool CreeperEntity::GetDataIsPowered() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_is_powered"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_powered"));
     }
 
     bool CreeperEntity::GetDataIsIgnited() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_is_ignited"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_ignited"));
     }
 
 
     void CreeperEntity::SetDataSwellDir(const int data_swell_dir)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_swell_dir"] = data_swell_dir;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_swell_dir"), data_swell_dir);
     }
 
     void CreeperEntity::SetDataIsPowered(const bool data_is_powered)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_is_powered"] = data_is_powered;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_powered"), data_is_powered);
     }
 
     void CreeperEntity::SetDataIsIgnited(const bool data_is_ignited)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_is_ignited"] = data_is_ignited;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_is_ignited"), data_is_ignited);
     }
 
 

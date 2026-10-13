@@ -7,13 +7,18 @@ namespace Botcraft
 {
     class CatEntity : public TamableAnimalEntity
     {
-    protected:
-#if PROTOCOL_VERSION < 775 /* < 26.1 */
-        static constexpr int metadata_count = 4;
-#else
-        static constexpr int metadata_count = 5;
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_type_id"),
+            std::string_view("is_lying"),
+            std::string_view("relax_state_one"),
+            std::string_view("data_collar_color"),
+#if PROTOCOL_VERSION > 774 /* > 1.21.11 */
+            std::string_view("data_sound_variant_id"),
 #endif
-        static const std::array<std::string, metadata_count> metadata_names;
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = TamableAnimalEntity::metadata_count + TamableAnimalEntity::hierarchy_metadata_count;
 
     public:
@@ -32,8 +37,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetDataTypeId() const;
         bool GetIsLying() const;
         bool GetRelaxStateOne() const;

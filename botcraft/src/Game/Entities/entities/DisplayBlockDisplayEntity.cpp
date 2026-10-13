@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayBlockDisplayEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, DisplayBlockDisplayEntity::metadata_count> DisplayBlockDisplayEntity::metadata_names{ {
-        "data_block_state_id",
-    } };
-
     DisplayBlockDisplayEntity::DisplayBlockDisplayEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBlockStateId(0);
     }
 
@@ -54,31 +49,15 @@ namespace Botcraft
     }
 
 
-    void DisplayBlockDisplayEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            DisplayEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
-
     int DisplayBlockDisplayEntity::GetDataBlockStateId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_block_state_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_block_state_id"));
     }
 
 
     void DisplayBlockDisplayEntity::SetDataBlockStateId(const int data_block_state_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_block_state_id"] = data_block_state_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_block_state_id"), data_block_state_id);
     }
 
     double DisplayBlockDisplayEntity::GetWidthImpl() const

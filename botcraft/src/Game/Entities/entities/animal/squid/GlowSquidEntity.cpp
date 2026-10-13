@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 754 /* > 1.16.5 */
 #include "botcraft/Game/Entities/entities/animal/squid/GlowSquidEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, GlowSquidEntity::metadata_count> GlowSquidEntity::metadata_names{ {
-        "data_dark_ticks_remaining",
-    } };
-
     GlowSquidEntity::GlowSquidEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataDarkTicksRemaining(0);
     }
 
@@ -53,30 +48,15 @@ namespace Botcraft
     }
 
 
-    void GlowSquidEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            SquidEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int GlowSquidEntity::GetDataDarkTicksRemaining() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_dark_ticks_remaining"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_dark_ticks_remaining"));
     }
 
 
     void GlowSquidEntity::SetDataDarkTicksRemaining(const int data_dark_ticks_remaining)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_dark_ticks_remaining"] = data_dark_ticks_remaining;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_dark_ticks_remaining"), data_dark_ticks_remaining);
     }
 
 

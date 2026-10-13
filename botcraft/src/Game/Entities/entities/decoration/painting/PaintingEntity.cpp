@@ -1,19 +1,12 @@
 #include "botcraft/Game/Entities/entities/decoration/painting/PaintingEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
-    const std::array<std::string, PaintingEntity::metadata_count> PaintingEntity::metadata_names{ {
-        "data_painting_variant_id",
-    } };
-#endif
-
     PaintingEntity::PaintingEntity()
     {
-#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
+#if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         SetDataPaintingVariantId(0);
 #endif
     }
@@ -57,30 +50,15 @@ namespace Botcraft
     }
 
 
-    void PaintingEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            HangingEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int PaintingEntity::GetDataPaintingVariantId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_painting_variant_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_painting_variant_id"));
     }
 
 
     void PaintingEntity::SetDataPaintingVariantId(const int data_painting_variant_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_painting_variant_id"] = data_painting_variant_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_painting_variant_id"), data_painting_variant_id);
     }
 #endif
 

@@ -1,17 +1,12 @@
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Game/Entities/entities/monster/warden/WardenEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, WardenEntity::metadata_count> WardenEntity::metadata_names{ {
-        "client_anger_level",
-    } };
-
     WardenEntity::WardenEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetClientAngerLevel(0);
 
         // Initialize all attributes with default values
@@ -63,30 +58,15 @@ namespace Botcraft
     }
 
 
-    void WardenEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MonsterEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int WardenEntity::GetClientAngerLevel() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("client_anger_level"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("client_anger_level"));
     }
 
 
     void WardenEntity::SetClientAngerLevel(const int client_anger_level)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["client_anger_level"] = client_anger_level;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("client_anger_level"), client_anger_level);
     }
 
 

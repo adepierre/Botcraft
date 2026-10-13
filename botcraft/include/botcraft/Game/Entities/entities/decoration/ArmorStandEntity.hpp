@@ -6,9 +6,18 @@ namespace Botcraft
 {
     class ArmorStandEntity : public LivingEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_client_flags"),
+            std::string_view("data_head_pose"),
+            std::string_view("data_body_pose"),
+            std::string_view("data_left_arm_pose"),
+            std::string_view("data_right_arm_pose"),
+            std::string_view("data_left_leg_pose"),
+            std::string_view("data_right_leg_pose"),
+        };
     protected:
-        static constexpr int metadata_count = 7;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = LivingEntity::metadata_count + LivingEntity::hierarchy_metadata_count;
 
     public:
@@ -27,8 +36,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         char GetDataClientFlags() const;
         Vector3<float> GetDataHeadPose() const;
         Vector3<float> GetDataBodyPose() const;

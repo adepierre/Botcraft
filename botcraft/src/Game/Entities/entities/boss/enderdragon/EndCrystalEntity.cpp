@@ -1,17 +1,11 @@
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EndCrystalEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, EndCrystalEntity::metadata_count> EndCrystalEntity::metadata_names{ {
-        "data_beam_target",
-        "data_show_bottom",
-    } };
-
     EndCrystalEntity::EndCrystalEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataBeamTarget(std::optional<Position>());
         SetDataShowBottom(true);
     }
@@ -55,42 +49,25 @@ namespace Botcraft
     }
 
 
-    void EndCrystalEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     std::optional<Position> EndCrystalEntity::GetDataBeamTarget() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<Position>>(metadata.at("data_beam_target"));
+        return GetMetadata<std::optional<Position>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_beam_target"));
     }
 
     bool EndCrystalEntity::GetDataShowBottom() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_show_bottom"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_show_bottom"));
     }
 
 
     void EndCrystalEntity::SetDataBeamTarget(const std::optional<Position>& data_beam_target)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_beam_target"] = data_beam_target;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_beam_target"), data_beam_target);
     }
 
     void EndCrystalEntity::SetDataShowBottom(const bool data_show_bottom)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_show_bottom"] = data_show_bottom;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_show_bottom"), data_show_bottom);
     }
 
 

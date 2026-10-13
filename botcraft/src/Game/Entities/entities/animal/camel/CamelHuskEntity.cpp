@@ -1,8 +1,6 @@
 #if PROTOCOL_VERSION > 773 /* > 1.21.10 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelHuskEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
     CamelHuskEntity::CamelHuskEntity()

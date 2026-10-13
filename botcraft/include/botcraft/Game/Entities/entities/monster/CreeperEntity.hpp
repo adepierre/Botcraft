@@ -6,9 +6,14 @@ namespace Botcraft
 {
     class CreeperEntity : public MonsterEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_swell_dir"),
+            std::string_view("data_is_powered"),
+            std::string_view("data_is_ignited"),
+        };
     protected:
-        static constexpr int metadata_count = 3;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = MonsterEntity::metadata_count + MonsterEntity::hierarchy_metadata_count;
 
     public:
@@ -27,8 +32,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         int GetDataSwellDir() const;
         bool GetDataIsPowered() const;
         bool GetDataIsIgnited() const;

@@ -6,12 +6,17 @@ namespace Botcraft
 {
     class AbstractSkeletonEntity : public MonsterEntity
     {
+#if PROTOCOL_VERSION < 405 /* < 1.14 */
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("is_swinging_arms"),
+        };
+#endif
     protected:
 #if PROTOCOL_VERSION > 404 /* > 1.13.2 */
         static constexpr int metadata_count = 0;
 #else
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
 #endif
         static constexpr int hierarchy_metadata_count = MonsterEntity::metadata_count + MonsterEntity::hierarchy_metadata_count;
 
@@ -26,8 +31,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetIsSwingingArms() const;
 
         void SetIsSwingingArms(const bool is_swinging_arms);

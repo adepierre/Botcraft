@@ -15,14 +15,25 @@ namespace Botcraft
     class PlayerEntity : public AvatarEntity
 #endif
     {
-    protected:
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("data_player_absorption_id"),
+            std::string_view("data_score_id"),
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */
-        static constexpr int metadata_count = 6;
-        static const std::array<std::string, metadata_count> metadata_names;
+            std::string_view("data_player_mode_customisation"),
+            std::string_view("data_player_main_hand"),
+            std::string_view("data_shoulder_left"),
+            std::string_view("data_shoulder_right"),
+#else
+            std::string_view("data_shoulder_parrot_left"),
+            std::string_view("data_shoulder_parrot_right"),
+#endif
+        };
+    protected:
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
+#if PROTOCOL_VERSION < 773 /* < 1.21.9 */
         static constexpr int hierarchy_metadata_count = LivingEntity::metadata_count + LivingEntity::hierarchy_metadata_count;
 #else
-        static constexpr int metadata_count = 4;
-        static const std::array<std::string, metadata_count> metadata_names;
         static constexpr int hierarchy_metadata_count = AvatarEntity::metadata_count + AvatarEntity::hierarchy_metadata_count;
 #endif
 
@@ -53,9 +64,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
-
         float GetDataPlayerAbsorptionId() const;
         int GetDataScoreId() const;
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */

@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/golem/SnowGolemEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, SnowGolemEntity::metadata_count> SnowGolemEntity::metadata_names{ {
-        "data_pumpkin_id",
-    } };
-
     SnowGolemEntity::SnowGolemEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataPumpkinId(16);
 
         // Initialize all attributes with default values
@@ -56,30 +51,15 @@ namespace Botcraft
     }
 
 
-    void SnowGolemEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractGolemEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     char SnowGolemEntity::GetDataPumpkinId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_pumpkin_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_pumpkin_id"));
     }
 
 
     void SnowGolemEntity::SetDataPumpkinId(const char data_pumpkin_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_pumpkin_id"] = data_pumpkin_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_pumpkin_id"), data_pumpkin_id);
     }
 
 

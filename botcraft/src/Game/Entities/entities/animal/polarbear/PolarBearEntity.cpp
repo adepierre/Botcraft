@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/animal/polarbear/PolarBearEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, PolarBearEntity::metadata_count> PolarBearEntity::metadata_names{ {
-        "data_standing_id",
-    } };
-
     PolarBearEntity::PolarBearEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataStandingId(false);
 
         // Initialize all attributes with default values
@@ -60,30 +55,15 @@ namespace Botcraft
     }
 
 
-    void PolarBearEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool PolarBearEntity::GetDataStandingId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_standing_id"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_standing_id"));
     }
 
 
     void PolarBearEntity::SetDataStandingId(const bool data_standing_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_standing_id"] = data_standing_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_standing_id"), data_standing_id);
     }
 
 

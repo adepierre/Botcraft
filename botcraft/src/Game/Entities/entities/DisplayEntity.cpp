@@ -1,36 +1,12 @@
 #if PROTOCOL_VERSION > 761 /* > 1.19.3 */
 #include "botcraft/Game/Entities/entities/DisplayEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, DisplayEntity::metadata_count> DisplayEntity::metadata_names{ {
-#if PROTOCOL_VERSION < 764 /* < 1.20.2 */
-        "data_interpolation_start_delta_ticks_id",
-        "data_interpolation_duration_id",
-#else
-        "data_transformation_interpolation_start_delta_ticks_id",
-        "data_transformation_interpolation_duration_id",
-        "data_pos_rot_interpolation_duration_id",
-#endif
-        "data_translation_id",
-        "data_scale_id",
-        "data_left_rotation_id",
-        "data_right_rotation_id",
-        "data_billboard_render_constraints_id",
-        "data_brightness_override_id",
-        "data_view_range_id",
-        "data_shadow_radius_id",
-        "data_shadow_strength_id",
-        "data_width_id",
-        "data_height_id",
-        "data_glow_color_override_id",
-    } };
-
     DisplayEntity::DisplayEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
         SetDataInterpolationStartDeltaTicksId(0);
         SetDataInterpolationDurationId(0);
@@ -94,227 +70,179 @@ namespace Botcraft
     }
 
 
-    void DisplayEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            Entity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
-
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     int DisplayEntity::GetDataInterpolationStartDeltaTicksId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_interpolation_start_delta_ticks_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_interpolation_start_delta_ticks_id"));
     }
 
     int DisplayEntity::GetDataInterpolationDurationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_interpolation_duration_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_interpolation_duration_id"));
     }
 #else
     int DisplayEntity::GetDataTransformationInterpolationStartDeltaTicksId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_transformation_interpolation_start_delta_ticks_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_transformation_interpolation_start_delta_ticks_id"));
     }
 
     int DisplayEntity::GetDataTransformationInterpolationDurationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_transformation_interpolation_duration_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_transformation_interpolation_duration_id"));
     }
 
     int DisplayEntity::GetDataPosRotInterpolationDurationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_pos_rot_interpolation_duration_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_pos_rot_interpolation_duration_id"));
     }
 #endif
 
     Vector3<float> DisplayEntity::GetDataTranslationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Vector3<float>>(metadata.at("data_translation_id"));
+        return GetMetadata<Vector3<float>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_translation_id"));
     }
 
     Vector3<float> DisplayEntity::GetDataScaleId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<Vector3<float>>(metadata.at("data_scale_id"));
+        return GetMetadata<Vector3<float>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_scale_id"));
     }
 
     std::array<float, 4> DisplayEntity::GetDataLeftRotationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::array<float, 4>>(metadata.at("data_left_rotation_id"));
+        return GetMetadata<std::array<float, 4>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_left_rotation_id"));
     }
 
     std::array<float, 4> DisplayEntity::GetDataRightRotationId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::array<float, 4>>(metadata.at("data_right_rotation_id"));
+        return GetMetadata<std::array<float, 4>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_right_rotation_id"));
     }
 
     char DisplayEntity::GetDataBillboardRenderConstraintsId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<char>(metadata.at("data_billboard_render_constraints_id"));
+        return GetMetadata<char>(BOTCRAFT_ENTITY_METADATA_INDEX("data_billboard_render_constraints_id"));
     }
 
     int DisplayEntity::GetDataBrightnessOverrideId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_brightness_override_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_brightness_override_id"));
     }
 
     float DisplayEntity::GetDataViewRangeId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_view_range_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_view_range_id"));
     }
 
     float DisplayEntity::GetDataShadowRadiusId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_shadow_radius_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shadow_radius_id"));
     }
 
     float DisplayEntity::GetDataShadowStrengthId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_shadow_strength_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_shadow_strength_id"));
     }
 
     float DisplayEntity::GetDataWidthId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_width_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_width_id"));
     }
 
     float DisplayEntity::GetDataHeightId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<float>(metadata.at("data_height_id"));
+        return GetMetadata<float>(BOTCRAFT_ENTITY_METADATA_INDEX("data_height_id"));
     }
 
     int DisplayEntity::GetDataGlowColorOverrideId() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_glow_color_override_id"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_glow_color_override_id"));
     }
 
 
 #if PROTOCOL_VERSION < 764 /* < 1.20.2 */
     void DisplayEntity::SetDataInterpolationStartDeltaTicksId(const int data_interpolation_start_delta_ticks_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_interpolation_start_delta_ticks_id"] = data_interpolation_start_delta_ticks_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_interpolation_start_delta_ticks_id"), data_interpolation_start_delta_ticks_id);
     }
 
     void DisplayEntity::SetDataInterpolationDurationId(const int data_interpolation_duration_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_interpolation_duration_id"] = data_interpolation_duration_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_interpolation_duration_id"), data_interpolation_duration_id);
     }
 #else
     void DisplayEntity::SetDataTransformationInterpolationStartDeltaTicksId(const int data_transformation_interpolation_start_delta_ticks_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_transformation_interpolation_start_delta_ticks_id"] = data_transformation_interpolation_start_delta_ticks_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_transformation_interpolation_start_delta_ticks_id"), data_transformation_interpolation_start_delta_ticks_id);
     }
 
     void DisplayEntity::SetDataTransformationInterpolationDurationId(const int data_transformation_interpolation_duration_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_transformation_interpolation_duration_id"] = data_transformation_interpolation_duration_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_transformation_interpolation_duration_id"), data_transformation_interpolation_duration_id);
     }
 
     void DisplayEntity::SetDataPosRotInterpolationDurationId(const int data_pos_rot_interpolation_duration_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_pos_rot_interpolation_duration_id"] = data_pos_rot_interpolation_duration_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_pos_rot_interpolation_duration_id"), data_pos_rot_interpolation_duration_id);
     }
 #endif
 
     void DisplayEntity::SetDataTranslationId(const Vector3<float> data_translation_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_translation_id"] = data_translation_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_translation_id"), data_translation_id);
     }
 
     void DisplayEntity::SetDataScaleId(const Vector3<float> data_scale_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_scale_id"] = data_scale_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_scale_id"), data_scale_id);
     }
 
     void DisplayEntity::SetDataLeftRotationId(const std::array<float, 4> data_left_rotation_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_left_rotation_id"] = data_left_rotation_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_left_rotation_id"), data_left_rotation_id);
     }
 
     void DisplayEntity::SetDataRightRotationId(const std::array<float, 4> data_right_rotation_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_right_rotation_id"] = data_right_rotation_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_right_rotation_id"), data_right_rotation_id);
     }
 
     void DisplayEntity::SetDataBillboardRenderConstraintsId(const char data_billboard_render_constraints_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_billboard_render_constraints_id"] = data_billboard_render_constraints_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_billboard_render_constraints_id"), data_billboard_render_constraints_id);
     }
 
     void DisplayEntity::SetDataBrightnessOverrideId(const int data_brightness_override_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_brightness_override_id"] = data_brightness_override_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_brightness_override_id"), data_brightness_override_id);
     }
 
     void DisplayEntity::SetDataViewRangeId(const float data_view_range_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_view_range_id"] = data_view_range_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_view_range_id"), data_view_range_id);
     }
 
     void DisplayEntity::SetDataShadowRadiusId(const float data_shadow_radius_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shadow_radius_id"] = data_shadow_radius_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shadow_radius_id"), data_shadow_radius_id);
     }
 
     void DisplayEntity::SetDataShadowStrengthId(const float data_shadow_strength_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_shadow_strength_id"] = data_shadow_strength_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_shadow_strength_id"), data_shadow_strength_id);
     }
 
     void DisplayEntity::SetDataWidthId(const float data_width_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_width_id"] = data_width_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_width_id"), data_width_id);
     }
 
     void DisplayEntity::SetDataHeightId(const float data_height_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_height_id"] = data_height_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_height_id"), data_height_id);
     }
 
     void DisplayEntity::SetDataGlowColorOverrideId(const int data_glow_color_override_id)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_glow_color_override_id"] = data_glow_color_override_id;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_glow_color_override_id"), data_glow_color_override_id);
     }
 }
 #endif

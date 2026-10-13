@@ -1,18 +1,12 @@
 #if PROTOCOL_VERSION > 770 /* > 1.21.5 */
 #include "botcraft/Game/Entities/entities/animal/happyghast/HappyGhastEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, HappyGhastEntity::metadata_count> HappyGhastEntity::metadata_names{ {
-        "is_leash_holder",
-        "stays_still",
-    } };
-
     HappyGhastEntity::HappyGhastEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetIsLeashHolder(false);
         SetStaysStill(false);
 
@@ -66,42 +60,25 @@ namespace Botcraft
     }
 
 
-    void HappyGhastEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AnimalEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool HappyGhastEntity::GetIsLeashHolder() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("is_leash_holder"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("is_leash_holder"));
     }
 
     bool HappyGhastEntity::GetStaysStill() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("stays_still"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("stays_still"));
     }
 
 
     void HappyGhastEntity::SetIsLeashHolder(const int is_leash_holder)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["is_leash_holder"] = is_leash_holder;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("is_leash_holder"), is_leash_holder);
     }
 
     void HappyGhastEntity::SetStaysStill(const int stays_still)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["stays_still"] = stays_still;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("stays_still"), stays_still);
     }
 
 

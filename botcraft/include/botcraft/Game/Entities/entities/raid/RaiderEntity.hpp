@@ -7,9 +7,12 @@ namespace Botcraft
 {
     class RaiderEntity : public PatrollingMonsterEntity
     {
+    private:
+        static constexpr std::array metadata_names{
+            std::string_view("is_celebrating"),
+        };
     protected:
-        static constexpr int metadata_count = 1;
-        static const std::array<std::string, metadata_count> metadata_names;
+        static constexpr int metadata_count = static_cast<int>(metadata_names.size());
         static constexpr int hierarchy_metadata_count = PatrollingMonsterEntity::metadata_count + PatrollingMonsterEntity::hierarchy_metadata_count;
 
     public:
@@ -21,8 +24,6 @@ namespace Botcraft
         virtual ProtocolCraft::Json::Value Serialize() const override;
 
         // Metadata stuff
-        virtual void SetMetadataValue(const int index, const std::any& value) override;
-
         bool GetIsCelebrating() const;
 
         void SetIsCelebrating(const bool is_celebrating);

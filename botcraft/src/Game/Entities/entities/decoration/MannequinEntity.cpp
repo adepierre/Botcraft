@@ -1,19 +1,12 @@
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
 #include "botcraft/Game/Entities/entities/decoration/MannequinEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, MannequinEntity::metadata_count> MannequinEntity::metadata_names{ {
-        "data_profile",
-        "data_immovable",
-        "data_description",
-    } };
-
     MannequinEntity::MannequinEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataProfile(ProtocolCraft::Components::DataComponentTypeResolvableProfile()
             .SetUnpack(ProtocolCraft::Either<ProtocolCraft::GameProfile, ProtocolCraft::Components::PartialResolvableProfile>()
                 .SetRight(ProtocolCraft::Components::PartialResolvableProfile()
@@ -74,54 +67,35 @@ namespace Botcraft
     }
 
 
-    void MannequinEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AvatarEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     ProtocolCraft::Components::DataComponentTypeResolvableProfile MannequinEntity::GetDataProfile() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<ProtocolCraft::Components::DataComponentTypeResolvableProfile>(metadata.at("data_profile"));
+        return GetMetadata<ProtocolCraft::Components::DataComponentTypeResolvableProfile>(BOTCRAFT_ENTITY_METADATA_INDEX("data_profile"));
     }
 
     bool MannequinEntity::GetDataImmovable() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("data_immovable"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("data_immovable"));
     }
 
     std::optional<ProtocolCraft::Chat> MannequinEntity::GetDataDescription() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<std::optional<ProtocolCraft::Chat>>(metadata.at("data_description"));
+        return GetMetadata<std::optional<ProtocolCraft::Chat>>(BOTCRAFT_ENTITY_METADATA_INDEX("data_description"));
     }
 
 
     void MannequinEntity::SetDataProfile(const ProtocolCraft::Components::DataComponentTypeResolvableProfile& data_profile)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_profile"] = data_profile;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_profile"), data_profile);
     }
 
     void MannequinEntity::SetDataImmovable(const bool data_immovable)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_immovable"] = data_immovable;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_immovable"), data_immovable);
     }
 
     void MannequinEntity::SetDataDescription(const std::optional<ProtocolCraft::Chat>& data_description)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_description"] = data_description;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_description"), data_description);
     }
 
 

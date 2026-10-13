@@ -1,16 +1,11 @@
 #include "botcraft/Game/Entities/entities/boss/enderdragon/EnderDragonEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, EnderDragonEntity::metadata_count> EnderDragonEntity::metadata_names{ {
-        "data_phase",
-    } };
-
     EnderDragonEntity::EnderDragonEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDataPhase(10);
 
         // Initialize all attributes with default values
@@ -58,30 +53,15 @@ namespace Botcraft
     }
 
 
-    void EnderDragonEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            MobEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     int EnderDragonEntity::GetDataPhase() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<int>(metadata.at("data_phase"));
+        return GetMetadata<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_phase"));
     }
 
 
     void EnderDragonEntity::SetDataPhase(const int data_phase)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_phase"] = data_phase;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_phase"), data_phase);
     }
 
 

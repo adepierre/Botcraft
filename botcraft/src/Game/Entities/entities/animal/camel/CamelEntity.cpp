@@ -1,18 +1,12 @@
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
 #include "botcraft/Game/Entities/entities/animal/camel/CamelEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-    const std::array<std::string, CamelEntity::metadata_count> CamelEntity::metadata_names{ {
-        "dash",
-        "last_pose_change_tick",
-    } };
-
     CamelEntity::CamelEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
         SetDash(true);
 #if PROTOCOL_VERSION < 762 /* < 1.19.4 */
         SetLastPoseChangeTick(-52);
@@ -70,42 +64,25 @@ namespace Botcraft
     }
 
 
-    void CamelEntity::SetMetadataValue(const int index, const std::any& value)
-    {
-        if (index < hierarchy_metadata_count)
-        {
-            AbstractHorseEntity::SetMetadataValue(index, value);
-        }
-        else if (index - hierarchy_metadata_count < metadata_count)
-        {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
-        }
-    }
-
     bool CamelEntity::GetDash() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<bool>(metadata.at("dash"));
+        return GetMetadata<bool>(BOTCRAFT_ENTITY_METADATA_INDEX("dash"));
     }
 
     long long int CamelEntity::GetLastPoseChangeTick() const
     {
-        std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return std::any_cast<long long int>(metadata.at("last_pose_change_tick"));
+        return GetMetadata<long long int>(BOTCRAFT_ENTITY_METADATA_INDEX("last_pose_change_tick"));
     }
 
 
     void CamelEntity::SetDash(const bool dash)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["dash"] = dash;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("dash"), dash);
     }
 
     void CamelEntity::SetLastPoseChangeTick(const long long int last_pose_change_tick)
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["last_pose_change_tick"] = last_pose_change_tick;
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("last_pose_change_tick"), last_pose_change_tick);
     }
 
 

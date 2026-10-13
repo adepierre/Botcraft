@@ -1,19 +1,12 @@
 #if PROTOCOL_VERSION > 340 /* > 1.12.2 */
 #include "botcraft/Game/Entities/entities/animal/fish/SalmonEntity.hpp"
 
-#include <mutex>
-
 namespace Botcraft
 {
-#if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-    const std::array<std::string, SalmonEntity::metadata_count> SalmonEntity::metadata_names{ {
-        "data_type",
-    } };
-#endif
-
     SalmonEntity::SalmonEntity()
     {
         // Initialize all metadata with default values
+        metadata.resize(metadata_count + hierarchy_metadata_count);
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
         SetDataType("medium");
@@ -62,17 +55,18 @@ namespace Botcraft
     }
 
 
-    void SalmonEntity::SetMetadataValue(const int index, const std::any& value)
+    void SalmonEntity::OnMetadataChangedImpl(const int index)
     {
         if (index < hierarchy_metadata_count)
         {
-            AbstractSchoolingFishEntity::SetMetadataValue(index, value);
+            AbstractSchoolingFishEntity::OnMetadataChangedImpl(index);
         }
-        else if (index - hierarchy_metadata_count < metadata_count)
+#if USE_GUI
+        else if (index == BOTCRAFT_ENTITY_METADATA_INDEX("data_type"))
         {
-            std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-            metadata[metadata_names[index - hierarchy_metadata_count]] = value;
+            OnSizeUpdated();
         }
+#endif
     }
 
 #if PROTOCOL_VERSION < 769 /* < 1.21.4 */
@@ -84,7 +78,7 @@ namespace Botcraft
 
     const std::string& SalmonEntity::GetDataTypeImpl() const
     {
-        return std::any_cast<const std::string&>(metadata.at("data_type"));
+        return GetMetadataImpl<const std::string&>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"));
     }
 #else
     int SalmonEntity::GetDataType() const
@@ -95,7 +89,7 @@ namespace Botcraft
 
     int SalmonEntity::GetDataTypeImpl() const
     {
-        return std::any_cast<int>(metadata.at("data_type"));
+        return GetMetadataImpl<int>(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"));
     }
 #endif
 
@@ -136,11 +130,7 @@ namespace Botcraft
     void SalmonEntity::SetDataType(const int data_type)
 #endif
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
-        metadata["data_type"] = data_type;
-#if USE_GUI
-        OnSizeUpdated();
-#endif
+        SetMetadata(BOTCRAFT_ENTITY_METADATA_INDEX("data_type"), data_type);
     }
 #endif
 
