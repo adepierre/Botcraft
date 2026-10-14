@@ -468,6 +468,9 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
             { "is_waxed", "true" },
             { "front_text", text_content_str },
             { "back_text", text_content_str },
+#if PROTOCOL_VERSION > 776 /* > 26.2 */
+            { "allow_op_features", "true" },
+#endif
         },
         false
 #endif
