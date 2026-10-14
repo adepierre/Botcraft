@@ -178,12 +178,29 @@ namespace Botcraft::Utilities
             return 0;
         }
 
-        std::vector<std::string> splitted_expires = SplitString(s, '.');
-        if (EndsWith(splitted_expires.back(), "Z"))
+        int ms = 0;
+        if (iso8601.peek() == '.')
         {
-            splitted_expires.back() = splitted_expires.back().substr(0, splitted_expires.back().size() - 1);
+            iso8601.get();
+            if (iso8601.peek() < '0' || iso8601.peek() > '9')
+            {
+                LOG_ERROR("Error trying to parse ISO 8601 string: " << s);
+                return 0;
+            }
+
+            // Fractions are decimal seconds, not necessarily microseconds.
+            // Pad shorter fractions and truncate digits finer than milliseconds.
+            for (int scale = 100; iso8601.peek() >= '0' && iso8601.peek() <= '9'; scale /= 10)
+            {
+                ms += (iso8601.get() - '0') * scale;
+            }
         }
-        const long long int ms = std::stol(splitted_expires.back()) / 1000;
+
+        if (iso8601.get() != 'Z' || iso8601.peek() != std::char_traits<char>::eof())
+        {
+            LOG_ERROR("Error trying to parse ISO 8601 string: " << s);
+            return 0;
+        }
 
         const int year = t.tm_year + 1900;
         const int month = t.tm_mon + 1;
@@ -191,7 +208,7 @@ namespace Botcraft::Utilities
         const int day_of_year = DaysFrom1Jan(year, month, day);
         const int days_since_epoch = DaysFrom1970(year) + day_of_year;
 
-        const long long int sec = 3600 * 24 * days_since_epoch + 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
+        const long long int sec = 3600LL * 24 * days_since_epoch + 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
 
         return sec * 1000 + ms;
     }
