@@ -151,7 +151,11 @@ class Server:
 
         # Copy custom level.dat file
         if dat_path != "" and os.path.isfile(dat_path):
-            shutil.copy(dat_path, os.path.join(base_folder, "world", "level.dat"))
+            if version < str_to_tuple_version("26.1") or not os.path.exists(dat_path + ".26.1"):
+                shutil.copy(dat_path, os.path.join(base_folder, "world", "level.dat"))
+            else:
+                # Mojang bug ignoring the "structures: 0" flag when converting 1.12.2 level.dat to 26.1+, so instead we use one from 1.16.5
+                shutil.copy(dat_path + ".26.1", os.path.join(base_folder, "world", "level.dat"))
 
         # Accept EULA I guess
         with open(os.path.join(base_folder, "eula.txt"), "w") as f:

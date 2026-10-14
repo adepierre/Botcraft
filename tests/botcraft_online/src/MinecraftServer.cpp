@@ -328,7 +328,15 @@ void MinecraftServer::InitServerFolder(const std::filesystem::path& path)
 #endif
 
     // Setup level.dat
-    std::filesystem::copy_file(path / server_relative_files_path / "runtime" / "level.dat", path / "world" / "level.dat");
+    std::filesystem::copy_file(
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
+        path / server_relative_files_path / "runtime" / "level.dat",
+#else
+        // Mojang bug ignoring the "structures: 0" flag when converting 1.12.2 level.dat to 26.1+, so instead we use one from 1.16.5
+        path / server_relative_files_path / "runtime" / "level.dat.26.1",
+#endif
+        path / "world" / "level.dat"
+    );
 
     // Setup structures files
     std::filesystem::copy(
