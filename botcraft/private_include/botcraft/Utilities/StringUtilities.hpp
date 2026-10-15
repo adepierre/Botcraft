@@ -20,6 +20,8 @@ namespace Botcraft::Utilities
 
     std::vector<unsigned char> RSAToBytes(const std::string& s);
 
+    // Parse a UTC certificate timestamp ending in Z. Fractional seconds are
+    // optional and truncated to milliseconds. Returns 0 if parsing fails.
     long long int TimestampMilliFromISO8601(const std::string& s);
 #endif
 }

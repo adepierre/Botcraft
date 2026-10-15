@@ -7,6 +7,7 @@ set(SRC_FILES
     src/blockstate.cpp
     src/items.cpp
     src/pathfinding.cpp
+    src/string_utilities.cpp
     src/world.cpp
 
     src/init.cpp
@@ -16,6 +17,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2WithMain)
 target_link_libraries(${PROJECT_NAME} PRIVATE botcraft)
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/botcraft/private_include")
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Tests)
 
 # Output the test executable next to the examples and library files
