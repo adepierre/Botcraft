@@ -801,7 +801,7 @@ namespace Botcraft
             const int day = t.tm_mday;
             const int days_since_epoch = DaysFrom1970(year) + DaysFrom1Jan(year, month, day);
 
-            const long long int sec = 3600 * 24 * days_since_epoch + 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
+            const long long int sec = 3600LL * 24 * days_since_epoch + 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
 
             return sec * 1000 + std::stoll(millis);
         }

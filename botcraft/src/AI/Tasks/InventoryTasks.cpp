@@ -36,6 +36,12 @@ namespace Botcraft
         // ItemStack/CarriedItem, StateId and ChangedSlots will be set in SendInventoryTransaction
         int transaction_id = inventory_manager->SendInventoryTransaction(click_window_packet);
 
+        // The container was closed before the click was sent
+        if (transaction_id < 0)
+        {
+            return Status::Failure;
+        }
+
         // Wait for the click confirmation (versions < 1.17)
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         auto start = std::chrono::steady_clock::now();
@@ -346,7 +352,6 @@ namespace Botcraft
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
 
-        short inventory_correct_slot_index = -1;
         short inventory_destination_slot_index = hand == Hand::Off ? Window::INVENTORY_OFFHAND_INDEX : (Window::INVENTORY_HOTBAR_START + inventory_manager->GetIndexHotbarSelected());
 
         // We need to check the inventory
@@ -372,28 +377,21 @@ namespace Botcraft
         }
 
         // Otherwise we need to find a slot with the given item
-        { // slots scope
-            const auto slots = inventory_manager->GetPlayerInventory()->GetLockedSlots();
-            for (const auto& [id, slot] : *slots)
-            {
-                if (id >= Window::INVENTORY_STORAGE_START
-                    && id < Window::INVENTORY_OFFHAND_INDEX
-                    && !slot.IsEmptySlot()
-                    && slot.GetItemId() == item_id)
-                {
-                    inventory_correct_slot_index = id;
-                    break;
-                }
-            }
-        }
+        const std::optional<short> inventory_correct_slot_index = inventory_manager->GetPlayerInventory()->FindSlotMatching(
+            [&](const short id, const ProtocolCraft::Slot& slot) {
+                return id >= Window::INVENTORY_STORAGE_START &&
+                    id < Window::INVENTORY_OFFHAND_INDEX &&
+                    !slot.IsEmptySlot() &&
+                    slot.GetItemId() == item_id;
+            });
 
         // If there is no stack with the given item in the inventory
-        if (inventory_correct_slot_index == -1)
+        if (!inventory_correct_slot_index.has_value())
         {
             return Status::Failure;
         }
 
-        return SwapItemsInContainer(client, Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index, inventory_destination_slot_index);
+        return SwapItemsInContainer(client, Window::PLAYER_INVENTORY_INDEX, inventory_correct_slot_index.value(), inventory_destination_slot_index);
     }
 
 
@@ -668,12 +666,12 @@ namespace Botcraft
     Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, std::optional<PlayerDiggingFace> face, const bool wait_confirmation, const bool allow_midair_placing, const bool allow_pathfinding)
     {
         constexpr std::array variable_names = {
-               "PlaceBlock.item_name",
-               "PlaceBlock.pos",
-               "PlaceBlock.face",
-               "PlaceBlock.wait_confirmation",
-               "PlaceBlock.allow_midair_placing",
-               "PlaceBlock.allow_pathfinding",
+            "PlaceBlock.item_name",
+            "PlaceBlock.pos",
+            "PlaceBlock.face",
+            "PlaceBlock.wait_confirmation",
+            "PlaceBlock.allow_midair_placing",
+            "PlaceBlock.allow_pathfinding",
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -691,12 +689,12 @@ namespace Botcraft
     Status PlaceBlockBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "PlaceBlock.item_name",
-               "PlaceBlock.pos",
-               "PlaceBlock.face",
-               "PlaceBlock.wait_confirmation",
-               "PlaceBlock.allow_midair_placing",
-               "PlaceBlock.allow_pathfinding",
+            "PlaceBlock.item_name",
+            "PlaceBlock.pos",
+            "PlaceBlock.face",
+            "PlaceBlock.wait_confirmation",
+            "PlaceBlock.allow_midair_placing",
+            "PlaceBlock.allow_pathfinding",
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -757,8 +755,8 @@ namespace Botcraft
     Status Eat(BehaviourClient& client, const std::string& food_name, const bool wait_confirmation)
     {
         constexpr std::array variable_names = {
-               "Eat.food_name",
-               "Eat.wait_confirmation"
+            "Eat.food_name",
+            "Eat.wait_confirmation"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -772,8 +770,8 @@ namespace Botcraft
     Status EatBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "Eat.food_name",
-               "Eat.wait_confirmation"
+            "Eat.food_name",
+            "Eat.wait_confirmation"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -817,7 +815,7 @@ namespace Botcraft
     Status OpenContainer(BehaviourClient& client, const Position& pos)
     {
         constexpr std::array variable_names = {
-               "OpenContainer.pos"
+            "OpenContainer.pos"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -830,7 +828,7 @@ namespace Botcraft
     Status OpenContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "OpenContainer.pos"
+            "OpenContainer.pos"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -867,7 +865,7 @@ namespace Botcraft
     Status CloseContainer(BehaviourClient& client, const short container_id)
     {
         constexpr std::array variable_names = {
-               "CloseContainer.container_id"
+            "CloseContainer.container_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -880,7 +878,7 @@ namespace Botcraft
     Status CloseContainerBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "CloseContainer.container_id"
+            "CloseContainer.container_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -913,7 +911,7 @@ namespace Botcraft
     Status LogInventoryContent(BehaviourClient& client, const LogLevel level)
     {
         constexpr std::array variable_names = {
-               "LogInventoryContent.level"
+            "LogInventoryContent.level"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -926,7 +924,7 @@ namespace Botcraft
     Status LogInventoryContentBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "LogInventoryContent.level"
+            "LogInventoryContent.level"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -993,6 +991,12 @@ namespace Botcraft
             return Status::Failure;
         }
 
+        if (trade_index < 0 || trade_index >= static_cast<int>(trades.size()))
+        {
+            LOG_WARNING("Failed trading (index " << trade_index << " out of range)");
+            return Status::Failure;
+        }
+
         // Check that the trade is not locked
         if (trades[trade_index].GetNumberOfTradesUses() >= trades[trade_index].GetMaximumNumberOfTradeUses())
         {
@@ -1028,25 +1032,18 @@ namespace Botcraft
         // Check we have at least one empty slot to get back input remainings + outputs
         std::vector<short> empty_slots(has_trade_second_item ? 3 : 2);
         int empty_slots_index = 0;
+        short next_slot_index = trading_container->GetFirstPlayerInventorySlot();
+        while (empty_slots_index < static_cast<int>(empty_slots.size()))
         {
-            auto slots = trading_container->GetLockedSlots();
-            for (const auto& [id, slot] : *slots)
+            const std::optional<short> empty_slot = trading_container->FindSlotMatching(
+                [](const short, const ProtocolCraft::Slot& slot) { return slot.IsEmptySlot(); },
+                next_slot_index);
+            if (!empty_slot.has_value())
             {
-                if (id < trading_container->GetFirstPlayerInventorySlot())
-                {
-                    continue;
-                }
-
-                if (slot.IsEmptySlot())
-                {
-                    empty_slots[empty_slots_index] = id;
-                    empty_slots_index++;
-                    if (empty_slots_index == empty_slots.size())
-                    {
-                        break;
-                    }
-                }
+                break;
             }
+            empty_slots[empty_slots_index++] = empty_slot.value();
+            next_slot_index = empty_slot.value() + 1;
         }
         if (empty_slots_index == 0)
         {
@@ -1107,9 +1104,9 @@ namespace Botcraft
     Status Trade(BehaviourClient& client, const int item_id, const bool buy, const int trade_id)
     {
         constexpr std::array variable_names = {
-               "Trade.item_id",
-               "Trade.buy",
-               "Trade.trade_id"
+            "Trade.item_id",
+            "Trade.buy",
+            "Trade.trade_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1124,9 +1121,9 @@ namespace Botcraft
     Status TradeBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "Trade.item_id",
-               "Trade.buy",
-               "Trade.trade_id"
+            "Trade.item_id",
+            "Trade.buy",
+            "Trade.trade_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1158,9 +1155,9 @@ namespace Botcraft
     Status TradeName(BehaviourClient& client, const std::string& item_name, const bool buy, const int trade_id)
     {
         constexpr std::array variable_names = {
-               "TradeName.item_name",
-               "TradeName.buy",
-               "TradeName.trade_id"
+            "TradeName.item_name",
+            "TradeName.buy",
+            "TradeName.trade_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1175,9 +1172,9 @@ namespace Botcraft
     Status TradeNameBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "TradeName.item_name",
-               "TradeName.buy",
-               "TradeName.trade_id"
+            "TradeName.item_name",
+            "TradeName.buy",
+            "TradeName.trade_id"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1197,6 +1194,13 @@ namespace Botcraft
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
         const ItemId air_id = AssetsManager::getInstance().GetItemID("minecraft:air");
+        auto is_empty_item = [&](const ItemId& id) {
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+            return id.first == -1 || id == air_id;
+#else
+            return id == -1 || id == air_id;
+#endif
+        };
 
         int min_x = 3;
         int max_x = -1;
@@ -1218,11 +1222,7 @@ namespace Botcraft
                 for (int x = 0; x < 3; ++x)
                 {
                     // Ignore undefined or air item ids
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-                    if (inputs[y][x].first != -1 && inputs[y][x] != air_id)
-#else
-                    if (inputs[y][x] != -1 && inputs[y][x] != air_id)
-#endif
+                    if (!is_empty_item(inputs[y][x]))
                     {
                         min_x = std::min(x, min_x);
                         max_x = std::max(x, max_x);
@@ -1275,11 +1275,7 @@ namespace Botcraft
                 const int destination_slot = use_inventory_craft ? (1 + x - min_x + (y - min_y) * 2) : (1 + x + 3 * y);
 
                 // Skip undefined or air item ids
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-                if (inputs[y][x].first == -1 || inputs[y][x] == air_id)
-#else
-                if (inputs[y][x] == -1 || inputs[y][x] == air_id)
-#endif
+                if (is_empty_item(inputs[y][x]))
                 {
                     continue;
                 }
@@ -1288,37 +1284,26 @@ namespace Botcraft
                 // so we know when the server sends the output update
                 output_slot_before = crafting_container->GetSlot(0);
 
-                int source_slot = -1;
+                const short first_player_slot = crafting_container->GetFirstPlayerInventorySlot();
                 int source_quantity = -1;
-                // Search for the required item in inventory
-                {
-                    auto slots = crafting_container->GetLockedSlots();
-                    for (const auto& [id, slot] : *slots)
-                    {
-                        if (id < crafting_container->GetFirstPlayerInventorySlot())
+                const std::optional<short> source_slot = crafting_container->FindSlotMatching(
+                    [&](const short id, const ProtocolCraft::Slot& slot) {
+                        if (id < first_player_slot || slot.GetItemId() != inputs[y][x])
                         {
-                            continue;
+                            return false;
                         }
-#if PROTOCOL_VERSION < 350 /* < 1.13 */
-                        if (slot.GetBlockId() == inputs[y][x].first && slot.GetItemDamage() == inputs[y][x].second)
-#else
-                        if (slot.GetItemId() == inputs[y][x])
-#endif
-                        {
-                            source_slot = id;
-                            source_quantity = slot.GetItemCount();
-                            break;
-                        }
-                    }
-                }
+                        source_quantity = slot.GetItemCount();
+                        return true;
+                    });
 
-                if (source_slot == -1)
+
+                if (!source_slot.has_value())
                 {
                     LOG_WARNING("Not enough source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] found in inventory for crafting.");
                     return Status::Failure;
                 }
 
-                if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
+                if (ClickSlotInContainer(client, crafting_container_id, source_slot.value(), 0, 0) == Status::Failure)
                 {
                     LOG_WARNING("Error trying to pick source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
                     return Status::Failure;
@@ -1334,7 +1319,7 @@ namespace Botcraft
                 // Put back the remaining items in the origin slot
                 if (source_quantity > 1)
                 {
-                    if (ClickSlotInContainer(client, crafting_container_id, source_slot, 0, 0) == Status::Failure)
+                    if (ClickSlotInContainer(client, crafting_container_id, source_slot.value(), 0, 0) == Status::Failure)
                     {
                         LOG_WARNING("Error trying to place back source item [" << AssetsManager::getInstance().Items().at(inputs[y][x])->GetName() << "] during crafting");
                         return Status::Failure;
@@ -1368,34 +1353,21 @@ namespace Botcraft
         }
 
         // Find an empty slot in inventory to place the cursor content
-        int destination_slot = -999;
-        {
-            auto slots = crafting_container->GetLockedSlots();
-            for (const auto& [id, slot] : *slots)
-            {
-                if (id < (use_inventory_craft ? Window::INVENTORY_STORAGE_START : crafting_container->GetFirstPlayerInventorySlot()))
-                {
-                    continue;
-                }
+        const short first_slot = use_inventory_craft ? Window::INVENTORY_STORAGE_START : crafting_container->GetFirstPlayerInventorySlot();
+        const ItemId cursor_item_id = inventory_manager->GetCursor().GetItemId();
+        const std::optional<short> destination_slot = crafting_container->FindSlotMatching(
+            [&](const short, const ProtocolCraft::Slot& slot) {
+                return slot.IsEmptySlot() ||
+                    (slot.GetItemId() == cursor_item_id
+                        && slot.GetItemCount() < AssetsManager::getInstance().Items().at(slot.GetItemId())->GetStackSize() - 1);
+            }, first_slot);
 
-                // If it fits in a slot (empty or with the same item)
-                if (slot.IsEmptySlot() ||
-                    (inventory_manager->GetCursor().GetItemId() == slot.GetItemId() &&
-                        slot.GetItemCount() < AssetsManager::getInstance().Items().at(slot.GetItemId())->GetStackSize() - 1)
-                    )
-                {
-                    destination_slot = id;
-                    break;
-                }
-            }
-        }
-
-        if (destination_slot == -999)
+        if (!destination_slot.has_value())
         {
             LOG_INFO("No available space for crafted item, will be thrown out");
         }
 
-        if (ClickSlotInContainer(client, crafting_container_id, destination_slot, 0, 0) == Status::Failure)
+        if (ClickSlotInContainer(client, crafting_container_id, destination_slot.value_or(-999), 0, 0) == Status::Failure)
         {
             LOG_WARNING("Error trying to put back output during crafting");
             return Status::Failure;
@@ -1407,8 +1379,8 @@ namespace Botcraft
     Status Craft(BehaviourClient& client, const std::array<std::array<ItemId, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         constexpr std::array variable_names = {
-               "Craft.inputs",
-               "Craft.allow_inventory_craft"
+            "Craft.inputs",
+            "Craft.allow_inventory_craft"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1422,8 +1394,8 @@ namespace Botcraft
     Status CraftBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "Craft.inputs",
-               "Craft.allow_inventory_craft"
+            "Craft.inputs",
+            "Craft.allow_inventory_craft"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1459,8 +1431,8 @@ namespace Botcraft
     Status CraftNamed(BehaviourClient& client, const std::array<std::array<std::string, 3>, 3>& inputs, const bool allow_inventory_craft)
     {
         constexpr std::array variable_names = {
-               "CraftNamed.inputs",
-               "CraftNamed.allow_inventory_craft"
+            "CraftNamed.inputs",
+            "CraftNamed.allow_inventory_craft"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1474,8 +1446,8 @@ namespace Botcraft
     Status CraftNamedBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "CraftNamed.inputs",
-               "CraftNamed.allow_inventory_craft"
+            "CraftNamed.inputs",
+            "CraftNamed.allow_inventory_craft"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1493,37 +1465,14 @@ namespace Botcraft
     Status HasItemInInventoryImpl(BehaviourClient& client, const ItemId item_id, const int quantity)
     {
         std::shared_ptr<InventoryManager> inventory_manager = client.GetInventoryManager();
-
-        int quantity_sum = 0;
-        {
-            auto slots = inventory_manager->GetPlayerInventory()->GetLockedSlots();
-            for (const auto& [id, slot] : *slots)
-            {
-                if (id < Window::INVENTORY_STORAGE_START)
-                {
-                    continue;
-                }
-
-                if (!slot.IsEmptySlot() && item_id == slot.GetItemId())
-                {
-                    quantity_sum += slot.GetItemCount();
-                }
-
-                if (quantity_sum >= quantity)
-                {
-                    return Status::Success;
-                }
-            }
-        }
-
-        return Status::Failure;
+        return inventory_manager->GetPlayerInventory()->CountItem(item_id, Window::INVENTORY_STORAGE_START) >= quantity ? Status::Success : Status::Failure;
     }
 
     Status HasItemIdInInventory(BehaviourClient& client, const ItemId item_id, const int quantity)
     {
         constexpr std::array variable_names = {
-               "HasItemIdInInventory.item_id",
-               "HasItemIdInInventory.quantity"
+            "HasItemIdInInventory.item_id",
+            "HasItemIdInInventory.quantity"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1536,8 +1485,8 @@ namespace Botcraft
     Status HasItemIdInInventoryBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "HasItemIdInInventory.item_id",
-               "HasItemIdInInventory.quantity"
+            "HasItemIdInInventory.item_id",
+            "HasItemIdInInventory.quantity"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1554,8 +1503,8 @@ namespace Botcraft
     Status HasItemInInventory(BehaviourClient& client, const std::string& item_name, const int quantity)
     {
         constexpr std::array variable_names = {
-               "HasItemInInventory.item_name",
-               "HasItemInInventory.quantity"
+            "HasItemInInventory.item_name",
+            "HasItemInInventory.quantity"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
@@ -1570,8 +1519,8 @@ namespace Botcraft
     Status HasItemInInventoryBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-               "HasItemInInventory.item_name",
-               "HasItemInInventory.quantity"
+            "HasItemInInventory.item_name",
+            "HasItemInInventory.quantity"
         };
 
         Blackboard& blackboard = client.GetBlackboard();

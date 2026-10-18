@@ -28,12 +28,8 @@ namespace Botcraft
     struct InventoryTransaction
     {
         std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket> packet;
-        // In 1.21.5+, ServerboundContainerClickPacket doesn't have the components data
-        // anymore, just hashed version so we need to store them somewhere
-#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 769 /* > 1.21.4 */
         std::map<short, ProtocolCraft::Slot> changed_slots;
         ProtocolCraft::Slot carried_item;
-#endif
     };
 
     class Window;
@@ -81,16 +77,16 @@ namespace Botcraft
 #endif
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        void AddPendingTransaction(const InventoryTransaction& transaction);
+        /// @brief Register a pending transaction, must be called with inventory_manager_mutex locked
+        /// @param transaction The transaction to register
+        void AddPendingTransactionImpl(const InventoryTransaction& transaction);
 #endif
-        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the packet
+        /// @brief "think" about the changes made by this transaction, filling in the necessary values in the packet, must be called with inventory_manager_mutex locked
+        /// @param window The container the transaction takes place in
         /// @param transaction The transaction to update with the modifications
-        /// @return An InventoryTransaction with various info, depending on the version
-        InventoryTransaction PrepareTransaction(const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
+        /// @return An InventoryTransaction with the modified slots and carried item
+        InventoryTransaction PrepareTransactionImpl(const std::shared_ptr<Window>& window, const std::shared_ptr<ProtocolCraft::ServerboundContainerClickPacket>& transaction);
 
-        /// @brief Apply a given transaction to a container
-        /// @param transaction The transaction to apply
-        void ApplyTransaction(const InventoryTransaction& transaction);
 
     private:
         virtual void Handle(ProtocolCraft::ClientboundContainerSetSlotPacket& packet) override;

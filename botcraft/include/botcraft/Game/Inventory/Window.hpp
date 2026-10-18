@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <map>
+#include <optional>
 #include <shared_mutex>
 
 #include "protocolCraft/Types/Item/Slot.hpp"
@@ -49,6 +51,18 @@ namespace Botcraft
         void SetStateId(const int state_id_);
 #endif
         short GetFirstPlayerInventorySlot() const;
+        /// @brief First slot with index >= first_index and for which predicate is true, thread-safe
+        /// @param predicate Predictate to match, must not call back into this window to prevent double locking
+        /// @param first_index Initial index to start the search
+        /// @return First matching slot index, std::nullopt if none
+        std::optional<short> FindSlotMatching(const std::function<bool(const short, const ProtocolCraft::Slot&)>& predicate, const short first_index = 0) const;
+        /// @brief Total count of item_id in slots >= first_index
+        /// @return Number of item in matching slots
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+        int CountItem(const std::pair<int, unsigned char>& item_id, const short first_index = 0) const;
+#else
+        int CountItem(const int item_id, const short first_index = 0) const;
+#endif
 
     private:
         mutable std::shared_mutex window_mutex;

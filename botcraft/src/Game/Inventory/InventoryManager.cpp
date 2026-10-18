@@ -4,10 +4,17 @@
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 
+#include <optional>
+
 using namespace ProtocolCraft;
 
 namespace Botcraft
 {
+    namespace
+    {
+        std::optional<short> NetworkIndexToInventoryIndex(const int index);
+    }
+
     InventoryManager::InventoryManager(const std::shared_ptr<NetworkManager>& network_manager) : network_manager(network_manager)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
@@ -100,7 +107,7 @@ namespace Botcraft
             return Slot();
         }
 
-        return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + index_hotbar_selected);
+        return inventory->GetSlot(Window::INVENTORY_HOTBAR_START + GetIndexHotbarSelected());
     }
 
     Slot InventoryManager::GetOffHand() const
@@ -168,10 +175,8 @@ namespace Botcraft
         return it2->second;
     }
 
-    void InventoryManager::AddPendingTransaction(const InventoryTransaction& transaction)
+    void InventoryManager::AddPendingTransactionImpl(const InventoryTransaction& transaction)
     {
-        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
-
         pending_transactions[transaction.packet->GetContainerId()].insert(std::make_pair(transaction.packet->GetUid(), transaction));
         transaction_states[transaction.packet->GetContainerId()].insert(std::make_pair(transaction.packet->GetUid(), TransactionState::Waiting));
 
@@ -255,37 +260,28 @@ namespace Botcraft
         cursor = c;
     }
 
-    InventoryTransaction InventoryManager::PrepareTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
+    InventoryTransaction InventoryManager::PrepareTransactionImpl(const std::shared_ptr<Window>& window, const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
     {
-        // Get the container
-        std::shared_ptr<Window> window = GetWindow(transaction->GetContainerId());
-
-        // Lock because we need read access to cursor
-        std::shared_lock<std::shared_mutex> lock(inventory_manager_mutex);
-
         InventoryTransaction output{ transaction };
         std::map<short, Slot> changed_slots;
         Slot carried_item;
 
         // Process the transaction
+#if PROTOCOL_VERSION < 775 /* < 26.1 */
+        const int click_type = transaction->GetClickType();
+#else
+        const int click_type = transaction->GetContainerInput();
+#endif
 
         // Click on the output of a crafting container
         if ((window->GetType() == InventoryType::PlayerInventory || window->GetType() == InventoryType::Crafting) &&
             transaction->GetSlotNum() == 0)
         {
-#if PROTOCOL_VERSION < 775 /* 26.1 */
-            if (transaction->GetClickType() != 0 && transaction->GetClickType() != 1)
+            if (click_type != 0 && click_type != 1)
             {
-                LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
+                LOG_ERROR("Transaction type '" << click_type << "' not implemented.");
                 throw std::runtime_error("Non supported transaction type created");
             }
-#else
-            if (transaction->GetContainerInput() != 0 && transaction->GetContainerInput() != 1)
-            {
-                LOG_ERROR("Transaction type '" << transaction->GetContainerInput() << "' not implemented.");
-                throw std::runtime_error("Non supported transaction type created");
-            }
-#endif
 
             if (transaction->GetButtonNum() != 0 && transaction->GetButtonNum() != 1)
             {
@@ -320,11 +316,7 @@ namespace Botcraft
         // Drop item
         else if (transaction->GetSlotNum() == -999)
         {
-#if PROTOCOL_VERSION < 775 /* 26.1 */
-            switch (transaction->GetClickType())
-#else
-            switch (transaction->GetContainerInput())
-#endif
+            switch (click_type)
             {
                 case 0:
                 {
@@ -350,11 +342,7 @@ namespace Botcraft
                 }
                 default:
                 {
-#if PROTOCOL_VERSION < 775 /* 26.1 */
-                    LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
-#else
-                    LOG_ERROR("Transaction type '" << transaction->GetContainerInput() << "' not implemented.");
-#endif
+                    LOG_ERROR("Transaction type '" << click_type << "' not implemented.");
                     throw std::runtime_error("Non supported transaction type created");
                     break;
                 }
@@ -363,11 +351,7 @@ namespace Botcraft
         // Normal case
         else
         {
-#if PROTOCOL_VERSION < 775 /* 26.1 */
-            switch (transaction->GetClickType())
-#else
-            switch (transaction->GetContainerInput())
-#endif
+            switch (click_type)
             {
                 case 0:
                 {
@@ -448,11 +432,7 @@ namespace Botcraft
                 }
                 default:
                 {
-#if PROTOCOL_VERSION < 775 /* 26.1 */
-                    LOG_ERROR("Transaction type '" << transaction->GetClickType() << "' not implemented.");
-#else
-                    LOG_ERROR("Transaction type '" << transaction->GetContainerInput() << "' not implemented.");
-#endif
+                    LOG_ERROR("Transaction type '" << click_type << "' not implemented.");
                     throw std::runtime_error("Non supported transaction type created");
                     break;
                 }
@@ -461,9 +441,6 @@ namespace Botcraft
 
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
         transaction->SetCarriedItem(window->GetSlot(transaction->GetSlotNum()));
-        output.changed_slots = changed_slots;
-        output.carried_item = carried_item;
-
         transaction->SetUid(window->GetNextTransactionId());
 #elif PROTOCOL_VERSION < 770 /* < 1.21.5 */
         transaction->SetCarriedItem(carried_item);
@@ -480,48 +457,59 @@ namespace Botcraft
         }
         transaction->SetChangedSlots(hashed_changed_slots);
         transaction->SetStateId(window->GetStateId());
-        // Store the real slots with the non-hashed components
+#endif
+        // Always store the real slots with the non-hashed components
+        // so that ApplyTransactionImpl can use them on every version
         output.changed_slots = changed_slots;
         output.carried_item = carried_item;
-#endif
+
         return output;
     }
 
     void InventoryManager::ApplyTransactionImpl(const InventoryTransaction& transaction)
     {
-#if PROTOCOL_VERSION < 755 /* < 1.17 */ || PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        const std::map<short, Slot>& modified_slots = transaction.changed_slots;
-        cursor = transaction.carried_item;
-#else
-        const std::map<short, Slot>& modified_slots = transaction.packet->GetChangedSlots();
-        cursor = transaction.packet->GetCarriedItem();
-#endif
-
         // Get the container
-        std::shared_ptr<Window> window = inventories[transaction.packet->GetContainerId()];
-        for (const auto& p : modified_slots)
+        auto it = inventories.find(transaction.packet->GetContainerId());
+        if (it == inventories.end())
         {
-            window->SetSlot(p.first, p.second);
+            // The window has been closed, there is nothing to apply
+            return;
         }
-    }
 
-    void InventoryManager::ApplyTransaction(const InventoryTransaction& transaction)
-    {
-        std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
-        ApplyTransactionImpl(transaction);
+        cursor = transaction.carried_item;
+
+        for (const auto& p : transaction.changed_slots)
+        {
+            it->second->SetSlot(p.first, p.second);
+        }
     }
 
     int InventoryManager::SendInventoryTransaction(const std::shared_ptr<ServerboundContainerClickPacket>& transaction)
     {
-        InventoryTransaction inventory_transaction = PrepareTransaction(transaction);
+        {
+            std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
+
+            auto it = inventories.find(transaction->GetContainerId());
+            if (it == inventories.end())
+            {
+                LOG_WARNING("Trying to click in a closed container");
+                return -1;
+            }
+
+            const InventoryTransaction inventory_transaction = PrepareTransactionImpl(it->second, transaction);
 #if PROTOCOL_VERSION < 755 /* < 1.17 */
-        AddPendingTransaction(inventory_transaction);
+            // Register before sending so an ack can never arrive for an unknown transaction
+            AddPendingTransactionImpl(inventory_transaction);
+#else
+            // In 1.17+ there is no server confirmation so apply it directly
+            ApplyTransactionImpl(inventory_transaction);
+#endif
+        }
+
         network_manager->Send(transaction);
+#if PROTOCOL_VERSION < 755 /* < 1.17 */
         return transaction->GetUid();
 #else
-        network_manager->Send(transaction);
-        // In 1.17+ there is no server confirmation so apply it directly
-        ApplyTransaction(inventory_transaction);
         return 1;
 #endif
     }
@@ -536,9 +524,9 @@ namespace Botcraft
     void InventoryManager::IncrementMerchantOfferUse(const int index)
     {
         std::scoped_lock<std::shared_mutex> lock(inventory_manager_mutex);
-        if (index < 0 || index > available_trades.size())
+        if (index < 0 || index >= static_cast<int>(available_trades.size()))
         {
-            LOG_WARNING("Trying to update trade use of an invalid trade (" << index << "<" << available_trades.size() << ")");
+            LOG_WARNING("Trying to update trade use of an invalid trade (" << index << ">=" << available_trades.size() << ")");
             return;
         }
         MerchantOffer& trade = available_trades[index];
@@ -553,16 +541,12 @@ namespace Botcraft
         {
             SetCursor(packet.GetItemStack());
         }
-        // Slot index is starting in the hotbar, THEN in the main storage in this case :)
         else if (packet.GetContainerId() == -2)
         {
-            if (packet.GetSlot() < Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START)
+            const std::optional<short> index = NetworkIndexToInventoryIndex(packet.GetSlot());
+            if (index.has_value())
             {
-                SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + packet.GetSlot(), packet.GetItemStack());
-            }
-            else
-            {
-                SetSlot(Window::PLAYER_INVENTORY_INDEX, packet.GetSlot() + Window::INVENTORY_OFFHAND_INDEX - Window::INVENTORY_HOTBAR_START, packet.GetItemStack());
+                SetSlot(Window::PLAYER_INVENTORY_INDEX, index.value(), packet.GetItemStack());
             }
         }
         else if (packet.GetContainerId() >= 0)
@@ -584,6 +568,9 @@ namespace Botcraft
         if (window != nullptr)
         {
             window->SetContent(packet.GetItems());
+#if PROTOCOL_VERSION > 755 /* > 1.17 */
+            SetCursor(packet.GetCarriedItem());
+#endif
         }
 
 #if PROTOCOL_VERSION > 755 /* > 1.17 */
@@ -694,14 +681,44 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void InventoryManager::Handle(ClientboundSetCursorItemPacket& packet)
     {
-        // Not sure about this one, I can't figure out when it's sent by the server
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, Window::INVENTORY_HOTBAR_START + index_hotbar_selected, packet.GetContents());
+        SetCursor(packet.GetContents());
     }
 
-    void InventoryManager::Handle(ProtocolCraft::ClientboundSetPlayerInventoryPacket& packet)
+    void InventoryManager::Handle(ClientboundSetPlayerInventoryPacket& packet)
     {
-        SetSlot(Window::PLAYER_INVENTORY_INDEX, static_cast<short>(packet.GetSlot()), packet.GetContents());
+        const std::optional<short> index = NetworkIndexToInventoryIndex(packet.GetSlot());
+        if (index.has_value())
+        {
+            SetSlot(Window::PLAYER_INVENTORY_INDEX, index.value(), packet.GetContents());
+        }
     }
 #endif
 
+    namespace
+    {
+        std::optional<short> NetworkIndexToInventoryIndex(const int index)
+        {
+            if (index < 0)
+            {
+                return std::nullopt;
+            }
+            if (index < Window::INVENTORY_STORAGE_START)
+            {
+                return static_cast<short>(Window::INVENTORY_HOTBAR_START + index);
+            }
+            if (index < Window::INVENTORY_HOTBAR_START)
+            {
+                return static_cast<short>(index);
+            }
+            if (index < 40)
+            {
+                return static_cast<short>(Window::INVENTORY_FEET_ARMOR - (index - 36));
+            }
+            if (index == 40)
+            {
+                return Window::INVENTORY_OFFHAND_INDEX;
+            }
+            return std::nullopt;
+        }
+    }
 } //Botcraft

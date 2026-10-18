@@ -137,4 +137,34 @@ namespace Botcraft
         }
     }
 
+    std::optional<short> Window::FindSlotMatching(const std::function<bool(const short, const ProtocolCraft::Slot&)>& predicate, const short first_index) const
+    {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
+        for (auto it = slots.lower_bound(first_index); it != slots.end(); ++it)
+        {
+            if (predicate(it->first, it->second))
+            {
+                return it->first;
+            }
+        }
+        return std::nullopt;
+    }
+
+#if PROTOCOL_VERSION < 347 /* < 1.13 */
+    int Window::CountItem(const std::pair<int, unsigned char>& item_id, const short first_index) const
+#else
+    int Window::CountItem(const int item_id, const short first_index) const
+#endif
+    {
+        std::shared_lock<std::shared_mutex> lock(window_mutex);
+        int output = 0;
+        for (auto it = slots.lower_bound(first_index); it != slots.end(); ++it)
+        {
+            if (!it->second.IsEmptySlot() && it->second.GetItemId() == item_id)
+            {
+                output += it->second.GetItemCount();
+            }
+        }
+        return output;
+    }
 } //Botcraft
