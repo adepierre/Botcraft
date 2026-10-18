@@ -71,7 +71,7 @@ namespace Botcraft
 
     /// @brief Same thing as LookAt, but reads its parameters from the blackboard
     /// @param client The client performing the action
-    /// @return Always return Success
+    /// @return Always Success if LookAt.sync_to_server is false, return the SyncPosRotToServer result otherwise
     Status LookAtBlackboard(BehaviourClient& client);
 
     /// @brief Make the current player fly (as in creative/spectator mode, NOT WITH ELYTRA)

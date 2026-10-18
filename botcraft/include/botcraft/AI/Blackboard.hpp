@@ -169,6 +169,12 @@ namespace Botcraft
         /// @return True if there is a value in the blackboard at the given key, false otherwise
         bool Contains(const std::string& key) const;
 
+        /// @brief Notify observers of a value without storing it (debug view only)
+        /// @param key Display key
+        /// @param value Value to notify
+        /// @param add_trace_prefix If true, will prefix the key with "Trace."
+        void Trace(const std::string& key, const std::any& value, const bool add_trace_prefix = true) const;
+
     private:
         void NotifyCleared() const;
         void NotifyKeyRemoved(const std::string& key) const;

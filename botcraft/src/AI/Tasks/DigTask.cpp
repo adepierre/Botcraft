@@ -279,10 +279,10 @@ namespace Botcraft
 
         Blackboard& blackboard = c.GetBlackboard();
 
-        blackboard.Set<Position>(variable_names[0], pos);
-        blackboard.Set<bool>(variable_names[1], send_swing);
-        blackboard.Set<PlayerDiggingFace>(variable_names[2], face);
-        blackboard.Set<bool>(variable_names[3], allow_pathfinding);
+        blackboard.Trace(variable_names[0], pos);
+        blackboard.Trace(variable_names[1], send_swing);
+        blackboard.Trace(variable_names[2], face);
+        blackboard.Trace(variable_names[3], allow_pathfinding);
 
         return DigImpl(c, pos, send_swing, face, allow_pathfinding);
     }

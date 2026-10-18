@@ -1334,13 +1334,13 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<Position>(variable_names[0], goal);
-        blackboard.Set<int>(variable_names[1], dist_tolerance);
-        blackboard.Set<int>(variable_names[2], min_end_dist);
-        blackboard.Set<int>(variable_names[3], min_end_dist_xz);
-        blackboard.Set<bool>(variable_names[4], allow_jump);
-        blackboard.Set<bool>(variable_names[5], sprint);
-        blackboard.Set<float>(variable_names[6], speed_factor);
+        blackboard.Trace(variable_names[0], goal);
+        blackboard.Trace(variable_names[1], dist_tolerance);
+        blackboard.Trace(variable_names[2], min_end_dist);
+        blackboard.Trace(variable_names[3], min_end_dist_xz);
+        blackboard.Trace(variable_names[4], allow_jump);
+        blackboard.Trace(variable_names[5], sprint);
+        blackboard.Trace(variable_names[6], speed_factor);
 
         return GoToImpl(client, Vector3<double>(goal.x + 0.5, goal.y, goal.z + 0.5), dist_tolerance, min_end_dist, min_end_dist_xz, allow_jump, sprint, speed_factor);
     }
@@ -1384,10 +1384,10 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<Vector3<double>>(variable_names[0], goal);
-        blackboard.Set<bool>(variable_names[1], allow_jump);
-        blackboard.Set<bool>(variable_names[2], sprint);
-        blackboard.Set<float>(variable_names[3], speed_factor);
+        blackboard.Trace(variable_names[0], goal);
+        blackboard.Trace(variable_names[1], allow_jump);
+        blackboard.Trace(variable_names[2], sprint);
+        blackboard.Trace(variable_names[3], speed_factor);
 
         return GoToImpl(client, goal, 0, 0, 0, allow_jump, sprint, speed_factor);
     }
@@ -1437,9 +1437,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<Vector3<double>>(variable_names[0], target);
-        blackboard.Set<bool>(variable_names[1], set_pitch);
-        blackboard.Set<bool>(variable_names[2], sync_to_server);
+        blackboard.Trace(variable_names[0], target);
+        blackboard.Trace(variable_names[1], set_pitch);
+        blackboard.Trace(variable_names[2], sync_to_server);
 
         return LookAtImpl(client, target, set_pitch, sync_to_server);
     }

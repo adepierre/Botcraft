@@ -83,8 +83,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], key);
-        blackboard.Set<T>(variable_names[1], data);
+        blackboard.Trace(variable_names[0], key);
+        blackboard.Trace(variable_names[1], data);
 
         return Internal::SetBlackboardDataImpl<T>(client, key, data);
     }

@@ -84,9 +84,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<int>(variable_names[0], entity_id);
-        blackboard.Set<Hand>(variable_names[1], hand);
-        blackboard.Set<bool>(variable_names[2], swing);
+        blackboard.Trace(variable_names[0], entity_id);
+        blackboard.Trace(variable_names[1], hand);
+        blackboard.Trace(variable_names[2], swing);
 
         return InteractEntityImpl(client, entity_id, hand, swing);
     }

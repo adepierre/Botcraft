@@ -37,7 +37,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], msg);
+        blackboard.Trace(variable_names[0], msg);
 
         return SayImpl(client, msg);
     }
@@ -155,9 +155,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<Position>(variable_names[0], pos);
-        blackboard.Set<PlayerDiggingFace>(variable_names[1], face);
-        blackboard.Set<bool>(variable_names[2], animation);
+        blackboard.Trace(variable_names[0], pos);
+        blackboard.Trace(variable_names[1], face);
+        blackboard.Trace(variable_names[2], animation);
 
         return InteractWithBlockImpl(client, pos, face, animation);
     }
@@ -196,7 +196,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], key);
+        blackboard.Trace(variable_names[0], key);
 
         return CheckBlackboardBoolDataImpl(client, key);
     }
@@ -231,7 +231,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], key);
+        blackboard.Trace(variable_names[0], key);
 
         return RemoveBlackboardDataImpl(client, key);
     }
@@ -264,7 +264,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<int>(variable_names[0], threshold);
+        blackboard.Trace(variable_names[0], threshold);
 
         return IsHungryImpl(client, threshold);
     }
@@ -277,8 +277,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        // Mandatory
-        const int threshold = blackboard.Get<int>(variable_names[0]);
+        // Optional
+        const int threshold = blackboard.Get<int>(variable_names[0], 20);
 
         return IsHungryImpl(client, threshold);
     }
@@ -300,8 +300,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], src);
-        blackboard.Set<std::string>(variable_names[1], dst);
+        blackboard.Trace(variable_names[0], src);
+        blackboard.Trace(variable_names[1], dst);
 
         return CopyBlackboardDataImpl(client, src, dst);
     }

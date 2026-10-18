@@ -61,6 +61,11 @@ namespace Botcraft
         return blackboard.find(key) != blackboard.end();
     }
 
+    void Blackboard::Trace(const std::string& key, const std::any& value, const bool add_trace_prefix) const
+    {
+        NotifyKeyChanged((add_trace_prefix ? "Trace." : "") + key, value);
+    }
+
     void Blackboard::NotifyCleared() const
     {
         for (auto o : observers)

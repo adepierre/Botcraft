@@ -81,10 +81,10 @@ namespace Botcraft
         Blackboard& blackboard = client.GetBlackboard();
 
         // Mandatory
-        blackboard.Set<short>(variable_names[0], container_id);
-        blackboard.Set<short>(variable_names[1], slot_id);
-        blackboard.Set<int>(variable_names[2], click_type);
-        blackboard.Set<char>(variable_names[3], button_num);
+        blackboard.Trace(variable_names[0], container_id);
+        blackboard.Trace(variable_names[1], slot_id);
+        blackboard.Trace(variable_names[2], click_type);
+        blackboard.Trace(variable_names[3], button_num);
 
         return ClickSlotInContainerImpl(client, container_id, slot_id, click_type, button_num);
     }
@@ -151,9 +151,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<short>(variable_names[0], container_id);
-        blackboard.Set<short>(variable_names[1], first_slot);
-        blackboard.Set<short>(variable_names[2], second_slot);
+        blackboard.Trace(variable_names[0], container_id);
+        blackboard.Trace(variable_names[1], first_slot);
+        blackboard.Trace(variable_names[2], second_slot);
 
         return SwapItemsInContainerImpl(client, container_id, first_slot, second_slot);
     }
@@ -216,9 +216,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<short>(variable_names[0], container_id);
-        blackboard.Set<short>(variable_names[1], slot_id);
-        blackboard.Set<short>(variable_names[2], num_to_keep);
+        blackboard.Trace(variable_names[0], container_id);
+        blackboard.Trace(variable_names[1], slot_id);
+        blackboard.Trace(variable_names[2], num_to_keep);
 
         return DropItemsFromContainerImpl(client, container_id, slot_id, num_to_keep);
     }
@@ -280,9 +280,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<short>(variable_names[0], container_id);
-        blackboard.Set<short>(variable_names[1], source_slot);
-        blackboard.Set<short>(variable_names[2], destination_slot);
+        blackboard.Trace(variable_names[0], container_id);
+        blackboard.Trace(variable_names[1], source_slot);
+        blackboard.Trace(variable_names[2], destination_slot);
 
         return PutOneItemInContainerSlotImpl(client, container_id, source_slot, destination_slot);
     }
@@ -328,7 +328,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<short>(variable_names[0], index);
+        blackboard.Trace(variable_names[0], index);
 
         return SelectHotbarSlotImpl(client, index);
     }
@@ -398,14 +398,14 @@ namespace Botcraft
     Status SetItemIdInHand(BehaviourClient& client, const ItemId item_id, const Hand hand)
     {
         constexpr std::array variable_names = {
-            "SetItemIdInHand.item_name",
+            "SetItemIdInHand.item_id",
             "SetItemIdInHand.hand"
         };
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<ItemId>(variable_names[0], item_id);
-        blackboard.Set<Hand>(variable_names[1], hand);
+        blackboard.Trace(variable_names[0], item_id);
+        blackboard.Trace(variable_names[1], hand);
 
         return SetItemInHandImpl(client, item_id, hand);
     }
@@ -413,7 +413,7 @@ namespace Botcraft
     Status SetItemIdInHandBlackboard(BehaviourClient& client)
     {
         constexpr std::array variable_names = {
-            "SetItemIdInHand.item_name",
+            "SetItemIdInHand.item_id",
             "SetItemIdInHand.hand"
         };
 
@@ -435,8 +435,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], item_name);
-        blackboard.Set<Hand>(variable_names[1], hand);
+        blackboard.Trace(variable_names[0], item_name);
+        blackboard.Trace(variable_names[1], hand);
 
         const ItemId item_id = AssetsManager::getInstance().GetItemID(item_name);
 
@@ -663,7 +663,7 @@ namespace Botcraft
         return Status::Success;
     }
 
-    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, std::optional<PlayerDiggingFace> face, const bool wait_confirmation, const bool allow_midair_placing, const bool allow_pathfinding)
+    Status PlaceBlock(BehaviourClient& client, const std::string& item_name, const Position& pos, const std::optional<PlayerDiggingFace>& face, const bool wait_confirmation, const bool allow_midair_placing, const bool allow_pathfinding)
     {
         constexpr std::array variable_names = {
             "PlaceBlock.item_name",
@@ -676,12 +676,12 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], item_name);
-        blackboard.Set<Position>(variable_names[1], pos);
-        blackboard.Set<std::optional<PlayerDiggingFace>>(variable_names[2], face);
-        blackboard.Set<bool>(variable_names[3], wait_confirmation);
-        blackboard.Set<bool>(variable_names[4], allow_midair_placing);
-        blackboard.Set<bool>(variable_names[5], allow_pathfinding);
+        blackboard.Trace(variable_names[0], item_name);
+        blackboard.Trace(variable_names[1], pos);
+        blackboard.Trace(variable_names[2], face);
+        blackboard.Trace(variable_names[3], wait_confirmation);
+        blackboard.Trace(variable_names[4], allow_midair_placing);
+        blackboard.Trace(variable_names[5], allow_pathfinding);
 
         return PlaceBlockImpl(client, item_name, pos, face, wait_confirmation, allow_midair_placing, allow_pathfinding);
     }
@@ -704,7 +704,7 @@ namespace Botcraft
         const Position& pos = blackboard.Get<Position>(variable_names[1]);
 
         // Optional
-        const std::optional<PlayerDiggingFace> face = blackboard.Get<std::optional<PlayerDiggingFace>>(variable_names[2], PlayerDiggingFace::Up);
+        const std::optional<PlayerDiggingFace> face = blackboard.Get<std::optional<PlayerDiggingFace>>(variable_names[2], std::nullopt);
         const bool wait_confirmation = blackboard.Get<bool>(variable_names[3], false);
         const bool allow_midair_placing = blackboard.Get<bool>(variable_names[4], false);
         const bool allow_pathfinding = blackboard.Get<bool>(variable_names[5], true);
@@ -761,8 +761,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], food_name);
-        blackboard.Set<bool>(variable_names[1], wait_confirmation);
+        blackboard.Trace(variable_names[0], food_name);
+        blackboard.Trace(variable_names[1], wait_confirmation);
 
         return EatImpl(client, food_name, wait_confirmation);
     }
@@ -780,7 +780,7 @@ namespace Botcraft
         const std::string& food_name = blackboard.Get<std::string>(variable_names[0]);
 
         // Optional
-        const bool wait_confirmation = blackboard.Get<bool>(variable_names[1], false);
+        const bool wait_confirmation = blackboard.Get<bool>(variable_names[1], true);
 
 
         return EatImpl(client, food_name, wait_confirmation);
@@ -820,7 +820,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<Position>(variable_names[0], pos);
+        blackboard.Trace(variable_names[0], pos);
 
         return OpenContainerImpl(client, pos);
     }
@@ -870,7 +870,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<short>(variable_names[0], container_id);
+        blackboard.Trace(variable_names[0], container_id);
 
         return CloseContainerImpl(client, container_id);
     }
@@ -916,7 +916,7 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<LogLevel>(variable_names[0], level);
+        blackboard.Trace(variable_names[0], level);
 
         return LogInventoryContentImpl(client, level);
     }
@@ -1111,9 +1111,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<int>(variable_names[0], item_id);
-        blackboard.Set<bool>(variable_names[1], buy);
-        blackboard.Set<int>(variable_names[2], trade_id);
+        blackboard.Trace(variable_names[0], item_id);
+        blackboard.Trace(variable_names[1], buy);
+        blackboard.Trace(variable_names[2], trade_id);
 
         return TradeImpl(client, item_id, buy, trade_id);
     }
@@ -1162,9 +1162,9 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::string>(variable_names[0], item_name);
-        blackboard.Set<bool>(variable_names[1], buy);
-        blackboard.Set<int>(variable_names[2], trade_id);
+        blackboard.Trace(variable_names[0], item_name);
+        blackboard.Trace(variable_names[1], buy);
+        blackboard.Trace(variable_names[2], trade_id);
 
         return TradeNameImpl(client, item_name, buy, trade_id);
     }
@@ -1385,8 +1385,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::array<std::array<ItemId, 3>, 3>>(variable_names[0], inputs);
-        blackboard.Set<bool>(variable_names[1], allow_inventory_craft);
+        blackboard.Trace(variable_names[0], inputs);
+        blackboard.Trace(variable_names[1], allow_inventory_craft);
 
         return CraftImpl(client, inputs, allow_inventory_craft);
     }
@@ -1437,8 +1437,8 @@ namespace Botcraft
 
         Blackboard& blackboard = client.GetBlackboard();
 
-        blackboard.Set<std::array<std::array<std::string, 3>, 3>>(variable_names[0], inputs);
-        blackboard.Set<bool>(variable_names[1], allow_inventory_craft);
+        blackboard.Trace(variable_names[0], inputs);
+        blackboard.Trace(variable_names[1], allow_inventory_craft);
 
         return CraftNamedImpl(client, inputs, allow_inventory_craft);
     }
@@ -1476,8 +1476,8 @@ namespace Botcraft
         };
 
         Blackboard& blackboard = client.GetBlackboard();
-        blackboard.Set<ItemId>(variable_names[0], item_id);
-        blackboard.Set<int>(variable_names[1], quantity);
+        blackboard.Trace(variable_names[0], item_id);
+        blackboard.Trace(variable_names[1], quantity);
 
         return HasItemInInventoryImpl(client, item_id, quantity);
     }
@@ -1508,8 +1508,8 @@ namespace Botcraft
         };
 
         Blackboard& blackboard = client.GetBlackboard();
-        blackboard.Set<std::string>(variable_names[0], item_name);
-        blackboard.Set<int>(variable_names[1], quantity);
+        blackboard.Trace(variable_names[0], item_name);
+        blackboard.Trace(variable_names[1], quantity);
 
         const auto item_id = AssetsManager::getInstance().GetItemID(item_name);
 
