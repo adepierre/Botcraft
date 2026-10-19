@@ -8,13 +8,13 @@
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Game/World/Blockstate.hpp"
-#include "protocolCraft/Types/NBT/NBT.hpp"
 #include "protocolCraft/Types/BlockEntityInfo.hpp"
+#include "protocolCraft/Types/NBT/NBT.hpp"
 
 namespace Botcraft
 {
     class Biome;
-    class Section;
+    struct Section;
 
     //We assume that a chunk is 16*256*16 in versions before 1.18 and 16*N*16 after
     //And a section is 16*16*16
@@ -30,6 +30,9 @@ namespace Botcraft
         Chunk(const int min_y_, const unsigned int height_, const size_t dim_index, const bool has_sky_light_);
 #endif
         Chunk(const Chunk& c);
+        Chunk(Chunk&&) noexcept;
+        Chunk& operator=(Chunk&&) noexcept;
+        ~Chunk();
 
         static Position BlockCoordsToChunkCoords(const Position& pos);
 
@@ -101,11 +104,9 @@ namespace Botcraft
 
     private:
         bool IsInsideChunk(const Position& pos, const bool ignore_gui_borders) const;
-#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
-        void LoadSectionBiomeData(const int section_y, ProtocolCraft::ReadIterator& iter, size_t& length);
-#endif
+
     private:
-        std::vector<std::shared_ptr<Section> > sections;
+        std::vector<std::unique_ptr<Section> > sections;
         std::vector<unsigned char> biomes;
 
         std::unordered_map<Position, ProtocolCraft::NBT::Value> block_entities_data;
