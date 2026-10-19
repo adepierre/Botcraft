@@ -39,7 +39,7 @@ namespace Botcraft
 
         while (position.SqrDist(entity_position) > range * range)
         {
-            if (GoTo(client, entity_position, static_cast<int>(range)) == Status::Failure)
+            if (GoTo(client, entity_position.ToBlockPos(), static_cast<int>(range)) == Status::Failure)
             {
                 return Status::Failure;
             }

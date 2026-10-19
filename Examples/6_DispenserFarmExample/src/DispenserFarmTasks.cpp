@@ -38,7 +38,7 @@ Status InitializeBlocks(BehaviourClient& client, const int radius)
     std::vector<Position> carrot_positions;
     std::vector<Position> stone_positions;
 
-    const Position my_pos = client.GetLocalPlayer()->GetPosition();
+    const Position my_pos = client.GetLocalPlayer()->GetPosition().ToBlockPos();
 
     std::shared_ptr<World> world = client.GetWorld();
     Position current_pos;
@@ -736,7 +736,7 @@ Status CollectCropsAndReplant(BehaviourClient& client, const std::string& blocks
 
     for (const auto& e : entity_positions)
     {
-        if (GoTo(client, e.second, 2) == Status::Failure)
+        if (GoTo(client, e.second.ToBlockPos(), 2) == Status::Failure)
         {
             LOG_WARNING("Error trying to pick up a crop item (can't get close enough to " << e.second << ")");
             return Status::Failure;

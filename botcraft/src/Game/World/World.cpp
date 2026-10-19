@@ -516,7 +516,7 @@ namespace Botcraft
             {
                 if (direction[i] > 0)
                 {
-                    tMax[i] = ((origin[i] == 0.0f) ? 1.0f : std::ceil(origin[i]) - origin[i]) / std::abs(direction[i]);
+                    tMax[i] = (std::floor(origin[i]) + 1.0 - origin[i]) / std::abs(direction[i]);
                 }
                 else if (direction[i] < 0)
                 {
@@ -560,46 +560,25 @@ namespace Botcraft
                 }
             }
 
-            // select the direction in which the next face is
-            // the closest
-            if (tMax.x < tMax.y && tMax.x < tMax.z)
+            // Step along the axis whose next cell boundary is the closest
+            int axis = 0;
+            if (tMax.y < tMax[axis])
             {
-                if (tMax.x > radius)
-                {
-                    return nullptr;
-                }
-
-                out_pos.x += static_cast<int>(std::round(step.x));
-                tMax.x += tDelta.x;
-                out_normal.x = -static_cast<int>(std::round(step.x));
-                out_normal.y = 0;
-                out_normal.z = 0;
+                axis = 1;
             }
-            else if (tMax.y < tMax.x && tMax.y < tMax.z)
+            if (tMax.z < tMax[axis])
             {
-                if (tMax.y > radius)
-                {
-                    return nullptr;
-                }
-                out_pos.y += static_cast<int>(std::round(step.y));
-                tMax.y += tDelta.y;
-                out_normal[0] = 0;
-                out_normal[1] = -static_cast<int>(std::round(step.y));
-                out_normal[2] = 0;
+                axis = 2;
             }
-            else // tMax.z < tMax.x && tMax.z < tMax.y
+            if (tMax[axis] > radius)
             {
-                if (tMax.z > radius)
-                {
-                    return nullptr;
-                }
-
-                out_pos.z += static_cast<int>(std::round(step.z));
-                tMax.z += tDelta.z;
-                out_normal.x = 0;
-                out_normal.x = 0;
-                out_normal.x = -static_cast<int>(std::round(step.z));
+                return nullptr;
             }
+            const int axis_step = static_cast<int>(std::round(step[axis]));
+            out_pos[axis] += axis_step;
+            tMax[axis] += tDelta[axis];
+            out_normal = Position(0, 0, 0);
+            out_normal[axis] = -axis_step;
         }
     }
 
@@ -987,15 +966,18 @@ namespace Botcraft
         const bool has_sky_light = dim == "minecraft:overworld";
 #endif
         const size_t dim_index = GetDimIndex(dim);
+        const auto make_chunk = [&]() {
+#if PROTOCOL_VERSION < 757 /* < 1.18 */
+            return Chunk(dim_index, has_sky_light);
+#else
+            return Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light);
+#endif
+        };
+
         auto it = terrain.find({ x,z });
         if (it == terrain.end())
         {
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-            auto inserted = terrain.insert({ {x, z}, Chunk(dim_index, has_sky_light) });
-#else
-            auto inserted = terrain.insert({ { x, z }, Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light)});
-#endif
-            inserted.first->second.AddLoader(loader_id);
+            it = terrain.insert({ { x, z }, make_chunk() }).first;
         }
         // This may already exists in this dimension if this is a shared world
         else if (it->second.GetDimensionIndex() != dim_index)
@@ -1005,17 +987,9 @@ namespace Botcraft
                 LOG_WARNING("Changing dimension with a shared world is not supported and can lead to wrong world data");
             }
             UnloadChunkImpl(x, z, loader_id);
-#if PROTOCOL_VERSION < 757 /* < 1.18 */
-            it->second = Chunk(dim_index, has_sky_light);
-#else
-            it->second = Chunk(dimension_min_y.at(dim), dimension_height.at(dim), dim_index, has_sky_light);
-#endif
-            it->second.AddLoader(loader_id);
+            it->second = make_chunk();
         }
-        else
-        {
-            it->second.AddLoader(loader_id);
-        }
+        it->second.AddLoader(loader_id);
 
         //Not necessary, from void to air, there is no difference
         //UpdateChunk(x, z);

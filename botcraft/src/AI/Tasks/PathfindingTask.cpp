@@ -829,11 +829,7 @@ namespace Botcraft
 
     bool Move(BehaviourClient& client, std::shared_ptr<LocalPlayer>& local_player, const Vector3<double>& target_position, const float speed_factor, const bool sprint)
     {
-        const Position target_block(
-            static_cast<int>(std::floor(target_position.x)),
-            static_cast<int>(std::floor(target_position.y)),
-            static_cast<int>(std::floor(target_position.z))
-        );
+        const Position target_block = target_position.ToBlockPos();
         const Vector3<double> look_at_target = target_position + Vector3<double>(0.0, local_player->GetEyeHeight(), 0.0);
         const Vector3<double> motion_vector = target_position - local_player->GetPosition();
         const double half_player_width = 0.5 * local_player->GetWidth();
@@ -975,11 +971,7 @@ namespace Botcraft
                 }
 
                 const Vector3<double> current_pos = local_player->GetPosition();
-                const Blockstate* feet_block = world->GetBlock(Position(
-                    static_cast<int>(std::floor(current_pos.x)),
-                    static_cast<int>(std::floor(current_pos.y)),
-                    static_cast<int>(std::floor(current_pos.z))
-                ));
+                const Blockstate* feet_block = world->GetBlock(current_pos.ToBlockPos());
                 local_player->SetInputsSneak(feet_block != nullptr &&
                     (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
                 local_player->SetInputsJump(local_player->GetFlying()); // Stop flying
@@ -1042,11 +1034,7 @@ namespace Botcraft
                 }
 
                 const Vector3<double> current_pos = local_player->GetPosition();
-                const Blockstate* feet_block = world->GetBlock(Position(
-                    static_cast<int>(std::floor(current_pos.x)),
-                    static_cast<int>(std::floor(current_pos.y)),
-                    static_cast<int>(std::floor(current_pos.z))
-                ));
+                const Blockstate* feet_block = world->GetBlock(current_pos.ToBlockPos());
                 local_player->SetInputsSneak(feet_block != nullptr &&
                     (feet_block->IsFluidOrWaterlogged() || feet_block->IsScaffolding() || (feet_block->IsAir() && motion_vector.y < -2.5)));
                 local_player->SetInputsJump(local_player->GetFlying()); // Stop flying
@@ -1145,11 +1133,7 @@ namespace Botcraft
             speed_factor = 1.0f;
         }
         std::shared_ptr<LocalPlayer> local_player = client.GetLocalPlayer();
-        const Position goal_block(
-            static_cast<int>(std::floor(goal.x)),
-            static_cast<int>(std::floor(goal.y)),
-            static_cast<int>(std::floor(goal.z))
-        );
+        const Position goal_block = goal.ToBlockPos();
 
         // Don't bother with pathfinding in spectator mode, directly go to the goal
         if (local_player->GetGameMode() == GameType::Spectator)
@@ -1206,11 +1190,7 @@ namespace Botcraft
             }
 
             // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
-            current_position = Position(
-                static_cast<int>(std::floor(local_player->GetPosition().x)),
-                static_cast<int>(std::floor(local_player->GetPosition().y + 0.25)),
-                static_cast<int>(std::floor(local_player->GetPosition().z))
-            );
+            current_position = (local_player->GetPosition() + Vector3<double>(0.0, 0.25, 0.0)).ToBlockPos();
 
             std::vector<std::pair<Position, float>> path;
             const bool is_goal_loaded = world->IsLoaded(goal_block);
@@ -1307,11 +1287,7 @@ namespace Botcraft
                 {
                     const Vector3<double> local_player_pos = local_player->GetPosition();
                     // Get the position, we add 0.25 to Y in case we are at X.97 instead of X+1
-                    current_position = Position(
-                        static_cast<int>(std::floor(local_player_pos.x)),
-                        static_cast<int>(std::floor(local_player_pos.y + 0.25)),
-                        static_cast<int>(std::floor(local_player_pos.z))
-                    );
+                    current_position = (local_player_pos + Vector3<double>(0.0, 0.25, 0.0)).ToBlockPos();
                 }
             }
         } while (current_position != goal_block);

@@ -319,22 +319,22 @@ void TestManager::CreateTPSign(const Botcraft::Position& src, const Botcraft::Ve
     if (facing == "north")
     {
         block_rotation = 0;
-        offset_target = dst + Botcraft::Position(0, 0, -1);
+        offset_target = dst.ToBlockPos() + Botcraft::Position(0, 0, -1);
     }
     else if (facing == "south")
     {
         block_rotation = 8;
-        offset_target = dst + Botcraft::Position(0, 0, 1);
+        offset_target = dst.ToBlockPos() + Botcraft::Position(0, 0, 1);
     }
     else if (facing == "east")
     {
         block_rotation = 12;
-        offset_target = dst + Botcraft::Position(-1, 0, 0);
+        offset_target = dst.ToBlockPos() + Botcraft::Position(-1, 0, 0);
     }
     else if (facing == "west")
     {
         block_rotation = 4;
-        offset_target = dst + Botcraft::Position(1, 0, 0);
+        offset_target = dst.ToBlockPos() + Botcraft::Position(1, 0, 0);
     }
     std::string text_color;
     switch (success)

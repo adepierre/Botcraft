@@ -226,3 +226,41 @@ TEST_CASE("Set/Get lights")
     CHECK(world.GetSkyLight(Position(0, 0, 0)) == 12);
     CHECK(world.GetSkyLight(Position(1, 0, 0)) == 6);
 }
+
+TEST_CASE("Raycast")
+{
+    World world = World(false);
+
+#if PROTOCOL_VERSION < 719 /* < 1.16 */
+    const Dimension dimension = Dimension::Overworld;
+#else
+    const std::string dimension = "minecraft:overworld";
+#endif
+
+#if PROTOCOL_VERSION > 756 /* > 1.17.1 */
+    world.SetDimensionMinY(dimension, 0);
+    world.SetDimensionHeight(dimension, 256);
+#endif
+    world.SetCurrentDimension(dimension);
+
+    world.LoadChunk(0, 0, dimension);
+
+    // Does nothing: chunk not loaded
+    world.SetBlock(Position(0, 1, 3), AssetsManager::getInstance().GetBlockstate("minecraft:stone")->GetId());
+
+    SECTION("Hit")
+    {
+        Position pos, normal;
+        const Blockstate* block = world.Raycast({ 0.5, 1.5, 0.5 }, { 0, 0, 1 }, 6.0f, pos, normal);
+        REQUIRE(block != nullptr);
+        REQUIRE(pos == Position(0, 1, 3));
+        REQUIRE(normal == Position(0, 0, -1));
+    }
+
+    SECTION("Miss")
+    {
+        Position pos, normal;
+        const Blockstate* block = world.Raycast({ 0.5, 1.5, 1.0 }, { 0, 0, 1 }, 1.5f, pos, normal);
+        REQUIRE(block == nullptr);
+    }
+}

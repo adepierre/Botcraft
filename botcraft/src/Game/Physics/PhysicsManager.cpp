@@ -314,11 +314,7 @@ namespace Botcraft
             // This is neither the most efficient way nor the simplest one.
             // But hopefully it will be easier to compare to original code
             // and update when changed on Minecraft side.
-            if (world->IsLoaded(Position(
-                static_cast<int>(std::floor(player->position.x)),
-                static_cast<int>(std::floor(player->position.y)),
-                static_cast<int>(std::floor(player->position.z))
-            )))
+            if (world->IsLoaded(player->position.ToBlockPos()))
             { // Player::tick
                 if (player->game_mode == GameType::Spectator)
                 {
@@ -408,11 +404,11 @@ namespace Botcraft
                             bool condition = m_sin_pitch <= 0.0 || player->inputs.jump;
                             if (!condition)
                             {
-                                const Blockstate* above_block = world->GetBlock(Position(
-                                    static_cast<int>(std::floor(player->position.x)),
-                                    static_cast<int>(std::floor(player->position.y + 1.0 - 0.1)),
-                                    static_cast<int>(std::floor(player->position.z))
-                                ));
+                                const Blockstate* above_block = world->GetBlock(Vector3<double>(
+                                    player->position.x,
+                                    player->position.y + 1.0 - 0.1,
+                                    player->position.z
+                                ).ToBlockPos());
                                 condition = above_block != nullptr && above_block->IsFluid();
                             }
                             if (condition)
@@ -538,11 +534,7 @@ namespace Botcraft
         }
         else
         {
-            const Blockstate* block = world->GetBlock(Position(
-                static_cast<int>(std::floor(player->position.x)),
-                static_cast<int>(std::floor(player->position.y)),
-                static_cast<int>(std::floor(player->position.z))
-            ));
+            const Blockstate* block = world->GetBlock(player->position.ToBlockPos());
             player->SetDataSharedFlagsIdImpl(
                 EntitySharedFlagsId::Swimming,
                 player->GetDataSharedFlagsIdImpl(EntitySharedFlagsId::Sprinting) &&
@@ -914,11 +906,7 @@ namespace Botcraft
 
         // Get block underneath
         float block_jump_factor = 1.0f;
-        const Blockstate* feet_block = world->GetBlock(Position(
-            static_cast<int>(std::floor(player->position.x)),
-            static_cast<int>(std::floor(player->position.y)),
-            static_cast<int>(std::floor(player->position.z))
-        ));
+        const Blockstate* feet_block = world->GetBlock(player->position.ToBlockPos());
         if (feet_block == nullptr || !feet_block->IsHoney())
         {
             const Blockstate* below_block = world->GetBlock(GetBlockBelowAffectingMovement());
@@ -1203,11 +1191,7 @@ namespace Botcraft
             return false;
         }
 
-        const Blockstate* feet_block = world->GetBlock(Position(
-            static_cast<int>(std::floor(player->position.x)),
-            static_cast<int>(std::floor(player->position.y)),
-            static_cast<int>(std::floor(player->position.z))
-        ));
+        const Blockstate* feet_block = world->GetBlock(player->position.ToBlockPos());
 
         // TODO: if trapdoor AND below block is a ladder with the same facing property
         // as the trapdoor then the trapdoor is a climbable block too
@@ -1371,11 +1355,7 @@ namespace Botcraft
                 player->speed.y = std::max(player->speed.y, -0.15000000596046448);
                 // Remove negative Y speed if feet are inside a scaffolding block and not pressing
                 // sneak, or if not a scaffolding block and pressing sneak
-                const Blockstate* feet_block = world->GetBlock(Position(
-                    static_cast<int>(std::floor(player->position.x)),
-                    static_cast<int>(std::floor(player->position.y)),
-                    static_cast<int>(std::floor(player->position.z))
-                ));
+                const Blockstate* feet_block = world->GetBlock(player->position.ToBlockPos());
                 if (feet_block != nullptr && feet_block->IsScaffolding() != player->inputs.sneak)
                 {
                     player->speed.y = 0.0;
@@ -1555,11 +1535,7 @@ namespace Botcraft
             }
             else
             {
-                const Blockstate* block_below = world->GetBlock(Position(
-                    static_cast<int>(std::floor(player->position.x)),
-                    static_cast<int>(std::floor(player->position.y - 0.2)),
-                    static_cast<int>(std::floor(player->position.z))
-                ));
+                const Blockstate* block_below = world->GetBlock((player->position + Vector3<double>(0.0, -0.2, 0.0)).ToBlockPos());
                 double new_speed = 0.0;
                 if (block_below != nullptr)
                 {
@@ -1608,11 +1584,7 @@ namespace Botcraft
                     }
                     else
                     {
-                        const Blockstate* block_below = world->GetBlock(Position(
-                            static_cast<int>(std::floor(player->position.x)),
-                            static_cast<int>(std::floor(player->position.y - 0.2)),
-                            static_cast<int>(std::floor(player->position.z))
-                        ));
+                        const Blockstate* block_below = world->GetBlock((player->position + Vector3<double>(0.0, -0.2, 0.0)).ToBlockPos());
                         if (block_below != nullptr)
                         {
                             if (block_below->IsSlime())
@@ -1655,11 +1627,7 @@ namespace Botcraft
         constexpr short soul_speed_lvl = 0;
 #endif
         float block_speed_factor = 1.0f;
-        const Blockstate* feet_block = world->GetBlock(Position(
-            static_cast<int>(std::floor(player->position.x)),
-            static_cast<int>(std::floor(player->position.y)),
-            static_cast<int>(std::floor(player->position.z))
-        ));
+        const Blockstate* feet_block = world->GetBlock(player->position.ToBlockPos());
         if (feet_block != nullptr && (feet_block->IsHoney() || (feet_block->IsSoulSand() && soul_speed_lvl == 0)))
         {
             block_speed_factor = 0.4f;
@@ -1758,11 +1726,7 @@ namespace Botcraft
                     }
                     else if (block->IsPowderSnow())
                     { // PowderSnowBlock::entityInside
-                        const Blockstate* feet_block = world->GetBlock(Position(
-                            static_cast<int>(std::floor(player->position.x)),
-                            static_cast<int>(std::floor(player->position.y)),
-                            static_cast<int>(std::floor(player->position.z))
-                        ));
+                        const Blockstate* feet_block = world->GetBlock(player->position.ToBlockPos());
                         if (feet_block != nullptr && feet_block->IsPowderSnow())
                         {
                             player->stuck_speed_multiplier = Vector3<double>(0.8999999761581421, 1.5, 0.8999999761581421);
@@ -1782,11 +1746,7 @@ namespace Botcraft
             return output;
         }
 
-        return Position(
-            static_cast<int>(std::floor(player->position.x)),
-            static_cast<int>(std::floor(player->position.y - 0.500001)),
-            static_cast<int>(std::floor(player->position.z))
-        );
+        return (player->position + Vector3<double>(0.0, -0.500001, 0.0)).ToBlockPos();
     }
 
 } //Botcraft

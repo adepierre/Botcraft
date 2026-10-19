@@ -41,5 +41,5 @@ TEST_CASE("teleport bot")
     std::unique_ptr<Botcraft::ManagersClient> bot;
     std::string botname;
     REQUIRE_NOTHROW(bot = TestManager::GetInstance().GetBot(botname, Botcraft::GameType::Adventure));
-    CHECK_NOTHROW(TestManager::GetInstance().Teleport(botname, TestManager::GetInstance().GetCurrentOffset() + Botcraft::Vector3<double>(1, 2, 1)));
+    CHECK_NOTHROW(TestManager::GetInstance().Teleport(botname, TestManager::GetInstance().GetCurrentOffset() + Botcraft::Position(1, 2, 1)));
 }

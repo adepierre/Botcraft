@@ -18,7 +18,7 @@ TEST_CASE("simple pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(2.5, 2.01, 2.5));
 
-    std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
+    std::vector<std::pair<std::string, Botcraft::Position>> directions = {
         {"south", Botcraft::Position(0, 0, 2)},
         {"north", Botcraft::Position(0, 0, -2)},
         {"east", Botcraft::Position(2, 0, 0)},
@@ -32,7 +32,7 @@ TEST_CASE("simple pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, false, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, init_position.ToBlockPos() + directions[i].second, 0, 0, 0, false, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -42,7 +42,7 @@ TEST_CASE("jump pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(1.5, 1.01, 1.5));
 
-    std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
+    std::vector<std::pair<std::string, Botcraft::Position>> directions = {
         {"south", Botcraft::Position(0, 1, 1)},
         {"north", Botcraft::Position(0, 1, -1)},
         {"east", Botcraft::Position(1, 1, 0)},
@@ -56,7 +56,7 @@ TEST_CASE("jump pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, init_position.ToBlockPos() + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -66,7 +66,7 @@ TEST_CASE("gap pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(2.5, 2.01, 2.5));
 
-    std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
+    std::vector<std::pair<std::string, Botcraft::Position>> directions = {
         {"south", Botcraft::Position(0, 0, 2)},
         {"north", Botcraft::Position(0, 0, -2)},
         {"east", Botcraft::Position(2, 0, 0)},
@@ -80,7 +80,7 @@ TEST_CASE("gap pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(5000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(5000, Botcraft::GoTo, init_position.ToBlockPos() + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -88,7 +88,7 @@ TEST_CASE("gap pathfinding")
 
 TEST_CASE("climb pathfinding")
 {
-    std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
+    std::vector<std::pair<std::string, Botcraft::Position>> directions = {
         {"south", Botcraft::Position(0, 4, -2)},
         {"north", Botcraft::Position(0, 4, 2)},
         {"east", Botcraft::Position(-2, 4, 0)},
@@ -110,7 +110,7 @@ TEST_CASE("climb pathfinding")
                     return local_player->GetOnGround();
                 }, 2000));
 
-            bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(10000, Botcraft::GoTo, init_position.ToBlockPos() + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }
@@ -120,7 +120,7 @@ TEST_CASE("fall pathfinding")
 {
     std::unique_ptr<Botcraft::SimpleBehaviourClient> bot = SetupTestBot<Botcraft::SimpleBehaviourClient>(Botcraft::Vector3<double>(2.5, 5.01, 2.5));
 
-    std::vector<std::pair<std::string, Botcraft::Vector3<double>>> directions = {
+    std::vector<std::pair<std::string, Botcraft::Position>> directions = {
         {"south", Botcraft::Position(0, -4, 2)},
         {"north", Botcraft::Position(0, -4, -2)},
         {"east", Botcraft::Position(2, -4, 0)},
@@ -134,7 +134,7 @@ TEST_CASE("fall pathfinding")
     {
         SECTION(directions[i].first)
         {
-            bot->SyncAction(10000, Botcraft::GoTo, Botcraft::Position(std::floor(init_position.x), std::floor(init_position.y), std::floor(init_position.z)) + directions[i].second, 0, 0, 0, true, false, 1.0f);
+            bot->SyncAction(10000, Botcraft::GoTo, init_position.ToBlockPos() + directions[i].second, 0, 0, 0, true, false, 1.0f);
             CHECK(SameBlock(local_player->GetPosition(), init_position + directions[i].second));
         }
     }

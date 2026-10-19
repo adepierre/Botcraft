@@ -1,8 +1,9 @@
 #pragma once
 
-#include <ostream>
 #include <cassert>
 #include <cmath>
+#include <ostream>
+#include <type_traits>
 
 #include "protocolCraft/Types/NetworkPosition.hpp"
 #if PROTOCOL_VERSION > 772 /* > 1.21.8 */
@@ -44,8 +45,18 @@ namespace Botcraft
         }
 #endif
 
-        template <typename U>
+        // Not float to int, cast is ok
+        template <typename U, std::enable_if_t<!std::is_floating_point_v<U> || !std::is_integral_v<T>, int> = 0>
         Vector3(const Vector3<U>& position)
+        {
+            x = static_cast<T>(position.x);
+            y = static_cast<T>(position.y);
+            z = static_cast<T>(position.z);
+        }
+
+        // Float to int, explicit because usually you want to call ToBlockPos() instead
+        template <typename U, std::enable_if_t<std::is_floating_point_v<U> && std::is_integral_v<T>, int> = 0>
+        explicit Vector3(const Vector3<U>& position)
         {
             x = static_cast<T>(position.x);
             y = static_cast<T>(position.y);
@@ -289,6 +300,15 @@ namespace Botcraft
             output.SetZ(z);
 
             return output;
+        }
+
+        Vector3<int> ToBlockPos() const
+        {
+            return Vector3<int>(
+                static_cast<int>(std::floor(x)),
+                static_cast<int>(std::floor(y)),
+                static_cast<int>(std::floor(z))
+            );
         }
     };
     typedef Vector3<int> Position;

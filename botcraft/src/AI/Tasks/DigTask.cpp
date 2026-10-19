@@ -87,11 +87,7 @@ namespace Botcraft
             return Status::Failure;
         }
 
-        const Position eyes_block = Position(
-            static_cast<int>(std::floor(eye_pos.x)),
-            static_cast<int>(std::floor(eye_pos.y)),
-            static_cast<int>(std::floor(eye_pos.z))
-        );
+        const Position eyes_block = eye_pos.ToBlockPos();
         const bool is_on_ground = local_player->GetOnGround();
 
         const Blockstate* head_blockstate = world->GetBlock(eyes_block);
