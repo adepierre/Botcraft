@@ -528,7 +528,6 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             private_include/botcraft/Renderer/BehaviourRenderer.hpp
             private_include/botcraft/Renderer/BlockRenderable.hpp
             private_include/botcraft/Renderer/Camera.hpp
-            private_include/botcraft/Renderer/Chunk.hpp
             private_include/botcraft/Renderer/Entity.hpp
             private_include/botcraft/Renderer/ImageSaver.hpp
             private_include/botcraft/Renderer/Shader.hpp
@@ -541,7 +540,6 @@ if(BOTCRAFT_USE_OPENGL_GUI)
             src/Renderer/BehaviourRenderer.cpp
             src/Renderer/BlockRenderable.cpp
             src/Renderer/Camera.cpp
-            src/Renderer/Chunk.cpp
             src/Renderer/Entity.cpp
             src/Renderer/RenderingManager.cpp
             src/Renderer/Face.cpp

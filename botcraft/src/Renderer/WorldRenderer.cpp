@@ -1,6 +1,5 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #include "botcraft/Renderer/Camera.hpp"
-#include "botcraft/Renderer/Chunk.hpp"
 #include "botcraft/Renderer/Entity.hpp"
 #include "botcraft/Renderer/TransparentChunk.hpp"
 #include "botcraft/Renderer/WorldRenderer.hpp"
@@ -12,20 +11,40 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <algorithm>
+#include <iterator>
 #include <unordered_set>
 
 namespace Botcraft
 {
     namespace Renderer
     {
-        WorldRenderer::WorldRenderer(const unsigned int section_height_)
+        namespace
         {
-            section_height = section_height_;
+            std::array<unsigned int, 2> ToMultipliers(const std::vector<unsigned int>& v);
+
+            Position SectionOf(const Position& block_pos);
+
+            template<class ChunkPtr>
+            void ReplaceColumn(
+                std::unordered_map<Position, std::shared_ptr<ChunkPtr>>& renderables,
+                std::mutex& mutex,
+                std::atomic<bool>& dirty,
+                const int x, const int z,
+                std::unordered_map<Position, std::vector<Face>>&& new_faces
+            );
+        }
+
+        WorldRenderer::WorldRenderer()
+        {
+            view_uniform_buffer = 0;
+            atlas_texture = 0;
 
             chunks = std::unordered_map<Position, std::shared_ptr<Chunk> >();
             transparent_chunks = std::unordered_map<Position, std::shared_ptr<TransparentChunk> >();
 
-            blocks_faces_should_be_updated = true;
+            chunks_dirty = true;
+            transparent_chunks_dirty = true;
 
             entities = std::unordered_map<int, std::shared_ptr<Entity> >();
             entities_faces_should_be_updated = true;
@@ -35,7 +54,6 @@ namespace Botcraft
 
         WorldRenderer::~WorldRenderer()
         {
-            glDeleteTextures(1, &atlas_texture);
             camera.reset();
         }
 
@@ -73,24 +91,49 @@ namespace Botcraft
             glBindTexture(GL_TEXTURE_2D, 0);
         }
 
+        void WorldRenderer::ReleaseGL()
+        {
+            {
+                std::lock_guard<std::mutex> lock(chunks_mutex);
+                chunks.clear();
+            }
+            {
+                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
+                transparent_chunks.clear();
+            }
+            {
+                std::lock_guard<std::mutex> lock(entities_mutex);
+                entities.clear();
+            }
+
+            if (view_uniform_buffer != 0)
+            {
+                glDeleteBuffers(1, &view_uniform_buffer);
+                view_uniform_buffer = 0;
+            }
+            if (atlas_texture != 0)
+            {
+                glDeleteTextures(1, &atlas_texture);
+                atlas_texture = 0;
+            }
+        }
+
         void WorldRenderer::UpdateViewMatrix()
         {
             if (camera->GetHasChangedOrientation() || camera->GetHasChangedPosition())
             {
-                m_mutex_camera.lock();
                 glm::mat4 view_matrix = camera->GetViewMatrix();
                 if (camera->GetHasChangedPosition())
                 {
                     transparent_chunks_mutex.lock();
                     for (auto it = transparent_chunks.begin(); it != transparent_chunks.end(); ++it)
                     {
-                        it->second->SetDisplayStatus(BufferStatus::Updated);
+                        it->second->MarkForSort();
                     }
                     transparent_chunks_mutex.unlock();
                 }
                 camera->ResetHasChangedPosition();
                 camera->ResetHasChangedOrientation();
-                m_mutex_camera.unlock();
                 glBindBuffer(GL_UNIFORM_BUFFER, view_uniform_buffer);
                 glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view_matrix));
                 glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -99,60 +142,46 @@ namespace Botcraft
 
         void WorldRenderer::SetCameraProjection(const glm::mat4& proj)
         {
-            std::lock_guard<std::mutex> lock(m_mutex_camera);
             camera->SetProjection(proj);
         }
 
         void WorldRenderer::UpdateFaces()
         {
-            if (blocks_faces_should_be_updated)
+            if (chunks_dirty.load(std::memory_order_relaxed))
             {
-                blocks_faces_should_be_updated = false;
+                std::lock_guard<std::mutex> lock(chunks_mutex);
+                if (chunks_dirty.exchange(false))
                 {
-                    std::lock_guard<std::mutex> lock(chunks_mutex);
                     for (auto it = chunks.begin(); it != chunks.end();)
                     {
                         it->second->Update();
-                        if (it->second->GetNumFace() == 0)
-                        {
-                            it = chunks.erase(it);
-                        }
-                        else
-                        {
-                            ++it;
-                        }
-                    }
-                }
-                {
-                    std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
-                    for (auto it = transparent_chunks.begin(); it != transparent_chunks.end();)
-                    {
-                        it->second->Update();
-                        if (it->second->GetNumFace() == 0)
-                        {
-                            it = transparent_chunks.erase(it);
-                        }
-                        else
-                        {
-                            ++it;
-                        }
+                        it = it->second->GetNumFace() == 0 ? chunks.erase(it) : std::next(it);
                     }
                 }
             }
-            if (entities_faces_should_be_updated)
+
+            if (transparent_chunks_dirty.load(std::memory_order_relaxed))
             {
-                entities_faces_should_be_updated = false;
-                std::lock_guard<std::mutex> lock(entities_mutex);
-                for (auto it = entities.begin(); it != entities.end();)
+                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
+                if (transparent_chunks_dirty.exchange(false))
                 {
-                    it->second->Update();
-                    if (it->second->GetNumFace() == 0)
+                    for (auto it = transparent_chunks.begin(); it != transparent_chunks.end();)
                     {
-                        it = entities.erase(it);
+                        it->second->Update();
+                        it = it->second->GetNumFace() == 0 ? transparent_chunks.erase(it) : std::next(it);
                     }
-                    else
+                }
+            }
+
+            if (entities_faces_should_be_updated.load(std::memory_order_relaxed))
+            {
+                std::lock_guard<std::mutex> lock(entities_mutex);
+                if (entities_faces_should_be_updated.exchange(false))
+                {
+                    for (auto it = entities.begin(); it != entities.end();)
                     {
-                        ++it;
+                        it->second->Update();
+                        it = it->second->GetNumFace() == 0 ? entities.erase(it) : std::next(it);
                     }
                 }
             }
@@ -160,36 +189,15 @@ namespace Botcraft
 
         void WorldRenderer::UpdateChunk(const int x_, const int z_, const std::optional<Botcraft::Chunk>& chunk)
         {
-            // Remove any previous version of this chunk
-            {
-                std::lock_guard<std::mutex> lock(chunks_mutex);
-
-                for (auto it = chunks.begin(); it != chunks.end(); ++it)
-                {
-                    if (it->first.x == x_ && it->first.z == z_)
-                    {
-                        it->second->ClearFaces();
-                    }
-                }
-            }
-            {
-                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
-
-                for (auto it = transparent_chunks.begin(); it != transparent_chunks.end(); ++it)
-                {
-                    if (it->first.x == x_ && it->first.z == z_)
-                    {
-                        it->second->ClearFaces();
-                    }
-                }
-            }
-
             if (!chunk.has_value())
             {
-                blocks_faces_should_be_updated = true;
+                ReplaceColumn(chunks, chunks_mutex, chunks_dirty, x_, z_, {});
+                ReplaceColumn(transparent_chunks, transparent_chunks_mutex, transparent_chunks_dirty, x_, z_, {});
                 return;
             }
 
+            std::unordered_map<Position, std::vector<Face>> opaque_faces;
+            std::unordered_map<Position, std::vector<Face>> transparent_faces;
             // For each block in the chunk, check its neighbours
             // to see which face to draw
             const std::vector<Position> neighbour_positions({ Position(0, -1, 0), Position(0, 0, -1),
@@ -269,15 +277,23 @@ namespace Botcraft
                                     neighbour_blockstates[static_cast<int>(current_faces[i].cullface_direction)]->GetName() != this_block->GetName())
                                 )
                             {
-                                AddFace(block_pos, offset,
-                                    current_faces[i].face, current_faces[i].texture_names,
-                                    GetColorModifier(pos.y, current_biome, this_block, current_faces[i].use_tintindexes));
+                                Face f = current_faces[i].face;
+                                // Add 0.5 because the origin of the block is at the center
+                                // but the coordinates start from the block corner
+                                f.GetMatrix()[12] += static_cast<float>(offset.x) + 0.5f;
+                                f.GetMatrix()[13] += static_cast<float>(offset.y) + 0.5f;
+                                f.GetMatrix()[14] += static_cast<float>(offset.z) + 0.5f;
+                                f.SetTextureMultipliers(ToMultipliers(GetColorModifier(pos.y, current_biome, this_block, current_faces[i].use_tintindexes)));
+
+                                std::unordered_map<Position, std::vector<Face>>& target = f.GetTransparencyData() == Transparency::Partial ? transparent_faces : opaque_faces;
+                                target[SectionOf(block_pos)].push_back(std::move(f));
                             }
                         }
                     }
                 }
             }
-            blocks_faces_should_be_updated = true;
+            ReplaceColumn(chunks, chunks_mutex, chunks_dirty, x_, z_, std::move(opaque_faces));
+            ReplaceColumn(transparent_chunks, transparent_chunks_mutex, transparent_chunks_dirty, x_, z_, std::move(transparent_faces));
         }
 
         void WorldRenderer::UpdateEntity(const int id, const std::vector<Face>& faces)
@@ -298,7 +314,7 @@ namespace Botcraft
             }
             else if (it != entities.end())
             {
-                it->second->UpdateFaces(faces);
+                it->second->SetFaces(std::vector<Face>(faces.begin(), faces.end()));
                 entities_faces_should_be_updated = true;
             }
         }
@@ -333,7 +349,8 @@ namespace Botcraft
                     it->second->ClearFaces();
                 }
             }
-            blocks_faces_should_be_updated = true;
+            chunks_dirty = true;
+            transparent_chunks_dirty = true;
             entities_faces_should_be_updated = true;
         }
 
@@ -341,7 +358,6 @@ namespace Botcraft
         {
             if (camera)
             {
-                std::lock_guard<std::mutex> lock(m_mutex_camera);
                 camera->SetPosition(
                     static_cast<float>(x_),
                     static_cast<float>(y_),
@@ -389,8 +405,8 @@ namespace Botcraft
 
                 const float min_x = static_cast<float>(CHUNK_WIDTH * (*it).x);
                 const float max_x = static_cast<float>(CHUNK_WIDTH * ((*it).x + 1));
-                const float min_y = static_cast<float>(static_cast<int>(section_height) * (*it).y);
-                const float max_y = static_cast<float>(static_cast<int>(section_height) * ((*it).y + 1));
+                const float min_y = static_cast<float>(static_cast<int>(RENDERING_SECTION_HEIGHT) * (*it).y);
+                const float max_y = static_cast<float>(static_cast<int>(RENDERING_SECTION_HEIGHT) * ((*it).y + 1));
                 const float min_z = static_cast<float>(CHUNK_WIDTH * (*it).z);
                 const float max_z = static_cast<float>(CHUNK_WIDTH * ((*it).z + 1));
 
@@ -424,9 +440,7 @@ namespace Botcraft
             }
 
             // Sort the chunks from far to near the camera (necessary for transparent chunks to render in the right order)
-            m_mutex_camera.lock();
             std::sort(chunks_to_render.begin(), chunks_to_render.end(), [this](const Position& p1, const Position& p2) {return this->DistanceToCamera(p1) > this->DistanceToCamera(p2); });
-            m_mutex_camera.unlock();
 
             // Render all non partially transparent faces
             const int num_rendered_chunks = static_cast<int>(chunks_to_render.size());
@@ -456,7 +470,7 @@ namespace Botcraft
                 const Vector3<float> approx_pos = e.second->GetApproxPos();
                 const Position chunk_position(
                     static_cast<int>(floor(approx_pos.x / static_cast<double>(CHUNK_WIDTH))),
-                    static_cast<int>(floor(approx_pos.y / static_cast<double>(section_height))),
+                    static_cast<int>(floor(approx_pos.y / static_cast<double>(RENDERING_SECTION_HEIGHT))),
                     static_cast<int>(floor(approx_pos.z / static_cast<double>(CHUNK_WIDTH)))
                 );
 
@@ -473,9 +487,7 @@ namespace Botcraft
             }
             entities_mutex.unlock();
 
-            m_mutex_camera.lock();
             const glm::vec3 cam_pos = camera->GetPosition();
-            m_mutex_camera.unlock();
 
             // Render all partially transparent faces
             transparent_chunks_mutex.lock();
@@ -514,44 +526,6 @@ namespace Botcraft
             if (num_rendered_entities_)
             {
                 *num_rendered_entities_ = num_rendered_entities;
-            }
-        }
-
-        void WorldRenderer::AddFace(const Position& block_pos, const Vector3<double>& offset, const Face& face_, const std::vector<std::string>& texture_identifiers_, const std::vector<unsigned int>& texture_multipliers_)
-        {
-            std::array<unsigned int, 2> texture_multipliers = { 0xFFFFFFFF, 0xFFFFFFFF };
-            for (int i = 0; i < std::min(2, static_cast<int>(texture_multipliers_.size())); ++i)
-            {
-                texture_multipliers[i] = texture_multipliers_[i];
-            }
-
-            const Position chunk_position(
-                static_cast<int>(floor(block_pos.x / static_cast<double>(CHUNK_WIDTH))),
-                static_cast<int>(floor(block_pos.y / static_cast<double>(section_height))),
-                static_cast<int>(floor(block_pos.z / static_cast<double>(CHUNK_WIDTH)))
-            );
-
-            if (face_.GetTransparencyData() == Transparency::Partial)
-            {
-                std::lock_guard<std::mutex> lock(transparent_chunks_mutex);
-                auto chunk_it = transparent_chunks.find(chunk_position);
-                if (chunk_it == transparent_chunks.end())
-                {
-                    transparent_chunks[chunk_position] = std::make_shared<TransparentChunk>();
-                }
-                //Add 0.5 because the origin of the block is at the center
-                //but the coordinates start from the block corner
-                transparent_chunks[chunk_position]->AddFace(face_, texture_multipliers, offset.x + 0.5f, offset.y + 0.5f, offset.z + 0.5f);
-            }
-            else
-            {
-                std::lock_guard<std::mutex> lock(chunks_mutex);
-                auto chunk_it = chunks.find(chunk_position);
-                if (chunk_it == chunks.end())
-                {
-                    chunks[chunk_position] = std::make_shared<Chunk>();
-                }
-                chunks[chunk_position]->AddFace(face_, texture_multipliers, offset.x + 0.5f, offset.y + 0.5f, offset.z + 0.5f);
             }
         }
 
@@ -605,7 +579,67 @@ namespace Botcraft
 
         const float WorldRenderer::DistanceToCamera(const Position& chunk) const
         {
-            return camera->GetDistance(CHUNK_WIDTH * (chunk.x + 0.5f), section_height * (chunk.y + 0.5f), CHUNK_WIDTH * (chunk.z + 0.5f));
+            return camera->GetDistance(CHUNK_WIDTH * (chunk.x + 0.5f), RENDERING_SECTION_HEIGHT * (chunk.y + 0.5f), CHUNK_WIDTH * (chunk.z + 0.5f));
+        }
+
+        namespace
+        {
+            std::array<unsigned int, 2> ToMultipliers(const std::vector<unsigned int>& v)
+            {
+                std::array<unsigned int, 2> out = { 0xFFFFFFFF, 0xFFFFFFFF };
+                for (int i = 0; i < std::min(2, static_cast<int>(v.size())); ++i)
+                {
+                    out[i] = v[i];
+                }
+                return out;
+            }
+
+            Position SectionOf(const Position& block_pos)
+            {
+                return Position(
+                    static_cast<int>(std::floor(block_pos.x / static_cast<double>(CHUNK_WIDTH))),
+                    static_cast<int>(std::floor(block_pos.y / static_cast<double>(RENDERING_SECTION_HEIGHT))),
+                    static_cast<int>(std::floor(block_pos.z / static_cast<double>(CHUNK_WIDTH)))
+                );
+            }
+
+            template<class ChunkPtr>
+            void ReplaceColumn(
+                std::unordered_map<Position, std::shared_ptr<ChunkPtr>>& renderables,
+                std::mutex& mutex,
+                std::atomic<bool>& dirty,
+                const int x, const int z,
+                std::unordered_map<Position, std::vector<Face>>&& new_faces
+            )
+            {
+                bool changed = false;
+                std::lock_guard<std::mutex> lock(mutex);
+
+                for (auto& [pos, renderable] : renderables)
+                {
+                    if (pos.x == x && pos.z == z && new_faces.find(pos) == new_faces.end())
+                    {
+                        renderable->SetFaces({});
+                        changed = true;
+                    }
+                }
+
+                for (auto& [pos, faces] : new_faces)
+                {
+                    std::shared_ptr<ChunkPtr>& r = renderables[pos];
+                    if (r == nullptr)
+                    {
+                        r = std::make_shared<ChunkPtr>();
+                    }
+                    r->SetFaces(std::move(faces));
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    dirty = true;
+                }
+            }
         }
     } // Renderer
 } // Botcraft

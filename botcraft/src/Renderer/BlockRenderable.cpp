@@ -2,6 +2,9 @@
 
 #include "botcraft/Renderer/BlockRenderable.hpp"
 
+#include <cassert>
+#include <utility>
+
 namespace Botcraft
 {
     namespace Renderer
@@ -13,7 +16,7 @@ namespace Botcraft
             data_VBO = 0;
             face_number = 0;
 
-            buffer_status = BufferStatus::Created;
+            dirty = true;
         }
 
         BlockRenderable::~BlockRenderable()
@@ -21,19 +24,46 @@ namespace Botcraft
             DeleteOpenGLBuffer();
         }
 
+        void BlockRenderable::SetFaces(std::vector<Face>&& faces_)
+        {
+            std::lock_guard<std::mutex> lock_faces(mutex_faces);
+            faces = std::move(faces_);
+            dirty = true;
+        }
+
         void BlockRenderable::Update()
         {
+            std::lock_guard<std::mutex> lock_faces(mutex_faces);
+            if (!dirty)
+            {
+                return;
+            }
 
+            dirty = false;
+            face_number = static_cast<unsigned int>(faces.size());
+
+            if (face_number == 0)
+            {
+                DeleteOpenGLBuffer();
+            }
+            else
+            {
+                if (faces_VAO == 0)
+                {
+                    GenerateOpenGLBuffer();
+                }
+
+                glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, faces.data(), GL_DYNAMIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+
+            OnUploadedLocked();
         }
 
         void BlockRenderable::ClearFaces()
         {
-            std::lock_guard<std::mutex> lock_faces(mutex_faces);
-            faces.clear();
-            if (buffer_status != BufferStatus::Created)
-            {
-                buffer_status = BufferStatus::Updated;
-            }
+            SetFaces({});
         }
 
         const unsigned int BlockRenderable::GetNumFace() const
@@ -49,6 +79,8 @@ namespace Botcraft
 
         void BlockRenderable::GenerateOpenGLBuffer()
         {
+            assert(faces_VAO == 0);
+
             glGenVertexArrays(1, &faces_VAO);
             glGenBuffers(1, &faces_VBO);
 
@@ -63,7 +95,6 @@ namespace Botcraft
 
             glGenBuffers(1, &data_VBO);
             glBindBuffer(GL_ARRAY_BUFFER, data_VBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(Face) * face_number, 0, GL_DYNAMIC_DRAW);
 
             //(matrix4x4) model matrix of the face
             //Actually passed as 4 columns
@@ -117,18 +148,26 @@ namespace Botcraft
 
         void BlockRenderable::DeleteOpenGLBuffer()
         {
-            if (faces_VBO)
+            if (faces_VBO != 0)
             {
                 glDeleteBuffers(1, &faces_VBO);
+                faces_VBO = 0;
             }
-            if (data_VBO)
+            if (data_VBO != 0)
             {
                 glDeleteBuffers(1, &data_VBO);
+                data_VBO = 0;
             }
-            if (faces_VAO)
+            if (faces_VAO != 0)
             {
                 glDeleteVertexArrays(1, &faces_VAO);
+                faces_VAO = 0;
             }
+        }
+
+        void BlockRenderable::OnUploadedLocked()
+        {
+
         }
     } // Renderer
 } // Botcraft

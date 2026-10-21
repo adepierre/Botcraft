@@ -63,8 +63,7 @@ namespace Botcraft
             // Chunks in renderer are independant of chunks in the corresponding world.
             // Set headless_ to true to run without opening a window (rendering is still done)
             RenderingManager(std::shared_ptr<World> world_, std::shared_ptr<InventoryManager> inventory_manager_,
-                std::shared_ptr<EntityManager> entity_manager_,
-                const unsigned int section_height_ = 16
+                std::shared_ptr<EntityManager> entity_manager_
             );
 
             static std::weak_ptr<RenderingManager> current_instance;
@@ -81,9 +80,6 @@ namespace Botcraft
             void SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback);
             void AddChunkToUpdate(const int x, const int z);
             void AddEntityToUpdate(const int id);
-
-            // Set world renderer's camera position and orientation
-            void SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_);
 
             void SetCurrentBehaviourTree(const BaseNode* root) const;
             void ResetBehaviourState() const;
@@ -185,7 +181,7 @@ namespace Botcraft
             bool has_proj_changed;
 
             // 0.5 is noon, 0 and 1 are midnight
-            float day_time;
+            std::atomic<float> day_time;
 
             std::unique_ptr<Shader> my_shader;
             std::unique_ptr<WorldRenderer> world_renderer;
@@ -193,8 +189,9 @@ namespace Botcraft
 
             std::function<void(double, double)> MouseCallback;
             std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> KeyboardCallback;
+            std::mutex callbacks_mutex;
 
-            bool running;
+            std::atomic<bool> running;
 
             std::unordered_set<Position> chunks_to_udpate;
             std::unordered_set<int> entities_to_update;

@@ -16,7 +16,6 @@
 #include "botcraft/Renderer/Atlas.hpp"
 #include "botcraft/Renderer/BehaviourRenderer.hpp"
 #include "botcraft/Renderer/Camera.hpp"
-#include "botcraft/Renderer/Chunk.hpp"
 #include "botcraft/Renderer/ImageSaver.hpp"
 #include "botcraft/Renderer/Settings.hpp"
 #include "botcraft/Renderer/Shader.hpp"
@@ -24,18 +23,20 @@
 #include "botcraft/Renderer/WorldRenderer.hpp"
 
 #include "botcraft/Game/AssetsManager.hpp"
-#include "botcraft/Game/World/World.hpp"
 #include "botcraft/Game/World/Chunk.hpp"
+#include "botcraft/Game/World/World.hpp"
 
+#include "botcraft/Game/Entities/entities/Entity.hpp"
 #include "botcraft/Game/Entities/EntityManager.hpp"
 #include "botcraft/Game/Entities/LocalPlayer.hpp"
-#include "botcraft/Game/Entities/entities/Entity.hpp"
 
 #include "botcraft/Game/Inventory/InventoryManager.hpp"
 #include "botcraft/Game/Inventory/Window.hpp"
 
 #include "botcraft/Utilities/Logger.hpp"
 #include "botcraft/Utilities/SleepUtilities.hpp"
+
+#include <utility>
 
 const std::vector<float> color_day({ 0.6f, 0.85f, 0.9f });
 const std::vector<float> color_night({0.1f, 0.1f, 0.1f});
@@ -59,7 +60,7 @@ namespace Botcraft
 
             if (instance == nullptr)
             {
-                instance.reset(new RenderingManager(world_, inventory_manager_, entity_manager_, 16));
+                instance.reset(new RenderingManager(world_, inventory_manager_, entity_manager_));
                 current_instance = instance;
 
                 return instance;
@@ -70,8 +71,7 @@ namespace Botcraft
         RenderingManager::RenderingManager(
             std::shared_ptr<World> world_,
             std::shared_ptr<InventoryManager> inventory_manager_,
-            std::shared_ptr<EntityManager> entity_manager_,
-            const unsigned int section_height_
+            std::shared_ptr<EntityManager> entity_manager_
         )
         {
             world = world_;
@@ -105,32 +105,27 @@ namespace Botcraft
             MouseCallback = [](double, double) {};
             KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double) {};
 
-            world_renderer = std::make_unique<WorldRenderer>(section_height_);
+            world_renderer = std::make_unique<WorldRenderer>();
 
             day_time = 0.0f;
 
             running = true;
             rendering_thread = std::thread(&RenderingManager::Run, this);
-            thread_updating_renderable = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
         }
 
         RenderingManager::~RenderingManager()
         {
-            MouseCallback = [](double, double) {};
-            KeyboardCallback = [](std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double) {};
-
-            running = false;
-
-            condition_update.notify_all();
-            if (thread_updating_renderable.joinable())
             {
-                thread_updating_renderable.join();
+                std::lock_guard<std::mutex> lock(mutex_updating);
+                running = false;
             }
+            condition_update.notify_all();
 
             if (rendering_thread.joinable())
             {
                 rendering_thread.join();
             }
+            // thread_updating_renderable is joined before rendering_thread returns so we don't need to wait for it here
         }
 
         void RenderingManager::Run()
@@ -139,13 +134,16 @@ namespace Botcraft
             if (!Init())
             {
                 LOG_ERROR("Can't init rendering manager");
+                running = false;
                 return;
             }
+
+            thread_updating_renderable = std::thread(&RenderingManager::WaitForRenderingUpdate, this);
 
             my_shader->Use();
             float real_fps = 1.0f;
 
-            while (!glfwWindowShouldClose(window))
+            while (running && !glfwWindowShouldClose(window))
             {
                 const double currentFrame = glfwGetTime();
                 const std::chrono::steady_clock::time_point frame_start = std::chrono::steady_clock::now();
@@ -185,16 +183,21 @@ namespace Botcraft
 
                 if (current_window_height > 0 && current_window_width > 0)
                 {
+                    if (local_player == nullptr)
+                    {
+                        local_player = entity_manager->GetLocalPlayer();
+                    }
+                    if (local_player != nullptr)
+                    {
+                        const Vector3<double> pos = local_player->GetPosition();
+                        world_renderer->SetPosOrientation(pos.x, pos.y + local_player->GetEyeHeight(), pos.z, local_player->GetYaw(), local_player->GetPitch());
+                    }
 #ifdef USE_IMGUI
                     ImGui_ImplOpenGL3_NewFrame();
                     ImGui_ImplGlfw_NewFrame();
                     ImGui::NewFrame();
 
                     {
-                        if (local_player == nullptr)
-                        {
-                            local_player = entity_manager->GetLocalPlayer();
-                        }
                         ImGui::SetNextWindowPos(ImVec2(0, 0));
                         ImGui::SetNextWindowSize(ImVec2(290, 70));
                         const Vector3<double> position = local_player == nullptr ? Vector3<double>(0.0) : local_player->GetPosition();
@@ -417,6 +420,10 @@ namespace Botcraft
                     if (current_target_fps <= 0.0)
                     {
                         Utilities::SleepFor(std::chrono::milliseconds(10));
+                        if (!running)
+                        {
+                            break;
+                        }
                         continue;
                     }
 
@@ -444,7 +451,17 @@ namespace Botcraft
                 }
             }
 
-            world_renderer.reset();
+            {
+                std::lock_guard<std::mutex> lock(mutex_updating);
+                running = false;
+            }
+            condition_update.notify_all();
+            if (thread_updating_renderable.joinable())
+            {
+                thread_updating_renderable.join();
+            }
+
+            world_renderer->ReleaseGL();
             my_shader.reset();
 
 #ifdef USE_IMGUI
@@ -456,23 +473,29 @@ namespace Botcraft
 #endif
 
             glfwDestroyWindow(window);
+            window = nullptr;
             glfwTerminate();
         }
 
         void RenderingManager::Close()
         {
-            glfwSetWindowShouldClose(window, true);
-            running = false;
+            {
+                std::lock_guard<std::mutex> lock(mutex_updating);
+                running = false;
+            }
+            condition_update.notify_all();
         }
 
         void RenderingManager::SetMouseCallback(std::function<void(double, double)> callback)
         {
-            MouseCallback = callback;
+            std::lock_guard<std::mutex> lock(callbacks_mutex);
+            MouseCallback = std::move(callback);
         }
 
         void RenderingManager::SetKeyboardCallback(std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback)
         {
-            KeyboardCallback = callback;
+            std::lock_guard<std::mutex> lock(callbacks_mutex);
+            KeyboardCallback = std::move(callback);
         }
 
         void RenderingManager::SetCurrentBehaviourTree(const BaseNode* root) const
@@ -555,6 +578,9 @@ namespace Botcraft
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
             {
                 LOG_ERROR("Failed to initialize GLAD");
+                glfwDestroyWindow(window);
+                window = nullptr;
+                glfwTerminate();
                 return false;
             }
 
@@ -626,7 +652,17 @@ namespace Botcraft
                 return;
             }
 
-            this_object->MouseCallback(xoffset, yoffset);
+            // Copy the callback to prevent double locking in the unexpected case where a
+            // user defined callback locks the mutex too
+            std::function<void(double, double)> callback;
+            {
+                std::lock_guard<std::mutex> lock(this_object->callbacks_mutex);
+                callback = this_object->MouseCallback;
+            }
+            if (callback)
+            {
+                callback(xoffset, yoffset);
+            }
         }
 
         void RenderingManager::InternalProcessInput(GLFWwindow *window)
@@ -682,7 +718,17 @@ namespace Botcraft
                 Settings::screenhsot_path = "screenshot.png";
             }
 
-            KeyboardCallback(is_key_pressed, deltaTime);
+            // Copy the callback to prevent double locking in the unexpected case where a
+            // user defined callback locks the mutex too
+            std::function<void(std::array<bool, static_cast<int>(KEY_CODE::NUMBER_OF_KEYS)>, double)> callback;
+            {
+                std::lock_guard<std::mutex> lock(callbacks_mutex);
+                callback = KeyboardCallback;
+            }
+            if (callback)
+            {
+                callback(is_key_pressed, deltaTime);
+            }
         }
 
         void RenderingManager::AddChunkToUpdate(const int x, const int z)
@@ -705,72 +751,42 @@ namespace Botcraft
             condition_update.notify_all();
         }
 
-        void RenderingManager::SetPosOrientation(const double x_, const double y_, const double z_, const float yaw_, const float pitch_)
-        {
-            if (world_renderer)
-            {
-                world_renderer->SetPosOrientation(x_, y_, z_, yaw_, pitch_);
-            }
-        }
-
         void RenderingManager::WaitForRenderingUpdate()
         {
             Logger::GetInstance().RegisterThread("RenderingDataUpdate");
-            while (running)
+
+            while (true)
             {
+                std::unordered_set<Position> chunks;
+                std::unordered_set<int> entities;
+
                 {
-                    std::unique_lock<std::mutex> lck(mutex_updating);
-                    condition_update.wait(lck);
+                    std::unique_lock<std::mutex> lock(mutex_updating);
+                    condition_update.wait(lock, [this]() {
+                        return !running || !chunks_to_udpate.empty() || !entities_to_update.empty();
+                    });
+                    if (!running)
+                    {
+                        return;
+                    }
+                    chunks = std::exchange(chunks_to_udpate, {});
+                    entities = std::exchange(entities_to_update, {});
                 }
 
-                while (!chunks_to_udpate.empty())
+                for (const Position& pos : chunks)
                 {
-                    Position pos;
-                    mutex_updating.lock();
-                    if (!chunks_to_udpate.empty())
-                    {
-                        auto posIterator = chunks_to_udpate.begin();
-                        pos = *posIterator;
-                        chunks_to_udpate.erase(posIterator);
-                    }
-                    mutex_updating.unlock();
-
                     std::optional<Botcraft::Chunk> chunk;
                     // Get the new values in the world
-                    bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
+                    const bool has_chunk_been_modified = world->HasChunkBeenModified(pos.x, pos.z);
                     if (has_chunk_been_modified)
                     {
                         chunk = world->ResetChunkModificationState(pos.x, pos.z);
-                    }
-
-                    if (has_chunk_been_modified)
-                    {
                         world_renderer->UpdateChunk(pos.x, pos.z, chunk);
-                    }
-
-                    // If we left the game, we don't need to process
-                    // the rest of the data, just discard them
-                    if (!running)
-                    {
-                        mutex_updating.lock();
-                        chunks_to_udpate.clear();
-                        mutex_updating.unlock();
-                        break;
                     }
                 }
 
-                while (!entities_to_update.empty())
+                for (const int entity_id : entities)
                 {
-                    int entity_id = -1;
-                    mutex_updating.lock();
-                    if (!entities_to_update.empty())
-                    {
-                        auto eid_it = entities_to_update.begin();
-                        entity_id = *eid_it;
-                        entities_to_update.erase(eid_it);
-                    }
-                    mutex_updating.unlock();
-
                     std::vector<Face> faces;
                     // Get the new values
                     std::shared_ptr<Botcraft::Entity> entity = entity_manager->GetEntity(entity_id);
@@ -788,16 +804,6 @@ namespace Botcraft
                     if (should_update)
                     {
                         world_renderer->UpdateEntity(entity_id, faces);
-                    }
-
-                    // If we left the game, we don't need to process
-                    // the rest of the data, just discard them
-                    if (!running)
-                    {
-                        mutex_updating.lock();
-                        entities_to_update.clear();
-                        mutex_updating.unlock();
-                        break;
                     }
                 }
             }

@@ -9,7 +9,7 @@ namespace Botcraft
 {
     namespace Renderer
     {
-        //To avoid including glm in public header
+        // To avoid including glm in public header
         struct IMatrix
         {
             IMatrix(const glm::mat4& m_ = glm::mat4(1.0f))
@@ -28,6 +28,11 @@ namespace Botcraft
             0.9999f, -0.9999f, 0.9999f
         };
 
+        namespace
+        {
+            glm::mat4 ComputeModelMatrix(const FaceTransformation& transformations, const Orientation orientation);
+        }
+
         Face::Face()
         {
 
@@ -35,25 +40,12 @@ namespace Botcraft
 
         Face::Face(const FaceTransformation& transformations, const Orientation orientation)
         {
-            IMatrix model;
+            const glm::mat4 m = ComputeModelMatrix(transformations, orientation);
 
-            //Apply the translations of the model
-            for (int i = 0; i < transformations.translations.size(); ++i)
-            {
-                transformations.translations[i]->ApplyTransformation(model);
-            }
-
-            //Apply the rotations
-            for (int i = 0; i < transformations.rotations.size(); ++i)
-            {
-                transformations.rotations[i]->ApplyTransformation(model);
-            }
-
-            //Apply the scales
+            // Check scales for back culling of flat plane
             unsigned int display_back_face = 1;
             for (int i = 0; i < transformations.scales.size(); ++i)
             {
-                transformations.scales[i]->ApplyTransformation(model);
                 if (abs(transformations.scales[i]->axis_x) < 0.001f ||
                     abs(transformations.scales[i]->axis_y) < 0.001f ||
                     abs(transformations.scales[i]->axis_z) < 0.001f)
@@ -62,45 +54,9 @@ namespace Botcraft
                 }
             }
 
-            //Apply the transformations to get the good face from the base one
-            switch (orientation)
-            {
-            case Orientation::None:
-            case Orientation::Bottom:
-                // No rotation needed
-                break;
-            case Orientation::Top:
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::East:
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::West:
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::North:
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::South:
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                break;
-            }
+            unsigned char texture_rotation = transformations.rotation & 0x03;
 
-            unsigned char texture_rotation = transformations.rotation;
-            while (texture_rotation < 0)
-            {
-                texture_rotation += 4;
-            }
-            while (texture_rotation > 3)
-            {
-                texture_rotation -= 4;
-            }
-
-            const float* model_ptr = glm::value_ptr(model.m);
+            const float* model_ptr = glm::value_ptr(m);
 
             for (int i = 0; i < 16; ++i)
             {
@@ -162,7 +118,7 @@ namespace Botcraft
             }
             else
             {
-                texture_data &= (~1Ul) << 2;
+                texture_data &= ~(1U << 2);
             }
         }
 
@@ -206,58 +162,62 @@ namespace Botcraft
 
         void Face::UpdateMatrix(const FaceTransformation& transformations, const Orientation orientation)
         {
-            IMatrix model;
+            const glm::mat4 m = ComputeModelMatrix(transformations, orientation);
 
-            //Apply the translations of the model
-            for (int i = 0; i < transformations.translations.size(); ++i)
-            {
-                transformations.translations[i]->ApplyTransformation(model);
-            }
-
-            //Apply the rotations
-            for (int i = 0; i < transformations.rotations.size(); ++i)
-            {
-                transformations.rotations[i]->ApplyTransformation(model);
-            }
-
-            //Apply the scales
-            for (int i = 0; i < transformations.scales.size(); ++i)
-            {
-                transformations.scales[i]->ApplyTransformation(model);
-            }
-
-            //Apply the transformations to get the good face from the base one
-            switch (orientation)
-            {
-            case Orientation::None:
-            case Orientation::Bottom:
-                // No rotation needed
-            case Orientation::Top:
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::East:
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::West:
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::North:
-                model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-                break;
-            case Orientation::South:
-                model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                break;
-            }
-
-            const float* model_ptr = glm::value_ptr(model.m);
-
+            const float* model_ptr = glm::value_ptr(m);
             for (int i = 0; i < 16; ++i)
             {
                 model_matrix[i] = model_ptr[i];
+            }
+        }
+
+        namespace
+        {
+            glm::mat4 ComputeModelMatrix(const FaceTransformation& transformations, const Orientation orientation)
+            {
+                IMatrix model;
+                for (const TransformationPtr& t : transformations.translations)
+                {
+                    t->ApplyTransformation(model);
+                }
+                for (const TransformationPtr& r : transformations.rotations)
+                {
+                    r->ApplyTransformation(model);
+                }
+                for (const ScalePtr& s : transformations.scales)
+                {
+                    s->ApplyTransformation(model);
+                }
+
+                // Apply the transformations to get the good face from the base one
+                switch (orientation)
+                {
+                case Orientation::None:
+                case Orientation::Bottom:
+                    // No rotation needed
+                    break;
+                case Orientation::Top:
+                    model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                    model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    break;
+                case Orientation::East:
+                    model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                    model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    break;
+                case Orientation::West:
+                    model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+                    model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    break;
+                case Orientation::North:
+                    model.m = glm::rotate(model.m, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                    model.m = glm::rotate(model.m, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                    break;
+                case Orientation::South:
+                    model.m = glm::rotate(model.m, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                    break;
+                }
+
+                return model.m;
             }
         }
     } // Renderer

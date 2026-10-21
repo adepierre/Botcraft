@@ -60,10 +60,8 @@ UserControlledClient::UserControlledClient(bool online) : ManagersClient()
                 rendering_manager->SetKeyboardCallback(std::bind(&UserControlledClient::KeyBoardCallback, this, std::placeholders::_1, std::placeholders::_2));
             }
         }
-        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
-#else
-        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
 #endif
+        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
 
         // Launch the thread for the position
         entity_manager->GetLocalPlayer()->SetPosition(Vector3<double>(0.0, 0.0, 0.0));

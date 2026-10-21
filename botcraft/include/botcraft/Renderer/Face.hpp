@@ -49,19 +49,19 @@ namespace Botcraft
 
         private:
             // Model matrix, 16 floats
-            std::array<float, 16> model_matrix;
+            std::array<float, 16> model_matrix{};
 
             // Texture coordinates for both base texture and optional overlay
             // (u1, v1, u2, v2)
-            std::array<float, 4> texture_coords;
-            std::array<float, 4> texture_coords_overlay;
+            std::array<float, 4> texture_coords{};
+            std::array<float, 4> texture_coords_overlay{};
 
-            //One int with all textures data packed inside
-            //(unused : 26 bits, use_overlay : 1 bit, rotation : 2 bits, display_backface: 1 bit, transparency_data : 2 bit)
-            unsigned int texture_data;
+            // One int with all textures data packed inside
+            // (unused : 26 bits, use_overlay : 1 bit, rotation : 2 bits, display_backface: 1 bit, transparency_data : 2 bit)
+            unsigned int texture_data = 0;
 
-            //One int with texture multiplier packed inside (rgba) x2 for one optional overlay
-            std::array<unsigned int, 2> texture_multipliers;
+            // One int with texture multiplier packed inside (rgba) x2 for one optional overlay
+            std::array<unsigned int, 2> texture_multipliers{};
         };
     } // Renderer
 } // Botcraft

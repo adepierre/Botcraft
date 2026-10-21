@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -21,8 +22,9 @@ namespace Botcraft
 
     namespace Renderer
     {
-        class Chunk;
         class Entity;
+        class BlockRenderable;
+        using Chunk = BlockRenderable;
         class TransparentChunk;
         class Camera;
         class Atlas;
@@ -35,16 +37,21 @@ namespace Botcraft
             Inside         // Box is inside the frustum
         };
 
+        // Each chunk faces are stored in rendering sections,
+        // They don't need to be the same size as real sections
+        static constexpr unsigned int RENDERING_SECTION_HEIGHT = 16;
+
         class WorldRenderer
         {
         public:
             // Constructor
-            WorldRenderer(const unsigned int section_height_);
+            WorldRenderer();
             ~WorldRenderer();
 
             std::shared_ptr<Camera> GetCamera();
 
             void InitGL();
+            void ReleaseGL();
             void UpdateViewMatrix();
             void SetCameraProjection(const glm::mat4& proj);
             void UpdateFaces();
@@ -63,13 +70,6 @@ namespace Botcraft
                 int* num_faces_ = nullptr, int* num_rendered_faces_ = nullptr);
 
         private:
-            // Add a face to the rendering data
-            // It will not be rendered until the next frame with
-            // blocks_faces_should_be_updated set to true
-            void AddFace(const Position& block_pos, const Vector3<double>& offset, const Face& face_,
-                const std::vector<std::string>& texture_identifiers_,
-                const std::vector<unsigned int>& texture_multipliers_);
-
             // Returns the color modifier (for redstone/leaves/water etc...)
             const std::vector<unsigned int> GetColorModifier(const int y, const Biome* biome, const Blockstate* blockstate, const std::vector<bool>& use_tintindex) const;
 
@@ -80,23 +80,18 @@ namespace Botcraft
         private:
             unsigned int view_uniform_buffer;
 
-            // Each chunk faces are stored in rendering sections,
-            // They don't need to be the same size as real
-            // sections
-            unsigned int section_height;
-
             std::unordered_map<Position, std::shared_ptr<Chunk> > chunks;
             std::mutex chunks_mutex;
             std::unordered_map<Position, std::shared_ptr<TransparentChunk> > transparent_chunks;
             std::mutex transparent_chunks_mutex;
-            bool blocks_faces_should_be_updated;
+            std::atomic<bool> chunks_dirty;
+            std::atomic<bool> transparent_chunks_dirty;
 
             std::unordered_map<int, std::shared_ptr<Entity> > entities;
             std::mutex entities_mutex;
-            bool entities_faces_should_be_updated;
+            std::atomic<bool> entities_faces_should_be_updated;
 
             std::shared_ptr<Camera> camera;
-            std::mutex m_mutex_camera;
 
             unsigned int atlas_texture;
         };

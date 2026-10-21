@@ -1,28 +1,31 @@
 #pragma once
 
+#include <atomic>
 #include <vector>
 
 #include <glm/vec3.hpp>
 
-#include "botcraft/Renderer/Chunk.hpp"
+#include "botcraft/Renderer/BlockRenderable.hpp"
 
 namespace Botcraft
 {
     namespace Renderer
     {
-        class TransparentChunk : public Chunk
+        class TransparentChunk : public BlockRenderable
         {
         public:
             TransparentChunk();
             ~TransparentChunk();
 
-            void SetDisplayStatus(const BufferStatus s);
+            void MarkForSort();
             void Sort(const glm::vec3& cam_pos);
-            void Update();
+
+        protected:
+            void OnUploadedLocked() override;
 
         protected:
             std::vector<Face> display_faces_positions;
-            BufferStatus display_buffer_status;
+            std::atomic<bool> needs_sort;
         };
     } // Renderer
 } // Botcraft

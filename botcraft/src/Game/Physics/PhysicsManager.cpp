@@ -12,26 +12,17 @@
 #include "botcraft/Game/Inventory/Window.hpp"
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/World/World.hpp"
-#if USE_GUI
-#include "botcraft/Renderer/RenderingManager.hpp"
-#endif
 
 using namespace ProtocolCraft;
 
 namespace Botcraft
 {
     PhysicsManager::PhysicsManager(
-#if USE_GUI
-        const std::shared_ptr<Renderer::RenderingManager>& rendering_manager_,
-#endif
         const std::shared_ptr<InventoryManager>& inventory_manager_,
         const std::shared_ptr<EntityManager>& entity_manager_,
         const std::shared_ptr<NetworkManager>& network_manager_,
         const std::shared_ptr<World>& world_)
     {
-#if USE_GUI
-        rendering_manager = rendering_manager_;
-#endif
         inventory_manager = inventory_manager_;
         entity_manager = entity_manager_;
         player = nullptr;
@@ -1095,19 +1086,6 @@ namespace Botcraft
         player->previous_on_ground = player->on_ground;
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
         player->previous_horizontal_collision = player->horizontal_collision;
-#endif
-
-#if USE_GUI
-        if (rendering_manager != nullptr && (has_moved || has_rotated))
-        {
-            rendering_manager->SetPosOrientation(
-                player->position.x,
-                player->position.y + player->GetEyeHeightImpl(),
-                player->position.z,
-                player->yaw,
-                player->pitch
-            );
-        }
 #endif
     }
 

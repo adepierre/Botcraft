@@ -20,21 +20,11 @@ namespace Botcraft
 
     class Item;
 
-#if USE_GUI
-    namespace Renderer
-    {
-        class RenderingManager;
-    }
-#endif
-
     class PhysicsManager : public ProtocolCraft::Handler
     {
     public:
         PhysicsManager() = delete;
         PhysicsManager(
-#if USE_GUI
-            const std::shared_ptr<Renderer::RenderingManager>& rendering_manager_,
-#endif
             const std::shared_ptr<InventoryManager>& inventory_manager_,
             const std::shared_ptr<EntityManager>& entity_manager_,
             const std::shared_ptr<NetworkManager>& network_manager_,
@@ -99,9 +89,6 @@ namespace Botcraft
         Position GetBlockBelowAffectingMovement() const;
 
     private:
-#if USE_GUI
-        std::shared_ptr<Renderer::RenderingManager> rendering_manager;
-#endif
         std::shared_ptr<EntityManager> entity_manager;
         std::shared_ptr<InventoryManager> inventory_manager;
         std::shared_ptr<LocalPlayer> player;

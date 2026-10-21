@@ -196,10 +196,8 @@ namespace Botcraft
                 network_manager->AddHandler(rendering_manager.get());
             }
         }
-        physics_manager = std::make_shared<PhysicsManager>(rendering_manager, inventory_manager, entity_manager, network_manager, world);
-#else
-        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
 #endif
+        physics_manager = std::make_shared<PhysicsManager>(inventory_manager, entity_manager, network_manager, world);
         network_manager->AddHandler(physics_manager.get());
         // Start physics
         physics_manager->StartPhysics();
