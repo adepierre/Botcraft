@@ -19,6 +19,8 @@ namespace ProtocolCraft
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, int>);
 #elif PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SERIALIZED_FIELD_WITHOUT_GETTER_SETTER(ParticleType, Internal::DiffType<ProtocolCraft::ParticleType, VarInt>);
+#elif PROTOCOL_VERSION > 776 /* > 26.2 */
+        SERIALIZED_FIELD(Particle, ProtocolCraft::Particle);
 #endif
         SERIALIZED_FIELD(OverrideLimiter, bool);
 #if PROTOCOL_VERSION > 768 /* > 1.21.3 */
@@ -36,11 +38,19 @@ namespace ProtocolCraft
         SERIALIZED_FIELD(XDist, float);
         SERIALIZED_FIELD(YDist, float);
         SERIALIZED_FIELD(ZDist, float);
+#if PROTOCOL_VERSION < 777 /* < 26.3 */
         SERIALIZED_FIELD(MaxSpeed, float);
         SERIALIZED_FIELD(Count, int);
+#else
+        SERIALIZED_FIELD(XMaxSpeed, float);
+        SERIALIZED_FIELD(YMaxSpeed, float);
+        SERIALIZED_FIELD(ZMaxSpeed, float);
+        SERIALIZED_FIELD(Count, VarInt);
+        SERIALIZED_FIELD(RandomizationType, VarInt);
+#endif
 #if PROTOCOL_VERSION < 766 /* < 1.20.5 */
         SERIALIZED_DYNAMIC_DATA_FIELD(ParticleData, THIS::ParticleType, ParticleOption, Particle::CreateParticleOption);
-#else
+#elif PROTOCOL_VERSION < 777 /* < 26.3 */
         SERIALIZED_FIELD(Particle, ProtocolCraft::Particle);
 #endif
 
