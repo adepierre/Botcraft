@@ -3,6 +3,7 @@
 
 #include <botcraft/AI/BehaviourTree.hpp>
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
+#include <botcraft/Utilities/MiscUtilities.hpp>
 
 using namespace Botcraft;
 
@@ -669,10 +670,34 @@ TEST_CASE("SyncAction")
 
     SECTION("success")
     {
-        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Botcraft::Status::Success; }) == Botcraft::Status::Success);
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Status::Success; }) == Status::Success);
     }
     SECTION("failure")
     {
-        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Botcraft::Status::Failure; }) == Botcraft::Status::Failure);
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Status::Failure; }) == Status::Failure);
+    }
+    SECTION("timeout then reuse")
+    {
+        const LogLevel log_level = Logger::GetInstance().GetLogLevel();
+        Logger::GetInstance().SetLogLevel(LogLevel::Error);
+        Utilities::OnEndScope reset_loglevel([log_level]() { Logger::GetInstance().SetLogLevel(log_level); });
+        // Yields forever, so only the timeout (checked between steps) can end it
+        REQUIRE(bot.SyncAction(50, [](BehaviourClient& c) { while (true) { c.Yield(); } return Status::Success; }) == Status::Failure);
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Status::Success; }) == Status::Success);
+    }
+    SECTION("throwing leaf")
+    {
+        const LogLevel log_level = Logger::GetInstance().GetLogLevel();
+        Logger::GetInstance().SetLogLevel(LogLevel::Fatal);
+        Utilities::OnEndScope reset_loglevel([log_level]() { Logger::GetInstance().SetLogLevel(log_level); });
+        // timeout_ms = 0: the call must end on its own, not wait for a dead thread
+        REQUIRE(bot.SyncAction(0, [](BehaviourClient&) { throw std::runtime_error("test exception"); return Status::Success; }) == Status::Failure);
+        // The behaviour thread is still alive
+        REQUIRE(bot.SyncAction(5000, [](BehaviourClient&) { return Status::Success; }) == Status::Success);
+
+    }
+    SECTION("named leaf")
+    {
+        REQUIRE(bot.SyncAction(5000, "named action", [](BehaviourClient&) { return Status::Success; }) == Status::Success);
     }
 }

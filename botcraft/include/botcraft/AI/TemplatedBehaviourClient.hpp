@@ -1,6 +1,9 @@
 #pragma once
 
 #include <atomic>
+#include <functional>
+#include <type_traits>
+#include <utility>
 
 #include "botcraft/AI/BehaviourClient.hpp"
 #include "botcraft/AI/BehaviourTree.hpp"
@@ -154,80 +157,42 @@ namespace Botcraft
                 StartBehaviour();
             }
 
-            // Make sure there is no active tree
-            if (tree != nullptr)
-            {
-                SetBehaviourTree(nullptr);
-                BehaviourStep();
+            // Shared pointers so they still exist for the tree even if we exit this function
+            std::shared_ptr<Status> return_value = std::make_shared<Status>(Status::Failure);
+            std::shared_ptr<std::atomic<bool>> done = std::make_shared<std::atomic<bool>>(false);
 
-                // Wait for the tree to be set as active one
-                if (!Utilities::WaitForCondition([&]() {
-                    return tree == nullptr;
-                    }, 500)
-                )
-                {
-                    LOG_WARNING("Timeout waiting for tree swapping in SyncAction");
-                    // It's not realy a failure as we couldn't swap the tree but we need to return something
-                    return Status::Failure;
-                }
-            }
+            // Wrap the action with a try catch so a throw becomes a failure instead of a deadlocked thread waiting for an update that will never come
+            const std::pair<std::string, std::function<Status(TDerived&)>> wrapped = MakeSyncActionLeaf<TDerived>(std::forward<Args>(args)...);
 
-            Status return_value = Status::Failure;
-
-            // Set the tree
             SetBehaviourTree(Builder<TDerived>()
                 .sequence()
-                    .selector()
-                        .sequence()
-                            .leaf(std::forward<Args>(args)...)
-                            // We know return_value will be a valid ref at least as long as the tree exists
-                            .leaf([&return_value](TDerived&) { return_value = Status::Success; return Status::Success; })
-                        .end()
-                        .leaf([&return_value](TDerived&) { return_value = Status::Failure; return Status::Success; })
+                    .succeeder().sequence()
+                        .leaf(wrapped.first, wrapped.second)
+                        .leaf([return_value](TDerived&) { *return_value = Status::Success; return Status::Success; })
                     .end()
-                    .leaf([](TDerived& c) { c.SetBehaviourTree(nullptr); return Status::Success; })
-                .end());
+                    .leaf([done](TDerived& c) { c.SetBehaviourTree(nullptr); *done = true; return Status::Success; })
+                .end()
+            );
 
-            // Perform one step to get out of the Yield lock and swap tree
-            BehaviourStep();
-
-            // Wait for the tree to be set as active one
-            if (!Utilities::WaitForCondition([&]() {
-                    return tree != nullptr;
-                }, 500)
-            )
-            {
-                LOG_WARNING("Timeout waiting for tree swapping in SyncAction");
-                // It's not realy a failure as we couldn't swap the tree but we need to return something
-                return Status::Failure;
-            }
-
-            // Run until tree is ticked once and reset to nullptr
+            // Run until the last leaf set done
             const std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-            while (tree != nullptr && !should_be_closed)
+            while (!*done)
             {
-                std::chrono::steady_clock::time_point iter_start = std::chrono::steady_clock::now();
-                std::chrono::steady_clock::time_point iter_end = iter_start + std::chrono::milliseconds(10);
-
-                // Timeout, reset tree and get out
-                if (timeout_ms > 0 && std::chrono::duration_cast<std::chrono::milliseconds>(iter_start - start).count() > timeout_ms)
+                // Timeout, reset tree and return
+                if (should_be_closed || (timeout_ms > 0 && std::chrono::steady_clock::now() - start > std::chrono::milliseconds(timeout_ms)))
                 {
-                    LOG_WARNING("Timeout when doing SyncAction");
+                    LOG_WARNING("Timeout during SyncAction");
                     SetBehaviourTree(nullptr);
                     BehaviourStep();
-                    Utilities::WaitForCondition([&]()
-                        {
-                            return tree == nullptr;
-                        }, 500);
-                    break;
+                    return Status::Failure;
                 }
 
+                const std::chrono::steady_clock::time_point iter_end = std::chrono::steady_clock::now() + std::chrono::milliseconds(10);
                 BehaviourStep();
-
                 Utilities::SleepUntil(iter_end);
             }
 
-            return return_value;
+            return *return_value;
         }
 
 
@@ -294,6 +259,36 @@ namespace Botcraft
 #endif
 
     private:
+        /// @brief Wrap a SyncAction action so a throw is reported as a failure
+        /// instead of stopping the behaviour thread.
+        template<typename Context, typename F, typename... Params>
+        static std::function<Status(Context&)> WrapSyncAction(F&& f, Params&&... params)
+        {
+            return [f = std::forward<F>(f), params...](Context& c) mutable {
+                try
+                {
+                    return f(c, params...);
+                }
+                catch (const std::exception& ex)
+                {
+                    LOG_ERROR("Exception in SyncAction:\n" << ex.what());
+                    return Status::Failure;
+                }
+            };
+        }
+
+        template<typename Context, typename F, typename... Params, typename = std::enable_if_t<!std::is_convertible_v<F, std::string>>>
+        static std::pair<std::string, std::function<Status(Context&)>> MakeSyncActionLeaf(F&& f, Params&&... params)
+        {
+            return { std::string(), WrapSyncAction<Context>(std::forward<F>(f), std::forward<Params>(params)...) };
+        }
+
+        template<typename Context, typename S, typename F, typename... Params, typename = std::enable_if_t<std::is_convertible_v<S, std::string>>>
+        static std::pair<std::string, std::function<Status(Context&)>> MakeSyncActionLeaf(S&& s, F&& f, Params&&... params)
+        {
+            return { std::string(s), WrapSyncAction<Context>(std::forward<F>(f), std::forward<Params>(params)...) };
+        }
+
         void TreeLoop()
         {
             Logger::GetInstance().RegisterThread("Behaviour - " + GetNetworkManager()->GetMyName());
