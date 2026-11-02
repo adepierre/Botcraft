@@ -1,19 +1,17 @@
 #pragma once
 
-#include "protocolCraft/Handler.hpp"
 #include "protocolCraft/enums.hpp"
+#include "protocolCraft/Handler.hpp"
 
-#include <vector>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <queue>
 #include <thread>
-#include <mutex>
-#include <condition_variable>
+#include <vector>
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #include "botcraft/Network/LastSeenMessagesTracker.hpp"
-#endif
-#if PROTOCOL_VERSION > 760 /* > 1.19.2 */
-#include <atomic>
 #endif
 
 namespace Botcraft
@@ -51,7 +49,7 @@ namespace Botcraft
     private:
         void WaitForNewPackets();
         void ProcessPacket(const std::vector<unsigned char>& bytes);
-        void OnNewRawData(const std::vector<unsigned char>& bytes);
+        void OnNewRawData(std::vector<unsigned char> bytes);
 
 
         virtual void Handle(ProtocolCraft::ClientboundLoginCompressionPacket& packet) override;
@@ -95,16 +93,17 @@ namespace Botcraft
 
         std::shared_ptr<TCP_Com> com;
         std::shared_ptr<Authentifier> authentifier;
-        ProtocolCraft::ConnectionState state;
+        std::atomic<ProtocolCraft::ConnectionState> state;
 
         std::thread m_thread_process;//Thread running to process incoming packets without blocking com
 
         std::queue<std::vector<unsigned char> > packets_to_process;
         std::mutex mutex_process;
         std::condition_variable process_condition;
-        int compression;
+        std::atomic<int> compression;
 
         std::mutex mutex_send;
+        std::mutex chat_mutex;
 
         std::string name;
 
@@ -113,7 +112,7 @@ namespace Botcraft
 #endif
 #if PROTOCOL_VERSION > 760 /* > 1.19.2 */
         ProtocolCraft::UUID chat_session_uuid{};
-        std::atomic<int> message_sent_index;
+        int message_sent_index = 0;
 #endif
 
 #if PROTOCOL_VERSION > 763 /* > 1.20.1 */

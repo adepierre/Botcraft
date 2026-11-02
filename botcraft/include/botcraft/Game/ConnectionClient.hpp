@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "protocolCraft/Handler.hpp"
 
 namespace Botcraft
@@ -64,6 +66,6 @@ namespace Botcraft
     protected:
         std::shared_ptr<NetworkManager> network_manager;
 
-        bool should_be_closed;
+        std::atomic<bool> should_be_closed;
     };
 } //Botcraft

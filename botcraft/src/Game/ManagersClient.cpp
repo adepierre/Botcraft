@@ -56,6 +56,11 @@ namespace Botcraft
             network_process_thread_id = network_manager->GetProcessingThreadId();
         }
 
+        if (physics_manager)
+        {
+            physics_manager->StopPhysics();
+        }
+
         ConnectionClient::Disconnect();
 
         difficulty = Difficulty::None;

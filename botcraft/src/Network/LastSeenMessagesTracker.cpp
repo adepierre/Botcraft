@@ -17,11 +17,6 @@ namespace Botcraft
 
     }
 
-    std::mutex& LastSeenMessagesTracker::GetMutex()
-    {
-        return mutex;
-    }
-
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     const std::vector<unsigned char>& LastSeenMessagesTracker::GetLastSignature() const
     {
@@ -35,8 +30,6 @@ namespace Botcraft
 
     void LastSeenMessagesTracker::AddSeenMessage(const std::vector<unsigned char>& signature, const ProtocolCraft::UUID& sender)
     {
-        std::scoped_lock<std::mutex> lock_messages(mutex);
-
         ProtocolCraft::LastSeenMessagesEntry entry;
         entry.SetLastSignature(signature);
         entry.SetProfileId(sender);
@@ -74,7 +67,6 @@ namespace Botcraft
 #else
     std::pair<std::vector<std::vector<unsigned char>>, ProtocolCraft::LastSeenMessagesUpdate> LastSeenMessagesTracker::GetLastSeenMessagesUpdate()
     {
-        std::scoped_lock<std::mutex> lock_messages(mutex);
         std::pair<std::vector<std::vector<unsigned char>>, ProtocolCraft::LastSeenMessagesUpdate> output;
         output.second.SetOffset(GetAndResetOffset());
 

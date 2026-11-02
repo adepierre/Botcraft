@@ -1,5 +1,6 @@
 #include <functional>
 #include <optional>
+#include <utility>
 
 #include "botcraft/Game/Enums.hpp"
 #include "botcraft/Network/AESEncrypter.hpp"
@@ -93,8 +94,6 @@ namespace Botcraft
             key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
             loginstart_packet->SetPublicKey(key);
-#else
-            message_sent_index = 0;
 #endif
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
             loginstart_packet->SetProfileId(authentifier->GetPlayerUUID());
@@ -117,7 +116,10 @@ namespace Botcraft
 
     void NetworkManager::Stop()
     {
-        state = ConnectionState::None;
+        {
+            std::scoped_lock<std::mutex> lock(mutex_process);
+            state = ConnectionState::None;
+        }
 
         if (com)
         {
@@ -132,7 +134,10 @@ namespace Botcraft
         }
         compression = -1;
 
-        com.reset();
+        {
+            std::lock_guard<std::mutex> lock(mutex_send);
+            com.reset();
+        }
     }
 
     void NetworkManager::AddHandler(Handler* h)
@@ -142,37 +147,40 @@ namespace Botcraft
 
     void NetworkManager::Send(const std::shared_ptr<Packet> packet)
     {
-        if (com)
+        std::lock_guard<std::mutex> lock(mutex_send);
+        if (!com)
         {
-            std::lock_guard<std::mutex> lock(mutex_send);
-            std::vector<unsigned char> packet_data;
-            packet_data.reserve(256);
-            packet->Write(packet_data);
-            if (compression == -1)
+            return;
+        }
+
+        const int compression_threshold = compression;
+        std::vector<unsigned char> packet_data;
+        packet_data.reserve(256);
+        packet->Write(packet_data);
+        if (compression_threshold == -1)
+        {
+            com->SendPacket(packet_data);
+        }
+        else
+        {
+#ifdef USE_COMPRESSION
+            if (packet_data.size() < static_cast<size_t>(compression_threshold))
             {
+                packet_data.insert(packet_data.begin(), 0x00);
                 com->SendPacket(packet_data);
             }
             else
             {
-#ifdef USE_COMPRESSION
-                if (packet_data.size() < compression)
-                {
-                    packet_data.insert(packet_data.begin(), 0x00);
-                    com->SendPacket(packet_data);
-                }
-                else
-                {
-                    std::vector<unsigned char> compressed_packet;
-                    compressed_packet.reserve(packet_data.size() + 5);
-                    WriteData<VarInt>(static_cast<int>(packet_data.size()), compressed_packet);
-                    std::vector<unsigned char> compressed_data = Compress(packet_data);
-                    compressed_packet.insert(compressed_packet.end(), compressed_data.begin(), compressed_data.end());
-                    com->SendPacket(compressed_packet);
-                }
-#else
-                throw std::runtime_error("Program compiled without ZLIB. Cannot send compressed message");
-#endif
+                std::vector<unsigned char> compressed_packet;
+                compressed_packet.reserve(packet_data.size() + 5);
+                WriteData<VarInt>(static_cast<int>(packet_data.size()), compressed_packet);
+                std::vector<unsigned char> compressed_data = Compress(packet_data);
+                compressed_packet.insert(compressed_packet.end(), compressed_data.begin(), compressed_data.end());
+                com->SendPacket(compressed_packet);
             }
+#else
+            throw std::runtime_error("Program compiled without ZLIB. Cannot send compressed message");
+#endif
         }
     }
 
@@ -188,6 +196,7 @@ namespace Botcraft
 
     void NetworkManager::SendChatMessage(const std::string& message)
     {
+        std::scoped_lock<std::mutex> lock_chat(chat_mutex);
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
         if (message[0] == '/')
         {
@@ -209,15 +218,10 @@ namespace Botcraft
             // 1.19
             signature = authentifier->GetMessageSignature(message, salt, timestamp);
 #elif PROTOCOL_VERSION == 760 /* 1.19.1/2 */
-            // 1.19.1 and 1.19.2
-            LastSeenMessagesUpdate last_seen_update;
-            {
-                std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
-                last_seen_update = chat_context.GetLastSeenMessagesUpdate();
-                signature = authentifier->GetMessageSignature(message, chat_context.GetLastSignature(), last_seen_update.GetLastSeen(), salt, timestamp);
-                // Update last signature with current one for the next message
-                chat_context.SetLastSignature(signature);
-            }
+            LastSeenMessagesUpdate last_seen_update = chat_context.GetLastSeenMessagesUpdate();
+            signature = authentifier->GetMessageSignature(message, chat_context.GetLastSignature(), last_seen_update.GetLastSeen(), salt, timestamp);
+            // Update last signature with current one for the next message
+            chat_context.SetLastSignature(signature);
             chat_message->SetLastSeenMessages(last_seen_update);
 #else
             // 1.19.3+
@@ -254,6 +258,7 @@ namespace Botcraft
 
     void NetworkManager::SendChatCommand(const std::string& command)
     {
+        std::scoped_lock<std::mutex> lock_chat(chat_mutex);
 #if PROTOCOL_VERSION > 765 /* > 1.20.4 */
         if (authentifier == nullptr)
         {
@@ -282,7 +287,6 @@ namespace Botcraft
         LastSeenMessagesUpdate last_seen_update;
         if (authentifier)
         {
-            std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
             last_seen_update = chat_context.GetLastSeenMessagesUpdate();
         }
         chat_command->SetLastSeenMessages(last_seen_update);
@@ -309,23 +313,24 @@ namespace Botcraft
         Logger::GetInstance().RegisterThread("NetworkPacketProcessing - " + name);
         try
         {
-            while (state != ConnectionState::None)
+            std::queue<std::vector<unsigned char>> batch;
+            while (true)
             {
                 {
                     std::unique_lock<std::mutex> lck(mutex_process);
-                    process_condition.wait(lck);
-                }
-                while (!packets_to_process.empty())
-                {
-                    std::vector<unsigned char> packet;
-                    { // process_guard scope
-                        std::lock_guard<std::mutex> process_guard(mutex_process);
-                        if (!packets_to_process.empty())
-                        {
-                            packet = packets_to_process.front();
-                            packets_to_process.pop();
-                        }
+                    process_condition.wait(lck, [this]() {
+                        return !packets_to_process.empty() || state == ConnectionState::None;
+                    });
+                    if (state == ConnectionState::None)
+                    {
+                        return;
                     }
+                    std::swap(batch, packets_to_process);
+                }
+                while (!batch.empty())
+                {
+                    std::vector<unsigned char> packet = std::move(batch.front());
+                    batch.pop();
                     if (packet.size() > 0)
                     {
                         if (compression == -1)
@@ -339,14 +344,14 @@ namespace Botcraft
                             ReadIterator iter = packet.begin();
                             int data_length = ReadData<VarInt>(iter, length);
 
-                            //Packet not compressed
+                            // Packet not compressed
                             if (data_length == 0)
                             {
-                                //Erase the first 0
+                                // Erase the first 0
                                 packet.erase(packet.begin());
                                 ProcessPacket(packet);
                             }
-                            //Packet compressed
+                            // Packet compressed
                             else
                             {
                                 const int size_varint = static_cast<int>(packet.size() - length);
@@ -406,11 +411,11 @@ namespace Botcraft
         }
     }
 
-    void NetworkManager::OnNewRawData(const std::vector<unsigned char>& bytes)
+    void NetworkManager::OnNewRawData(std::vector<unsigned char> bytes)
     {
         {
             std::unique_lock<std::mutex> lck(mutex_process);
-            packets_to_process.push(bytes);
+            packets_to_process.push(std::move(bytes));
         }
         process_condition.notify_all();
     }
@@ -576,14 +581,17 @@ namespace Botcraft
 #pragma push_macro("GetMessage")
 #undef GetMessage
 #endif
-        chat_context.AddSeenMessage(packet.GetMessage().GetHeaderSignature(), packet.GetMessage().GetSignedHeader().GetSender());
+        {
+            std::scoped_lock<std::mutex> lock_chat(chat_mutex);
+            chat_context.AddSeenMessage(packet.GetMessage().GetHeaderSignature(), packet.GetMessage().GetSignedHeader().GetSender());
+        }
 #if _MSC_VER || __MINGW32__
 #pragma pop_macro("GetMessage")
 #endif
 #else
         if (packet.GetSignature().has_value())
         {
-            std::scoped_lock<std::mutex> lock_messages(chat_context.GetMutex());
+            std::scoped_lock<std::mutex> lock_chat(chat_mutex);
 
             chat_context.AddSeenMessage(std::vector<unsigned char>(packet.GetSignature().value().begin(), packet.GetSignature().value().end()));
 
@@ -600,6 +608,7 @@ namespace Botcraft
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
     void NetworkManager::Handle(ClientboundPlayerChatHeaderPacket& packet)
     {
+        std::scoped_lock<std::mutex> lock_chat(chat_mutex);
         chat_context.AddSeenMessage(packet.GetHeaderSignature(), packet.GetHeader().GetSender());
     }
 #endif
@@ -630,17 +639,20 @@ namespace Botcraft
             key.SetSignature(Utilities::DecodeBase64(authentifier->GetKeySignature()));
 
             chat_session_data.SetProfilePublicKey(key);
-            chat_session_uuid = UUID();
-            std::mt19937 rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
-            std::uniform_int_distribution<int> distrib(std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max());
-            for (size_t i = 0; i < chat_session_uuid.size(); ++i)
             {
-                chat_session_uuid[i] = static_cast<unsigned char>(distrib(rnd));
-            }
-            chat_session_data.SetUuid(chat_session_uuid);
+                std::scoped_lock<std::mutex> lock_chat(chat_mutex);
+                chat_session_uuid = UUID();
+                std::mt19937 rnd = std::mt19937(static_cast<unsigned int>(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()));
+                std::uniform_int_distribution<int> distrib(std::numeric_limits<unsigned char>::min(), std::numeric_limits<unsigned char>::max());
+                for (size_t i = 0; i < chat_session_uuid.size(); ++i)
+                {
+                    chat_session_uuid[i] = static_cast<unsigned char>(distrib(rnd));
+                }
+                chat_session_data.SetUuid(chat_session_uuid);
 
-            chat_session_packet->SetChatSession(chat_session_data);
-            Send(chat_session_packet);
+                chat_session_packet->SetChatSession(chat_session_data);
+                Send(chat_session_packet);
+            }
         }
 #endif
     }

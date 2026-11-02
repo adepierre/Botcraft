@@ -1,7 +1,9 @@
 #include <functional>
+#include <utility>
+
 #include <asio/connect.hpp>
-#include <asio/write.hpp>
 #include <asio/ip/udp.hpp>
+#include <asio/write.hpp>
 
 #include "protocolCraft/BinaryReadWrite.hpp"
 
@@ -17,11 +19,12 @@
 
 namespace Botcraft
 {
-    TCP_Com::TCP_Com(const std::string& address,
-        std::function<void(const std::vector<unsigned char>&)> callback)
-        : socket(io_context), initialized(false)
+    TCP_Com::TCP_Com(
+        const std::string& address,
+        std::function<void(std::vector<unsigned char>)> callback
+    ) : socket(io_context), initialized(false)
     {
-        NewPacketCallback = callback;
+        NewPacketCallback = std::move(callback);
 
         SetIPAndPortFromAddress(address);
 
@@ -30,7 +33,8 @@ namespace Botcraft
         LOG_INFO("Trying to connect to " << ip << ":" << port);
         asio::async_connect(socket, results,
             std::bind(&TCP_Com::handle_connect, this,
-            std::placeholders::_1));
+            std::placeholders::_1)
+        );
 
         thread_com = std::thread([&] { io_context.run(); });
         Logger::GetInstance().RegisterThread(thread_com.get_id(), "NetworkIOService");
@@ -159,7 +163,7 @@ namespace Botcraft
                 {
                     data_packet = std::vector<unsigned char>(input_packet.begin() + bytes_read, input_packet.begin() + bytes_read + packet_length);
 
-                    NewPacketCallback(data_packet);
+                    NewPacketCallback(std::move(data_packet));
                     input_packet.erase(input_packet.begin(), input_packet.begin() + bytes_read + packet_length);
                 }
                 else

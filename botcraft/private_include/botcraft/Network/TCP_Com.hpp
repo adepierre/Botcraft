@@ -17,8 +17,7 @@ namespace Botcraft
     class TCP_Com
     {
     public:
-        TCP_Com(const std::string& address,
-            std::function<void(const std::vector<unsigned char>&)> callback);
+        TCP_Com(const std::string& address, std::function<void(std::vector<unsigned char>)> callback);
         ~TCP_Com();
 
         bool IsInitialized() const;
@@ -59,7 +58,7 @@ namespace Botcraft
         std::vector<unsigned char> input_packet;
         std::deque<std::vector<unsigned char> > output_packet;
 
-        std::function<void(const std::vector<unsigned char>&)> NewPacketCallback;
+        std::function<void(std::vector<unsigned char>)> NewPacketCallback;
         std::mutex mutex_output;
 
         std::string ip;

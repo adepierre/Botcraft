@@ -1,7 +1,6 @@
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
 #pragma once
 
-#include <mutex>
 #include <vector>
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
@@ -16,13 +15,13 @@
 
 namespace Botcraft
 {
+    /// @brief Tracks last seen messages for chat signing.
+    /// Not thread-safe: the owner (NetworkManager) must hold a mutex lock when using it.
     class LastSeenMessagesTracker
     {
     public:
         LastSeenMessagesTracker();
         ~LastSeenMessagesTracker();
-
-        std::mutex& GetMutex();
 
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         const std::vector<unsigned char>& GetLastSignature() const;
@@ -43,7 +42,6 @@ namespace Botcraft
 #endif
 
     private:
-        std::mutex mutex;
 #if PROTOCOL_VERSION < 761 /* < 1.19.3 */
         std::vector<unsigned char> last_signature_sent;
         std::deque<ProtocolCraft::LastSeenMessagesEntry> last_seen;
