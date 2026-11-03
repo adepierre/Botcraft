@@ -7,6 +7,8 @@
 #include <botcraft/AI/SimpleBehaviourClient.hpp>
 #include <botcraft/AI/Tasks/PathfindingTask.hpp>
 
+#include <cmath>
+
 bool SameBlock(const Botcraft::Vector3<double>& p1, const Botcraft::Vector3<double>& p2)
 {
     return std::floor(p1.x) == std::floor(p2.x) &&
@@ -222,7 +224,7 @@ TEST_CASE("speed pathfinding")
     const std::string& botname = bot->GetNetworkManager()->GetMyName();
 
     const Botcraft::Position delta(0, 0, 24);
-    const float distance = std::sqrtf(delta.SqrNorm());
+    const float distance = static_cast<float>(std::sqrt(delta.SqrNorm()));
 
     bool sprint = false;
     int speed_effect = 0;
