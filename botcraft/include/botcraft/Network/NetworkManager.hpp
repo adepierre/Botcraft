@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -28,7 +29,20 @@ namespace Botcraft
             Microsoft,
             McToken
         };
-        NetworkManager(const std::string& address, const std::string& login_or_microsoft_cache_key_or_mc_token, const AuthType auth_type, const std::vector<ProtocolCraft::Handler*>& handlers = {});
+
+        /// @brief
+        /// @param address
+        /// @param login_or_microsoft_cache_key_or_mc_token
+        /// @param auth_type
+        /// @param handlers
+        /// @param on_disconnect Callback called when the connection is lost or when calling Stop(). Must not call Disconnect() or Stop() inside
+        NetworkManager(
+            const std::string& address,
+            const std::string& login_or_microsoft_cache_key_or_mc_token,
+            const AuthType auth_type,
+            const std::vector<ProtocolCraft::Handler*>& handlers = {},
+            std::function<void()> on_disconnect = {}
+        );
         // Used to create a dummy network manager that does not fire any packet
         // but is always in constant_connection_state
         NetworkManager(const ProtocolCraft::ConnectionState constant_connection_state);
@@ -106,6 +120,8 @@ namespace Botcraft
         std::mutex chat_mutex;
 
         std::string name;
+
+        std::function<void()> OnDisconnectCallback;
 
 #if PROTOCOL_VERSION > 759 /* > 1.19 */
         LastSeenMessagesTracker chat_context;

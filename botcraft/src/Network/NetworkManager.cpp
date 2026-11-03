@@ -11,7 +11,6 @@
 #include "botcraft/Network/Compression.hpp"
 #endif
 #include "botcraft/Utilities/Logger.hpp"
-#include "botcraft/Utilities/SleepUtilities.hpp"
 #if PROTOCOL_VERSION > 758 /* > 1.18.2 */
 #include "botcraft/Utilities/StringUtilities.hpp"
 #endif
@@ -24,7 +23,13 @@ using namespace ProtocolCraft;
 
 namespace Botcraft
 {
-    NetworkManager::NetworkManager(const std::string& address, const std::string& login_or_microsoft_cache_key_or_mc_token, const AuthType auth_type, const std::vector<Handler*>& handlers)
+    NetworkManager::NetworkManager(
+        const std::string& address,
+        const std::string& login_or_microsoft_cache_key_or_mc_token,
+        const AuthType auth_type,
+        const std::vector<Handler*>& handlers,
+        std::function<void()> on_disconnect
+    )
     {
         com = nullptr;
 
@@ -60,16 +65,13 @@ namespace Botcraft
         }
 
         state = ConnectionState::Handshake;
+        OnDisconnectCallback = std::move(on_disconnect);
 
-        //Start the thread to process the incoming packets
-        m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
-
-        com = std::make_shared<TCP_Com>(address, std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1));
-
-        // Wait for the communication to be ready before sending any data
-        Utilities::WaitForCondition([&]() {
-            return com->IsInitialized();
-        }, 500, 0);
+        com = std::make_shared<TCP_Com>(
+            address,
+            std::bind(&NetworkManager::OnNewRawData, this, std::placeholders::_1),
+            [this]() { OnNewRawData({}); }
+        );
 
         std::shared_ptr<ServerboundClientIntentionPacket> handshake_packet = std::make_shared<ServerboundClientIntentionPacket>();
         handshake_packet->SetProtocolVersion(PROTOCOL_VERSION);
@@ -101,6 +103,9 @@ namespace Botcraft
         }
 #endif
         Send(loginstart_packet);
+
+        // Start the thread to process the incoming packets
+        m_thread_process = std::thread(&NetworkManager::WaitForNewPackets, this);
     }
 
     NetworkManager::NetworkManager(const ConnectionState constant_connection_state)
@@ -148,7 +153,7 @@ namespace Botcraft
     void NetworkManager::Send(const std::shared_ptr<Packet> packet)
     {
         std::lock_guard<std::mutex> lock(mutex_send);
-        if (!com)
+        if (!com || state == ConnectionState::None)
         {
             return;
         }
@@ -323,15 +328,22 @@ namespace Botcraft
                     });
                     if (state == ConnectionState::None)
                     {
-                        return;
+                        break;
                     }
                     std::swap(batch, packets_to_process);
                 }
+
+                bool closed = false;
                 while (!batch.empty())
                 {
                     std::vector<unsigned char> packet = std::move(batch.front());
                     batch.pop();
-                    if (packet.size() > 0)
+                    if (packet.empty())
+                    {
+                        closed = true;
+                        break;
+                    }
+                    else
                     {
                         if (compression == -1)
                         {
@@ -365,17 +377,29 @@ namespace Botcraft
                         }
                     }
                 }
+                if (closed)
+                {
+                    break;
+                }
             }
         }
         catch (const std::exception& e)
         {
             LOG_FATAL("Exception:\n" << e.what());
-            throw;
         }
         catch (...)
         {
             LOG_FATAL("Unknown exception");
-            throw;
+        }
+
+        state = ConnectionState::None;
+        if (com)
+        {
+            com->close();
+        }
+        if (OnDisconnectCallback)
+        {
+            OnDisconnectCallback();
         }
     }
 

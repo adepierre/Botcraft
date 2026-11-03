@@ -19,24 +19,60 @@ namespace Botcraft
 
     void ConnectionClient::Connect(const std::string& address, const std::string& login)
     {
+        if (network_manager)
+        {
+            network_manager->Stop();
+            network_manager.reset();
+        }
+        should_be_closed = false;
         if (login.empty())
         {
             ConnectMicrosoft(address);
         }
         else
         {
-            network_manager = std::make_shared<NetworkManager>(address, login, NetworkManager::AuthType::Offline, std::vector<Handler*>{ this });
+            network_manager = std::make_shared<NetworkManager>(
+                address,
+                login,
+                NetworkManager::AuthType::Offline,
+                std::vector<Handler*>{ this },
+                [this]() { should_be_closed = true; }
+            );
         }
     }
 
     void ConnectionClient::ConnectMicrosoft(const std::string& address, const std::string& cache_key)
     {
-        network_manager = std::make_shared<NetworkManager>(address, cache_key, NetworkManager::AuthType::Microsoft, std::vector<Handler*>{ this });
+        if (network_manager)
+        {
+            network_manager->Stop();
+            network_manager.reset();
+        }
+        should_be_closed = false;
+        network_manager = std::make_shared<NetworkManager>(
+            address,
+            cache_key,
+            NetworkManager::AuthType::Microsoft,
+            std::vector<Handler*>{ this },
+            [this]() { should_be_closed = true; }
+        );
     }
 
     void ConnectionClient::ConnectMinecraftToken(const std::string& address, const std::string& minecraft_token)
     {
-        network_manager = std::make_shared<NetworkManager>(address, minecraft_token, NetworkManager::AuthType::McToken, std::vector<Handler*>{ this });
+        if (network_manager)
+        {
+            network_manager->Stop();
+            network_manager.reset();
+        }
+        should_be_closed = false;
+        network_manager = std::make_shared<NetworkManager>(
+            address,
+            minecraft_token,
+            NetworkManager::AuthType::McToken,
+            std::vector<Handler*>{ this },
+            [this]() { should_be_closed = true; }
+        );
     }
 
     void ConnectionClient::Disconnect()

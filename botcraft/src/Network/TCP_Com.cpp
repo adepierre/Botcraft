@@ -1,4 +1,6 @@
+#include <chrono>
 #include <functional>
+#include <optional>
 #include <utility>
 
 #include <asio/connect.hpp>
@@ -21,37 +23,49 @@ namespace Botcraft
 {
     TCP_Com::TCP_Com(
         const std::string& address,
-        std::function<void(std::vector<unsigned char>)> callback
-    ) : socket(io_context), initialized(false)
+        std::function<void(std::vector<unsigned char>)> callback,
+        std::function<void()> on_close_callback
+    ) : socket(io_context)
     {
         NewPacketCallback = std::move(callback);
+        OnCloseCallback = std::move(on_close_callback);
+        close_reported = false;
 
         SetIPAndPortFromAddress(address);
 
         asio::ip::tcp::resolver resolver(io_context);
-        asio::ip::tcp::resolver::results_type results = resolver.resolve(ip, std::to_string(port));
         LOG_INFO("Trying to connect to " << ip << ":" << port);
-        asio::async_connect(socket, results,
-            std::bind(&TCP_Com::handle_connect, this,
-            std::placeholders::_1)
+        try
+        {
+            asio::connect(socket, resolver.resolve(ip, std::to_string(port)));
+        }
+        catch (const asio::system_error& e)
+        {
+            LOG_ERROR("Error when connecting to server. Error code :" << e.what());
+            throw;
+        }
+        LOG_INFO("Connection to server established.");
+
+        socket.async_read_some(
+            asio::buffer(read_packet.data(), read_packet.size()),
+            std::bind(&TCP_Com::handle_read, this, std::placeholders::_1, std::placeholders::_2)
         );
 
-        thread_com = std::thread([&] { io_context.run(); });
-        Logger::GetInstance().RegisterThread(thread_com.get_id(), "NetworkIOService");
+        thread_com = std::thread([this]() {
+            Logger::GetInstance().RegisterThread("NetworkIOService");
+            io_context.run();
+        });
     }
 
     TCP_Com::~TCP_Com()
     {
+        // Prevent a pending read handler from running after the owner is gone.
+        io_context.stop();
         if (thread_com.joinable())
         {
             Logger::GetInstance().UnregisterThread(thread_com.get_id());
             thread_com.join();
         }
-    }
-
-    bool TCP_Com::IsInitialized() const
-    {
-        return initialized;
     }
 
     void TCP_Com::SendPacket(const std::vector<unsigned char>& bytes)
@@ -96,22 +110,6 @@ namespace Botcraft
     void TCP_Com::close()
     {
         asio::post(io_context, std::bind(&TCP_Com::do_close, this));
-    }
-
-    void TCP_Com::handle_connect(const asio::error_code& error)
-    {
-        if (!error)
-        {
-            LOG_INFO("Connection to server established.");
-            initialized = true;
-            socket.async_read_some(asio::buffer(read_packet.data(), read_packet.size()),
-                std::bind(&TCP_Com::handle_read, this,
-                std::placeholders::_1, std::placeholders::_2));
-        }
-        else
-        {
-            LOG_ERROR("Error when connecting to server. Error code :" << error);
-        }
     }
 
     void TCP_Com::handle_read(const asio::error_code& error, std::size_t bytes_transferred)
@@ -224,7 +222,26 @@ namespace Botcraft
 
     void TCP_Com::do_close()
     {
-        socket.close();
+        if (close_reported)
+        {
+            return;
+        }
+        close_reported = true;
+
+        if (socket.is_open())
+        {
+            asio::error_code ec;
+            socket.close(ec);
+            if (ec)
+            {
+                LOG_ERROR("Error closing socket: " << ec.message());
+            }
+        }
+
+        if (OnCloseCallback)
+        {
+            OnCloseCallback();
+        }
     }
 
     void TCP_Com::SetIPAndPortFromAddress(const std::string& address)
@@ -255,8 +272,9 @@ namespace Botcraft
         }
 
         // If port is unknown we first try a SRV DNS lookup
-        LOG_INFO("Performing SRV DNS lookup on " << "_minecraft._tcp." << address << " to find an endpoint");
-        asio::ip::udp::socket udp_socket(io_context);
+        LOG_INFO("Performing SRV DNS lookup on " << "_minecraft._tcp." << addressOnly << " to find an endpoint");
+        asio::io_context dns_context;
+        asio::ip::udp::socket udp_socket(dns_context);
 
         // Create the query
         DNSMessage query;
@@ -278,7 +296,7 @@ namespace Botcraft
         // SRV type
         question.SetTypeCode(33);
         question.SetClassCode(1);
-        question.SetNameLabels(Utilities::SplitString("_minecraft._tcp." + address, '.'));
+        question.SetNameLabels(Utilities::SplitString("_minecraft._tcp." + addressOnly, '.'));
         query.SetQuestions({ question });
 
         // Write the request and send it to DNS4EU
@@ -286,39 +304,61 @@ namespace Botcraft
         query.Write(encoded_query);
         udp_socket.open(asio::ip::udp::v4());
         asio::ip::udp::endpoint endpoint(asio::ip::make_address("86.54.11.100" /* unfiltered DNS4EU server */), 53);
-        udp_socket.send_to(asio::buffer(encoded_query), endpoint);
-
-        // Wait for the answer
-        std::vector<unsigned char> answer_buffer(512);
-        asio::ip::udp::endpoint sender_endpoint;
-        const size_t len = udp_socket.receive_from(asio::buffer(answer_buffer), sender_endpoint);
-
-        ProtocolCraft::ReadIterator iter = answer_buffer.begin();
-        size_t remaining = len;
-
-        // Read answer
-        DNSMessage answer;
-        answer.Read(iter, remaining);
-
-        // If there is an answer and it's a SRV one (as it should be)
-        if (answer.GetNumberAnswer() > 0
-            && answer.GetAnswers()[0].GetTypeCode() == 0x21)
+        asio::error_code send_ec;
+        udp_socket.send_to(asio::buffer(encoded_query), endpoint, 0, send_ec);
+        if (send_ec)
         {
-            DNSSrvData data;
-            auto iter2 = answer.GetAnswers()[0].GetRData().begin();
-            size_t len2 = answer.GetAnswers()[0].GetRDLength();
-            data.Read(iter2, len2);
-            ip = "";
-            for (int i = 0; i < data.GetNameLabels().size(); ++i)
-            {
-                ip += data.GetNameLabels()[i] + (i == data.GetNameLabels().size() - 1 ? "" : ".");
-            }
-            port = data.GetPort();
-
-            LOG_INFO("SRV DNS lookup successful!");
-            return;
+            LOG_WARNING("SRV DNS query could not be sent: " << send_ec.message());
         }
-        LOG_WARNING("SRV DNS lookup failed to find an address");
+        else
+        {
+            // Wait for the answer
+            std::vector<unsigned char> answer_buffer(512);
+            asio::ip::udp::endpoint sender_endpoint;
+            std::optional<size_t> len;
+            udp_socket.async_receive_from(
+                asio::buffer(answer_buffer),
+                sender_endpoint,
+                [&len](const asio::error_code& ec, const std::size_t n) {
+                    if (!ec)
+                    {
+                        len = n;
+                    }
+                }
+            );
+            dns_context.run_for(std::chrono::seconds(2));
+
+            if (len.has_value())
+            {
+                ProtocolCraft::ReadIterator iter = answer_buffer.begin();
+                size_t remaining = len.value();
+                // Read answer
+                DNSMessage answer;
+                answer.Read(iter, remaining);
+                // If there is an answer and it's a SRV one (as it should be)
+                if (answer.GetNumberAnswer() > 0 && answer.GetAnswers()[0].GetTypeCode() == 0x21)
+                {
+                    DNSSrvData data;
+                    auto iter2 = answer.GetAnswers()[0].GetRData().begin();
+                    size_t len2 = answer.GetAnswers()[0].GetRDLength();
+                    data.Read(iter2, len2);
+                    ip = "";
+                    for (int i = 0; i < data.GetNameLabels().size(); ++i)
+                    {
+                        ip += data.GetNameLabels()[i] + (i == data.GetNameLabels().size() - 1 ? "" : ".");
+                    }
+                    port = data.GetPort();
+
+                    LOG_INFO("SRV DNS lookup successful!");
+                    return;
+                }
+                LOG_WARNING("SRV DNS lookup failed to find an address");
+            }
+            else
+            {
+                LOG_WARNING("SRV DNS lookup timed out");
+            }
+        }
 
         // If we are here either the port was given or the SRV failed
         // In both cases we need to assume the given address is the correct one

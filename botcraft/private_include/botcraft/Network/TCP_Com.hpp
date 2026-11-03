@@ -1,7 +1,8 @@
 #pragma once
 
-#include <atomic>
+#include <array>
 #include <deque>
+#include <functional>
 #include <thread>
 #include <mutex>
 #include <asio/error_code.hpp>
@@ -17,10 +18,12 @@ namespace Botcraft
     class TCP_Com
     {
     public:
-        TCP_Com(const std::string& address, std::function<void(std::vector<unsigned char>)> callback);
+        TCP_Com(
+            const std::string& address,
+            std::function<void(std::vector<unsigned char>)> callback,
+            std::function<void()> on_close_callback
+        );
         ~TCP_Com();
-
-        bool IsInitialized() const;
 
         void close();
 
@@ -33,9 +36,6 @@ namespace Botcraft
         const unsigned short GetPort() const;
 
     private:
-
-        void handle_connect(const asio::error_code& error);
-
         void handle_read(const asio::error_code& error, std::size_t bytes_transferred);
 
         void do_write(const std::vector<unsigned char>& bytes);
@@ -67,7 +67,7 @@ namespace Botcraft
 #ifdef USE_ENCRYPTION
         std::shared_ptr<AESEncrypter> encrypter;
 #endif
-
-        std::atomic<bool> initialized;
+        std::function<void()> OnCloseCallback;
+        bool close_reported;
     };
 } // Botcraft
