@@ -164,7 +164,6 @@ namespace Botcraft
         local_player->previous_yaw = packet.GetRelatives() & (1 << 3) ? local_player->yaw + packet.GetChange().GetYRot() : packet.GetChange().GetYRot();
         local_player->previous_pitch = packet.GetRelatives() & (1 << 4) ? local_player->pitch + packet.GetChange().GetXRot() : packet.GetChange().GetXRot();
 #endif
-        local_player->UpdateVectors();
 
         // Defer sending the position update to the next physics tick
         // Sending it now causes huge slow down of the tests (lag when
@@ -381,7 +380,7 @@ namespace Botcraft
                         // Compensate water downward speed depending on looking direction (?)
                         if (IsSwimmingAndNotFlying())
                         {
-                            const double m_sin_pitch = player->front_vector.y;
+                            const double m_sin_pitch = player->GetFrontVectorYImpl();
                             bool condition = m_sin_pitch <= 0.0 || player->inputs.jump;
                             if (!condition)
                             {
@@ -492,7 +491,8 @@ namespace Botcraft
 #endif
                 if (attached_id == player->entity_id)
                 {
-                    player->speed += player->front_vector * 0.1 + (player->front_vector * 1.5 - player->speed) * 0.5;
+                    const Vector3<double> front_vector = player->GetFrontVectorImpl();
+                    player->speed += front_vector * 0.1 + (front_vector * 1.5 - player->speed) * 0.5;
                 }
             }
         }
@@ -1272,7 +1272,8 @@ namespace Botcraft
         {
             // sqrt(front_vector.x² + front_vector.z²) to follow vanilla code
             // it's equal to cos(pitch) (as -90°<=pitch<=90°, cos(pitch) >= 0.0)
-            const double cos_pitch_from_length = std::sqrt(player->front_vector.x * player->front_vector.x + player->front_vector.z * player->front_vector.z);
+            const Vector3<double> front_vector = player->GetFrontVectorImpl();
+            const double cos_pitch_from_length = std::sqrt(front_vector.x * front_vector.x + front_vector.z * front_vector.z);
             const double cos_pitch = std::cos(static_cast<double>(player->pitch * 0.017453292f /* PI/180 */));
             const double cos_pitch_sqr = cos_pitch * cos_pitch;
             const double horizontal_speed = std::sqrt(player->speed.x * player->speed.x + player->speed.z * player->speed.z);
@@ -1282,22 +1283,22 @@ namespace Botcraft
             if (player->speed.y < 0.0 && cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
                 const double delta_speed = -player->speed.y * 0.1 * cos_pitch_sqr;
-                player->speed.x += player->front_vector.x * delta_speed / cos_pitch_from_length;
+                player->speed.x += front_vector.x * delta_speed / cos_pitch_from_length;
                 player->speed.y += delta_speed;
-                player->speed.z += player->front_vector.z * delta_speed / cos_pitch_from_length;
+                player->speed.z += front_vector.z * delta_speed / cos_pitch_from_length;
             }
             if (player->pitch < 0.0 && cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
-                // player->front_vector.y == -sin(pitch)
-                const double delta_speed = horizontal_speed * player->front_vector.y * 0.04;
-                player->speed.x -= player->front_vector.x * delta_speed / cos_pitch_from_length;
+                // front_vector.y == -sin(pitch)
+                const double delta_speed = horizontal_speed * front_vector.y * 0.04;
+                player->speed.x -= front_vector.x * delta_speed / cos_pitch_from_length;
                 player->speed.y += delta_speed * 3.2;
-                player->speed.z -= player->front_vector.z * delta_speed / cos_pitch_from_length;
+                player->speed.z -= front_vector.z * delta_speed / cos_pitch_from_length;
             }
             if (cos_pitch_from_length > 0.0) // cos condition to prevent dividing by 0
             {
-                player->speed.x += (player->front_vector.x / cos_pitch_from_length * horizontal_speed - player->speed.x) * 0.1;
-                player->speed.z += (player->front_vector.z / cos_pitch_from_length * horizontal_speed - player->speed.z) * 0.1;
+                player->speed.x += (front_vector.x / cos_pitch_from_length * horizontal_speed - player->speed.x) * 0.1;
+                player->speed.z += (front_vector.z / cos_pitch_from_length * horizontal_speed - player->speed.z) * 0.1;
             }
             player->speed *= Vector3<double>(0.9900000095367432, 0.9800000190734863, 0.9900000095367432);
             ApplyMovement();

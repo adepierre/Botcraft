@@ -11,8 +11,6 @@ namespace Botcraft
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);
 
         position = Vector3<double>(0.0, std::numeric_limits<double>::quiet_NaN(), 0.0);
-        front_vector = Vector3<double>(0.0, 0.0, 1.0);
-        right_vector = Vector3<double>(1.0, 0.0, 0.0);
 
         inputs = PlayerInputs();
         dirty_inputs = false;
@@ -70,19 +68,19 @@ namespace Botcraft
     Vector3<double> LocalPlayer::GetFrontVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return front_vector;
+        return GetFrontVectorImpl();
     }
 
     Vector3<double> LocalPlayer::GetXZVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return xz_vector;
+        return GetXZVectorImpl();
     }
 
     Vector3<double> LocalPlayer::GetRightVector() const
     {
         std::shared_lock<std::shared_mutex> lock(entity_mutex);
-        return right_vector;
+        return GetRightVectorImpl();
     }
 
 
@@ -268,7 +266,6 @@ namespace Botcraft
         if (yaw != yaw_)
         {
             yaw = yaw_;
-            UpdateVectors();
         }
     }
 
@@ -278,7 +275,6 @@ namespace Botcraft
         if (pitch != pitch_)
         {
             pitch = pitch_;
-            UpdateVectors();
         }
     }
 
@@ -369,28 +365,50 @@ namespace Botcraft
                 pitch = new_pitch;
             }
             yaw = new_yaw;
-            UpdateVectors();
         }
     }
 
-    void LocalPlayer::UpdateVectors()
+    Vector3<double> LocalPlayer::GetFrontVectorImpl() const
     {
         const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
         const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
         const float cos_pitch = CosLUT(rad_pitch);
-        front_vector = Vector3<double>(-SinLUT(rad_yaw) * cos_pitch, -SinLUT(rad_pitch), CosLUT(rad_yaw) * cos_pitch);
+        return Vector3<double>(-SinLUT(rad_yaw) * cos_pitch, -SinLUT(rad_pitch), CosLUT(rad_yaw) * cos_pitch);
+    }
 
-        // Vector is already normalized as front_vector² = (cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch) + sin²(rad_pitch) = 1
-        // front_vector.Normalize();
+    double LocalPlayer::GetFrontVectorXImpl() const
+    {
+        const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
+        const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
+        const float cos_pitch = CosLUT(rad_pitch);
+        return -SinLUT(rad_yaw) * cos_pitch;
+    }
 
-        xz_vector = front_vector;
-        xz_vector.y = 0.0;
-        // xzVector.Norm() = sqrt((cos²(rad_yaw) + sin²(rad_yaw)) * cos²(rad_pitch)) = sqrt(cos²(rad_pitch)) = cos(rad_pitch)
-        // xzVector.Normalize();
-        xz_vector = xz_vector / cos_pitch;
+    double LocalPlayer::GetFrontVectorYImpl() const
+    {
+        const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
+        return -SinLUT(rad_pitch);
+    }
 
-        //Right = crossproduct(front, (0, 1.0, 0)).Normalize()
-        right_vector = Vector3<double>(-front_vector.z / cos_pitch, 0.0, front_vector.x / cos_pitch);
+    double LocalPlayer::GetFrontVectorZImpl() const
+    {
+        const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
+        const float rad_pitch = pitch * 0.017453292f /* PI/180 */;
+        const float cos_pitch = CosLUT(rad_pitch);
+        return CosLUT(rad_yaw) * cos_pitch;
+    }
+
+    Vector3<double> LocalPlayer::GetXZVectorImpl() const
+    {
+        const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
+        return Vector3<double>(-SinLUT(rad_yaw), 0.0, CosLUT(rad_yaw));
+    }
+
+    Vector3<double> LocalPlayer::GetRightVectorImpl() const
+    {
+        // Right = crossproduct(front, (0, 1.0, 0)).Normalize()
+        const float rad_yaw = yaw * 0.017453292f /* PI/180 */;
+        return Vector3<double>(-CosLUT(rad_yaw), 0.0, -SinLUT(rad_yaw));
     }
 
     void LocalPlayer::ResetInputs()

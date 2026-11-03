@@ -83,7 +83,12 @@ namespace Botcraft
         void LookAt(const Vector3<double>& pos, const bool set_pitch = false);
 
     private:
-        void UpdateVectors();
+        Vector3<double> GetFrontVectorImpl() const;
+        double GetFrontVectorXImpl() const;
+        double GetFrontVectorYImpl() const;
+        double GetFrontVectorZImpl() const;
+        Vector3<double> GetXZVectorImpl() const;
+        Vector3<double> GetRightVectorImpl() const;
         void ResetInputs();
         void SetAbilitiesFlagsImpl(const char abilities_flags_);
         void UpdateAbilitiesFlagsImpl();
@@ -95,10 +100,6 @@ namespace Botcraft
 #endif
 
     private:
-        Vector3<double> front_vector;
-        Vector3<double> xz_vector;
-        Vector3<double> right_vector;
-
         PlayerInputs inputs;
         bool dirty_inputs;
 
