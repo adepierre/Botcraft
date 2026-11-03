@@ -188,6 +188,7 @@ namespace Botcraft
         virtual void SetZ(const double z_);
         virtual void SetYaw(const float yaw_);
         virtual void SetPitch(const float pitch_);
+        void AddSpeed(const Vector3<double>& delta);
         void SetSpeed(const Vector3<double>& speed_);
         void SetSpeedX(const double speed_x_);
         void SetSpeedY(const double speed_y_);

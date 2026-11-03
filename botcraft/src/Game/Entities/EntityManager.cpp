@@ -23,7 +23,7 @@ namespace Botcraft
 
     std::shared_ptr<LocalPlayer> EntityManager::GetLocalPlayer()
     {
-        std::scoped_lock<std::shared_mutex> lock(entity_manager_mutex);
+        std::shared_lock<std::shared_mutex> lock(entity_manager_mutex);
         return local_player;
     }
 
@@ -231,7 +231,7 @@ namespace Botcraft
         else
         {
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-            entity->SetSpeed(entity->GetSpeed() + Vector3<double>(
+            entity->AddSpeed(Vector3<double>(
                 static_cast<double>(packet.GetKnockbackX()),
                 static_cast<double>(packet.GetKnockbackY()),
                 static_cast<double>(packet.GetKnockbackZ())
@@ -239,7 +239,7 @@ namespace Botcraft
 #else
             if (packet.GetPlayerKnockback().has_value())
             {
-                entity->SetSpeed(entity->GetSpeed() + packet.GetPlayerKnockback().value());
+                entity->AddSpeed(packet.GetPlayerKnockback().value());
             }
 #endif
         }

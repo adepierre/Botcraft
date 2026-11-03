@@ -1149,6 +1149,12 @@ namespace Botcraft
         pitch = pitch_;
     }
 
+    void Entity::AddSpeed(const Vector3<double>& delta)
+    {
+        std::scoped_lock<std::shared_mutex> lock(entity_mutex);
+        speed += delta;
+    }
+
     void Entity::SetSpeed(const Vector3<double>& speed_)
     {
         std::scoped_lock<std::shared_mutex> lock(entity_mutex);

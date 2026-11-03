@@ -13,6 +13,8 @@
 #include "botcraft/Network/NetworkManager.hpp"
 #include "botcraft/Game/World/World.hpp"
 
+#include <optional>
+
 using namespace ProtocolCraft;
 
 namespace Botcraft
@@ -30,7 +32,6 @@ namespace Botcraft
         world = world_;
 
         should_run = false;
-        teleport_id = std::nullopt;
         ticks_since_last_position_sent = 0;
         double_tap_cause_sprint = true;
 
@@ -67,10 +68,11 @@ namespace Botcraft
     {
         double_tap_cause_sprint = b;
         // Reset sprint_double_tap_trigger_time to 0 if b is false
-        if (player != nullptr)
+        const std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        if (local_player != nullptr)
         {
-            std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
-            player->sprint_double_tap_trigger_time *= b;
+            std::scoped_lock<std::shared_mutex> lock(local_player->entity_mutex);
+            local_player->sprint_double_tap_trigger_time *= b;
         }
     }
 
@@ -80,78 +82,62 @@ namespace Botcraft
     }
 
 
-    void PhysicsManager::Handle(ClientboundLoginPacket& packet)
-    {
-        // Reset the player because *some* non vanilla servers
-        // sends new login packets
-        if (player != nullptr)
-        {
-            // If we already have a player, we need to make sure we're not in the middle
-            // of a physics update while swapping the player with the new one
-            std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
-            player = entity_manager->GetLocalPlayer();
-        }
-        else
-        {
-            player = entity_manager->GetLocalPlayer();
-        }
-    }
-
     void PhysicsManager::Handle(ClientboundPlayerPositionPacket& packet)
     {
-        if (player == nullptr)
+        const std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        if (local_player == nullptr)
         {
             LOG_WARNING("Received a PlayerPosition packet without a player");
             return;
         }
 
-        std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+        std::scoped_lock<std::shared_mutex> lock(local_player->entity_mutex);
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
         if (packet.GetRelativeArguments() & 0x01)
         {
-            player->position.x = player->position.x + packet.GetX();
+            local_player->position.x = local_player->position.x + packet.GetX();
         }
         else
         {
-            player->position.x = packet.GetX();
-            player->speed.x = 0.0;
+            local_player->position.x = packet.GetX();
+            local_player->speed.x = 0.0;
         }
         if (packet.GetRelativeArguments() & 0x02)
         {
-            player->position.y = player->position.y + packet.GetY();
+            local_player->position.y = local_player->position.y + packet.GetY();
         }
         else
         {
-            player->position.y = packet.GetY();
-            player->speed.y = 0.0;
+            local_player->position.y = packet.GetY();
+            local_player->speed.y = 0.0;
         }
         if (packet.GetRelativeArguments() & 0x04)
         {
-            player->position.z = player->position.z + packet.GetZ();
+            local_player->position.z = local_player->position.z + packet.GetZ();
         }
         else
         {
-            player->position.z = packet.GetZ();
-            player->speed.z = 0.0;
+            local_player->position.z = packet.GetZ();
+            local_player->speed.z = 0.0;
         }
-        player->yaw = packet.GetRelativeArguments() & 0x08 ? player->yaw + packet.GetYRot() : packet.GetYRot();
-        player->pitch = packet.GetRelativeArguments() & 0x10 ? player->pitch + packet.GetXRot() : packet.GetXRot();
+        local_player->yaw = packet.GetRelativeArguments() & 0x08 ? local_player->yaw + packet.GetYRot() : packet.GetYRot();
+        local_player->pitch = packet.GetRelativeArguments() & 0x10 ? local_player->pitch + packet.GetXRot() : packet.GetXRot();
 
-        player->previous_position = player->position;
-        player->previous_yaw = player->yaw;
-        player->previous_pitch = player->pitch;
+        local_player->previous_position = local_player->position;
+        local_player->previous_yaw = local_player->yaw;
+        local_player->previous_pitch = local_player->pitch;
 #else
         for (int i = 0; i < 3; ++i)
         {
-            player->position[i] = packet.GetRelatives() & (1 << i) ? player->position[i] + packet.GetChange().GetPosition()[i] : packet.GetChange().GetPosition()[i];
+            local_player->position[i] = packet.GetRelatives() & (1 << i) ? local_player->position[i] + packet.GetChange().GetPosition()[i] : packet.GetChange().GetPosition()[i];
         }
-        const float new_yaw = packet.GetRelatives() & (1 << 3) ? player->yaw + packet.GetChange().GetYRot() : packet.GetChange().GetYRot();
-        const float new_pitch = packet.GetRelatives() & (1 << 4) ? player->pitch + packet.GetChange().GetXRot() : packet.GetChange().GetXRot();
-        Vector3<double> speed = player->speed;
+        const float new_yaw = packet.GetRelatives() & (1 << 3) ? local_player->yaw + packet.GetChange().GetYRot() : packet.GetChange().GetYRot();
+        const float new_pitch = packet.GetRelatives() & (1 << 4) ? local_player->pitch + packet.GetChange().GetXRot() : packet.GetChange().GetXRot();
+        Vector3<double> speed = local_player->speed;
         if (packet.GetRelatives() & (1 << 8)) // Rotate delta, not sure what it's for...
         {
-            const float delta_yaw = player->yaw - new_yaw;
-            const float delta_pitch = player->pitch - new_pitch;
+            const float delta_yaw = local_player->yaw - new_yaw;
+            const float delta_pitch = local_player->pitch - new_pitch;
             // xRot
             speed = Vector3<double>(
                 speed.x,
@@ -165,26 +151,26 @@ namespace Botcraft
                 speed.z * static_cast<double>(std::cos(delta_yaw * 0.017453292f /* PI/180 */)) - speed.x * static_cast<double>(std::sin(delta_yaw * 0.017453292f /* PI/180 */))
             );
         }
-        player->yaw = new_yaw;
-        player->pitch = new_pitch;
+        local_player->yaw = new_yaw;
+        local_player->pitch = new_pitch;
         for (int i = 0; i < 3; ++i)
         {
-            player->speed[i] = packet.GetRelatives() & (1 << (5 + i)) ? speed[i] + packet.GetChange().GetDeltaMovement()[i] : packet.GetChange().GetDeltaMovement()[i];
+            local_player->speed[i] = packet.GetRelatives() & (1 << (5 + i)) ? speed[i] + packet.GetChange().GetDeltaMovement()[i] : packet.GetChange().GetDeltaMovement()[i];
         }
         for (int i = 0; i < 3; ++i)
         {
-            player->previous_position[i] = packet.GetRelatives() & (1 << i) ? player->previous_position[i] + packet.GetChange().GetPosition()[i] : packet.GetChange().GetPosition()[i];
+            local_player->previous_position[i] = packet.GetRelatives() & (1 << i) ? local_player->previous_position[i] + packet.GetChange().GetPosition()[i] : packet.GetChange().GetPosition()[i];
         }
-        player->previous_yaw = packet.GetRelatives() & (1 << 3) ? player->yaw + packet.GetChange().GetYRot() : packet.GetChange().GetYRot();
-        player->previous_pitch = packet.GetRelatives() & (1 << 4) ? player->pitch + packet.GetChange().GetXRot() : packet.GetChange().GetXRot();
+        local_player->previous_yaw = packet.GetRelatives() & (1 << 3) ? local_player->yaw + packet.GetChange().GetYRot() : packet.GetChange().GetYRot();
+        local_player->previous_pitch = packet.GetRelatives() & (1 << 4) ? local_player->pitch + packet.GetChange().GetXRot() : packet.GetChange().GetXRot();
 #endif
-        player->UpdateVectors();
+        local_player->UpdateVectors();
 
         // Defer sending the position update to the next physics tick
         // Sending it now causes huge slow down of the tests (lag when
         // botcraft_0 is teleported to place structure block/signs).
         // I'm not sure what causes this behaviour (server side?)
-        teleport_id = packet.GetId_();
+        local_player->pending_teleport_id = packet.GetId_();
     }
 
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
@@ -206,22 +192,23 @@ namespace Botcraft
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
     void PhysicsManager::Handle(ClientboundPlayerRotationPacket& packet)
     {
-        if (player == nullptr)
+        const std::shared_ptr<LocalPlayer> local_player = entity_manager->GetLocalPlayer();
+        if (local_player == nullptr)
         {
             LOG_WARNING("Received a PlayerRotation packet without a player");
             return;
         }
 
-        std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
+        std::scoped_lock<std::shared_mutex> lock(local_player->entity_mutex);
 #if PROTOCOL_VERSION < 773 /* < 1.21.9 */
-        player->yaw = packet.GetYRot();
-        player->pitch = packet.GetXRot();
+        local_player->yaw = packet.GetYRot();
+        local_player->pitch = packet.GetXRot();
 #else
-        player->yaw = player->yaw * packet.GetRelativeY() + packet.GetYRot();
-        player->pitch = player->pitch * packet.GetRelativeX() + packet.GetXRot();
+        local_player->yaw = local_player->yaw * packet.GetRelativeY() + packet.GetYRot();
+        local_player->pitch = local_player->pitch * packet.GetRelativeX() + packet.GetXRot();
 #endif
-        player->previous_yaw = player->yaw;
-        player->previous_pitch = player->pitch;
+        local_player->previous_yaw = local_player->yaw;
+        local_player->previous_pitch = local_player->pitch;
     }
 #endif
 
@@ -237,55 +224,58 @@ namespace Botcraft
 
             if (network_manager->GetConnectionState() == ConnectionState::Play)
             {
-                if (player != nullptr && !std::isnan(player->GetY()))
+                player = entity_manager->GetLocalPlayer();
+                if (player != nullptr)
                 {
                     // As PhysicsManager is a friend of LocalPlayer, we can lock the whole entity
                     // while physics is processed. This also means we can't use public interface
                     // as it's thread-safe by design and would deadlock because of this global lock
                     std::scoped_lock<std::shared_mutex> lock(player->entity_mutex);
-
-                    // Send player updated position with onground set to false to mimic vanilla client behaviour
-                    if (teleport_id.has_value())
+                    if (!std::isnan(player->position.y))
                     {
+                        // Send player updated position with onground set to false to mimic vanilla client behaviour
+                        if (player->pending_teleport_id.has_value())
+                        {
 #if PROTOCOL_VERSION < 777 /* < 26.3 */
-                        std::shared_ptr<ServerboundMovePlayerPacketPosRot> updated_position_packet = std::make_shared<ServerboundMovePlayerPacketPosRot>();
-                        updated_position_packet->SetX(player->position.x);
-                        updated_position_packet->SetY(player->position.y);
-                        updated_position_packet->SetZ(player->position.z);
-                        updated_position_packet->SetYRot(player->yaw);
-                        updated_position_packet->SetXRot(player->pitch);
-                        updated_position_packet->SetOnGround(false);
+                            std::shared_ptr<ServerboundMovePlayerPacketPosRot> updated_position_packet = std::make_shared<ServerboundMovePlayerPacketPosRot>();
+                            updated_position_packet->SetX(player->position.x);
+                            updated_position_packet->SetY(player->position.y);
+                            updated_position_packet->SetZ(player->position.z);
+                            updated_position_packet->SetYRot(player->yaw);
+                            updated_position_packet->SetXRot(player->pitch);
+                            updated_position_packet->SetOnGround(false);
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
-                        updated_position_packet->SetHorizontalCollision(false);
+                            updated_position_packet->SetHorizontalCollision(false);
 #endif
 
-                        std::shared_ptr<ServerboundAcceptTeleportationPacket> accept_tp_packet = std::make_shared<ServerboundAcceptTeleportationPacket>();
-                        accept_tp_packet->SetId_(teleport_id.value());
+                            std::shared_ptr<ServerboundAcceptTeleportationPacket> accept_tp_packet = std::make_shared<ServerboundAcceptTeleportationPacket>();
+                            accept_tp_packet->SetId_(player->pending_teleport_id.value());
 
-                        // In 1.21.2/1.21.3 -> move player then accept TP, other versions -> Accept TP then move player
+                            // In 1.21.2/1.21.3 -> move player then accept TP, other versions -> Accept TP then move player
 #if PROTOCOL_VERSION < 768 /* < 1.21.2 */
-                        network_manager->Send(accept_tp_packet);
-                        network_manager->Send(updated_position_packet);
+                            network_manager->Send(accept_tp_packet);
+                            network_manager->Send(updated_position_packet);
 #elif PROTOCOL_VERSION < 769 /* < 1.21.4 */
-                        network_manager->Send(updated_position_packet);
-                        network_manager->Send(accept_tp_packet);
+                            network_manager->Send(updated_position_packet);
+                            network_manager->Send(accept_tp_packet);
 #else
-                        network_manager->Send(accept_tp_packet);
-                        network_manager->Send(updated_position_packet);
+                            network_manager->Send(accept_tp_packet);
+                            network_manager->Send(updated_position_packet);
 #endif
 #else
-                        std::shared_ptr<ServerboundAcceptTeleportationPacket> accept_tp_packet = std::make_shared<ServerboundAcceptTeleportationPacket>();
-                        accept_tp_packet->SetId_(teleport_id.value());
-                        accept_tp_packet->SetX(player->position.x);
-                        accept_tp_packet->SetY(player->position.y);
-                        accept_tp_packet->SetZ(player->position.z);
-                        accept_tp_packet->SetYRot(player->yaw);
-                        accept_tp_packet->SetXRot(player->pitch);
-                        network_manager->Send(accept_tp_packet);
+                            std::shared_ptr<ServerboundAcceptTeleportationPacket> accept_tp_packet = std::make_shared<ServerboundAcceptTeleportationPacket>();
+                            accept_tp_packet->SetId_(player->pending_teleport_id.value());
+                            accept_tp_packet->SetX(player->position.x);
+                            accept_tp_packet->SetY(player->position.y);
+                            accept_tp_packet->SetZ(player->position.z);
+                            accept_tp_packet->SetYRot(player->yaw);
+                            accept_tp_packet->SetXRot(player->pitch);
+                            network_manager->Send(accept_tp_packet);
 #endif
-                        teleport_id = std::nullopt;
+                            player->pending_teleport_id = std::nullopt;
+                        }
+                        PhysicsTick();
                     }
-                    PhysicsTick();
                 }
 #if PROTOCOL_VERSION > 767 /* > 1.21.1 */
                 std::shared_ptr<ServerboundClientTickEndPacket> tick_end_packet = std::make_shared<ServerboundClientTickEndPacket>();

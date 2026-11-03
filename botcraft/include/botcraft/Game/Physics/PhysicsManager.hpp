@@ -2,7 +2,6 @@
 
 #include <atomic>
 #include <memory>
-#include <optional>
 #include <thread>
 
 #include "protocolCraft/Handler.hpp"
@@ -43,7 +42,6 @@ namespace Botcraft
         double GetMsPerTick() const;
 
     protected:
-        virtual void Handle(ProtocolCraft::ClientboundLoginPacket& packet) override;
         virtual void Handle(ProtocolCraft::ClientboundPlayerPositionPacket& packet) override;
 #if PROTOCOL_VERSION > 764 /* > 1.20.2 */
         virtual void Handle(ProtocolCraft::ClientboundTickingStatePacket& packet) override;
@@ -96,7 +94,6 @@ namespace Botcraft
         std::shared_ptr<World> world;
 
         std::atomic<bool> should_run;
-        std::optional<int> teleport_id;
 
         int ticks_since_last_position_sent;
 

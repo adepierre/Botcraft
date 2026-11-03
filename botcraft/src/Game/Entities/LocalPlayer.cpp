@@ -44,6 +44,7 @@ namespace Botcraft
         sprint_double_tap_trigger_time = 0;
         supporting_block_pos = std::optional<Position>();
         on_ground_without_supporting_block = false;
+        pending_teleport_id = std::nullopt;
 
         previous_sprinting = false;
         previous_shift_key_down = false;

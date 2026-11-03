@@ -133,6 +133,7 @@ namespace Botcraft
         int sprint_double_tap_trigger_time;
         std::optional<Position> supporting_block_pos;
         bool on_ground_without_supporting_block;
+        std::optional<int> pending_teleport_id;
 
         bool previous_sprinting;
         bool previous_shift_key_down;
