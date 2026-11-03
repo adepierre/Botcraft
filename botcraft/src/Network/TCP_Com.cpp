@@ -63,7 +63,6 @@ namespace Botcraft
         io_context.stop();
         if (thread_com.joinable())
         {
-            Logger::GetInstance().UnregisterThread(thread_com.get_id());
             thread_com.join();
         }
     }

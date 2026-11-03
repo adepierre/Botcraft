@@ -35,7 +35,7 @@ constexpr const char* file_name(const char* path)
     << " [" << logger.GetThreadName(std::this_thread::get_id())             \
     << "(" << std::this_thread::get_id() << ")] "                           \
     << file_name(__FILE__) << '(' << __LINE__ << "): " << osstream << '\n'; \
-    logger.Log(logger_ostringstream.str());                                 \
+    logger.Log(logger_ostringstream.str(), level);                          \
 } while(0)
 
 #define LOG_TRACE(osstream)   LOG(osstream, Botcraft::LogLevel::Trace)
@@ -84,7 +84,7 @@ namespace Botcraft
         ~Logger();
 
         static Logger& GetInstance();
-        void Log(const std::string& s);
+        void Log(const std::string& s, const LogLevel level = LogLevel::Info);
         void SetFilename(const std::string& s);
         void SetLogLevel(const LogLevel l);
         LogLevel GetLogLevel() const;

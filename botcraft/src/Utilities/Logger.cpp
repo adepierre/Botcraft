@@ -39,15 +39,15 @@ namespace Botcraft
         return test;
     }
 
-    void Logger::Log(const std::string& s)
+    void Logger::Log(const std::string& s, const LogLevel level)
     {
         std::lock_guard<std::mutex> lock(mutex);
         log_func(s);
 
         file_buffer += s;
         auto now = std::chrono::steady_clock::now();
-        // Only write to file every 5 seconds
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_time_logged).count() > 5000)
+        // Only write to file every 5 seconds, but always flush errors and above
+        if (level >= LogLevel::Error || now - last_time_logged > std::chrono::seconds(5))
         {
             if (filename != "")
             {
@@ -124,7 +124,8 @@ namespace Botcraft
     std::string Logger::GetThreadName(const std::thread::id id)
     {
         std::lock_guard<std::mutex> lock(thread_mutex);
-        return thread_names[id];
+        const auto it = thread_names.find(id);
+        return it == thread_names.end() ? "" : it->second;
     }
 
     void Logger::UnregisterThread(const std::thread::id id)
