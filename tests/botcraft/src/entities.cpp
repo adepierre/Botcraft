@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <botcraft/Game/Entities/entities/entity.hpp>
+#include <botcraft/Game/Entities/entities/Entity.hpp>
 #include <botcraft/Utilities/Logger.hpp>
 #include <botcraft/Utilities/MiscUtilities.hpp>
 
