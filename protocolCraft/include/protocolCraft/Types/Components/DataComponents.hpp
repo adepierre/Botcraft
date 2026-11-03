@@ -246,11 +246,11 @@ namespace ProtocolCraft
             std::map<DataComponentTypes, std::shared_ptr<DataComponentType>> map;
         };
 
-        extern template BasicDataComponentPatch<false>;
+        extern template class BasicDataComponentPatch<false>;
         using DataComponentPatch = BasicDataComponentPatch<false>;
 
 #if PROTOCOL_VERSION > 769 /* > 1.21.4 */
-        extern template BasicDataComponentPatch<true>;
+        extern template class BasicDataComponentPatch<true>;
         using LengthPrefixedDataComponentPatch = BasicDataComponentPatch<true>;
 
         class HashedDataComponentPatch : public NetworkType
